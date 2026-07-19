@@ -6,7 +6,7 @@
   <title>Sticky Note / Cork Board Dashboard</title>
 
   <!-- Anti-Flash IIFE -->
-  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme');if(t)document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-cork'}}();</script>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||'cork';document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-cork'}}();</script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -193,7 +193,7 @@
     .switcher-btn.active { background: var(--pin); color: white; }
   </style>
 </head>
-<body class="theme-cork">
+<body>
 
 <div class="app-shell">
 
@@ -338,7 +338,9 @@
 
 <script>
   window.setTheme = function(themeName) {
-    document.documentElement.className = 'theme-' + themeName;
+    var cls = 'theme-' + themeName;
+    document.documentElement.className = cls;
+    document.body.className = cls;
     localStorage.setItem('ui-beta-preview-theme', themeName);
     document.querySelectorAll('.switcher-btn').forEach(function(b) {
       b.classList.toggle('active', b.getAttribute('data-theme') === themeName);

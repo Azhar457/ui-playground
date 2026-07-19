@@ -6,7 +6,7 @@
   <title>Monochrome / High-Contrast Editorial</title>
 
   <!-- Anti-Flash IIFE -->
-  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme');if(t)document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-pure'}}();</script>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||'pure';document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-pure'}}();</script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,7 +152,7 @@
     }
     .inverted-grid .inv-img {
       width: 100%; height: 300px; object-fit: cover;
-      filter: grayscale(1) contrast: 1.5;
+      filter: grayscale(1) contrast(1.5);
       margin-top: 20px; border: 1px solid var(--paper);
     }
     .inverted-grid .inv-img:hover { filter: grayscale(1) contrast(1.5) invert(1); }
@@ -220,7 +220,7 @@
     .switcher-btn.active { background: var(--ink); color: var(--paper); }
   </style>
 </head>
-<body class="theme-pure">
+<body>
 
 <div class="app-shell">
 
@@ -311,7 +311,9 @@
 
 <script>
   window.setTheme = function(themeName) {
-    document.documentElement.className = 'theme-' + themeName;
+    var cls = 'theme-' + themeName;
+    document.documentElement.className = cls;
+    document.body.className = cls;
     localStorage.setItem('ui-beta-preview-theme', themeName);
     document.querySelectorAll('.switcher-btn').forEach(function(b) {
       b.classList.toggle('active', b.getAttribute('data-theme') === themeName);

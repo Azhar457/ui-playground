@@ -6,7 +6,7 @@
   <title>Gothic Horror / Victorian Macabre</title>
 
   <!-- Anti-Flash IIFE -->
-  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme');if(t)document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-gothic'}}();</script>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||'gothic';document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-gothic'}}();</script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -306,7 +306,7 @@
     .switcher-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
   </style>
 </head>
-<body class="theme-gothic">
+<body>
 
 <div class="app-shell">
 
@@ -403,7 +403,9 @@
 
 <script>
   window.setTheme = function(themeName) {
-    document.documentElement.className = 'theme-' + themeName;
+    var cls = 'theme-' + themeName;
+    document.documentElement.className = cls;
+    document.body.className = cls;
     localStorage.setItem('ui-beta-preview-theme', themeName);
     document.querySelectorAll('.switcher-btn').forEach(function(b) {
       b.classList.toggle('active', b.getAttribute('data-theme') === themeName);

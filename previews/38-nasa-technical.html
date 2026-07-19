@@ -6,7 +6,7 @@
   <title>NASA Technical / Mission Control Interface</title>
 
   <!-- Anti-Flash IIFE (local theme names — no global key) -->
-  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme');if(t)document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-mission'}}();</script>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||'mission';document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-mission'}}();</script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -313,7 +313,7 @@
     .t-minus-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; }
   </style>
 </head>
-<body class="theme-mission">
+<body>
 
 <div class="app-shell">
 
@@ -486,7 +486,9 @@
 <script>
   // Theme switcher
   window.setTheme = function(themeName) {
-    document.documentElement.className = 'theme-' + themeName;
+    var cls = 'theme-' + themeName;
+    document.documentElement.className = cls;
+    document.body.className = cls;
     localStorage.setItem('ui-beta-preview-theme', themeName);
     document.querySelectorAll('.switcher-btn').forEach(function(b) {
       b.classList.toggle('active', b.getAttribute('data-theme') === themeName);
