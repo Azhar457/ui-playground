@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monochrome / High-Contrast Editorial</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme');if(t)document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-pure'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Bodoni+Moda:opsz@6..72&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Pure (default) ===== */
+    :root, .theme-pure {
+      --ink: #000000;
+      --paper: #FFFFFF;
+      --border: 1px solid #000000;
+    }
+
+    .theme-pure-inverted {
+      --ink: #FFFFFF;
+      --paper: #000000;
+    }
+
+    .theme-pure-grid {
+      --ink: #000000;
+      --paper: #FFFFFF;
+    }
+    .theme-pure-grid body::before {
+      content: '' !important;
+      position: fixed !important; inset: 0 !important; pointer-events: none !important; z-index: 999 !important;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 1px, transparent 1px, transparent 40px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 1px, transparent 1px, transparent 40px) !important;
+    }
+
+    .theme-pure-dots {
+      --ink: #000000;
+      --paper: #FFFFFF;
+    }
+    .theme-pure-dots body::before {
+      content: '' !important;
+      position: fixed !important; inset: 0 !important; pointer-events: none !important; z-index: 999 !important;
+      background-image: radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px) !important;
+      background-size: 20px 20px !important;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ONLY black #000 and white #FFF — body background and text are direct variables */
+    img { display: block; max-width: 100%; }
+
+    /* Headings: Didot/Bodoni/Playfair Display */
+    h1, h2, h3, .headline {
+      font-family: 'Bodoni Moda', 'Playfair Display', 'Didot', serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .app-shell { max-width: 1200px; margin: 0 auto; }
+
+    /* === SECTION 1: HERO full-bleed === */
+    .hero-section {
+      position: relative; width: 100%; min-height: 90vh;
+      background: var(--ink); overflow: hidden; border-bottom: var(--border);
+    }
+    .hero-img-wrap {
+      position: absolute; inset: 0;
+    }
+    .hero-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(1) contrast(1.8);
+    }
+    .hero-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 40px;
+    }
+    .hero-overlay h1 {
+      font-size: 7rem; color: var(--paper);
+      mix-blend-mode: difference;
+      line-height: 0.9;
+    }
+    .hero-overlay .hero-caption {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--paper); mix-blend-mode: difference; margin-top: 12px;
+    }
+
+    /* === SECTION 2: GALLERY / ASYMMETRIC GRID === */
+    .gallery-section {
+      padding: 60px 40px; border-bottom: var(--border);
+    }
+    .gallery-grid {
+      display: grid; grid-template-columns: 3fr 1.5fr; gap: 40px;
+    }
+    .gallery-grid .large-img {
+      width: 100%; height: 500px; object-fit: cover;
+      filter: grayscale(1) contrast(1.5);
+      border: var(--border);
+      transition: filter 0s;
+      cursor: pointer;
+    }
+    .gallery-grid .large-img:hover { filter: grayscale(1) contrast(1.5) invert(1); }
+    .gallery-side { display: flex; flex-direction: column; gap: 24px; }
+    .gallery-side .side-img {
+      width: 100%; height: 220px; object-fit: cover;
+      filter: grayscale(1) contrast(1.6);
+      border: var(--border);
+      transition: filter 0s;
+      cursor: pointer;
+    }
+    .gallery-side .side-img:hover { filter: grayscale(1) contrast(1.6) invert(1); }
+    .gallery-side p {
+      font-size: 14px; line-height: 1.6; letter-spacing: 0.01em;
+    }
+
+    /* Wipe scroll reveal */
+    .wipe-reveal {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0ms;
+    }
+    .wipe-reveal.revealed {
+      clip-path: inset(0 0 0 0);
+      transition: clip-path 600ms ease-out;
+    }
+
+    /* === SECTION 3: INVERTED SECTION === */
+    .inverted-section {
+      background: var(--ink); color: var(--paper); padding: 60px 40px;
+      border-bottom: var(--border);
+    }
+    .inverted-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    }
+    .inverted-grid h2 {
+      font-size: 4rem; letter-spacing: -0.03em; line-height: 1;
+    }
+    .inverted-grid p {
+      font-size: 14px; line-height: 1.8;
+    }
+    .inverted-grid .inv-img {
+      width: 100%; height: 300px; object-fit: cover;
+      filter: grayscale(1) contrast: 1.5;
+      margin-top: 20px; border: 1px solid var(--paper);
+    }
+    .inverted-grid .inv-img:hover { filter: grayscale(1) contrast(1.5) invert(1); }
+
+    /* === SECTION 4: LOOKBOOK / CAPTION GRID === */
+    .lookbook-section {
+      padding: 60px 40px; border-bottom: var(--border);
+    }
+    .lookbook-title {
+      font-size: 5rem; margin-bottom: 40px; line-height: 1;
+    }
+    .lookbook-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
+    }
+    .lookbook-item { border: var(--border); }
+    .lookbook-item img {
+      width: 100%; height: 400px; object-fit: cover;
+      filter: grayscale(1) contrast(1.7);
+      display: block; transition: filter 0s;
+    }
+    .lookbook-item img:hover { filter: grayscale(1) contrast(1.7) invert(1); }
+    .lookbook-caption {
+      padding: 12px 16px; font-size: 10px; text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    .lookbook-caption .num { font-weight: bold; }
+
+    /* === SECTION 5: FOOTER / CREDITS === */
+    .footer-section {
+      background: var(--ink); color: var(--paper); padding: 40px;
+      text-align: center;
+    }
+    .footer-section p {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; line-height: 2;
+    }
+    .footer-section .footer-headline {
+      font-size: 6rem; letter-spacing: -0.03em; line-height: 1; margin-bottom: 12px;
+    }
+
+    /* Hard cut animations (no fade) */
+    .hard-reveal {
+      animation: hardCutIn 0ms forwards;
+      opacity: 0;
+    }
+    .hard-reveal.revealed { opacity: 1; }
+    @keyframes hardCutIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    /* Switcher */
+    .switcher-footer {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      padding: 30px 0; border-top: var(--border); margin-top: 0;
+    }
+    .switcher-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; }
+    .switcher-buttons { display: flex; gap: 0; }
+    .switcher-btn {
+      padding: 10px 24px; background: var(--paper); color: var(--ink);
+      border: var(--border); font-family: 'Helvetica Neue', sans-serif;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+      font-weight: 500; transition: none;
+    }
+    .switcher-btn:hover { background: var(--ink); color: var(--paper); }
+    .switcher-btn.active { background: var(--ink); color: var(--paper); }
+  </style>
+</head>
+<body class="theme-pure">
+
+<div class="app-shell">
+
+  <!-- SECTION 1: HERO full-bleed photo + headline -->
+  <section class="hero-section">
+    <div class="hero-img-wrap">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'%3E%3Crect fill='%23fff' width='1200' height='900'/%3E%3Cpath d='M0 0 L1200 900 M200 0 L1200 700 M0 300 L900 900 M400 0 L1200 500 M0 600 L600 900 M800 0 L1200 200' stroke='%23000' stroke-width='8'/%3E%3Ccircle cx='850' cy='250' r='120' fill='%23000'/%3E%3Ccircle cx='350' cy='550' r='80' fill='%23000'/%3E%3C/svg%3E"
+           alt="Editorial hero">
+    </div>
+    <div class="hero-overlay">
+      <h1>MONOCHROME<br>VOL. I</h1>
+      <div class="hero-caption">AW24 Collection &bull; Photography by M. Voss</div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: ASYMMETRIC GALLERY -->
+  <section class="gallery-section">
+    <div class="gallery-grid">
+      <div>
+        <img class="large-img wipe-reveal" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='500'%3E%3Crect fill='%23000' width='700' height='500'/%3E%3Crect x='60' y='60' width='250' height='380' fill='%23fff'/%3E%3C/svg%3E"
+             alt="Large editorial">
+      </div>
+      <div class="gallery-side">
+        <img class="side-img wipe-reveal" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='220'%3E%3Crect fill='%23fff' width='400' height='220'/%3E%3Crect x='40' y='40' width='80' height='140' fill='%23000'/%3E%3C/svg%3E"
+             alt="Side image 1">
+        <img class="side-img wipe-reveal" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='220'%3E%3Crect fill='%23fff' width='400' height='220'/%3E%3Cline x1='0' y1='0' x2='400' y2='220' stroke='%23000' stroke-width='12'/%3E%3C/svg%3E"
+             alt="Side image 2">
+        <p>High-contrast monochrome editorial — zero gray, zero shadows. Separation through pure contrast and shape alone. Every element exists in binary tension.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: INVERTED -->
+  <section class="inverted-section">
+    <div class="inverted-grid">
+      <div>
+        <h2>CONTRAST<br>IS THE<br>SUBJECT</h2>
+        <img class="inv-img wipe-reveal" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300'%3E%3Crect fill='%23fff' width='500' height='300'/%3E%3Ccircle cx='250' cy='150' r='100' fill='%23000'/%3E%3C/svg%3E"
+             alt="Inverted editorial">
+      </div>
+      <div>
+        <p>In fashion, gray is a compromise. This collection strips every image, every garment, every surface to its essential binary: black or white. No midtones. No shadows. No refuge.</p>
+        <p style="margin-top:20px;">The body becomes silhouette. The fabric becomes line. Texture is suggested, never simulated. What remains is the purest possible dialogue between absence and presence.</p>
+        <p style="margin-top:20px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;">Photography: Sarah Kim &mdash; Styling: L. Tanaka</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: LOOKBOOK GRID -->
+  <section class="lookbook-section">
+    <h2 class="lookbook-title">LOOK 01 &mdash; 06</h2>
+    <div class="lookbook-grid">
+      <div class="lookbook-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23fff' width='400' height='400'/%3E%3Crect x='80' y='50' width='240' height='300' fill='%23000'/%3E%3C/svg%3E" alt="Look 1">
+        <div class="lookbook-caption"><span class="num">01</span> &mdash; Structured Overcoat</div>
+      </div>
+      <div class="lookbook-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23000' width='400' height='400'/%3E%3Crect x='100' y='60' width='200' height='280' fill='%23fff'/%3E%3C/svg%3E" alt="Look 2">
+        <div class="lookbook-caption"><span class="num">02</span> &mdash; Draped Tunic</div>
+      </div>
+      <div class="lookbook-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23fff' width='400' height='400'/%3E%3Cline x1='0' y1='200' x2='400' y2='200' stroke='%23000' stroke-width='20'/%3E%3Cline x1='200' y1='0' x2='200' y2='400' stroke='%23000' stroke-width='20'/%3E%3C/svg%3E" alt="Look 3">
+        <div class="lookbook-caption"><span class="num">03</span> &mdash; Grid-Form Jacket</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FOOTER -->
+  <section class="footer-section">
+    <div class="footer-headline">PURE</div>
+    <p>Monochrome Vol. I &mdash; Studio Voss &copy; 2026</p>
+    <p style="margin-top:8px;">Creative Director: M. Voss &bull; Stylist: L. Tanaka &bull; All images black &amp; white</p>
+    <p style="margin-top:4px;">Only two colors permitted: Pure Black #000000 and Pure White #FFFFFF</p>
+  </section>
+
+  <!-- THEME SWITCHER -->
+  <footer class="switcher-footer">
+    <span class="switcher-label">SCHEME</span>
+    <div class="switcher-buttons">
+      <button class="switcher-btn active" onclick="setTheme('pure')" data-theme="pure">Pure</button>
+      <button class="switcher-btn" onclick="setTheme('pure-inverted')" data-theme="pure-inverted">Inverted</button>
+      <button class="switcher-btn" onclick="setTheme('pure-grid')" data-theme="pure-grid">Grid</button>
+      <button class="switcher-btn" onclick="setTheme('pure-dots')" data-theme="pure-dots">Dots</button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  window.setTheme = function(themeName) {
+    document.documentElement.className = 'theme-' + themeName;
+    localStorage.setItem('ui-beta-preview-theme', themeName);
+    document.querySelectorAll('.switcher-btn').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-theme') === themeName);
+    });
+  };
+
+  // Intersection Observer for wipe-reveal
+  (function() {
+    var els = document.querySelectorAll('.wipe-reveal');
+    if (!els.length || !window.IntersectionObserver) return;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    els.forEach(function(el) { observer.observe(el); });
+  })();
+</script>
+
+</body>
+</html>

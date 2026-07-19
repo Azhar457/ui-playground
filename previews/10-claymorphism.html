@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soft Claymorphism Playground</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-clay-theme') || 'gray';
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-gray';
+      }
+    })();
+  </script>
+
+  <style>
+    /* COLORING-PATTERN SEMANTIC TOKENS (Clay Soft Pastels) */
+    :root, .theme-gray {
+      --bg: #E0E5EC;
+      --surface: #E0E5EC;
+      --surface-alt: #D1D9E6;
+      --text: #2D3748;
+      --text-muted: #718096;
+      --primary: #8B5CF6;
+      --on-primary: #FFFFFF;
+      --border: rgba(255, 255, 255, 0.4);
+      --accent: #8B5CF6;
+      --accent-cyan: #38BDF8;
+      --accent-purple: #C084FC;
+      
+      /* Shadows */
+      --shadow-light-out: -8px -8px 16px rgba(255, 255, 255, 0.7);
+      --shadow-dark-out: 8px 8px 16px rgba(163, 177, 198, 0.6);
+      --shadow-light-in: inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+      --shadow-dark-in: inset 4px 4px 8px rgba(163, 177, 198, 0.65);
+    }
+
+    .theme-blue {
+      --bg: #D6E4F0;
+      --surface: #D6E4F0;
+      --surface-alt: #C9D9E8;
+      --text: #1E293B;
+      --text-muted: #64748B;
+      --primary: #3B82F6;
+      --on-primary: #FFFFFF;
+      --border: rgba(255, 255, 255, 0.4);
+      --accent: #3B82F6;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #8B5CF6;
+      
+      --shadow-light-out: -8px -8px 16px rgba(255, 255, 255, 0.75);
+      --shadow-dark-out: 8px 8px 16px rgba(158, 178, 198, 0.6);
+      --shadow-light-in: inset -4px -4px 8px rgba(255, 255, 255, 0.75);
+      --shadow-dark-in: inset 4px 4px 8px rgba(158, 178, 198, 0.6);
+    }
+
+    .theme-green {
+      --bg: #D8EAD3;
+      --surface: #D8EAD3;
+      --surface-alt: #C9DBCE;
+      --text: #1C3322;
+      --text-muted: #536B59;
+      --primary: #10B981;
+      --on-primary: #FFFFFF;
+      --border: rgba(255, 255, 255, 0.4);
+      --accent: #10B981;
+      --accent-cyan: #0EA5E9;
+      --accent-purple: #6366F1;
+      
+      --shadow-light-out: -8px -8px 16px rgba(255, 255, 255, 0.8);
+      --shadow-dark-out: 8px 8px 16px rgba(162, 179, 158, 0.6);
+      --shadow-light-in: inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+      --shadow-dark-in: inset 4px 4px 8px rgba(162, 179, 158, 0.6);
+    }
+
+    .theme-orange {
+      --bg: #F7E7D9;
+      --surface: #F7E7D9;
+      --surface-alt: #E8D6C7;
+      --text: #451A03;
+      --text-muted: #78350F;
+      --primary: #F59E0B;
+      --on-primary: #FFFFFF;
+      --border: rgba(255, 255, 255, 0.4);
+      --accent: #F59E0B;
+      --accent-cyan: #D97706;
+      --accent-purple: #EC4899;
+      
+      --shadow-light-out: -8px -8px 16px rgba(255, 255, 255, 0.8);
+      --shadow-dark-out: 8px 8px 16px rgba(193, 172, 156, 0.6);
+      --shadow-light-in: inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+      --shadow-dark-in: inset 4px 4px 8px rgba(193, 172, 156, 0.6);
+    }
+
+    .theme-rose {
+      --bg: #F5E0E6;
+      --surface: #F5E0E6;
+      --surface-alt: #E6D0D6;
+      --text: #4C0519;
+      --text-muted: #881337;
+      --primary: #EC4899;
+      --on-primary: #FFFFFF;
+      --border: rgba(255, 255, 255, 0.4);
+      --accent: #EC4899;
+      --accent-cyan: #F43F5E;
+      --accent-purple: #8B5CF6;
+      
+      --shadow-light-out: -8px -8px 16px rgba(255, 255, 255, 0.8);
+      --shadow-dark-out: 8px 8px 16px rgba(192, 169, 176, 0.6);
+      --shadow-light-in: inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+      --shadow-dark-in: inset 4px 4px 8px rgba(192, 169, 176, 0.6);
+    }
+
+    /* Reset & Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.15s ease, box-shadow 0.2s ease, border-radius 0.2s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .scroll-indicator-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+    }
+
+    /* Header Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 90;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-logo span {
+      color: var(--primary);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 2px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-cyan), var(--accent-purple), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.75rem 1.75rem;
+      width: 100%;
+      height: 100%;
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--surface-alt);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Sections */
+    section {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 9999px;
+      margin-bottom: 0.5rem;
+      align-self: center;
+      background: var(--surface);
+      padding: 6px 12px;
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+    }
+
+    /* SECTION 1: HERO */
+    .hero-sec {
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      max-width: 550px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* Clay Cards structures */
+    .clay-card {
+      background: var(--surface);
+      border-radius: var(--card-radius, 24px);
+      padding: 3rem;
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Interactive sandbox knobs */
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .control-row label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .control-row input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 9999px;
+      background: var(--surface-alt);
+      outline: none;
+      -webkit-appearance: none;
+      box-shadow: var(--shadow-light-in), var(--shadow-dark-in);
+    }
+
+    .control-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+      transition: transform 0.1s ease;
+    }
+
+    .control-row input[type="range"]::-webkit-slider-thumb:active {
+      transform: scale(1.2);
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border-radius: var(--card-radius, 24px);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .bento-card.wide {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      .bento-card.wide {
+        grid-column: span 1;
+      }
+    }
+
+    .bento-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+    }
+
+    .bento-card p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* Clay Input Field */
+    .clay-input {
+      background: var(--surface);
+      color: var(--text);
+      border: none;
+      border-radius: 20px;
+      padding: 0.8rem 1.25rem;
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-light-in), var(--shadow-dark-in);
+      width: 100%;
+      outline: none;
+    }
+
+    .clay-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Toggle Switch */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .toggle-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .toggle-track {
+      width: 60px;
+      height: 32px;
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: var(--shadow-light-in), var(--shadow-dark-in);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .toggle-knob {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+      pointer-events: none;
+    }
+
+    .toggle-track.active {
+      background: rgba(139, 92, 246, 0.1);
+    }
+
+    .toggle-track.active .toggle-knob {
+      transform: translateX(28px);
+      background: var(--primary);
+      box-shadow: -2px 2px 5px rgba(139, 92, 246, 0.15), 
+                  2px -2px 5px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Soft Clay Buttons */
+    .clay-btn {
+      background: var(--surface);
+      color: var(--text);
+      border: none;
+      border-radius: 20px;
+      padding: 0.85rem 1.75rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+      transition: all 0.1s ease;
+      outline: none;
+    }
+
+    .clay-btn:active {
+      box-shadow: var(--shadow-light-in), var(--shadow-dark-in);
+      transform: scale(0.98);
+    }
+
+    /* SECTION 5: FOOTER & THEMES */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-light-in), var(--shadow-dark-in);
+    }
+
+    .theme-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem 0;
+    }
+
+    .theme-btn {
+      background: var(--surface);
+      border: none;
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-light-out), var(--shadow-dark-out);
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-light-in), var(--shadow-dark-in);
+    }
+
+    .footer-credit {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-indicator-wrap">
+    <div class="scroll-indicator-bar" id="indicator"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand-logo">SOFT<span>.CLAY</span></div>
+    <a href="#control-console" class="conic-btn">
+      <span>Get Started</span>
+    </a>
+  </nav>
+
+  <!-- SECTION 1: HERO HEADER -->
+  <section class="hero-sec">
+    <div class="badge">Clay Engine Active</div>
+    <h1>Soft <span>Claymorphism</span> Interface.</h1>
+    <p class="hero-desc">
+      Simulasi ekstrusi tanah liat digital melalui perpaduan matematika bayangan luar (outset) dan bayangan dalam (inset) secara berlapis.
+    </p>
+    <a href="#control-console" class="conic-btn">
+      <span>Explore Soft UI Console <i class="fas fa-arrow-down" style="margin-left: 6px;"></i></span>
+    </a>
+  </section>
+
+  <!-- SECTION 2: CONTROLS CONSOLE (SANDBOX) -->
+  <section id="control-console">
+    <div class="badge" style="align-self: flex-start;">Configuration Console</div>
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem;">Shadow Math Console</h2>
+    <p style="color:var(--text-muted); margin-top: 0.5rem;">Sesuaikan tingkat ketajaman extrusi claymorphic dan corner radius secara real-time.</p>
+    
+    <div class="clay-card">
+      <div class="control-row">
+        <label for="blur-range">Clay Shadow Blur Width: <span id="blur-lbl" style="color:var(--primary); font-weight:bold;">16px</span></label>
+        <input type="range" id="blur-range" min="8" max="32" step="2" value="16" oninput="updateShadowBlur(this.value)">
+      </div>
+      <div class="control-row">
+        <label for="radius-range">Clay Card Border Radius: <span id="radius-lbl" style="color:var(--primary); font-weight:bold;">24px</span></label>
+        <input type="range" id="radius-range" min="8" max="48" step="2" value="24" oninput="updateBorderRadius(this.value)">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: BENTO SHOWCASE GRID -->
+  <section>
+    <div class="sec-header" style="text-align: center; margin-bottom: 2rem;">
+      <div class="badge">Interaction Arena</div>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem;">Interactive Clay Components</h2>
+    </div>
+    
+    <div class="bento-grid">
+      <!-- Card 1: Form Inputs -->
+      <div class="bento-card wide">
+        <div class="card-content">
+          <h3>Soft Input Fields</h3>
+          <p style="margin-bottom: 1rem;">Menulis teks di dalam pocket input inset yang dalam.</p>
+          <input type="text" class="clay-input" placeholder="Type inside the pocket...">
+        </div>
+      </div>
+
+      <!-- Card 2: Cancel/Deploy actions -->
+      <div class="bento-card">
+        <div class="card-content">
+          <h3>Push Buttons</h3>
+          <p style="margin-bottom: 1rem;">Tekan tombol di bawah untuk melihat animasi insetting.</p>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="clay-btn">CANCEL</button>
+            <button class="clay-btn" style="color:var(--primary);">DEPLOY</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Toggle switch -->
+      <div class="bento-card">
+        <div class="card-content">
+          <h3>Clay Switches</h3>
+          <p style="margin-bottom: 1rem;">Aktifkan tombol geser Soft-UI di bawah ini.</p>
+          <div class="toggle-row">
+            <span class="toggle-label" style="color:var(--text-muted);">Sync Mode</span>
+            <div class="toggle-track" id="clay-toggle" onclick="toggleSwitch()">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Dynamic theme explanation -->
+      <div class="bento-card wide">
+        <div class="card-content">
+          <h3>Dual Shadow Equations</h3>
+          <p>
+            Persamaan visual claymorphism mensimulasikan pencahayaan ambient dari sudut kiri atas (putih terang) dan bayangan objek di sudut kanan bawah (gelap pekat).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SKEUOMORPHISM DETAILS -->
+  <section>
+    <div class="badge" style="align-self: flex-start;">Theory & Math</div>
+    <div class="clay-card">
+      <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; color: var(--primary);">Shadow Physics Equation</h3>
+      <p style="color:var(--text-muted); line-height:1.6; font-size:0.95rem;">
+        Untuk menciptakan extrusi tanah liat yang tampak empuk, warna dasar kontainer harus benar-benar sama persis dengan warna dasar body latar belakang (`background-color == container-color`). Kedalaman murni dibentuk oleh bayangan ganda.
+      </p>
+      <p style="color:var(--text-muted); line-height:1.6; font-size:0.95rem;">
+        Saat tombol diaktifkan (`:active`), bayangan luar (outset) bergeser secara asimetris menjadi bayangan dalam (inset) dengan warna bayangan yang dipadukan secara linear menggunakan alpha opacity.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FOOTER & THEMES -->
+  <footer>
+    <h3 class="brand-logo" style="font-size: 1.5rem; margin-bottom: 1rem;">SOFT<span>.CLAY</span></h3>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">Desain mikro interaktif modern berbasis Soft-UI skeuomorphic.</p>
+    
+    <div class="theme-row">
+      <button class="theme-btn" id="theme-btn-gray" onclick="setTheme('gray')">Soft Gray</button>
+      <button class="theme-btn" id="theme-btn-blue" onclick="setTheme('blue')">Mint Blue</button>
+      <button class="theme-btn" id="theme-btn-green" onclick="setTheme('green')">Minty Green</button>
+      <button class="theme-btn" id="theme-btn-orange" onclick="setTheme('orange')">Peach Cream</button>
+      <button class="theme-btn" id="theme-btn-rose" onclick="setTheme('rose')">Rosy Blush</button>
+    </div>
+
+    <div style="margin: 2rem 0;">
+      <a href="#" class="conic-btn">
+        <span>Back to Top <i class="fas fa-chevron-up" style="margin-left: 6px;"></i></span>
+      </a>
+    </div>
+    <p class="footer-credit">&copy; 2026 Wide Note - Antigravity Soft Claymorphism. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Toggle script
+    function toggleSwitch() {
+      const track = document.getElementById('clay-toggle');
+      track.classList.toggle('active');
+    }
+
+    // Scroll tracker
+    window.addEventListener('scroll', () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
+      document.getElementById('indicator').style.width = `${scrollPercent}%`;
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const activeTheme = localStorage.getItem('playground-clay-theme') || 'gray';
+      document.getElementById('theme-btn-' + activeTheme).classList.add('active');
+    });
+
+    function setTheme(themeName) {
+      document.documentElement.className = 'theme-' + themeName;
+      localStorage.setItem('playground-clay-theme', themeName);
+      
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('theme-btn-' + themeName).classList.add('active');
+    }
+
+    // Interactive Sandbox functions
+    function updateShadowBlur(val) {
+      document.getElementById('blur-lbl').innerText = `${val}px`;
+      
+      // Compute shadow variables dynamically based on currently selected theme values
+      const blurHalf = parseInt(val) / 2;
+      document.documentElement.style.setProperty('--shadow-light-out', `-${blurHalf}px -${blurHalf}px ${val}px rgba(255, 255, 255, 0.75)`);
+      document.documentElement.style.setProperty('--shadow-dark-out', `${blurHalf}px ${blurHalf}px ${val}px rgba(163, 177, 198, 0.6)`);
+      document.documentElement.style.setProperty('--shadow-light-in', `inset -${blurHalf/2}px -${blurHalf/2}px ${blurHalf}px rgba(255, 255, 255, 0.75)`);
+      document.documentElement.style.setProperty('--shadow-dark-in', `inset ${blurHalf/2}px ${blurHalf/2}px ${blurHalf}px rgba(163, 177, 198, 0.6)`);
+    }
+
+    function updateBorderRadius(val) {
+      document.getElementById('radius-lbl').innerText = `${val}px`;
+      document.documentElement.style.setProperty('--card-radius', `${val}px`);
+    }
+  </script>
+</body>
+</html>

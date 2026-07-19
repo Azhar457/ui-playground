@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cottagecore / Fairycore Diary</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Tangerine:wght@400;700&family=Caveat:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,300;0,7..72,400;1,7..72,300;1,7..72,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #E8F3E8; --fg: #5C4033; --card-bg: #FDFBF7; --rose: #D4A5A5; --lavender: #C8B8DB; --bark: #5C4033; --sage: #E8F3E8;
+      --card-shadow: #D4C4B0; --lace: rgba(255,255,255,0.7); --floral-svg: rgba(120,150,100,0.08); --ribbon: #D4A5A5;
+      --wavy-color: #D4A5A5; --thumbtack: #CC0000; --butterfly-color: #D4A5A5;
+    }
+    html.theme-sage { --bg: #E8F3E8; --fg: #5C4033; --card-bg: #FDFBF7; --rose: #D4A5A5; --lavender: #C8B8DB; --bark: #5C4033; --sage: #E8F3E8; --card-shadow: #D4C4B0; --lace: rgba(255,255,255,0.7); --floral-svg: rgba(120,150,100,0.08); --ribbon: #D4A5A5; --wavy-color: #D4A5A5; --thumbtack: #CC0000; --butterfly-color: #D4A5A5; }
+    html.theme-rose { --bg: #F5EDED; --fg: #5C4033; --card-bg: #FDF5F5; --rose: #D4A5A5; --lavender: #D4C4D4; --bark: #5C4033; --sage: #E8F3E8; --card-shadow: #C8B0B0; --lace: rgba(255,240,240,0.8); --floral-svg: rgba(200,150,150,0.08); --ribbon: #C8A0A0; --wavy-color: #C8A0A0; --thumbtack: #CC0000; --butterfly-color: #C8A0A0; }
+    html.theme-lavender { --bg: #EDE8F5; --fg: #5C4033; --card-bg: #FBF8FD; --rose: #C8B8DB; --lavender: #B8A8D0; --bark: #5C4033; --sage: #E8F3E8; --card-shadow: #C0B8D0; --lace: rgba(240,235,250,0.8); --floral-svg: rgba(160,140,200,0.08); --ribbon: #B8A8D0; --wavy-color: #B8A8D0; --thumbtack: #AA88CC; --butterfly-color: #B8A8D0; }
+    html.theme-honey { --bg: #F5F0E0; --fg: #5C4033; --card-bg: #FEFCF5; --rose: #D4A555; --lavender: #D4C4A0; --bark: #5C4033; --sage: #E8F3E8; --card-shadow: #C8B890; --lace: rgba(255,250,230,0.8); --floral-svg: rgba(180,160,80,0.08); --ribbon: #D4A555; --wavy-color: #D4A555; --thumbtack: #C08000; --butterfly-color: #D4A555; }
+
+    body {
+      background: var(--bg); color: var(--fg);
+      font-family: 'Literata', serif; font-size: 16px; line-height: 1.9;
+      min-height: 100vh; overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+      position: relative;
+    }
+
+    /* pressed flower background */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M40,40 C30,30 20,40 30,50 C40,60 50,50 40,40' fill='none' stroke='%235C4033' stroke-width='0.5' opacity='0.06'/%3E%3Cpath d='M60,60 C50,50 40,60 50,70 C60,80 70,70 60,60' fill='none' stroke='%235C4033' stroke-width='0.5' opacity='0.05'/%3E%3Ccircle cx='30' cy='70' r='6' fill='none' stroke='%235C4033' stroke-width='0.4' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    .page { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 1.5rem 2rem 1rem; }
+
+    /* lace border */
+    .lace-top { padding-top: 1.5rem; position: relative; }
+    .lace-top::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 16px; background: repeating-linear-gradient(90deg, var(--lace) 0px, var(--lace) 8px, transparent 8px, transparent 12px, var(--lace) 12px, var(--lace) 20px, transparent 20px, transparent 24px); }
+
+    /* header */
+    .header { text-align: center; padding: 1rem 0 0.5rem; }
+    .header h1 { font-family: 'Tangerine', cursive; font-size: clamp(2.8rem,6vw,3.8rem); font-weight: 400; color: var(--bark); }
+    .header .floral-divider { margin: 0.5rem auto; }
+    .header .floral-divider svg { width: 120px; height: 24px; stroke: var(--rose); fill: none; stroke-width: 1.5; }
+
+    /* post cards */
+    .post-card { background: var(--card-bg); box-shadow: 0 2px 0 var(--card-shadow); padding: 1.5rem 2rem; margin: 2rem 0; position: relative; clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 10px), 97% 100%, 94% calc(100% - 10px), 90% 100%, 86% calc(100% - 10px), 82% 100%, 78% calc(100% - 10px), 74% 100%, 70% calc(100% - 10px), 66% 100%, 62% calc(100% - 10px), 58% 100%, 54% calc(100% - 10px), 50% 100%, 46% calc(100% - 10px), 42% 100%, 38% calc(100% - 10px), 34% 100%, 30% calc(100% - 10px), 26% 100%, 22% calc(100% - 10px), 18% 100%, 14% calc(100% - 10px), 10% 100%, 6% calc(100% - 10px), 3% 100%, 0% calc(100% - 10px)); transition: transform 0.3s, box-shadow 0.3s; }
+    .post-card:hover { transform: translateY(-3px); box-shadow: 0 4px 0 var(--card-shadow); }
+    .post-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; color: var(--bark); margin-bottom: 0.3rem; }
+    .post-date { font-family: 'Caveat', cursive; font-size: 1.1rem; color: var(--rose); margin-bottom: 0.8rem; }
+    .post-card p { margin-bottom: 0.5rem; }
+
+    /* thumbtack */
+    .thumbtack { position: absolute; top: -6px; left: 20px; width: 24px; height: 24px; z-index: 2; transition: transform 0.3s; }
+    .thumbtack svg { width: 100%; height: 100%; }
+    .post-card:hover .thumbtack { transform: rotate(10deg); }
+
+    /* wavy underline links */
+    a { color: var(--rose); text-decoration: underline; text-decoration-style: wavy; text-underline-offset: 4px; }
+    a:hover { color: var(--bark); }
+
+    /* sidebar (sticker) */
+    .sidebar { background: var(--card-bg); border: 2px dashed var(--rose); border-radius: 16px; padding: 1.2rem 1.5rem; margin: 2rem 0; box-shadow: 0 2px 0 var(--card-shadow); }
+    .sidebar h3 { font-family: 'Caveat', cursive; font-size: 1.5rem; color: var(--bark); margin-bottom: 0.5rem; }
+    .sidebar p { font-family: 'Caveat', cursive; font-size: 1.1rem; line-height: 1.5; }
+    .sidebar::before { content: ''; display: block; width: 40px; height: 8px; background: var(--rose); border-radius: 4px; margin: 0 auto 0.8rem; opacity: 0.5; }
+
+    /* floral corners for quote */
+    .quote-wrap { position: relative; padding: 1.5rem 2rem; margin: 2rem 0; text-align: center; }
+    .quote-wrap::before { content: ''; position: absolute; top: 0; left: 0; width: 36px; height: 36px; background: var(--rose); opacity: 0.3; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='M18,2 C10,8 8,16 8,24 C8,30 12,34 18,34 C24,34 28,30 28,24 C28,16 26,8 18,2' fill='black'/%3E%3Ccircle cx='18' cy='14' r='4' fill='black'/%3E%3C/svg%3E") center/contain no-repeat; }
+    .quote-wrap::after { content: ''; position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; background: var(--rose); opacity: 0.3; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='M18,2 C10,8 8,16 8,24 C8,30 12,34 18,34 C24,34 28,30 28,24 C28,16 26,8 18,2' fill='black'/%3E%3Ccircle cx='18' cy='14' r='4' fill='black'/%3E%3C/svg%3E") center/contain no-repeat; transform: rotate(180deg); }
+    .quote-wrap blockquote { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.2rem; color: var(--bark); max-width: 40ch; margin: 0 auto; }
+
+    /* butterfly */
+    .butterfly { position: fixed; top: 20%; left: -60px; z-index: 10; pointer-events: none; animation: flutter 12s ease-in-out infinite; }
+    .butterfly svg { width: 32px; height: 28px; }
+    @keyframes flutter {
+      0% { left: -60px; top: 20%; transform: rotate(0deg); }
+      20% { left: 30%; top: 35%; transform: rotate(8deg); }
+      40% { left: 60%; top: 25%; transform: rotate(-4deg); }
+      60% { left: 80%; top: 40%; transform: rotate(6deg); }
+      80% { left: 95vw; top: 30%; transform: rotate(-2deg); }
+      100% { left: -60px; top: 20%; transform: rotate(0deg); }
+    }
+
+    /* footer */
+    .footer { text-align: center; padding: 1.5rem 0; }
+    .floral-wreath svg { width: 80px; height: 36px; stroke: var(--rose); fill: none; stroke-width: 1.5; }
+    .footer p { font-size: 0.75rem; color: var(--bark); margin-top: 0.5rem; }
+
+    /* theme */
+    .theme-section { text-align: center; padding: 1.5rem 0 0.5rem; border-top: 1px solid var(--rose); margin-top: 1.5rem; }
+    .theme-btn { font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; background: transparent; border: 1px solid var(--rose); color: var(--rose); padding: 0.4rem 1rem; cursor: pointer; margin: 0 0.3rem; transition: background 0.3s, color 0.3s; }
+    .theme-btn:hover, .theme-btn.active { background: var(--rose); color: var(--card-bg); }
+  </style>
+</head>
+<body>
+  <div class="butterfly">
+    <svg viewBox="0 0 32 28">
+      <path d="M16,14 C12,6 4,2 2,6 C0,10 8,14 16,14" fill="none" stroke="var(--butterfly-color)" stroke-width="1.2"/>
+      <path d="M16,14 C20,6 28,2 30,6 C32,10 24,14 16,14" fill="none" stroke="var(--butterfly-color)" stroke-width="1.2"/>
+      <path d="M16,14 C14,22 10,26 12,28 C14,28 16,24 16,20" fill="none" stroke="var(--butterfly-color)" stroke-width="1"/>
+      <path d="M16,14 C18,22 22,26 20,28 C18,28 16,24 16,20" fill="none" stroke="var(--butterfly-color)" stroke-width="1"/>
+      <line x1="16" y1="2" x2="16" y2="14" stroke="var(--butterfly-color)" stroke-width="0.8"/>
+    </svg>
+  </div>
+
+  <div class="page lace-top">
+    <!-- SECTION 1: Header -->
+    <div class="header">
+      <h1>Meadow Journal</h1>
+      <div class="floral-divider">
+        <svg viewBox="0 0 120 24">
+          <path d="M10,12 C20,4 30,18 40,12 C50,6 60,18 70,12 C80,6 90,18 100,12" stroke="currentColor" fill="none"/>
+          <circle cx="40" cy="12" r="2" fill="var(--rose)" opacity="0.5"/>
+          <circle cx="70" cy="12" r="2" fill="var(--rose)" opacity="0.5"/>
+        </svg>
+      </div>
+      <p style="font-family:'Caveat',cursive;font-size:1.2rem;color:var(--rose);">collected thoughts from a quiet life</p>
+    </div>
+
+    <!-- SECTION 2: Post Card 1 -->
+    <div class="post-card">
+      <div class="thumbtack">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="6" r="5" fill="var(--thumbtack)" stroke="var(--bark)" stroke-width="1"/>
+          <rect x="10" y="12" width="4" height="12" rx="1" fill="var(--bark)"/>
+        </svg>
+      </div>
+      <h2>The First Strawberry</h2>
+      <div class="post-date">June 14, 2026 &mdash; afternoon light</div>
+      <p>There is nothing quite like the first strawberry of the season. Warm from the sun, still dusted with soil, it tastes of patience and promise. I picked it at dawn and ate it sitting on the garden wall, watching the bees wake among the lavender.</p>
+      <p>The roses are climbing well this year. I've tied new canes to the trellis and whispered a little encouragement to each one.</p>
+    </div>
+
+    <!-- SECTION 3: Quote / Floral corners -->
+    <div class="quote-wrap">
+      <blockquote>&ldquo;The earth laughs in flowers. To sit in the garden is to be present at the most patient conversation.&rdquo;</blockquote>
+    </div>
+
+    <!-- SECTION 4: Sidebar / About -->
+    <div class="sidebar">
+      <h3>A Little About Me</h3>
+      <p>I live in a stone cottage at the edge of a hazel wood. I keep bees, write letters, and dry flowers between the pages of old books. This journal is where I gather what is soft and true.</p>
+      <p style="margin-top:0.5rem;color:var(--rose);">— Elara</p>
+    </div>
+
+    <!-- SECTION 5: Post Card 2 -->
+    <div class="post-card">
+      <div class="thumbtack">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="6" r="5" fill="var(--thumbtack)" stroke="var(--bark)" stroke-width="1"/>
+          <rect x="10" y="12" width="4" height="12" rx="1" fill="var(--bark)"/>
+        </svg>
+      </div>
+      <h2>A Walk to the Beech Grove</h2>
+      <div class="post-date">June 8, 2026 &mdash; after the rain</div>
+      <p>The air after rain carries a sweetness you can taste. I walked the lane to the beech grove, where the canopy filters the light into a green cathedral. A fox crossed the path ahead and paused to look back at me, as if to say, <em>you are welcome here</em>.</p>
+      <p>I collected a few fallen beech leaves for pressing and a feather from a jay. Small treasures. The day's true harvest was quietness.</p>
+      <p><a href="#">Read more &hellip;</a></p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="floral-wreath">
+        <svg viewBox="0 0 80 36">
+          <path d="M40,30 C20,28 8,18 12,10 C16,4 28,2 40,6 C52,2 64,4 68,10 C72,18 60,28 40,30" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="40" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="1"/>
+          <path d="M40,2 L40,6 M40,26 L40,30" stroke="currentColor" stroke-width="1"/>
+          <circle cx="20" cy="14" r="1.5" fill="none" stroke="currentColor"/>
+          <circle cx="60" cy="14" r="1.5" fill="none" stroke="currentColor"/>
+        </svg>
+      </div>
+      <p>&copy; 2026 Meadow Journal &mdash; written with ink and intention</p>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-section">
+      <button class="theme-btn" data-theme="sage">Sage</button>
+      <button class="theme-btn" data-theme="rose">Rose</button>
+      <button class="theme-btn" data-theme="lavender">Lavender</button>
+      <button class="theme-btn" data-theme="honey">Honey</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+      });
+    });
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      try { localStorage.setItem('ui-beta-preview-theme', n); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

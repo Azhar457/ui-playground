@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magnetic Micro-Interactions Console</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-magnetic-theme') || 'dark';
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-dark';
+      }
+    })();
+  </script>
+
+  <style>
+    /* COLORING-PATTERN SEMANTIC TOKENS */
+    :root, .theme-dark {
+      --bg: #0A0D18;
+      --surface: #121727;
+      --surface-alt: #1B2238;
+      --text: #F1F5F9;
+      --text-muted: #64748B;
+      --primary: #8B5CF6;
+      --on-primary: #FFFFFF;
+      --secondary: #1E1B4B;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #8B5CF6;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #C084FC;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-light {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-alt: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --primary: #6366F1;
+      --on-primary: #FFFFFF;
+      --secondary: #F1F5F9;
+      --border: rgba(0, 0, 0, 0.06);
+      --accent: #6366F1;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #8B5CF6;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-orange {
+      --bg: #FAF6F0;
+      --surface: #FFFFFF;
+      --surface-alt: #F1E9DB;
+      --text: #2D251E;
+      --text-muted: #7C6F62;
+      --primary: #D97706;
+      --on-primary: #FFFFFF;
+      --secondary: #F7EFE2;
+      --border: rgba(139, 92, 26, 0.1);
+      --accent: #D97706;
+      --accent-cyan: #F59E0B;
+      --accent-purple: #EA580C;
+      --shadow-color: rgba(139, 92, 26, 0.05);
+    }
+
+    .theme-sea {
+      --bg: #030E12;
+      --surface: #071922;
+      --surface-alt: #0D2633;
+      --text: #E0F2FE;
+      --text-muted: #38BDF8;
+      --primary: #0EA5E9;
+      --on-primary: #FFFFFF;
+      --secondary: #0B2535;
+      --border: rgba(14, 165, 233, 0.15);
+      --accent: #0EA5E9;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #2DD4BF;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-rose {
+      --bg: #0F0509;
+      --surface: #1C0A12;
+      --surface-alt: #2D111E;
+      --text: #FFE4E6;
+      --text-muted: #FB7185;
+      --primary: #F43F5E;
+      --on-primary: #FFFFFF;
+      --secondary: #2E101B;
+      --border: rgba(244, 63, 94, 0.15);
+      --accent: #F43F5E;
+      --accent-cyan: #FDA4AF;
+      --accent-purple: #EC4899;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* Reset & Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .scroll-indicator-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+    }
+
+    /* Header Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 90;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-logo span {
+      color: var(--primary);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 1.5px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-cyan), var(--accent-purple), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.75rem 1.75rem;
+      width: 100%;
+      height: 100%;
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--surface-alt);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Section structures */
+    section {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      margin-bottom: 0.5rem;
+      align-self: center;
+    }
+
+    /* SECTION 1: HERO HEADER */
+    .hero-sec {
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      max-width: 550px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* SECTION 2: CONTROLS CONSOLE (SANDBOX) */
+    .control-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .control-row label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .control-row select, .control-row input[type="range"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* SECTION 3: BENTO SHOWCASE GRID */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Magnetic Elements wrappers */
+    .magnetic-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px; /* Magnetic hover zone */
+      will-change: transform;
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      will-change: transform;
+    }
+
+    .bento-card.wide {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      .bento-card.wide {
+        grid-column: span 1;
+      }
+    }
+
+    .card-spotlight {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle var(--spotlight-radius, 100px) at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.05), transparent 85%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 5;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .magnetic-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+      will-change: transform;
+    }
+
+    /* SECTION 4: PHYSICS TELEMETRY */
+    .telemetry-sec {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .telemetry-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 580px) {
+      .telemetry-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .telemetry-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      border-radius: 16px;
+    }
+
+    .telemetry-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .telemetry-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* SECTION 5: FOOTER & THEMES */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+
+    .theme-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem 0;
+    }
+
+    .theme-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    }
+
+    .footer-credit {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-indicator-wrap">
+    <div class="scroll-indicator-bar" id="indicator"></div>
+  </div>
+
+  <!-- Header Nav -->
+  <nav>
+    <div class="brand-logo">MAGNETIC<span>.SYS</span></div>
+    <div class="magnetic-wrapper" id="nav-btn-wrap">
+      <a href="#control-console" class="conic-btn" id="nav-conic-btn">
+        <span>Get Started</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- SECTION 1: HERO HEADER -->
+  <section class="hero-sec">
+    <div class="badge">Micro-interactions Engine active</div>
+    <h1>Spring <span>Magnetic</span> Coordinates.</h1>
+    <p class="hero-desc">
+      Tombol dan elemen bento yang secara dinamis mendekati koordinat kursor Anda. Mendukung visual spring physics damping yang mulus.
+    </p>
+    
+    <div class="magnetic-wrapper" id="hero-btn-wrap">
+      <a href="#control-console" class="conic-btn" id="hero-conic-btn">
+        <span>Explore Attraction Arena <i class="fas fa-arrow-down" style="margin-left: 6px;"></i></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- SECTION 2: CONTROLS CONSOLE (SANDBOX) -->
+  <section id="control-console">
+    <div class="badge" style="align-self: flex-start;">Configuration Dashboard</div>
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem;">Attraction Parameter Editor</h2>
+    <p style="color:var(--text-muted); margin-top: 0.5rem;">Sesuaikan radius sensitivitas kursor dan gaya gravitasi tarikan inersia.</p>
+    
+    <div class="control-box">
+      <div class="control-row">
+        <label for="strength-range">Magnetic Strength Offset: <span id="strength-lbl" style="color:var(--primary);">0.30</span></label>
+        <input type="range" id="strength-range" min="0.1" max="0.8" step="0.05" value="0.50" oninput="updateStrength(this.value)">
+      </div>
+      <div class="control-row">
+        <label for="radius-range">Spotlight Glow Radius: <span id="radius-lbl" style="color:var(--primary);">120px</span></label>
+        <input type="range" id="radius-range" min="50" max="250" step="10" value="120" oninput="updateRadius(this.value)">
+      </div>
+      <div class="control-row">
+        <label for="spring-select">Spring Tension Response</label>
+        <select id="spring-select" onchange="changeSpringCurve(this.value)">
+          <option value="cubic-bezier(0.25, 1, 0.5, 1)">Smooth Damped (Default)</option>
+          <option value="cubic-bezier(0.175, 0.885, 0.32, 1.275)">High Tension Spring (Elastic)</option>
+          <option value="linear">Linear Drag (No Cushion)</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: BENTO SHOWCASE GRID -->
+  <section>
+    <div class="sec-header" style="text-align: center; margin-bottom: 2rem;">
+      <div class="badge">Interaction Arena</div>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem;">Attraction Bento Grid</h2>
+    </div>
+    
+    <div class="bento-grid">
+      <!-- Card 1: Spotlight card -->
+      <div class="bento-card parallax-card" id="magnetic-card-1">
+        <div class="card-spotlight"></div>
+        <div class="card-content">
+          <span class="card-title">Intelligent Spotlight</span>
+          <p class="card-desc">Sorotan cahaya mengikuti koordinat kursor. Sudut kartu akan miring lembut mengikuti pusat gravitasi mouse.</p>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--primary); font-weight:700;">SPOTLIGHT ACTIVE</span>
+      </div>
+
+      <!-- Card 2: Conic Magnetic Button -->
+      <div class="bento-card wide" id="magnetic-card-2" style="align-items: center; justify-content: center; text-align: center;">
+        <div class="card-spotlight"></div>
+        <div class="card-content" style="align-items: center;">
+          <span class="card-title">Conic Gravity</span>
+          <p class="card-desc" style="margin-bottom: 1rem;">Tombol conic border di bawah ini ikut melayang mendekati kursor secara penuh.</p>
+          
+          <div class="magnetic-wrapper" id="card-btn-wrap">
+            <a href="#" class="conic-btn" id="card-conic-btn">
+              <span>Magnetic Trigger</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Magnetic Link -->
+      <div class="bento-card" id="magnetic-card-3" style="align-items: center; justify-content: center; text-align: center;">
+        <div class="card-spotlight"></div>
+        <div class="card-content" style="align-items: center;">
+          <div class="magnetic-wrapper" id="card-link-wrap">
+            <a href="#" class="magnetic-link" id="card-link-btn">EXPLORE DOCUMENTS <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Stats -->
+      <div class="bento-card wide" id="magnetic-card-4">
+        <div class="card-spotlight"></div>
+        <div class="card-content">
+          <span class="card-title">Physics Spring Formula</span>
+          <p class="card-desc">Gaya inersia diatur melalui persamaan integrasi linear dengan parameter transisi cubic-bezier untuk mencegah efek getaran kaku.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: VECTOR TELEMETRY -->
+  <section class="telemetry-sec">
+    <div class="badge">Telemetry Output</div>
+    <h2>Vector Mathematics Diagnostic</h2>
+    
+    <div class="telemetry-row">
+      <div class="telemetry-item">
+        <div class="telemetry-lbl">Cursor X Coord</div>
+        <div class="telemetry-num" id="coord-x">0px</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="telemetry-lbl">Cursor Y Coord</div>
+        <div class="telemetry-num" id="coord-y">0px</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="telemetry-lbl">Attraction Shift</div>
+        <div class="telemetry-num" id="attract-shift">0.0px</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FOOTER & THEMES -->
+  <footer>
+    <h3 class="brand-logo" style="font-size: 1.5rem; margin-bottom: 1rem;">MAGNETIC<span>.SYS</span></h3>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">Desain mikro interaktif modern berbasis spring physics.</p>
+    
+    <div class="theme-row">
+      <button class="theme-btn" id="theme-btn-dark" onclick="setTheme('dark')">Cyber Dark</button>
+      <button class="theme-btn" id="theme-btn-light" onclick="setTheme('light')">Modern Light</button>
+      <button class="theme-btn" id="theme-btn-orange" onclick="setTheme('orange')">Warm Tech</button>
+      <button class="theme-btn" id="theme-btn-sea" onclick="setTheme('sea')">Neon Depths</button>
+      <button class="theme-btn" id="theme-btn-rose" onclick="setTheme('rose')">Cyber Rose</button>
+    </div>
+
+    <div style="margin: 2rem 0;">
+      <a href="#" class="conic-btn">
+        <span>Back to Top <i class="fas fa-chevron-up" style="margin-left: 6px;"></i></span>
+      </a>
+    </div>
+    <p class="footer-credit">&copy; 2026 Wide Note - Antigravity Magnetic Interactions. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Configurable parameters
+    let currentStrength = 0.50;   // was 0.30
+    let currentRadius = 120;
+    let springCurve = 'cubic-bezier(0.25, 1, 0.5, 1)';
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Track scroll
+    window.addEventListener('scroll', () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = scrollHeight > 0 ? (window.scrollY / scrollHeight) * 100 : 0;
+      document.getElementById('indicator').style.width = `${scrollPercent}%`;
+    });
+
+    // Cursor position tracking
+    window.addEventListener('mousemove', (e) => {
+      document.getElementById('coord-x').innerText = `${e.clientX}px`;
+      document.getElementById('coord-y').innerText = `${e.clientY}px`;
+    });
+
+    // Make elements magnetic
+    function bindMagneticEvents(wrapperId, targetId, innerId = null, strengthMultiplier = 1.0) {
+      if (isTouchDevice) return;
+
+      const wrapper = document.getElementById(wrapperId);
+      const target = document.getElementById(targetId);
+      const inner = innerId ? document.getElementById(innerId) : null;
+
+      wrapper.addEventListener('mousemove', (e) => {
+        const bounds = wrapper.getBoundingClientRect();
+        
+        const centerX = bounds.left + bounds.width / 2;
+        const centerY = bounds.top + bounds.height / 2;
+        
+        const offsetX = e.clientX - centerX;
+        const offsetY = e.clientY - centerY;
+
+        const effectiveStrength = currentStrength * strengthMultiplier;
+        const tx = offsetX * effectiveStrength;
+        const ty = offsetY * effectiveStrength;
+        
+        target.style.transition = `transform 0.15s ease-out`;   // was 0.05s — too fast to feel
+        target.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+
+        document.getElementById('attract-shift').innerText = `${Math.sqrt(tx*tx + ty*ty).toFixed(1)}px`;
+
+        if (inner) {
+          inner.style.transition = `transform 0.15s ease-out`;
+          inner.style.transform = `translate3d(${offsetX * (effectiveStrength * 1.5)}px, ${offsetY * (effectiveStrength * 1.5)}px, 0)`;
+        }
+      });
+
+      wrapper.addEventListener('mouseleave', () => {
+        target.style.transition = `transform 0.4s ${springCurve}`;
+        target.style.transform = 'translate3d(0, 0, 0)';
+        document.getElementById('attract-shift').innerText = `0.0px`;
+
+        if (inner) {
+          inner.style.transition = `transform 0.4s ${springCurve}`;
+          inner.style.transform = 'translate3d(0, 0, 0)';
+        }
+      });
+    }
+
+    // Card mouselook tilting + spotlight follow
+    function bindCardInteraction(cardId) {
+      if (isTouchDevice) return;
+
+      const card = document.getElementById(cardId);
+      const spot = card.querySelector('.card-spotlight');
+
+      card.addEventListener('mousemove', (e) => {
+        const bounds = card.getBoundingClientRect();
+        
+        const x = e.clientX - bounds.left;
+        const y = e.clientY - bounds.top;
+        spot.style.setProperty('--mouse-x', `${x}px`);
+        spot.style.setProperty('--mouse-y', `${y}px`);
+
+        const cx = bounds.left + bounds.width / 2;
+        const cy = bounds.top + bounds.height / 2;
+        const ox = e.clientX - cx;
+        const oy = e.clientY - cy;
+
+        card.style.transition = `transform 0.05s ease-out`;
+        card.style.transform = `translate3d(${ox * 0.06}px, ${oy * 0.06}px, 0) rotateX(${-oy * 0.03}deg) rotateY(${ox * 0.03}deg) scale(1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transition = `transform 0.5s ${springCurve}`;
+        card.style.transform = 'translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1)';
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const activeTheme = localStorage.getItem('playground-magnetic-theme') || 'dark';
+      document.getElementById('theme-btn-' + activeTheme).classList.add('active');
+
+      // Bind magnetic setups
+      bindMagneticEvents('nav-btn-wrap', 'nav-conic-btn', null, 0.8);
+      bindMagneticEvents('hero-btn-wrap', 'hero-conic-btn', null, 0.8);
+      bindMagneticEvents('card-btn-wrap', 'card-conic-btn', null, 0.9);
+      bindMagneticEvents('card-link-wrap', 'card-link-btn', null, 1.2);
+
+      // Bind card spot bounds
+      bindCardInteraction('magnetic-card-1');
+      bindCardInteraction('magnetic-card-2');
+      bindCardInteraction('magnetic-card-3');
+      bindCardInteraction('magnetic-card-4');
+    });
+
+    function setTheme(themeName) {
+      document.documentElement.className = 'theme-' + themeName;
+      localStorage.setItem('playground-magnetic-theme', themeName);
+      
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('theme-btn-' + themeName).classList.add('active');
+    }
+
+    function updateStrength(val) {
+      currentStrength = parseFloat(val);
+      document.getElementById('strength-lbl').innerText = val;
+    }
+
+    function updateRadius(val) {
+      currentRadius = parseInt(val);
+      document.getElementById('radius-lbl').innerText = `${val}px`;
+      document.documentElement.style.setProperty('--spotlight-radius', `${val}px`);
+    }
+
+    function changeSpringCurve(curve) {
+      springCurve = curve;
+    }
+  </script>
+</body>
+</html>

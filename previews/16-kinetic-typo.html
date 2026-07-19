@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinetic Typography Hero (Variable Font)</title>
+
+  <!-- ANTI-FLASH IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Anybody variable font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..125,100..900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEMES ===== */
+    :root, .theme-light {
+      --bg: #FAFAFA;
+      --text: #09090B;
+      --accent: #E11D48;
+      --card-bg: #FFFFFF;
+      --card-border: rgba(0,0,0,0.08);
+      --muted: #71717A;
+      --slider-bg: #D4D4D8;
+    }
+    .theme-dark {
+      --bg: #0A0A0A;
+      --text: #F5F5F5;
+      --accent: #FB7185;
+      --card-bg: #1A1A1A;
+      --card-border: rgba(255,255,255,0.08);
+      --muted: #A1A1AA;
+      --slider-bg: #3F3F46;
+    }
+    .theme-rose {
+      --bg: #FFF5F7;
+      --text: #2D1B1E;
+      --accent: #E11D48;
+      --card-bg: #FFFFFF;
+      --card-border: rgba(225,29,72,0.1);
+      --muted: #9F6D75;
+      --slider-bg: #FCD5D9;
+    }
+    .theme-ink {
+      --bg: #1C1917;
+      --text: #EDE9DA;
+      --accent: #F59E0B;
+      --card-bg: #292524;
+      --card-border: rgba(255,255,255,0.06);
+      --muted: #A8A29E;
+      --slider-bg: #44403C;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Anybody', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .section { max-width:900px; margin:0 auto; padding:4rem 2rem; }
+    .section-title { font-size:1.5rem; font-weight:700; letter-spacing:-0.5px; margin-bottom:2rem; }
+
+    /* SECTION 1: HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    .hero-header {
+      display:flex; justify-content:space-between; align-items:center;
+      width:100%; max-width:900px; padding:2rem; position:absolute; top:0;
+    }
+    .brand { font-weight:700; font-size:0.95rem; letter-spacing:1px; }
+
+    .kinetic-title {
+      font-family:'Anybody',sans-serif;
+      font-size:clamp(3rem,11.5vw,9.5rem);
+      text-transform:uppercase; display:flex; gap:2px;
+      line-height:0.85; text-align:center;
+    }
+    .kinetic-letter {
+      display:inline-block;
+      font-variation-settings:'wght' 200,'wdth' 85;
+      will-change:font-variation-settings,transform;
+      transition:font-variation-settings 0.25s cubic-bezier(0.25,1,0.5,1);
+    }
+    .hero-sub { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--muted); margin-top:2rem; text-align:center; }
+
+    /* SECTION 2: FEATURES */
+    #features { background:var(--card-bg); border-top:1px solid var(--card-border); border-bottom:1px solid var(--card-border); transition:background 0.3s ease; }
+    .feature-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5rem; }
+    .feature-card {
+      background:var(--bg); border:1px solid var(--card-border); border-radius:12px;
+      padding:1.5rem; transition:transform 0.2s ease,box-shadow 0.2s ease;
+    }
+    .feature-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+    .feature-card h3 { font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
+    .feature-card p { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted); line-height:1.6; }
+
+    /* SECTION 3: SANDBOX */
+    #sandbox { background:var(--bg); }
+    .sandbox-controls { display:flex; flex-direction:column; gap:1.5rem; max-width:500px; }
+    .slider-group { display:flex; flex-direction:column; gap:0.5rem; }
+    .slider-group label { font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:700; display:flex; justify-content:space-between; }
+    input[type="range"] { -webkit-appearance:none; width:100%; height:6px; background:var(--slider-bg); border-radius:999px; outline:none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent); cursor:pointer; }
+    .sandbox-preview { margin-top:1.5rem; font-family:'Anybody',sans-serif; font-size:2rem; text-align:center; padding:2rem; border:1px dashed var(--card-border); border-radius:12px; }
+
+    /* SECTION 4: SPECS */
+    #specs { background:var(--card-bg); border-top:1px solid var(--card-border); border-bottom:1px solid var(--card-border); transition:background 0.3s ease; }
+    .specs-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.5rem; }
+    .spec-item { text-align:center; padding:1.5rem; }
+    .spec-value { font-size:2rem; font-weight:700; color:var(--accent); }
+    .spec-label { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:0.25rem; }
+
+    /* SECTION 5: THEME FOOTER */
+    #theme-footer { padding:3rem 2rem; text-align:center; }
+    .theme-buttons { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin-top:1.5rem; }
+    .theme-btn {
+      font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:700;
+      padding:0.6rem 1.2rem; border:1px solid var(--card-border); border-radius:8px;
+      background:var(--card-bg); color:var(--text); cursor:pointer; transition:all 0.2s ease;
+    }
+    .theme-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .footer-credit { font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--muted); margin-top:2rem; }
+  </style>
+</head>
+<body>
+
+<!-- SECTION 1: HERO -->
+<section id="hero">
+  <div class="hero-header">
+    <div class="brand">TYPO.VAR</div>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--accent);">AXES: wght / wdth</span>
+  </div>
+  <h1 class="kinetic-title" id="kinetic-word">
+    <span class="kinetic-letter">D</span>
+    <span class="kinetic-letter">Y</span>
+    <span class="kinetic-letter">N</span>
+    <span class="kinetic-letter">A</span>
+    <span class="kinetic-letter">M</span>
+    <span class="kinetic-letter">O</span>
+  </h1>
+  <p class="hero-sub">MOVE POINTER NEAR LETTERS &mdash; GLYPHS RESPOND IN REAL-TIME</p>
+</section>
+
+<!-- SECTION 2: FEATURES -->
+<section id="features" class="section">
+  <h2 class="section-title">Typography in Motion</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3>Headlines</h3>
+      <p>Variable font axes let you dial in the exact weight and width for any display context, from thin captions to bold posters.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Branding</h3>
+      <p>Kinetic typography adds a layer of interactivity that static logos cannot match, engaging visitors with every cursor movement.</p>
+    </div>
+    <div class="feature-card">
+      <h3>UI Text</h3>
+      <p>Proximity-driven weight shifts guide the eye and create depth without animation keyframes or JavaScript timelines.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: SANDBOX -->
+<section id="sandbox" class="section">
+  <h2 class="section-title">Manual Axis Control</h2>
+  <div class="sandbox-controls">
+    <div class="slider-group">
+      <label><span>Weight (wght)</span><span id="wght-val">200</span></label>
+      <input type="range" id="wght-slider" min="100" max="900" value="200" step="10">
+    </div>
+    <div class="slider-group">
+      <label><span>Width (wdth)</span><span id="wdth-val">85</span></label>
+      <input type="range" id="wdth-slider" min="75" max="125" value="85" step="1">
+    </div>
+    <div class="sandbox-preview" id="sandbox-preview">KINETIC</div>
+  </div>
+</section>
+
+<!-- SECTION 4: SPECS -->
+<section id="specs" class="section">
+  <h2 class="section-title">Variable Font Specs</h2>
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="spec-value">100&ndash;900</div>
+      <div class="spec-label">Weight Range</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">75&ndash;125</div>
+      <div class="spec-label">Width Range</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">280px</div>
+      <div class="spec-label">Proximity Radius</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">Anybody</div>
+      <div class="spec-label">Font Family</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: THEME FOOTER -->
+<section id="theme-footer">
+  <h2 class="section-title">Theme Switcher</h2>
+  <div class="theme-buttons">
+    <button class="theme-btn" onclick="setTheme('light')">Light</button>
+    <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+    <button class="theme-btn" onclick="setTheme('rose')">Rose</button>
+    <button class="theme-btn" onclick="setTheme('ink')">Ink</button>
+  </div>
+  <p class="footer-credit">UI PLAYGROUND BETA &middot; 16-KINETIC-TYPO</p>
+</section>
+
+<script>
+  // ===== THEME SWITCHER API =====
+  window.setTheme = function(name){document.documentElement.className='theme-'+name;localStorage.setItem('ui-beta-preview-theme',name);};
+
+  // ===== KINETIC TYPOGRAPHY PROXIMITY LOGIC (preserved from original) =====
+  const letters = document.querySelectorAll('.kinetic-letter');
+  window.addEventListener('mousemove', function(e) {
+    letters.forEach(function(letter) {
+      var rect = letter.getBoundingClientRect();
+      var cx = rect.left + rect.width / 2;
+      var cy = rect.top + rect.height / 2;
+      var dx = e.clientX - cx, dy = e.clientY - cy;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var prox = Math.max(0, 1 - dist / 280);
+      var wght = Math.floor(100 + prox * 800);
+      var wdth = Math.floor(75 + prox * 50);
+      letter.style.fontVariationSettings = "'wght' " + wght + ", 'wdth' " + wdth;
+    });
+  });
+  window.addEventListener('mouseleave', function() {
+    letters.forEach(function(letter) {
+      letter.style.fontVariationSettings = "'wght' 200, 'wdth' 85";
+    });
+  });
+
+  // ===== SANDBOX SLIDERS =====
+  var wS = document.getElementById('wght-slider');
+  var wdS = document.getElementById('wdth-slider');
+  var pv = document.getElementById('sandbox-preview');
+  wS.addEventListener('input', function(){
+    document.getElementById('wght-val').textContent = wS.value;
+    pv.style.fontVariationSettings = "'wght' " + wS.value + ", 'wdth' " + wdS.value;
+  });
+  wdS.addEventListener('input', function(){
+    document.getElementById('wdth-val').textContent = wdS.value;
+    pv.style.fontVariationSettings = "'wght' " + wS.value + ", 'wdth' " + wdS.value;
+  });
+</script>
+</body>
+</html>

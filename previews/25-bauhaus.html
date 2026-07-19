@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bauhaus Functionalism</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: bauhaus (current) ===== */
+    .theme-bauhaus {
+      --c1: #E63946;
+      --c2: #F1C40F;
+      --c3: #0044CC;
+      --text: #111111;
+      --bg: #F5F5DC;
+      --card-bg: #FFFFFF;
+      --footer-bg: #111111;
+      --footer-text: #FFFFFF;
+      --accent: #E63946;
+    }
+    /* ===== THEME: monochrome ===== */
+    .theme-monochrome {
+      --c1: #333333;
+      --c2: #999999;
+      --c3: #CCCCCC;
+      --text: #000000;
+      --bg: #F0F0F0;
+      --card-bg: #FFFFFF;
+      --footer-bg: #000000;
+      --footer-text: #FFFFFF;
+      --accent: #666666;
+    }
+    /* ===== THEME: primary-alt ===== */
+    .theme-primary-alt {
+      --c1: #F1C40F;
+      --c2: #0044CC;
+      --c3: #E63946;
+      --text: #111111;
+      --bg: #F5F5DC;
+      --card-bg: #FFFFFF;
+      --footer-bg: #0044CC;
+      --footer-text: #FFFFFF;
+      --accent: #F1C40F;
+    }
+    /* ===== THEME: dark ===== */
+    .theme-dark {
+      --c1: #E63946;
+      --c2: #F1C40F;
+      --c3: #4488FF;
+      --text: #E0E0E0;
+      --bg: #1A1A1A;
+      --card-bg: #222222;
+      --footer-bg: #000000;
+      --footer-text: #E0E0E0;
+      --accent: #E63946;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      border-radius: 0 !important;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .bauhaus-reveal {
+      opacity: 0;
+      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
+
+    .bauhaus-reveal.from-left { transform: translateX(-40px); }
+    .bauhaus-reveal.from-right { transform: translateX(40px); }
+    .bauhaus-reveal.from-top { transform: translateY(-40px); }
+    .bauhaus-reveal.from-bottom { transform: translateY(40px); }
+    .bauhaus-reveal.active { opacity: 1; transform: translate(0, 0); }
+
+    .hero {
+      background: var(--card-bg);
+      border-bottom: 4px solid var(--text);
+      padding: 3rem 4vw;
+      position: relative;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0;
+      position: relative;
+      min-height: 400px;
+    }
+
+    .hero-grid::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image:
+        repeating-linear-gradient(90deg, var(--text) 0px, var(--text) 1px, transparent 1px, transparent calc((100%) / 12));
+      background-size: calc(100% / 12) 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-grid::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image:
+        repeating-linear-gradient(0deg, var(--text) 0px, var(--text) 1px, transparent 1px, transparent 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      grid-column: 1 / 6;
+      padding: 3rem 2rem 3rem 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-content h1 {
+      font-weight: 900;
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      text-transform: uppercase;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-content p {
+      font-weight: 700;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1.5rem;
+      max-width: 40ch;
+    }
+
+    .hero-shape-circle {
+      grid-column: 7 / 9;
+      grid-row: 1;
+      width: 120px;
+      height: 120px;
+      background: var(--c1);
+      border-radius: 50% !important;
+      align-self: center;
+      justify-self: center;
+      position: relative;
+      z-index: 2;
+      transition: background 0.3s;
+    }
+
+    .hero-shape-triangle {
+      grid-column: 9 / 11;
+      grid-row: 1;
+      width: 120px;
+      height: 120px;
+      background: var(--c2);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      align-self: flex-end;
+      justify-self: center;
+      position: relative;
+      z-index: 2;
+      transition: background 0.3s;
+    }
+
+    .shapes-section {
+      padding: 4rem 4vw;
+      background: var(--card-bg);
+      border-bottom: 4px solid var(--text);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .section-label {
+      font-weight: 800;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      transition: color 0.3s;
+    }
+
+    .shapes-grid {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .shape-block {
+      flex-shrink: 0;
+      transition: background 0.3s, border-bottom-color 0.3s;
+    }
+
+    .shape-block.circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50% !important;
+      background: var(--c3);
+    }
+
+    .shape-block.triangle {
+      width: 0;
+      height: 0;
+      border-left: 60px solid transparent;
+      border-right: 60px solid transparent;
+      border-bottom: 104px solid var(--c2);
+    }
+
+    .shape-block.rect {
+      width: 120px;
+      height: 80px;
+      background: var(--c1);
+    }
+
+    .shape-block.rect-tall {
+      width: 60px;
+      height: 120px;
+      background: var(--text);
+    }
+
+    .project-section {
+      padding: 4rem 4vw;
+      background: var(--card-bg);
+      border-bottom: 4px solid var(--text);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 4px solid var(--text);
+    }
+
+    .project-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 120px;
+      align-items: center;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--text);
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .project-num {
+      width: 32px;
+      height: 32px;
+      background: var(--c1);
+      border-radius: 50% !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--card-bg);
+      font-weight: 900;
+      font-size: 0.75rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .project-name { font-weight: 800; }
+    .project-year { text-align: right; font-weight: 700; opacity: 0.6; }
+
+    .type-section {
+      padding: 4rem 4vw;
+      background: var(--bg);
+      border-bottom: 4px solid var(--text);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .type-scale { display: flex; flex-direction: column; gap: 0; }
+
+    .type-scale-item {
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      border-bottom: 1px solid var(--text);
+      padding: 0.5rem 0;
+    }
+
+    .type-scale-item.size-96 { font-size: 96px; }
+    .type-scale-item.size-72 { font-size: 72px; }
+    .type-scale-item.size-48 { font-size: 48px; }
+
+    .type-scale-label {
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--accent);
+      float: right;
+      margin-top: 1rem;
+      transition: color 0.3s;
+    }
+
+    /* ===== SECTION 3: Shape Randomizer ===== */
+    .sandbox-area {
+      padding: 4rem 4vw;
+      background: var(--card-bg);
+      border-bottom: 4px solid var(--text);
+      text-align: center;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .sandbox-shapes {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      min-height: 140px;
+      margin: 1.5rem 0;
+    }
+
+    .sandbox-shapes > div {
+      flex-shrink: 0;
+    }
+
+    .bauhaus-btn {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0.9rem 2.5rem;
+      background: var(--text);
+      color: var(--bg);
+      border: 2px solid var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .bauhaus-btn:hover {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .blue-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--c3);
+      transition: background 0.3s;
+    }
+
+    /* ===== SECTION 5: Footer ===== */
+    .bauhaus-footer {
+      padding: 2rem 4vw;
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .theme-btns {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .theme-btn {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0.5rem 1.2rem;
+      background: transparent;
+      border: 2px solid var(--footer-text);
+      color: var(--footer-text);
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0.6;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      opacity: 1;
+      background: var(--footer-text);
+      color: var(--footer-bg);
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .footer-row span:last-child { color: var(--c2); }
+  </style>
+</head>
+<body class="theme-bauhaus">
+
+  <!-- ===== SECTION 1: Hero / Header ===== -->
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-content bauhaus-reveal from-left">
+        <h1>FORM<br>FOLLOWS<br>FUNCTION</h1>
+        <p>The bauhaus school reduced design to its functional essence. Geometry. Primary colors. No ornament.</p>
+      </div>
+      <div class="hero-shape-circle bauhaus-reveal from-top"></div>
+      <div class="hero-shape-triangle bauhaus-reveal from-right"></div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: Features / Gallery ===== -->
+  <section class="shapes-section">
+    <div class="section-label bauhaus-reveal from-left">Geometric Vocabulary</div>
+    <div class="shapes-grid">
+      <div class="shape-block circle bauhaus-reveal from-bottom"></div>
+      <div class="shape-block triangle bauhaus-reveal from-bottom"></div>
+      <div class="shape-block rect bauhaus-reveal from-bottom"></div>
+      <div class="shape-block rect-tall bauhaus-reveal from-bottom"></div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: Interactive Sandbox ===== -->
+  <section class="sandbox-area">
+    <div class="section-label" style="margin-bottom:0.5rem;">Shape Randomizer</div>
+    <p style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem;">Click to regenerate the geometric set</p>
+    <div class="sandbox-shapes" id="sandbox-shapes">
+      <div class="shape-block circle"></div>
+      <div class="shape-block triangle"></div>
+      <div class="shape-block rect"></div>
+      <div class="shape-block rect-tall"></div>
+    </div>
+    <button class="bauhaus-btn" id="randomize-btn">RANDOMIZE</button>
+  </section>
+
+  <!-- ===== SECTION 4: Specs / Stats ===== -->
+  <section class="project-section">
+    <div class="section-label bauhaus-reveal from-left">Selected Works</div>
+    <div class="project-list bauhaus-reveal from-left">
+      <div class="project-row">
+        <div class="project-num">01</div>
+        <span class="project-name">Bauhaus Dessau Building</span>
+        <span class="project-year">1925 / Dessau</span>
+      </div>
+      <div class="project-row">
+        <div class="project-num">02</div>
+        <span class="project-name">Wassily Kandinsky Compositions</span>
+        <span class="project-year">1923 / Weimar</span>
+      </div>
+      <div class="project-row">
+        <div class="project-num">03</div>
+        <span class="project-name">Marcel Breuer Furniture</span>
+        <span class="project-year">1926 / Berlin</span>
+      </div>
+      <div class="project-row">
+        <div class="project-num">04</div>
+        <span class="project-name">Typographic Photo-montage</span>
+        <span class="project-year">1928 / Zurich</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modular Typography -->
+  <section class="type-section">
+    <div class="section-label bauhaus-reveal from-left">Modular Scale</div>
+    <div class="type-scale bauhaus-reveal from-bottom">
+      <div class="type-scale-item size-96">FUNCTION <span class="type-scale-label">96px</span></div>
+      <div class="type-scale-item size-72">PRECISION <span class="type-scale-label">72px</span></div>
+      <div class="type-scale-item size-48">GEOMETRY <span class="type-scale-label">48px</span></div>
+    </div>
+  </section>
+
+  <div class="blue-bar"></div>
+
+  <!-- ===== SECTION 5: Theme Switcher Footer ===== -->
+  <footer class="bauhaus-footer">
+    <div class="theme-btns">
+      <button class="theme-btn" data-theme="bauhaus">Bauhaus</button>
+      <button class="theme-btn" data-theme="monochrome">Mono</button>
+      <button class="theme-btn" data-theme="primary-alt">Alt</button>
+      <button class="theme-btn" data-theme="dark">Dark</button>
+    </div>
+    <div class="footer-row">
+      <span>&copy; 2026 BAUHAUS / UI</span>
+      <span>LESS IS MORE</span>
+    </div>
+  </footer>
+
+  <script>
+    window.setTheme = function(n){
+      document.body.className = 'theme-'+n;
+      localStorage.setItem('ui-beta-preview-theme',n);
+      document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.theme===n);});
+    };
+
+    window.addEventListener('DOMContentLoaded', function(){
+      var saved = localStorage.getItem('ui-beta-preview-theme') || 'bauhaus';
+      document.body.className = 'theme-'+saved;
+      document.querySelectorAll('.theme-btn').forEach(function(b){
+        if(b.dataset.theme===saved) b.classList.add('active');
+        b.addEventListener('click',function(){window.setTheme(this.dataset.theme);});
+      });
+
+      // Reveal animations
+      var items = document.querySelectorAll('.bauhaus-reveal');
+      items.forEach(function(item, index){
+        setTimeout(function(){ item.classList.add('active'); }, 100 + index * 100);
+      });
+
+      // Shape randomizer
+      var sb = document.getElementById('sandbox-shapes');
+      var shapes = sb.querySelectorAll('.shape-block');
+      var palettes = [
+        {c1:'#E63946',c2:'#F1C40F',c3:'#0044CC',t:'#111'},
+        {c1:'#2ECC71',c2:'#E74C3C',c3:'#3498DB',t:'#222'},
+        {c1:'#9B59B6',c2:'#F39C12',c3:'#1ABC9C',t:'#333'},
+        {c1:'#FF5733',c2:'#33FF57',c3:'#3357FF',t:'#000'},
+      ];
+
+      function randomizeShapes(){
+        var p = palettes[Math.floor(Math.random()*palettes.length)];
+        shapes.forEach(function(s, idx){
+          var colors = [p.c1, p.c2, p.c3, p.t];
+          if(s.classList.contains('circle')) s.style.background = colors[0];
+          else if(s.classList.contains('triangle')) {
+            s.style.borderBottomColor = colors[1];
+          }
+          else if(s.classList.contains('rect')) s.style.background = colors[2];
+          else if(s.classList.contains('rect-tall')) s.style.background = colors[3];
+        });
+      }
+
+      document.getElementById('randomize-btn').addEventListener('click', randomizeShapes);
+    });
+  </script>
+</body>
+</html>

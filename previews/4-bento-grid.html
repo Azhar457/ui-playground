@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Bento Grid Dashboard</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('ui-beta-preview-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-dark';
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ===== THEME: Dark (default) ===== */
+    :root, .theme-dark {
+      --bg-dark: #09090B;
+      --bg-card: #18181B;
+      --accent: #10B981;
+      --border-thin: rgba(255, 255, 255, 0.08);
+      --text-main: #F4F4F5;
+      --text-muted: #A1A1AA;
+      --card-hover: rgba(255, 255, 255, 0.02);
+      --accent-glow: rgba(16, 185, 129, 0.2);
+      --accent-secondary: #3B82F6;
+    }
+
+    .theme-light {
+      --bg-dark: #F4F4F5;
+      --bg-card: #FFFFFF;
+      --accent: #059669;
+      --border-thin: rgba(0, 0, 0, 0.08);
+      --text-main: #18181B;
+      --text-muted: #71717A;
+      --card-hover: rgba(0, 0, 0, 0.02);
+      --accent-glow: rgba(5, 150, 105, 0.15);
+      --accent-secondary: #2563EB;
+    }
+
+    .theme-sea {
+      --bg-dark: #0A0E1A;
+      --bg-card: #111827;
+      --accent: #06B6D4;
+      --border-thin: rgba(6, 182, 212, 0.15);
+      --text-main: #ECFEFF;
+      --text-muted: #67E8F9;
+      --card-hover: rgba(6, 182, 212, 0.03);
+      --accent-glow: rgba(6, 182, 212, 0.25);
+      --accent-secondary: #6366F1;
+    }
+
+    .theme-orange {
+      --bg-dark: #0A0A09;
+      --bg-card: #1C1917;
+      --accent: #F97316;
+      --border-thin: rgba(249, 115, 22, 0.15);
+      --text-main: #FFF7ED;
+      --text-muted: #FDBA74;
+      --card-hover: rgba(249, 115, 22, 0.03);
+      --accent-glow: rgba(249, 115, 22, 0.25);
+      --accent-secondary: #EAB308;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 3rem 1.5rem;
+      min-height: 100vh;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    .app-shell {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* Section labels */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-thin);
+      padding-bottom: 0.5rem;
+    }
+
+    /* Bento Grid Structures */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 130px;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 140px;
+      }
+    }
+
+    .bento-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-thin);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .bento-card:hover {
+      transform: translateY(-2px);
+      background: var(--card-hover);
+      border-color: var(--accent);
+      box-shadow: 0 8px 30px var(--accent-glow);
+    }
+
+    /* Bento Spans */
+    .span-2x2 { grid-column: span 2; grid-row: span 2; }
+    .span-2x1 { grid-column: span 2; grid-row: span 1; }
+    .span-1x1 { grid-column: span 1; grid-row: span 1; }
+
+    .card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-top: 0.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .card-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Alive Card highlight edge */
+    .alive-card {
+      border: 1px solid transparent;
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  linear-gradient(135deg, var(--accent), var(--accent-secondary)) border-box;
+    }
+
+    /* Sparkline active bars */
+    .sparkline-box {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      margin-top: 0.75rem;
+    }
+
+    .sparkline-bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 1px;
+      animation: loopPulse 2.5s infinite ease-in-out;
+    }
+
+    @keyframes loopPulse {
+      0%, 100% { height: 25%; opacity: 0.5; }
+      50% { height: 95%; opacity: 1; }
+    }
+
+    /* Range slider custom */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: var(--border-thin);
+      border-radius: 9999px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Monospace telemetry display */
+    .telemetry-display {
+      font-family: 'VT323', monospace;
+      font-size: 2.2rem;
+      color: var(--accent);
+      line-height: 1;
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    /* SECTION 1: Header & Hero */
+    header.dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-thin);
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* FOOTER CONTROLS */
+    .dashboard-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      border-top: 1px solid var(--border-thin);
+      padding-top: 3rem;
+    }
+
+    .swapper-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .swapper-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-thin);
+      color: var(--text-main);
+      padding: 0.5rem 1.2rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .swapper-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .swapper-btn.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--bg-dark);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 1.5px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      margin-top: 1rem;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-secondary), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      color: var(--accent);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.5rem 1.4rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Spec stat cards */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .spec-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-thin);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .spec-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .spec-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 0.35rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- SECTION 1: HERO -->
+    <section>
+      <header class="dashboard-header">
+        <div>
+          <div class="brand">GRID.SYS</div>
+          <div class="hero-tagline">Modular Bento Telemetry Interface</div>
+        </div>
+        <div class="card-label" style="font-size:0.75rem;">Build-4903 // ACTIVE</div>
+      </header>
+    </section>
+
+    <!-- SECTION 2: FEATURES / GALLERY -->
+    <section>
+      <div class="section-label">SECTION 2 // Features Gallery</div>
+      <div class="bento-grid">
+
+        <!-- Card 1: Main Core Engine (2x2) -->
+        <div class="bento-card span-2x2">
+          <div>
+            <span class="card-label">Modular Architecture</span>
+            <div class="card-title" style="font-size:1.4rem; line-height:1.2; margin-top:0.5rem;">Bento Modular Grid Systems</div>
+            <p class="card-desc" style="margin-top:0.5rem;">
+              Penyusunan tata letak modular grid yang mengedepankan efisiensi visual, keterbacaan data, serta transisi respon antarmuka yang presisi.
+            </p>
+          </div>
+          <a href="#" class="conic-btn">
+            <span>Deploy Instantly <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+
+        <!-- Card 2: Performance (1x1) -->
+        <div class="bento-card span-1x1">
+          <span class="card-label">Frame Rate</span>
+          <div>
+            <div class="card-title" style="font-size:1.6rem; color:var(--accent);">99.8%</div>
+            <p class="card-desc">Lock rate locked.</p>
+          </div>
+        </div>
+
+        <!-- Card 3: Security (1x1) -->
+        <div class="bento-card span-1x1">
+          <span class="card-label">SSL Payload</span>
+          <div>
+            <div class="card-title" style="font-size:1.25rem;">TLS 1.3</div>
+            <p class="card-desc">Secure tunnels.</p>
+          </div>
+        </div>
+
+        <!-- Card 4: Telemetry Monitor (2x1) -->
+        <div class="bento-card span-2x1 alive-card">
+          <div>
+            <span class="card-label" style="color:var(--accent);">Live Feeds</span>
+            <div class="card-title">Active Metrics Flow</div>
+          </div>
+          <div class="sparkline-box">
+            <div class="sparkline-bar" style="animation-delay: 0.1s;"></div>
+            <div class="sparkline-bar" style="animation-delay: 0.4s;"></div>
+            <div class="sparkline-bar" style="animation-delay: 0.2s;"></div>
+            <div class="sparkline-bar" style="animation-delay: 0.6s;"></div>
+            <div class="sparkline-bar" style="animation-delay: 0.3s;"></div>
+            <div class="sparkline-bar" style="animation-delay: 0.8s;"></div>
+            <div class="sparkline-bar" style="animation-delay: 0.5s;"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE SANDBOX -->
+    <section>
+      <div class="section-label">SECTION 3 // Interactive Sandbox</div>
+      <div class="bento-grid" style="grid-auto-rows:130px;">
+
+        <!-- Database Spanner (2x2) -->
+        <div class="bento-card span-2x2">
+          <div>
+            <span class="card-label">Database Configuration</span>
+            <div class="card-title" style="font-size:1.35rem; margin-top:0.25rem;">Live Spanner Bench</div>
+            <p class="card-desc" style="margin-top:0.5rem;">Geser range slider di sebelah kanan untuk mengubah parameter simulasi telemetri secara waktu nyata.</p>
+          </div>
+          <span class="card-label">System Active</span>
+        </div>
+
+        <!-- Live Speed Controller Dial (2x2) -->
+        <div class="bento-card span-2x2" style="justify-content:center; gap:1.25rem;">
+          <span class="card-label">SPN_FREQ_HZ</span>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+            <span>Target Load</span>
+            <span id="load-val" style="color:var(--accent)">75%</span>
+          </div>
+          <input type="range" min="10" max="100" value="75" oninput="updateLoad(this.value)">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: SPECS / TECHNICAL -->
+    <section>
+      <div class="section-label">SECTION 4 // Specs & Telemetry</div>
+      <div class="bento-grid" style="grid-auto-rows: 120px;">
+
+        <!-- Telemetry Card (2x1) -->
+        <div class="bento-card span-2x1">
+          <span class="card-label">Server Latency</span>
+          <div class="telemetry-display" id="latency-val">012MS</div>
+        </div>
+
+        <!-- Telemetry Card (2x1) -->
+        <div class="bento-card span-2x1">
+          <span class="card-label">Active Connections</span>
+          <div class="telemetry-display" id="conn-val">4,819</div>
+        </div>
+
+      </div>
+
+      <div class="spec-grid" style="margin-top:1.25rem;">
+        <div class="spec-item">
+          <div class="spec-value">4-col</div>
+          <div class="spec-label">Grid Columns</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-value">130px</div>
+          <div class="spec-label">Row Height</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-value">1.25rem</div>
+          <div class="spec-label">Gap</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-value">16px</div>
+          <div class="spec-label">Card Radius</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: THEME SWITCHER FOOTER -->
+    <footer class="dashboard-footer">
+      <div class="section-label" style="border:none; padding:0; margin:0;">SECTION 5 // Theme Switcher</div>
+      <div class="swapper-row">
+        <button class="swapper-btn active" onclick="setTheme('dark')">Dark</button>
+        <button class="swapper-btn" onclick="setTheme('light')">Light</button>
+        <button class="swapper-btn" onclick="setTheme('sea')">Sea</button>
+        <button class="swapper-btn" onclick="setTheme('orange')">Orange</button>
+      </div>
+      <span style="font-size:0.6rem; opacity:0.4;">GRID TELEMETRY OVERLAY // SYSTEM ACTIVE</span>
+    </footer>
+
+  </div>
+
+  <script>
+    window.setTheme = function(name) {
+      document.documentElement.className = 'theme-' + name;
+      localStorage.setItem('ui-beta-preview-theme', name);
+      document.querySelectorAll('.swapper-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === name);
+      });
+    };
+
+    // Live slider update
+    function updateLoad(val) {
+      document.getElementById('load-val').textContent = val + '%';
+      const lat = Math.round(val * 0.2 + 5);
+      document.getElementById('latency-val').textContent = String(lat).padStart(3, '0') + 'MS';
+    }
+
+    // Activate current theme button on load
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.swapper-btn').forEach(function(b) {
+        if (b.textContent.toLowerCase() === current) b.classList.add('active');
+      });
+    })();
+
+    // Dynamic numeric fluctuation loop
+    setInterval(function() {
+      var latEl = document.getElementById('latency-val');
+      var curLat = parseInt(latEl.textContent);
+      var newLat = Math.max(5, Math.min(100, curLat + (Math.random() > 0.5 ? 1 : -1)));
+      latEl.textContent = String(newLat).padStart(3, '0') + 'MS';
+
+      var connEl = document.getElementById('conn-val');
+      var curConn = parseInt(connEl.textContent.replace(/,/g, ''));
+      var newConn = curConn + Math.floor(Math.random() * 9 - 4);
+      connEl.textContent = newConn.toLocaleString();
+    }, 1500);
+  </script>
+</body>
+</html>

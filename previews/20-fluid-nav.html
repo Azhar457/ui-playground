@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organic Blob / Fluid Navigation Menu</title>
+
+  <!-- ANTI-FLASH IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ===== THEMES ===== */
+    :root, .theme-purple {
+      --blob-1: #A78BFA;
+      --blob-2: #F472B6;
+      --bg: #0F0E17;
+      --text: #FFFFFE;
+      --glow: rgba(244,114,182,0.3);
+      --bg-circle-1: rgba(167,139,250,0.1);
+      --bg-circle-2: rgba(244,114,182,0.12);
+    }
+    .theme-ocean {
+      --blob-1: #38BDF8;
+      --blob-2: #2DD4BF;
+      --bg: #0A1418;
+      --text: #E0F2FE;
+      --glow: rgba(45,212,191,0.3);
+      --bg-circle-1: rgba(56,189,248,0.1);
+      --bg-circle-2: rgba(45,212,191,0.12);
+    }
+    .theme-sunset {
+      --blob-1: #FB923C;
+      --blob-2: #E879F9;
+      --bg: #1A0E12;
+      --text: #FFEDD5;
+      --glow: rgba(232,121,249,0.3);
+      --bg-circle-1: rgba(251,146,60,0.1);
+      --bg-circle-2: rgba(232,121,249,0.12);
+    }
+    .theme-forest {
+      --blob-1: #4ADE80;
+      --blob-2: #22D3EE;
+      --bg: #0A140E;
+      --text: #DCFCE7;
+      --glow: rgba(34,211,238,0.3);
+      --bg-circle-1: rgba(74,222,128,0.1);
+      --bg-circle-2: rgba(34,211,238,0.12);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .section { width:100%; max-width:600px; margin:0 auto; padding:3rem 2rem; text-align:center; }
+
+    /* SECTION 1: HERO */
+    #hero { min-height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; }
+    .hero-title { font-size:clamp(1.5rem,4vw,2.5rem); font-weight:700; margin-bottom:0.5rem; }
+    .hero-sub { font-size:0.85rem; opacity:0.7; font-weight:500; }
+
+    /* Ambient background blobs */
+    .bg-circle {
+      position:fixed; border-radius:50%;
+      background:var(--bg-circle-1);
+      filter:blur(40px); z-index:1; pointer-events:none;
+      transition:transform 0.5s ease-out, background 0.3s ease;
+    }
+
+    /* Fluid Organic Blob Container */
+    .fluid-menu-container {
+      width:120px; height:60px;
+      background:linear-gradient(135deg, var(--blob-1), var(--blob-2));
+      border-radius:60% 40% 30% 70% / 60% 30% 70% 40%;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; position:relative; z-index:10;
+      box-shadow:0 10px 25px var(--glow);
+      transition:all 0.6s cubic-bezier(0.175,0.885,0.32,1.25), background 0.3s ease;
+      overflow:hidden;
+    }
+    .fluid-menu-container:not(.open) {
+      animation:morphBlob 6s infinite alternate ease-in-out;
+    }
+    @keyframes morphBlob {
+      0%{ border-radius:60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50%{ border-radius:40% 60% 60% 40% / 40% 60% 40% 60%; }
+      100%{ border-radius:50% 50% 30% 70% / 70% 30% 70% 30%; }
+    }
+    .fluid-menu-container.open {
+      width:280px; height:380px;
+      border-radius:20px 40px 30px 40px;
+      box-shadow:0 15px 35px var(--glow);
+      cursor:default;
+      display:flex; flex-direction:column;
+      justify-content:space-between; padding:2.5rem 2rem;
+    }
+    .close-btn {
+      position:absolute; top:15px; right:15px;
+      background:transparent; border:none; color:var(--text);
+      font-size:1.15rem; cursor:pointer;
+      opacity:0; transition:opacity 0.3s ease; pointer-events:none; z-index:20;
+    }
+    .fluid-menu-container.open .close-btn { opacity:0.8; pointer-events:auto; }
+    .close-btn:hover { opacity:1; }
+    .hamburger-icon { font-size:1.25rem; color:var(--text); transition:opacity 0.3s ease; }
+    .fluid-menu-container.open .hamburger-icon { display:none; }
+
+    .menu-links { display:none; flex-direction:column; gap:1.5rem; width:100%; margin-top:1.5rem; list-style:none; }
+    .fluid-menu-container.open .menu-links { display:flex; }
+    .menu-links li { opacity:0; transform:translateY(20px); transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.2); }
+    .fluid-menu-container.open .menu-links li { opacity:1; transform:translateY(0); }
+    .menu-links a { color:var(--text); text-decoration:none; font-size:1.15rem; font-weight:700; display:inline-block; position:relative; }
+    .menu-links a::after {
+      content:''; position:absolute; bottom:-6px; left:0; width:0%; height:3px;
+      background:var(--text); border-radius:2px;
+      transition:width 0.3s cubic-bezier(0.175,0.885,0.32,1.25);
+    }
+    .menu-links a:hover::after { width:100%; }
+    .menu-footer { font-size:0.75rem; opacity:0.7; display:none; font-weight:500; }
+    .fluid-menu-container.open .menu-footer { display:block; }
+
+    /* SECTION 2: BLOB DEMO SANDBOX */
+    #sandbox .blob-demo {
+      width:100px; height:100px; margin:1rem auto;
+      background:linear-gradient(135deg, var(--blob-1), var(--blob-2));
+      border-radius:60% 40% 30% 70% / 60% 30% 70% 40%;
+      animation:morphBlob 4s infinite alternate ease-in-out;
+      box-shadow:0 10px 25px var(--glow);
+      transition:background 0.3s ease;
+    }
+    .sandbox-btns { display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
+    .sandbox-btn {
+      font-family:'Quicksand',sans-serif; font-weight:700; font-size:0.7rem;
+      padding:0.5rem 1rem; border:2px solid var(--blob-1); border-radius:30px;
+      background:transparent; color:var(--text); cursor:pointer;
+      transition:all 0.2s; backdrop-filter:blur(4px);
+    }
+    .sandbox-btn:hover { background:var(--blob-1); color:var(--bg); }
+
+    /* SECTION 3: MENU ITEMS */
+    #menu-items { background:rgba(255,255,255,0.03); border-radius:20px; backdrop-filter:blur(8px); transition:background 0.3s ease; }
+    .menu-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+    .menu-item { padding:1rem; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); }
+    .menu-item .icon { font-size:1.5rem; margin-bottom:0.5rem; display:block; }
+    .menu-item .name { font-size:0.85rem; font-weight:700; }
+
+    /* SECTION 4: SPECS */
+    #specs .specs-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+    #specs .spec-item { padding:1rem; border-radius:12px; background:rgba(255,255,255,0.03); }
+    #specs .spec-item .val { font-size:1.5rem; font-weight:700; }
+    #specs .spec-item .lbl { font-size:0.65rem; opacity:0.6; text-transform:uppercase; margin-top:0.25rem; }
+
+    /* SECTION 5: THEME FOOTER */
+    #theme-footer { padding:2rem; }
+    .theme-buttons { display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap; margin-top:1rem; }
+    .theme-btn {
+      font-family:'Quicksand',sans-serif; font-weight:700; font-size:0.7rem;
+      padding:0.5rem 1rem; border:2px solid rgba(255,255,255,0.2); border-radius:30px;
+      background:rgba(255,255,255,0.05); color:var(--text); cursor:pointer;
+      transition:all 0.2s; backdrop-filter:blur(4px);
+    }
+    .theme-btn:hover { border-color:var(--blob-1); background:var(--blob-1); color:var(--bg); }
+    .footer-credit { font-size:0.6rem; opacity:0.4; margin-top:1.5rem; }
+  </style>
+</head>
+<body>
+
+<!-- Ambient circles -->
+<div class="bg-circle" id="bg-c1" style="width:120px;height:120px;top:25%;left:30%;"></div>
+<div class="bg-circle" id="bg-c2" style="width:150px;height:150px;bottom:25%;right:25%;"></div>
+
+<!-- SECTION 1: HERO -->
+<section id="hero" class="section">
+  <div class="hero-title">Fluid Navigation</div>
+  <p class="hero-sub">Organic blob interface &middot; Elastic morphing &middot; Touch-ready</p>
+
+  <!-- The blob menu lives in the hero -->
+  <div style="margin-top:2rem;">
+    <div class="fluid-menu-container" id="fluid-menu" onclick="openMenu(event)">
+      <button class="close-btn" onclick="closeMenu(event)"><i class="fas fa-times"></i></button>
+      <div class="hamburger-icon"><i class="fas fa-bars"></i></div>
+      <ul class="menu-links">
+        <li style="transition-delay:0.08s;"><a href="#">Home</a></li>
+        <li style="transition-delay:0.16s;"><a href="#">Projects</a></li>
+        <li style="transition-delay:0.24s;"><a href="#">Philosophy</a></li>
+        <li style="transition-delay:0.32s;"><a href="#">Connect</a></li>
+      </ul>
+      <div class="menu-footer"><span>FLUID_CORE V1</span></div>
+    </div>
+  </div>
+  <p style="font-size:0.7rem;opacity:0.5;margin-top:1rem;">Click blob to expand &middot; X to close</p>
+</section>
+
+<!-- SECTION 2: BLOB DEMO SANDBOX -->
+<section id="sandbox" class="section">
+  <h2 style="font-size:1.2rem;font-weight:700;">Morph Sandbox</h2>
+  <p style="font-size:0.75rem;opacity:0.6;">Click buttons to change the blob shape live</p>
+  <div class="blob-demo" id="blob-demo"></div>
+  <div class="sandbox-btns">
+    <button class="sandbox-btn" onclick="morphBlob('round')">Round</button>
+    <button class="sandbox-btn" onclick="morphBlob('squish')">Squish</button>
+    <button class="sandbox-btn" onclick="morphBlob('wave')">Wave</button>
+    <button class="sandbox-btn" onclick="morphBlob('random')">Random</button>
+  </div>
+</section>
+
+<!-- SECTION 3: MENU ITEMS -->
+<section id="menu-items" class="section">
+  <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;">Navigation Items</h2>
+  <div class="menu-grid">
+    <div class="menu-item"><span class="icon"><i class="fas fa-home"></i></span><span class="name">Home</span></div>
+    <div class="menu-item"><span class="icon"><i class="fas fa-folder"></i></span><span class="name">Projects</span></div>
+    <div class="menu-item"><span class="icon"><i class="fas fa-brain"></i></span><span class="name">Philosophy</span></div>
+    <div class="menu-item"><span class="icon"><i class="fas fa-envelope"></i></span><span class="name">Connect</span></div>
+  </div>
+</section>
+
+<!-- SECTION 4: SPECS -->
+<section id="specs" class="section">
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="val">6s</div>
+      <div class="lbl">Morph Cycle</div>
+    </div>
+    <div class="spec-item">
+      <div class="val">0.6s</div>
+      <div class="lbl">Elastic Ease</div>
+    </div>
+    <div class="spec-item">
+      <div class="val">4</div>
+      <div class="lbl">Menu Items</div>
+    </div>
+    <div class="spec-item">
+      <div class="val">Blob</div>
+      <div class="lbl">Shape Type</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: THEME FOOTER -->
+<section id="theme-footer" class="section">
+  <h2 style="font-size:1.2rem;font-weight:700;">Theme Switcher</h2>
+  <div class="theme-buttons">
+    <button class="theme-btn" onclick="setTheme('purple')">Purple</button>
+    <button class="theme-btn" onclick="setTheme('ocean')">Ocean</button>
+    <button class="theme-btn" onclick="setTheme('sunset')">Sunset</button>
+    <button class="theme-btn" onclick="setTheme('forest')">Forest</button>
+  </div>
+  <p class="footer-credit">UI PLAYGROUND BETA &middot; 20-FLUID-NAV</p>
+</section>
+
+<script>
+  // ===== THEME SWITCHER API =====
+  window.setTheme = function(name){document.documentElement.className='theme-'+name;localStorage.setItem('ui-beta-preview-theme',name);};
+
+  // ===== ORIGINAL BLOB CONTROLS (preserved) =====
+  var menu = document.getElementById('fluid-menu');
+  function openMenu(e) {
+    if (menu.classList.contains('open')) return;
+    menu.classList.add('open');
+  }
+  function closeMenu(e) {
+    e.stopPropagation();
+    menu.classList.remove('open');
+  }
+
+  // Background circles repel
+  window.addEventListener('mousemove', function(e) {
+    var c1 = document.getElementById('bg-c1');
+    var c2 = document.getElementById('bg-c2');
+    var cx = window.innerWidth / 2;
+    var cy = window.innerHeight / 2;
+    var ox = e.clientX - cx;
+    var oy = e.clientY - cy;
+    c1.style.transform = 'translate3d(' + (-ox * 0.08) + 'px, ' + (-oy * 0.08) + 'px, 0)';
+    c2.style.transform = 'translate3d(' + (-ox * 0.06) + 'px, ' + (-oy * 0.06) + 'px, 0)';
+  });
+
+  // ===== MORPH SANDBOX =====
+  var blobDemo = document.getElementById('blob-demo');
+  var shapes = {
+    round: { br: '50% 50% 50% 50% / 50% 50% 50% 50%', dur: '2s' },
+    squish: { br: '40% 60% 60% 40% / 60% 40% 60% 40%', dur: '3s' },
+    wave: { br: '30% 70% 20% 80% / 70% 30% 80% 20%', dur: '5s' },
+    random: { br: '55% 45% 65% 35% / 45% 55% 35% 65%', dur: '1.5s' }
+  };
+  function morphBlob(name) {
+    var s = shapes[name] || shapes.round;
+    blobDemo.style.borderRadius = s.br;
+    blobDemo.style.animation = 'none';
+    blobDemo.offsetHeight; // reflow
+    blobDemo.style.animation = 'morphBlob ' + s.dur + ' infinite alternate ease-in-out';
+  }
+</script>
+</body>
+</html>

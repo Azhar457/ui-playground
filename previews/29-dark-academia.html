@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Academia</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---- Theme Variants ---- */
+    :root { --bg: #2C1810; --fg: #E8E1D1; --accent: #C9A961; --text-body: #D4C9B8; --text-muted: #8B7355; --quote-color: #C9A961; --border-color: rgba(201,169,97,0.2); --header-border: #C9A961; --noise-color: "0.18 0.09 0.06"; }
+    html.theme-emerald { --bg: #14281C; --fg: #D4E8D4; --accent: #7AB87A; --text-body: #C4DCC4; --text-muted: #5A8A5A; --quote-color: #7AB87A; --border-color: rgba(122,184,122,0.2); --header-border: #7AB87A; --noise-color: "0.10 0.18 0.10"; }
+    html.theme-charcoal { --bg: #1A1C1E; --fg: #C8CCD0; --accent: #8B9BB4; --text-body: #B0B8C0; --text-muted: #5A6570; --quote-color: #8B9BB4; --border-color: rgba(139,155,180,0.2); --header-border: #8B9BB4; --noise-color: "0.12 0.14 0.16"; }
+    html.theme-parchment { --bg: #F5F0E1; --fg: #3E2723; --accent: #A67C52; --text-body: #5C4033; --text-muted: #8B7355; --quote-color: #A67C52; --border-color: rgba(166,124,82,0.2); --header-border: #A67C52; --noise-color: "0.04 0.04 0.04"; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: Georgia, 'Times New Roman', serif;
+      min-height: 100vh;
+      padding: 0 15vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Parchment noise overlay */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise"/><feColorMatrix type="matrix" values="0 0 0 0 0.18 0 0 0 0 0.09 0 0 0 0 0.06 0 0 0 0.04 0" in="noise"/></filter><rect width="100" height="100" filter="url(#n)" opacity="0.5"/></svg>');
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .reading-layout {
+      max-width: 680px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      padding: 4rem 0;
+    }
+
+    /* Minimal header */
+    .da-header {
+      border-bottom: 1px solid var(--header-border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .da-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+    }
+    .da-header-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--fg);
+      margin-bottom: 0.5rem;
+    }
+    h1 .italic {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .subhead {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 3rem;
+      line-height: 1.5;
+    }
+
+    /* Drop cap */
+    .body-text {
+      font-size: 17px;
+      line-height: 1.8;
+      max-width: 60ch;
+      color: var(--text-body);
+    }
+    .body-text p { margin-bottom: 1.5rem; }
+    .body-text p:first-of-type::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.2rem;
+      float: left;
+      line-height: 0.85;
+      margin-right: 0.4rem;
+      margin-top: 0.15rem;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: border-bottom 0.2s;
+      border-bottom: 1px solid transparent;
+    }
+    a:hover { border-bottom-color: var(--accent); }
+
+    /* Blockquote */
+    blockquote {
+      border-left: 2px solid var(--quote-color);
+      margin: 2rem 0;
+      padding: 0.5rem 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--quote-color);
+    }
+    blockquote cite {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Fleuron divider */
+    .fleuron {
+      text-align: center;
+      margin: 2.5rem 0;
+      font-size: 1.2rem;
+      color: var(--accent);
+      letter-spacing: 0.5em;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .section-link {
+      display: inline-block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--accent);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.25s;
+    }
+    .section-link:hover { border-bottom-color: var(--accent); }
+
+    /* Footer */
+    .da-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      margin-top: 3rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Font size slider */
+    .reading-controls {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin: 2rem 0; padding: 1rem 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .reading-controls label {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .reading-controls input[type="range"] {
+      -webkit-appearance: none; appearance: none;
+      flex: 1; max-width: 200px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+      outline: none;
+    }
+    .reading-controls input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--fg);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+    }
+    .reading-controls input[type="range"]::-moz-range-thumb {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--fg);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+    }
+    .font-size-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem;
+      color: var(--accent);
+      min-width: 3rem;
+    }
+
+    /* Stats / specs */
+    .specs-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin: 2rem 0;
+    }
+    .spec-item {
+      text-align: center;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+    }
+    .spec-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: var(--accent);
+    }
+    .spec-label {
+      font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--text-muted);
+    }
+
+    /* Theme buttons */
+    .theme-btn-group {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+      margin: 1.5rem 0;
+    }
+    .theme-btn {
+      padding: 0.4rem 1rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { background: var(--accent); color: var(--bg); }
+    .theme-btn.active { background: var(--accent); color: var(--bg); }
+  </style>
+</head>
+<body>
+  <div class="reading-layout">
+
+    <!-- SECTION 1: Hero / Header -->
+    <header class="da-header">
+      <h2>The Syllabus</h2>
+      <span class="da-header-date">Vol. III, No. 7</span>
+    </header>
+
+    <h1>On the <span class="italic">Beauty</span> of Decay</h1>
+    <div class="subhead">A meditation on ephemera, dust, and the quiet dignity of old things</div>
+
+    <!-- SECTION 2: Features / Gallery -->
+    <div class="body-text">
+      <p>
+        It is in the nature of all crafted things to return to the earth from which they came. The leather binding cracks,
+        the gilt edges tarnish, the pages fox and curl at their corners. And yet — or perhaps <em>therefore</em> — we find
+        in these imperfections a beauty no factory finish can replicate. The library at midnight, the scent of aged paper,
+        the soft creak of a floorboard in an empty hall: these are the touchstones of a sensibility that prizes
+        <a href="#">depth over novelty</a>, and resonance over brightness.
+      </p>
+
+      <p>
+        Consider the patina of a bronze reading lamp, or the way candlelight warms the spine of a well-read book.
+        The dark academia aesthetic is not merely a visual preference — it is an epistemology. It suggests that
+        knowledge is accretive, that understanding layers itself like sediment, and that the most profound truths
+        are often those that have been <a href="#">written and rewritten</a> across centuries.
+      </p>
+    </div>
+
+    <blockquote>
+      "We read to know we are not alone. We write to leave a mark that outlasts us. We collect — books, specimens,
+      pressed flowers, marginalia — because to gather is to remember, and to remember is to resist oblivion."
+      <cite>— from the Commonplace Book of A. W., c. 1923</cite>
+    </blockquote>
+
+    <div class="fleuron">&#10086; &#10086; &#10086;</div>
+
+    <div class="body-text">
+      <p>
+        There is, too, a particular discipline required by this way of seeing. It demands patience — the willingness
+        to sit with a single paragraph for an hour, to trace an argument through its digressions, to accept that
+        not every question yields an answer. The modern world rewards speed; the dark academic rewards
+        <a href="#">deliberation</a>. Its virtues are those of the seminar room, the archive, the dimly lit study.
+      </p>
+      <p>
+        To live academically is to live <em>in relationship</em> with what has come before. Every footnote is a
+        conversation across time. Every citation is an acknowledgment of debt. We are, all of us, standing on the
+        shoulders of giants — and in the dark academia tradition, we take the time to note their names.
+      </p>
+    </div>
+
+    <!-- SECTION 3: Interactive Sandbox (Reading Controls) -->
+    <div class="reading-controls">
+      <label for="fontSlider">Type size</label>
+      <input type="range" id="fontSlider" min="14" max="24" value="17" step="1">
+      <span class="font-size-label" id="fontSizeLabel">17px</span>
+    </div>
+
+    <!-- SECTION 4: Specs / Stats / Technical -->
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="spec-num">1,247</div>
+        <div class="spec-label">Volumes</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-num">1832</div>
+        <div class="spec-label">Established</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-num">XIV</div>
+        <div class="spec-label">Folios</div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Theme Switcher Footer -->
+    <footer class="da-footer" style="flex-direction:column; gap:1.5rem; align-items:center; border-top:1px solid var(--header-border);">
+      <div class="theme-btn-group">
+        <button class="theme-btn" data-theme="academia">Academia</button>
+        <button class="theme-btn" data-theme="emerald">Emerald</button>
+        <button class="theme-btn" data-theme="charcoal">Charcoal</button>
+        <button class="theme-btn" data-theme="parchment">Parchment</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; width:100%;">
+        <span>Commonplace Book of A. W.</span>
+        <span>Autumn, 1923</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Font Size Slider
+    (function() {
+      const slider = document.getElementById('fontSlider');
+      const label = document.getElementById('fontSizeLabel');
+      const texts = document.querySelectorAll('.body-text');
+      function update() {
+        const v = slider.value + 'px';
+        label.textContent = slider.value + 'px';
+        texts.forEach(function(el) { el.style.fontSize = v; });
+      }
+      slider.addEventListener('input', update);
+    })();
+
+    // Theme Switcher
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+      });
+    })();
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      localStorage.setItem('ui-beta-preview-theme', n);
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

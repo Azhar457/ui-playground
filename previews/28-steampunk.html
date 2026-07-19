@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steampunk / Victorian Interface</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---- Theme Variants ---- */
+    :root { --bg: #F5F0E1; --fg: #3E2723; --accent: #D4AF37; --panel: linear-gradient(145deg, #C5A33A, #8B7355, #A0853D); --panel-border: #8B7355; --panel-outline: #D4AF37; --leather-bg: #3E2723; --leather-fg: #F5F0E1; --dial-inner: #D4AF37; --dial-mid: #6B5330; --dial-outer: #3E2723; --toggle-off: #6B5330; --toggle-on: #D4AF37; --rivet-hi: #D4AF37; --rivet-lo: #6B5330; --text-muted: #8B7355; --text-dim: #6B5330; --card-border: #D4AF37; --divider-bar: #8B7355; --overlay: rgba(139,115,85,0.04); --panel-text: #FFF8DC; }
+    html.theme-ember  { --bg: #F5E6D3; --fg: #4A1C0E; --accent: #D4764A; --panel: linear-gradient(145deg, #C8633E, #8B4A35, #A0553D); --panel-border: #8B4A35; --panel-outline: #D4764A; --leather-bg: #4A1C0E; --leather-fg: #F5E6D3; --dial-inner: #D4764A; --dial-mid: #8B4A35; --dial-outer: #4A1C0E; --toggle-off: #8B4A35; --toggle-on: #D4764A; --rivet-hi: #D4764A; --rivet-lo: #8B4A35; --text-muted: #8B4A35; --text-dim: #6B3A25; --card-border: #D4764A; --divider-bar: #8B4A35; --overlay: rgba(139,74,53,0.04); --panel-text: #FFF0E0; }
+    html.theme-silver  { --bg: #E8ECEF; --fg: #1F2937; --accent: #9CA3AF; --panel: linear-gradient(145deg, #B0B8C4, #6B7280, #8B95A5); --panel-border: #6B7280; --panel-outline: #9CA3AF; --leather-bg: #1F2937; --leather-fg: #E8ECEF; --dial-inner: #9CA3AF; --dial-mid: #6B7280; --dial-outer: #1F2937; --toggle-off: #6B7280; --toggle-on: #9CA3AF; --rivet-hi: #9CA3AF; --rivet-lo: #6B7280; --text-muted: #6B7280; --text-dim: #4B5563; --card-border: #9CA3AF; --divider-bar: #6B7280; --overlay: rgba(107,114,128,0.04); --panel-text: #F3F4F6; }
+    html.theme-dark-wood { --bg: #1A1410; --fg: #D4C4A8; --accent: #C4956A; --panel: linear-gradient(145deg, #5C3A1E, #3E2723, #4A3020); --panel-border: #3E2723; --panel-outline: #C4956A; --leather-bg: #0D0A07; --leather-fg: #D4C4A8; --dial-inner: #C4956A; --dial-mid: #5C3A1E; --dial-outer: #0D0A07; --toggle-off: #5C3A1E; --toggle-on: #C4956A; --rivet-hi: #C4956A; --rivet-lo: #5C3A1E; --text-muted: #8B7355; --text-dim: #5C3A1E; --card-border: #C4956A; --divider-bar: #5C3A1E; --overlay: rgba(92,58,30,0.08); --panel-text: #E8DCC8; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    /* Parchment texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(var(--overlay) 1px, transparent 1px);
+      background-size: 3px 3px;
+      pointer-events: none; z-index: 0;
+    }
+    h1, h2, h3 { font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 0.05em; }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; }
+    h2 { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); }
+
+    .container {
+      max-width: 1000px; margin: 0 auto;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; gap: 2.5rem;
+    }
+
+    /* Brass gradient panel */
+    .panel {
+      background: var(--panel);
+      border: 3px solid var(--panel-border);
+      outline: 1px solid var(--panel-outline);
+      outline-offset: -4px;
+      padding: 1.5rem 2rem;
+      position: relative;
+      border-radius: 2px;
+    }
+    .panel::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(212,175,55,0.3) 6px, rgba(212,175,55,0.3) 8px);
+    }
+    .panel h2 { color: var(--panel-text); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+
+    /* Rivets at corners */
+    .rivet {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 4px 4px, var(--rivet-hi), var(--rivet-lo));
+      border: 1px solid var(--fg);
+    }
+    .rivet-tl { top: -6px; left: -6px; }
+    .rivet-tr { top: -6px; right: -6px; }
+    .rivet-bl { bottom: -6px; left: -6px; }
+    .rivet-br { bottom: -6px; right: -6px; }
+
+    /* Leather section */
+    .leather-section {
+      background: var(--leather-bg);
+      border: 2px dashed rgba(255,255,255,0.2);
+      padding: 2rem;
+      color: var(--leather-fg);
+      position: relative;
+      border-radius: 2px;
+    }
+    .leather-section h2 { color: var(--accent); }
+    .leather-section p { font-size: 1.1rem; line-height: 1.7; font-style: italic; }
+
+    /* Ornate divider */
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1rem 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--divider-bar), transparent);
+    }
+    .divider-icon { color: var(--accent); font-size: 1.3rem; }
+
+    /* SVG Gear animation */
+    .gear-container {
+      display: flex; justify-content: center; gap: 2rem;
+      padding: 1.5rem 0;
+    }
+    .gear-svg { width: 80px; height: 80px; animation: spin 60s linear infinite; }
+    .gear-svg-reverse { animation: spin-reverse 60s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin-reverse { to { transform: rotate(-360deg); } }
+
+    /* Rotary dial */
+    .dial-container {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin: 1rem 0;
+    }
+    .dial {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--dial-inner), var(--dial-mid) 50%, var(--dial-outer));
+      border: 4px solid var(--panel-border);
+      position: relative;
+      cursor: grab; user-select: none;
+      flex-shrink: 0;
+    }
+    .dial:active { cursor: grabbing; }
+    .dial-marker {
+      position: absolute;
+      top: 8px; left: 50%;
+      transform: translateX(-50%);
+      width: 4px; height: 20px;
+      background: var(--panel-text);
+      border-radius: 2px;
+    }
+    .dial-label { font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--text-muted); }
+    .dial-value { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--accent); }
+
+    /* Toggle lever */
+    .toggle-row {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin: 1rem 0;
+    }
+    .toggle-track {
+      width: 60px; height: 30px;
+      background: var(--toggle-off);
+      border: 2px solid var(--panel-border);
+      border-radius: 15px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .toggle-track.on { background: var(--toggle-on); }
+    .toggle-knob {
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 8px 8px, var(--panel-text), var(--divider-bar));
+      border: 1px solid var(--fg);
+      transition: left 0.1s;
+    }
+    .toggle-track.on .toggle-knob { left: 32px; }
+    .toggle-state { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* Ornate section divider */
+    .ornate-divider {
+      text-align: center; margin: 0.5rem 0;
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+    }
+    .ornate-divider span { padding: 0 0.8rem; }
+    .ornate-divider::before, .ornate-divider::after {
+      content: '༄༄༄'; letter-spacing: 0.2em; color: var(--accent);
+      font-size: 0.6rem;
+    }
+
+    /* Card with gear ornament */
+    .gear-card {
+      display: grid; grid-template-columns: 1fr auto; gap: 1.5rem;
+      align-items: center;
+      background: rgba(139,115,85,0.08);
+      border-left: 3px solid var(--card-border);
+      padding: 1.2rem 1.5rem;
+    }
+    .gear-card p { font-size: 1rem; line-height: 1.6; font-family: 'Playfair Display', serif; }
+    .gear-card-icon { width: 40px; height: 40px; animation: spin 30s linear infinite; }
+
+    /* Decorative initial */
+    .dropcap {
+      font-family: 'Cinzel', serif;
+      font-size: 3.5rem; float: left;
+      line-height: 0.8; margin-right: 0.3rem;
+      color: var(--accent);
+    }
+
+    /* Gear Sandbox Button */
+    .sandbox-gear-btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      outline: 1px solid var(--panel-outline);
+      outline-offset: -3px;
+      color: var(--panel-text);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .sandbox-gear-btn:active { transform: scale(0.95); }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      border: 1px solid var(--divider-bar);
+      background: rgba(139,115,85,0.06);
+    }
+    .stat-num { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--accent); }
+    .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); }
+
+    /* Theme buttons in footer */
+    .theme-btn-group {
+      display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+    }
+    .theme-btn {
+      padding: 0.5rem 1rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--leather-bg);
+      color: var(--leather-fg);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .theme-btn:hover { opacity: 0.7; }
+    .theme-btn.active { background: var(--accent); color: var(--leather-bg); }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- SECTION 1: Hero / Header -->
+    <div class="panel">
+      <div class="rivet rivet-tl"></div>
+      <div class="rivet rivet-tr"></div>
+      <div class="rivet rivet-bl"></div>
+      <div class="rivet rivet-br"></div>
+      <h1>Steampunk Atelier</h1>
+      <p style="font-family:'Playfair Display',serif; color:var(--panel-text); opacity:0.8; font-style:italic;">
+        Victorian engineering meets brass and leather
+      </p>
+    </div>
+
+    <!-- SECTION 2: Features / Gallery -->
+    <div class="leather-section">
+      <div class="rivet rivet-tl"></div>
+      <div class="rivet rivet-tr"></div>
+      <div class="rivet rivet-bl"></div>
+      <div class="rivet rivet-br"></div>
+      <h2>Mechanisms & Motive Power</h2>
+      <p>
+        The marriage of cast iron and polished brass gave rise to an aesthetic where every rivet,
+        every gear, every steam vent is a deliberate ornament. Here we celebrate the age of
+        precision engineering — when machines were built to last centuries.
+      </p>
+    </div>
+
+    <div class="ornate-divider"><span>✦ GEAR GALLERY ✦</span></div>
+
+    <div class="gear-container">
+      <svg class="gear-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="28" fill="none" stroke="var(--divider-bar)" stroke-width="6"/>
+        <circle cx="50" cy="50" r="10" fill="var(--accent)"/>
+        <path d="M50 8 L52 18 L48 18 Z" fill="var(--divider-bar)"/>
+        <path d="M50 92 L52 82 L48 82 Z" fill="var(--divider-bar)"/>
+        <path d="M8 50 L18 52 L18 48 Z" fill="var(--divider-bar)"/>
+        <path d="M92 50 L82 52 L82 48 Z" fill="var(--divider-bar)"/>
+        <path d="M20 20 L27 27 L24 30 Z" fill="var(--divider-bar)"/>
+        <path d="M80 80 L73 73 L76 70 Z" fill="var(--divider-bar)"/>
+        <path d="M80 20 L73 27 L70 24 Z" fill="var(--divider-bar)"/>
+        <path d="M20 80 L27 73 L30 76 Z" fill="var(--divider-bar)"/>
+      </svg>
+      <svg class="gear-svg gear-svg-reverse" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="22" fill="none" stroke="var(--accent)" stroke-width="5"/>
+        <circle cx="50" cy="50" r="8" fill="var(--divider-bar)"/>
+        <path d="M50 12 L52 20 L48 20 Z" fill="var(--accent)"/>
+        <path d="M50 88 L52 80 L48 80 Z" fill="var(--accent)"/>
+        <path d="M12 50 L20 52 L20 48 Z" fill="var(--accent)"/>
+        <path d="M88 50 L80 52 L80 48 Z" fill="var(--accent)"/>
+        <path d="M22 22 L28 28 L25 30 Z" fill="var(--accent)"/>
+        <path d="M78 78 L72 72 L75 70 Z" fill="var(--accent)"/>
+        <path d="M78 22 L72 28 L70 25 Z" fill="var(--accent)"/>
+        <path d="M22 78 L28 72 L30 75 Z" fill="var(--accent)"/>
+      </svg>
+    </div>
+
+    <div class="gear-card">
+      <div>
+        <span class="dropcap">T</span>
+        <p>he differential gear — one of the most elegant mechanisms ever devised — allows wheels to rotate at different speeds while receiving power from a single source. A lesson in harmony through controlled asymmetry.</p>
+      </div>
+      <svg class="gear-card-icon" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="20" fill="none" stroke="var(--divider-bar)" stroke-width="4"/>
+        <circle cx="50" cy="50" r="8" fill="var(--accent)"/>
+        <path d="M50 15 L51 22 L49 22 Z" fill="var(--divider-bar)"/>
+        <path d="M50 85 L51 78 L49 78 Z" fill="var(--divider-bar)"/>
+        <path d="M15 50 L22 51 L22 49 Z" fill="var(--divider-bar)"/>
+        <path d="M85 50 L78 51 L78 49 Z" fill="var(--divider-bar)"/>
+      </svg>
+    </div>
+
+    <!-- SECTION 3: Interactive Sandbox -->
+    <div class="ornate-divider"><span>✦ SANDBOX ✦</span></div>
+    <div class="leather-section">
+      <div class="rivet rivet-tl"></div>
+      <div class="rivet rivet-tr"></div>
+      <div class="rivet rivet-bl"></div>
+      <div class="rivet rivet-br"></div>
+      <h2>Gear Spin Workshop</h2>
+      <p style="font-size:0.95rem;">Click the button to set the gears in motion at different speeds.</p>
+      <div style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
+        <button class="sandbox-gear-btn" id="gearSpinSlow">Spin Slow</button>
+        <button class="sandbox-gear-btn" id="gearSpinFast">Spin Fast</button>
+        <button class="sandbox-gear-btn" id="gearSpinStop">Halt</button>
+        <button class="sandbox-gear-btn" id="gearSpinReset" style="background:var(--leather-bg); color:var(--leather-fg); border-color:var(--accent);">⟲ Reset</button>
+      </div>
+      <div id="gearSandboxStatus" style="margin-top:0.8rem; font-family:'Cinzel',serif; font-size:0.75rem; color:var(--accent); letter-spacing:0.1em;">GEARS AT REST</div>
+    </div>
+
+    <!-- SECTION 4: Specs / Stats / Technical -->
+    <div class="ornate-divider"><span>✦ SPECIFICATIONS ✦</span></div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">4.7</div>
+        <div class="stat-label">Horsepower</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">200</div>
+        <div class="stat-label">PSI Capacity</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">316</div>
+        <div class="stat-label">Brass Parts</div>
+      </div>
+    </div>
+
+    <div class="dial-container">
+      <div class="dial" id="rotaryDial">
+        <div class="dial-marker" id="dialMarker"></div>
+      </div>
+      <div>
+        <div class="dial-label">PRESSURE REGULATOR</div>
+        <div class="dial-value" id="dialValue">0 &deg;</div>
+        <div style="font-size:0.75rem; color:var(--text-dim); font-style:italic;">Click-drag or scroll to adjust</div>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-track" id="toggleTrack">
+        <div class="toggle-knob"></div>
+      </div>
+      <div>
+        <div class="toggle-state" id="toggleState">DISENGAGED</div>
+        <div style="font-size:0.7rem; color:var(--text-dim);">MAIN VALVE</div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Theme Switcher Footer -->
+    <div class="panel" style="margin-top:1rem;">
+      <div class="rivet rivet-tl"></div>
+      <div class="rivet rivet-tr"></div>
+      <div class="rivet rivet-bl"></div>
+      <div class="rivet rivet-br"></div>
+      <p style="text-align:center; color:var(--panel-text); font-family:'Playfair Display',serif; font-style:italic; font-size:0.9rem; margin-bottom:1rem;">
+        "The engineer's aesthetic is the truth of function made beautiful."
+      </p>
+      <div class="theme-btn-group">
+        <button class="theme-btn" data-theme="brass">Classic Brass</button>
+        <button class="theme-btn" data-theme="ember">Ember Copper</button>
+        <button class="theme-btn" data-theme="silver">Cold Silver</button>
+        <button class="theme-btn" data-theme="dark-wood">Dark Wood</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Rotary Dial — scroll to rotate
+    (function() {
+      const dial = document.getElementById('rotaryDial');
+      const marker = document.getElementById('dialMarker');
+      const value = document.getElementById('dialValue');
+      let angle = 0;
+
+      dial.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        angle += e.deltaY > 0 ? 15 : -15;
+        dial.style.transform = `rotate(${angle}deg)`;
+        value.textContent = (angle % 360) + '°';
+      });
+
+      let isDragging = false, startY, startAngle;
+      dial.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        startAngle = angle;
+        dial.style.cursor = 'grabbing';
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const deltaY = startY - e.clientY;
+        angle = startAngle + deltaY;
+        dial.style.transform = `rotate(${angle}deg)`;
+        value.textContent = (angle % 360) + '°';
+      });
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          dial.style.cursor = 'grab';
+        }
+      });
+    })();
+
+    // Toggle Lever — physical click feel
+    (function() {
+      const track = document.getElementById('toggleTrack');
+      const state = document.getElementById('toggleState');
+      track.addEventListener('click', function() {
+        this.classList.toggle('on');
+        state.textContent = this.classList.contains('on') ? 'ENGAGED' : 'DISENGAGED';
+      });
+    })();
+
+    // Gear Spin Sandbox
+    (function() {
+      const gears = document.querySelectorAll('.gear-svg, .gear-card-icon');
+      const status = document.getElementById('gearSandboxStatus');
+      let currentDuration = '60s';
+
+      document.getElementById('gearSpinSlow').addEventListener('click', function() {
+        currentDuration = '60s';
+        gears.forEach(g => { g.style.animationDuration = currentDuration; });
+        status.textContent = 'GEARS TURNING — SLOW REVOLUTION';
+      });
+      document.getElementById('gearSpinFast').addEventListener('click', function() {
+        currentDuration = '8s';
+        gears.forEach(g => { g.style.animationDuration = currentDuration; });
+        status.textContent = 'GEARS SPINNING — FULL THROTTLE';
+      });
+      document.getElementById('gearSpinStop').addEventListener('click', function() {
+        gears.forEach(g => { g.style.animation = 'none'; });
+        status.textContent = 'GEARS AT REST';
+      });
+      document.getElementById('gearSpinReset').addEventListener('click', function() {
+        gears.forEach(function(g) {
+          g.style.animation = '';
+          if (g.classList.contains('gear-svg-reverse')) g.style.animation = 'spin-reverse 60s linear infinite';
+          else if (g.classList.contains('gear-svg')) g.style.animation = 'spin 60s linear infinite';
+          else g.style.animation = 'spin 30s linear infinite';
+        });
+        status.textContent = 'GEARS TURNING — SLOW REVOLUTION';
+      });
+    })();
+
+    // Theme Switcher
+    (function() {
+      const current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+      });
+    })();
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      localStorage.setItem('ui-beta-preview-theme', n);
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

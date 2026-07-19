@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sci-Fi HUD / FUI Dashboard</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: hud (current teal) ===== */
+    .theme-hud {
+      --bg: #020408;
+      --c1: #00D4AA;
+      --c2: #FF9500;
+      --c3: #FF3333;
+      --text-dim: #3A3A50;
+      --line: rgba(0,212,170,0.2);
+      --line-strong: rgba(0,212,170,0.5);
+      --card-bg: #030712;
+    }
+    /* ===== THEME: amber ===== */
+    .theme-amber {
+      --bg: #0A0800;
+      --c1: #FFB000;
+      --c2: #FF6600;
+      --c3: #FF0000;
+      --text-dim: #4A3A00;
+      --line: rgba(255,176,0,0.2);
+      --line-strong: rgba(255,176,0,0.5);
+      --card-bg: #0F0A00;
+    }
+    /* ===== THEME: red-alert ===== */
+    .theme-red-alert {
+      --bg: #080002;
+      --c1: #FF2222;
+      --c2: #FF8800;
+      --c3: #FFCC00;
+      --text-dim: #4A0000;
+      --line: rgba(255,34,34,0.2);
+      --line-strong: rgba(255,34,34,0.5);
+      --card-bg: #0F0002;
+    }
+    /* ===== THEME: ghost ===== */
+    .theme-ghost {
+      --bg: #0A0A0F;
+      --c1: #CCD0D8;
+      --c2: #8890A0;
+      --c3: #FF4444;
+      --text-dim: #555568;
+      --line: rgba(204,208,216,0.15);
+      --line-strong: rgba(204,208,216,0.4);
+      --card-bg: #0E0E14;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--c1);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      height: 100vh;
+      width: 100vw;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 260px 1fr 260px;
+      gap: 0;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .col-left, .col-center, .col-right {
+      position: relative;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .panel {
+      position: relative;
+      background: transparent;
+      border: none;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 12px; height: 12px;
+      border-top: 1px solid var(--line-strong);
+      border-left: 1px solid var(--line-strong);
+      transition: border-color 0.3s;
+    }
+
+    .panel::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 12px; height: 12px;
+      border-bottom: 1px solid var(--line-strong);
+      border-right: 1px solid var(--line-strong);
+      transition: border-color 0.3s;
+    }
+
+    .panel-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+      transition: color 0.3s;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.7rem;
+      transition: border-color 0.3s;
+    }
+
+    .data-label { color: var(--text-dim); letter-spacing: 1px; transition: color 0.3s; }
+    .data-value { font-weight: 700; color: var(--c1); font-variant-numeric: tabular-nums; transition: color 0.3s; }
+    .data-value.amber { color: var(--c2); }
+    .data-value.red { color: var(--c3); }
+
+    .slot-value { display: inline-block; transition: all 0.1s ease; }
+
+    .reticle-viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .reticle {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      left: calc(var(--mx, 50%) - 30px);
+      top: calc(var(--my, 50%) - 30px);
+      pointer-events: none;
+      transition: left 0.08s ease-out, top 0.08s ease-out;
+    }
+
+    .reticle-ring {
+      width: 60px;
+      height: 60px;
+      border: 1px solid var(--c3);
+      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0;
+      animation: reticlePulse 2s ease-in-out infinite;
+      transition: border-color 0.3s;
+    }
+
+    .reticle-ring::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 4px; height: 4px;
+      background: var(--c3);
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      transition: background 0.3s;
+    }
+
+    .reticle-crosshair-h, .reticle-crosshair-v {
+      position: absolute;
+      background: var(--c3);
+      transition: background 0.3s;
+    }
+    .reticle-crosshair-h { width: 14px; height: 1px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .reticle-crosshair-v { width: 1px; height: 14px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+    @keyframes reticlePulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    .radar-container { width: 160px; height: 160px; position: relative; margin: 0 auto; }
+    .radar-svg { width: 100%; height: 100%; }
+    .radar-sweep { animation: radarSpin 4s linear infinite; transform-origin: 80px 80px; }
+
+    @keyframes radarSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .gauge-container { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+    .gauge-item { text-align: center; }
+    .gauge-label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.25rem; transition: color 0.3s; }
+    .gauge-value { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--c1); transition: color 0.3s; }
+
+    .ticker-bar {
+      grid-row: 2;
+      border-top: 1px solid var(--line-strong);
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .ticker-inner {
+      display: inline-block;
+      animation: tickerScroll 20s linear infinite;
+      font-size: 0.7rem;
+      color: var(--c2);
+      letter-spacing: 1px;
+      transition: color 0.3s;
+    }
+
+    .ticker-inner span { margin-right: 3rem; }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .col-left::-webkit-scrollbar, .col-right::-webkit-scrollbar { display: none; }
+
+    .col-left { border-right: 1px solid var(--line); transition: border-color 0.3s; }
+    .col-right { border-left: 1px solid var(--line); transition: border-color 0.3s; }
+
+    .status-dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      background: var(--c1);
+      margin-right: 6px;
+      vertical-align: middle;
+      animation: dotBlink 1.5s step-end infinite;
+      transition: background 0.3s;
+    }
+    .status-dot.amber { background: var(--c2); }
+    .status-dot.red { background: var(--c3); }
+
+    @keyframes dotBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .log-entry {
+      font-size: 0.6rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-dim);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .log-entry.alert { color: var(--c2); }
+    .log-entry.critical { color: var(--c3); }
+
+    /* ===== SECTION 3: Reticle Sandbox ===== */
+    .click-marker {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--c3);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      animation: markerFade 0.8s ease-out forwards;
+      z-index: 5;
+    }
+
+    @keyframes markerFade {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+    }
+
+    /* ===== SECTION 5: Theme buttons ===== */
+    .hud-theme-bar {
+      display: flex;
+      gap: 0.3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .theme-btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0.4rem 0.8rem;
+      background: transparent;
+      border: 1px solid var(--line-strong);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      border-color: var(--c1);
+      color: var(--c1);
+    }
+
+    @media (max-width: 900px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .col-left, .col-right { display: none; }
+    }
+  </style>
+</head>
+<body class="theme-hud">
+
+  <div class="dashboard">
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+      <div class="panel">
+        <div class="panel-title">SYS_TELEMETRY</div>
+        <div class="data-row">
+          <span class="data-label">TGT_DIST</span>
+          <span class="data-value amber"><span class="slot-value" id="val-dist">1047</span> M</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">SYS_TEMP</span>
+          <span class="data-value"><span class="slot-value" id="val-temp">87.3</span> K</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">PWR_OUT</span>
+          <span class="data-value"><span class="slot-value" id="val-pwr">94.2</span> %</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">SIG_QUAL</span>
+          <span class="data-value amber"><span class="slot-value" id="val-sig">76</span> %</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">SHLD_CAP</span>
+          <span class="data-value"><span class="slot-value" id="val-shld">88</span> %</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">THRUST / NAV</div>
+        <div class="gauge-container">
+          <div class="gauge-item">
+            <svg width="70" height="70" viewBox="0 0 70 70">
+              <circle cx="35" cy="35" r="28" fill="none" stroke="var(--line)" stroke-width="3"/>
+              <circle cx="35" cy="35" r="28" fill="none" stroke="var(--c1)" stroke-width="3"
+                stroke-dasharray="176" stroke-dashoffset="52" transform="rotate(-90 35 35)"/>
+              <text x="35" y="38" text-anchor="middle" fill="var(--c1)" font-size="14" font-family="'Share Tech Mono', monospace">70</text>
+            </svg>
+            <div class="gauge-label">THR%</div>
+          </div>
+          <div class="gauge-item">
+            <svg width="70" height="70" viewBox="0 0 70 70">
+              <circle cx="35" cy="35" r="28" fill="none" stroke="var(--line)" stroke-width="3"/>
+              <circle cx="35" cy="35" r="28" fill="none" stroke="var(--c2)" stroke-width="3"
+                stroke-dasharray="176" stroke-dashoffset="106" transform="rotate(-90 35 35)"/>
+              <text x="35" y="38" text-anchor="middle" fill="var(--c2)" font-size="14" font-family="'Share Tech Mono', monospace">40</text>
+            </svg>
+            <div class="gauge-label">NAV%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="col-center">
+      <!-- ===== SECTION 1: Hero / Header ===== -->
+      <div class="reticle-viewport" id="reticle-viewport">
+        <div style="position: absolute; top: 0.5rem; left: 50%; transform: translateX(-50%); text-align: center; z-index: 3;">
+          <div style="font-size: 0.5rem; color: var(--text-dim); letter-spacing: 3px;">ACQUIRING</div>
+          <div style="font-size: 0.8rem; color: var(--c3); letter-spacing: 1px; transition: color 0.3s;" id="target-label">TGT_0001</div>
+        </div>
+
+        <!-- Radar -->
+        <div style="position: absolute; bottom: 1rem; left: 1rem; z-index: 2;">
+          <div class="radar-container" id="radar-container">
+            <svg class="radar-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="80" cy="80" r="70" fill="none" stroke="var(--line)" stroke-width="0.8"/>
+              <circle cx="80" cy="80" r="50" fill="none" stroke="var(--line)" stroke-width="0.8"/>
+              <circle cx="80" cy="80" r="30" fill="none" stroke="var(--line)" stroke-width="0.8"/>
+              <line x1="10" y1="80" x2="150" y2="80" stroke="var(--line)" stroke-width="0.5"/>
+              <line x1="80" y1="10" x2="80" y2="150" stroke="var(--line)" stroke-width="0.5"/>
+              <g class="radar-sweep">
+                <line x1="80" y1="80" x2="150" y2="80" stroke="var(--c1)" stroke-width="1" opacity="0.6"/>
+                <path d="M 80 80 L 140 50 A 70 70 0 0 1 150 80 Z" fill="var(--c1)" opacity="0.06"/>
+              </g>
+              <circle cx="110" cy="55" r="3" fill="none" stroke="var(--c2)" stroke-width="1.2" opacity="0.8"/>
+              <circle cx="60" cy="100" r="2" fill="none" stroke="var(--c3)" stroke-width="1.2" opacity="0.8"/>
+              <circle cx="100" cy="45" r="1.5" fill="var(--c1)" opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Reticle -->
+        <div class="reticle" id="reticle">
+          <div class="reticle-ring"></div>
+          <div class="reticle-crosshair-h"></div>
+          <div class="reticle-crosshair-v"></div>
+        </div>
+
+        <!-- ===== SECTION 3: Click target sandbox marker ===== -->
+        <div style="position: absolute; bottom: 1rem; right: 1rem; z-index: 2; text-align:right;">
+          <div style="font-size:0.5rem;color:var(--text-dim);letter-spacing:2px;">CLICK TO MARK TARGET</div>
+          <div style="font-size:0.65rem;color:var(--c1);" id="click-coords">-- , --</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+      <!-- ===== SECTION 4: Specs / Stats ===== -->
+      <div class="panel">
+        <div class="panel-title">SYS_LOG</div>
+        <div class="log-entry">[<span style="color:var(--text-dim)">00:00:12</span>] INIT sequence OK</div>
+        <div class="log-entry">[<span style="color:var(--text-dim)">00:00:14</span>] CTRL sync engaged</div>
+        <div class="log-entry alert">[<span style="color:var(--c2)">00:00:18</span>] SYS_TEMP rising</div>
+        <div class="log-entry">[<span style="color:var(--text-dim)">00:00:22</span>] TELEM stream stable</div>
+        <div class="log-entry critical">[<span style="color:var(--c3)">00:00:27</span>] SHIELD_DROP 12%</div>
+        <div class="log-entry">[<span style="color:var(--text-dim)">00:00:31</span>] NAV correction applied</div>
+        <div class="log-entry">[<span style="color:var(--text-dim)">00:00:35</span>] SCAN cycle 0047</div>
+        <div class="log-entry alert">[<span style="color:var(--c2)">00:00:38</span>] TGT_DIST 1047M</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">STATUS</div>
+        <div class="data-row">
+          <span class="data-label"><span class="status-dot"></span> COMMS</span>
+          <span class="data-value">LINKED</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label"><span class="status-dot amber"></span> THERMAL</span>
+          <span class="data-value amber">CAUTION</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label"><span class="status-dot"></span> NAV</span>
+          <span class="data-value">ONLINE</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label"><span class="status-dot red"></span> SHIELD</span>
+          <span class="data-value red">DEGRADED</span>
+        </div>
+      </div>
+
+      <!-- ===== SECTION 2: Features / Gauges Gallery ===== -->
+      <div class="panel">
+        <div class="panel-title">ORDNANCE</div>
+        <div class="data-row"><span class="data-label">RAIL</span><span class="data-value">RDY</span></div>
+        <div class="data-row"><span class="data-label">BEAM</span><span class="data-value amber">CHG</span></div>
+        <div class="data-row"><span class="data-label">FLARE</span><span class="data-value">ARM</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5: Theme Switcher Footer ===== -->
+  <div class="ticker-bar" id="ticker-bar">
+    <div style="display:flex;align-items:center;gap:1rem;height:100%;">
+      <div class="hud-theme-bar">
+        <button class="theme-btn" data-theme="hud">HUD</button>
+        <button class="theme-btn" data-theme="amber">AMBER</button>
+        <button class="theme-btn" data-theme="red-alert">ALERT</button>
+        <button class="theme-btn" data-theme="ghost">GHOST</button>
+      </div>
+      <div class="ticker-inner" id="ticker">
+        <span>[SYS] All stations nominal —</span>
+        <span>[WARN] Thermal load at 87.3K —</span>
+        <span>[INFO] Scan cycle 0047 complete —</span>
+        <span>[ALERT] Target distance 1047M —</span>
+        <span>[SYS] Shield capacitance at 88% —</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.setTheme = function(n){
+      document.body.className = 'theme-'+n;
+      localStorage.setItem('ui-beta-preview-theme',n);
+      document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.theme===n);});
+    };
+
+    window.addEventListener('DOMContentLoaded', function(){
+      var saved = localStorage.getItem('ui-beta-preview-theme') || 'hud';
+      document.body.className = 'theme-'+saved;
+      document.querySelectorAll('.theme-btn').forEach(function(b){
+        if(b.dataset.theme===saved) b.classList.add('active');
+        b.addEventListener('click',function(){window.setTheme(this.dataset.theme);});
+      });
+
+      // Reticle mouse tracking
+      var viewport = document.querySelector('.reticle-viewport');
+      var reticle = document.getElementById('reticle');
+
+      viewport.addEventListener('mousemove', function(e){
+        var rect = viewport.getBoundingClientRect();
+        var x = ((e.clientX - rect.left) / rect.width) * 100;
+        var y = ((e.clientY - rect.top) / rect.height) * 100;
+        viewport.style.setProperty('--mx', x + '%');
+        viewport.style.setProperty('--my', y + '%');
+      });
+
+      // Click marker sandbox
+      var coordsEl = document.getElementById('click-coords');
+      viewport.addEventListener('click', function(e){
+        var rect = viewport.getBoundingClientRect();
+        var x = Math.round(e.clientX - rect.left);
+        var y = Math.round(e.clientY - rect.top);
+        coordsEl.textContent = x + ' , ' + y;
+
+        var marker = document.createElement('div');
+        marker.className = 'click-marker';
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+        viewport.appendChild(marker);
+        setTimeout(function(){ marker.remove(); }, 800);
+      });
+
+      // Slot machine number refresh
+      var slots = document.querySelectorAll('.slot-value');
+      function scrambleSlot(el, final, duration){
+        var isFloat = final.toString().includes('.');
+        var parts = isFloat ? final.toString().split('.') : [final.toString()];
+        var intLen = parts[0].length;
+        var decLen = parts.length > 1 ? parts[1].length : 0;
+        var start = Date.now();
+        var interval = setInterval(function(){
+          var elapsed = Date.now() - start;
+          if(elapsed >= duration){
+            el.textContent = final;
+            clearInterval(interval);
+            return;
+          }
+          var intPart = '';
+          for(var i=0;i<intLen;i++) intPart += Math.floor(Math.random()*10);
+          if(isFloat){
+            var decPart = '';
+            for(var i=0;i<decLen;i++) decPart += Math.floor(Math.random()*10);
+            el.textContent = intPart + '.' + decPart;
+          } else {
+            el.textContent = intPart;
+          }
+        }, 60);
+      }
+
+      function refreshData(){
+        var dist = (900 + Math.floor(Math.random()*300)).toString();
+        var temp = (80 + Math.random()*15).toFixed(1);
+        var pwr = (80 + Math.random()*18).toFixed(1);
+        var sig = (60 + Math.floor(Math.random()*35)).toString();
+        var shld = (70 + Math.floor(Math.random()*25)).toString();
+        scrambleSlot(document.getElementById('val-dist'), dist, 400);
+        scrambleSlot(document.getElementById('val-temp'), temp, 400);
+        scrambleSlot(document.getElementById('val-pwr'), pwr, 400);
+        scrambleSlot(document.getElementById('val-sig'), sig, 400);
+        scrambleSlot(document.getElementById('val-shld'), shld, 400);
+      }
+
+      refreshData();
+      setInterval(refreshData, 4000);
+
+      setInterval(function(){
+        var targets = ['TGT_0001', 'TGT_0004', 'TGT_0007', 'TGT_0009', 'TGT_0012'];
+        document.getElementById('target-label').textContent = targets[Math.floor(Math.random()*targets.length)];
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

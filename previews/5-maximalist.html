@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Maximalist / Anti-Design Portal</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Default: Acid Pink */
+    :root {
+      --bg-color: #00C2FF;
+      --primary: #FF1B6B;
+      --secondary: #B6FF00;
+      --accent: #FF6B00;
+      --black: #000000;
+      --white: #FFFFFF;
+    }
+
+    .theme-cyan {
+      --bg-color: #B6FF00;
+      --primary: #00C2FF;
+      --secondary: #FF1B6B;
+      --accent: #000000;
+    }
+
+    .theme-lime {
+      --bg-color: #FF6B00;
+      --primary: #B6FF00;
+      --secondary: #00C2FF;
+      --accent: #FF1B6B;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--black);
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      overflow-x: hidden;
+      padding: 1.5rem 0.5rem;
+      transition: background 0.3s ease;
+    }
+
+    /* Screen invert effect for chaos bench */
+    body.invert-chaos {
+      filter: invert(1);
+    }
+
+    .app-shell {
+      max-width: 850px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    /* SECTION 1: MARQUEE HEADER */
+    .marquee-container {
+      background: var(--black);
+      color: var(--secondary);
+      border: 4px solid var(--black);
+      padding: 0.5rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      font-family: 'Anton', sans-serif;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      animation: scrollMarquee 15s linear infinite;
+    }
+
+    @keyframes scrollMarquee {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+
+    /* SECTION 2: HERO BANNER */
+    .hero {
+      background: var(--primary);
+      border: 4px solid var(--black);
+      padding: 3rem 1.5rem;
+      position: relative;
+      transform: rotate(-1.5deg);
+      box-shadow: 8px 8px 0 var(--black);
+    }
+
+    .badge-diagonal {
+      position: absolute;
+      top: -15px; right: 20px;
+      background: var(--accent);
+      color: var(--white);
+      border: 3px solid var(--black);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      transform: rotate(8deg);
+    }
+
+    h1 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3rem, 9vw, 5.5rem);
+      line-height: 0.85;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 span {
+      background: var(--secondary);
+      color: var(--black);
+      padding: 0 12px;
+      display: inline-block;
+      transform: rotate(-3deg);
+    }
+
+    /* SECTION 3: CLASHING GALLERY */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gallery-card {
+      background: var(--secondary);
+      border: 4px solid var(--black);
+      padding: 2rem;
+      box-shadow: 6px 6px 0 var(--black);
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .gallery-card:hover {
+      transform: scale(1.03) rotate(2deg);
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .gallery-card.alt {
+      background: var(--white);
+      transform: rotate(-1.5deg);
+    }
+
+    .gallery-card.alt:hover {
+      transform: scale(1.03) rotate(-3deg);
+      background: var(--accent);
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      background: var(--black);
+      color: var(--secondary);
+      padding: 4px 8px;
+      align-self: flex-start;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    /* SECTION 4: CHAOS SOUNDBOARD (SANDBOX) */
+    .chaos-bench {
+      background: var(--white);
+      border: 4px solid var(--black);
+      padding: 2.5rem;
+      box-shadow: 8px 8px 0 var(--black);
+    }
+
+    .chaos-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      .chaos-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chaos-btn {
+      background: var(--secondary);
+      color: var(--black);
+      border: 3px solid var(--black);
+      padding: 1.25rem;
+      font-family: 'Anton', sans-serif;
+      font-size: 1.35rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--black);
+      transition: all 0.1s ease;
+    }
+
+    .chaos-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    .chaos-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* SECTION 5: OVERSPILL FOOTER */
+    .maximalist-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      background: var(--black);
+      color: var(--secondary);
+      padding: 3rem 1.5rem;
+      border: 4px solid var(--black);
+      margin-bottom: 2rem;
+    }
+
+    .theme-select-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .theme-select-btn {
+      background: var(--black);
+      border: 3px solid var(--secondary);
+      color: var(--secondary);
+      padding: 0.6rem 1.2rem;
+      border-radius: 0;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--secondary);
+      transition: all 0.15s ease;
+    }
+
+    .theme-select-btn:hover {
+      background: var(--secondary);
+      color: var(--black);
+    }
+
+    /* Conic Border Button */
+    .chaos-btn.conic-btn {
+      padding: 3px !important;
+      overflow: hidden;
+      position: relative;
+      transform: translateZ(0);
+      user-select: none;
+    }
+
+    .chaos-btn.conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+      animation: rotateBorder 3s linear infinite;
+      z-index: 1;
+    }
+
+    .chaos-btn.conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--secondary);
+      color: var(--black);
+      width: 100%;
+      height: 100%;
+      padding: 1rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .chaos-btn.conic-btn:hover span {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    
+    <!-- SECTION 1: MARQUEE HEADER -->
+    <div class="marquee-container">
+      <div class="marquee-text">
+        ✦ MAXIMUM SATURATION // NO LAYOUT RESTRAINT // BREAK THE GRID SYMMETRY // NO RULES // ✦ MAXIMUM SATURATION // NO LAYOUT RESTRAINT // BREAK THE GRID SYMMETRY // NO RULES //
+      </div>
+    </div>
+
+    <!-- SECTION 2: HERO BANNER -->
+    <header class="hero">
+      <div class="badge-diagonal">CATALOG V.02</div>
+      <span class="card-label">RULE BREAKING SYSTEM</span>
+      <h1>ANTI<br><span>DESIGN</span></h1>
+      <p style="font-size:0.9rem; line-height:1.6; margin-top:1rem;">
+        Sengaja menabrak batas simetri standard. Menampilkan paduan warna bersaturasi tinggi serta teks display Anton yang menabrak label monospace mini.
+      </p>
+    </header>
+
+    <!-- SECTION 3: CLASHING GALLERY -->
+    <section class="gallery-grid">
+      <div class="gallery-card">
+        <span class="card-label">01 / DENSE</span>
+        <h3 style="font-family:'Anton',sans-serif; font-size:1.6rem; text-transform:uppercase;">CLASH DISPLAY</h3>
+        <p style="font-size:0.8rem; line-height:1.5; margin-top:0.5rem;">Pink bersanding di atas warna hijau lemon bersaturasi maksimum.</p>
+      </div>
+
+      <div class="gallery-card alt">
+        <span class="card-label" style="background:var(--accent); color:var(--white);">02 / ANGLE</span>
+        <h3 style="font-family:'Anton',sans-serif; font-size:1.6rem; text-transform:uppercase;">ROTATED BADGE</h3>
+        <p style="font-size:0.8rem; line-height:1.5; margin-top:0.5rem;">Memiringkan elemen layout secara ekstrem untuk efek visual menonjol.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: CHAOS SOUNDBOARD (SANDBOX) -->
+    <section class="chaos-bench">
+      <span class="card-label" style="background:var(--black); color:var(--white);">INTERACTIVE CHAOS MODULATION</span>
+      <h3 style="font-family:'Anton',sans-serif; font-size:1.8rem; text-transform:uppercase; margin-top:0.5rem;">Saturate Vortex</h3>
+      <p style="font-size:0.8rem; line-height:1.5; margin-top:0.5rem;">Klik tombol di bawah untuk memicu distorsi layar dan bunyi sintetis.</p>
+      
+      <div class="chaos-grid">
+        <button class="chaos-btn" onclick="triggerChaos('invert')">Invert Screen</button>
+        <div class="chaos-btn conic-btn" onclick="triggerChaos('synth')">
+          <span>Synth Blip</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: OVERSPILL FOOTER -->
+    <footer class="maximalist-footer">
+      <h2 style="font-family:'Anton',sans-serif; font-size:2.5rem; text-transform:uppercase;">CLASH SCHEME SELECTOR</h2>
+      
+      <div class="theme-select-row">
+        <button class="theme-select-btn active" data-theme="pink" onclick="setMaximalistTheme('pink', this)">Acid Pink</button>
+        <button class="theme-select-btn" data-theme="cyan" onclick="setMaximalistTheme('cyan', this)">Toxic Cyan</button>
+        <button class="theme-select-btn" data-theme="lime" onclick="setMaximalistTheme('lime', this)">Poison Lime</button>
+      </div>
+      
+      <div style="font-size:0.65rem; text-align:center; opacity:0.7;">
+        MAXIMALIST LAB // 2026 // ANTI-ESTABLISHMENT GRID SYSTEM
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Audio synthesizer helper
+    let audioCtx = null;
+    function playBeep(freq, duration) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    // Trigger chaos actions
+    function triggerChaos(type) {
+      if (type === 'invert') {
+        playBeep(120, 0.4);
+        document.body.classList.add('invert-chaos');
+        setTimeout(() => {
+          document.body.classList.remove('invert-chaos');
+        }, 300);
+      } else if (type === 'synth') {
+        playBeep(880, 0.15);
+        setTimeout(() => playBeep(1320, 0.2), 100);
+      }
+    }
+
+    // Theme Switcher API
+    window.setMaximalistTheme = function(themeName, btn) {
+      const root = document.documentElement;
+      root.className = '';
+      if (themeName !== 'pink') {
+        root.classList.add('theme-' + themeName);
+      }
+
+      document.querySelectorAll('.theme-select-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Nouveau / Jugendstil Brand</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Infant:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Sorts+Mill+Goudy:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #F5F0E6; --fg: #3E2723; --accent: #4A6741; --gold: #C9A961; --rose: #C4A4A4;
+      --card-bg: #FDF8F0; --border-curve: #4A6741; --nav-gold: #C9A961; --stripe: #E8E0D0;
+      --initial-cap: #C9A961; --floral-stroke: #4A6741; --footer-gold: #C9A961;
+    }
+    html.theme-camo {
+      --bg: #F5F0E6; --fg: #3E2723; --accent: #4A6741; --gold: #C9A961; --rose: #C4A4A4;
+      --card-bg: #FDF8F0; --border-curve: #4A6741; --nav-gold: #C9A961; --stripe: #E8E0D0;
+      --initial-cap: #C9A961; --floral-stroke: #4A6741; --footer-gold: #C9A961;
+    }
+    html.theme-rose {
+      --bg: #F5EDED; --fg: #3E2723; --accent: #C4A4A4; --gold: #C9A961; --rose: #C4A4A4;
+      --card-bg: #FDF5F5; --border-curve: #C4A4A4; --nav-gold: #C9A961; --stripe: #E8D8D8;
+      --initial-cap: #C9A961; --floral-stroke: #C4A4A4; --footer-gold: #C9A961;
+    }
+    html.theme-walnut {
+      --bg: #3E2723; --fg: #E8DCC8; --accent: #C9A961; --gold: #C9A961; --rose: #C4A4A4;
+      --card-bg: #4A3428; --border-curve: #C9A961; --nav-gold: #C9A961; --stripe: #4A3428;
+      --initial-cap: #C9A961; --floral-stroke: #C9A961; --footer-gold: #C9A961;
+    }
+    html.theme-cream {
+      --bg: #FFFDF5; --fg: #3E2723; --accent: #4A6741; --gold: #D4AF37; --rose: #D4A4A4;
+      --card-bg: #FFFFFF; --border-curve: #4A6741; --nav-gold: #D4AF37; --stripe: #F0EDE0;
+      --initial-cap: #D4AF37; --floral-stroke: #4A6741; --footer-gold: #D4AF37;
+    }
+
+    body {
+      background: var(--bg); color: var(--fg);
+      font-family: 'Sorts Mill Goudy', serif; font-size: 17px; line-height: 1.8;
+      min-height: 100vh; overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    /* wallpaper stripes */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: repeating-linear-gradient(90deg, transparent, transparent 59px, var(--stripe) 59px, var(--stripe) 60px);
+      pointer-events: none; z-index: 0;
+    }
+
+    .page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem 3rem 1rem; }
+
+    /* nav */
+    .nav { display: flex; justify-content: center; gap: 2.5rem; padding: 1.5rem 0 2rem; flex-wrap: wrap; }
+    .nav a { font-family: 'Cormorant Infant', serif; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--nav-gold); text-decoration: none; position: relative; padding-bottom: 4px; }
+    .nav a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 1px; background: var(--gold); transition: width 0.4s ease-out; transform-origin: center; }
+    .nav a:hover::after { width: 100%; left: 0; }
+    .nav a:hover { color: var(--gold); }
+
+    /* hero */
+    .hero { text-align: center; padding: 3rem 0 2rem; position: relative; }
+
+    .initial-cap { font-family: 'Cormorant Garamond', serif; font-size: 5rem; color: var(--initial-cap); float: left; line-height: 0.85; margin-right: 0.4rem; position: relative; }
+    .initial-cap svg { display: inline-block; vertical-align: middle; margin-right: 4px; width: auto; height: 5rem; }
+
+    .hero-headline { font-family: 'Cormorant Infant', serif; font-size: clamp(2.5rem,6vw,4.5rem); font-weight: 500; line-height: 1.2; color: var(--fg); margin: 1rem 0; }
+    .hero-headline i { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 1rem; color: var(--gold); letter-spacing: 0.1em; font-family: 'Cormorant Infant', serif; text-transform: uppercase; margin-bottom: 1.5rem; }
+
+    /* whiplash curves (SVG decorative frames) */
+    .whiplash-frame { position: relative; margin: 3rem 0; }
+    .whiplash-frame svg { width: 100%; height: 60px; overflow: visible; }
+    .whiplash-frame .curve-path { fill: none; stroke: var(--border-curve); stroke-width: 2; stroke-dasharray: 600; stroke-dashoffset: 600; animation: growCurve 1.5s ease-out forwards; }
+    .whiplash-frame.left svg { transform: scaleX(-1); }
+    @keyframes growCurve { to { stroke-dashoffset: 0; } }
+
+    /* vertical whiplash side frames */
+    .side-curves { position: absolute; top: 0; bottom: 0; width: 80px; pointer-events: none; }
+    .side-curves.left { left: -60px; }
+    .side-curves.right { right: -60px; }
+    .side-curves svg { height: 100%; width: 100%; }
+
+    /* section frames */
+    .section-frame { position: relative; padding: 2.5rem 2rem; margin: 3rem 0; background: var(--card-bg); border: 1px solid var(--border-curve); border-radius: 50% 50% 0 0 / 20% 20% 0 0; }
+    .section-frame::before { content: ''; position: absolute; inset: 4px; border: 1px solid var(--gold); border-radius: 50% 50% 0 0 / 20% 20% 0 0; pointer-events: none; }
+    .section-title { font-family: 'Cormorant Infant', serif; font-size: 2.2rem; font-weight: 500; color: var(--accent); margin-bottom: 1rem; }
+
+    /* floral ornament inline */
+    .floral-ornament { display: inline-block; vertical-align: middle; margin: 0 0.5rem; }
+    .floral-ornament svg { width: 24px; height: 24px; stroke: var(--floral-stroke); fill: none; stroke-width: 1.5; }
+
+    /* decorative initial per section */
+    .dropcap { font-family: 'Cormorant Garamond', serif; font-size: 4rem; color: var(--gold); float: left; line-height: 0.8; margin-right: 0.6rem; margin-top: 0.1rem; font-weight: 500; }
+
+    /* products grid */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin: 2rem 0; }
+    .product-card { background: var(--card-bg); border: 2px solid var(--gold); border-radius: 50% 50% 0 0 / 20% 20% 0 0; padding: 2rem 1.5rem 1.5rem; text-align: center; transition: transform 0.8s ease-out; }
+    .product-card:hover { transform: scale(1.02); }
+    .product-card h3 { font-family: 'Cormorant Infant', serif; font-size: 1.3rem; color: var(--accent); margin-bottom: 0.5rem; }
+    .product-card p { font-size: 0.9rem; color: var(--fg); }
+
+    /* quote */
+    .quote-block { max-width: 48ch; margin: 2rem auto; text-align: center; font-style: italic; font-size: 1.1rem; color: var(--fg); position: relative; padding: 0 2rem; }
+    .quote-block::before, .quote-block::after { content: '"'; font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: var(--gold); position: absolute; line-height: 1; }
+    .quote-block::before { top: -0.5rem; left: 0; }
+    .quote-block::after { bottom: -1.5rem; right: 0; content: '"'; }
+    .quote-author { margin-top: 0.8rem; font-style: normal; font-size: 0.85rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* footer */
+    .footer { text-align: center; padding: 2rem 0 1rem; }
+    .footer-separator { margin: 1.5rem 0; }
+    .footer-separator svg { width: 100%; height: 40px; overflow: visible; }
+    .footer-iris { margin: 0.8rem 0; }
+    .footer-iris svg { width: 28px; height: 28px; stroke: var(--footer-gold); fill: none; stroke-width: 1.5; }
+    .footer p { font-size: 0.8rem; color: var(--fg); letter-spacing: 0.05em; }
+
+    /* theme switcher */
+    .theme-section { text-align: center; padding: 2rem 0 1rem; margin-top: 2rem; border-top: 1px solid var(--stripe); }
+    .theme-btn { font-family: 'Cormorant Infant', serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 0.4rem 1rem; cursor: pointer; margin: 0 0.3rem; transition: background 0.3s, color 0.3s; }
+    .theme-btn:hover, .theme-btn.active { background: var(--gold); color: var(--bg); }
+
+    /* scroll reveal */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* image oval mask */
+    .oval-mask { width: 200px; height: 260px; border-radius: 50%; margin: 1.5rem auto; overflow: hidden; background: var(--accent); opacity: 0.6; display: flex; align-items: center; justify-content: center; color: var(--card-bg); font-family: 'Cormorant Infant', serif; font-size: 0.9rem; letter-spacing: 0.1em; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- SECTION 1: Hero -->
+    <nav class="nav">
+      <a href="#">Atelier</a>
+      <a href="#">Collections</a>
+      <a href="#">Journal</a>
+      <a href="#">Exhibition</a>
+      <a href="#">Contact</a>
+    </nav>
+
+    <div class="hero" style="position:relative;">
+      <!-- Side whiplash curves -->
+      <div class="side-curves left">
+        <svg viewBox="0 0 80 400" preserveAspectRatio="none">
+          <path d="M80,0 C20,50 60,150 10,200 C60,250 20,350 80,400" fill="none" stroke="var(--border-curve)" stroke-width="2" stroke-dasharray="600" stroke-dashoffset="0"/>
+        </svg>
+      </div>
+      <div class="side-curves right">
+        <svg viewBox="0 0 80 400" preserveAspectRatio="none">
+          <path d="M0,0 C60,50 20,150 70,200 C20,250 60,350 0,400" fill="none" stroke="var(--border-curve)" stroke-width="2" stroke-dasharray="600" stroke-dashoffset="0"/>
+        </svg>
+      </div>
+
+      <div class="hero-sub">Maison d'Artisanat</div>
+      <h1 class="hero-headline" style="max-width:12ch;margin:0.5rem auto;">
+        <span class="initial-cap">
+          <svg viewBox="0 0 40 50" width="40" height="50">
+            <path d="M12,48 C8,38 4,28 4,16 C4,6 10,2 20,2 C30,2 36,6 36,16 C36,28 32,38 28,48" fill="none" stroke="var(--initial-cap)" stroke-width="2"/>
+            <path d="M14,42 C12,36 8,28 8,18 C8,10 14,6 20,6 C26,6 32,10 32,18 C32,28 28,36 26,42" fill="none" stroke="var(--initial-cap)" stroke-width="1.5"/>
+            <circle cx="20" cy="16" r="4" fill="var(--initial-cap)" opacity="0.6"/>
+            <path d="M20,20 L20,36 M14,28 L26,28" stroke="var(--initial-cap)" stroke-width="1"/>
+          </svg>
+        </span>
+        Artisanal <i>Craft</i><br>Meet Modern
+      </h1>
+      <p style="max-width:50ch;margin:1rem auto;font-size:1.05rem;color:var(--fg);">Where the organic lines of nature meet the elegance of fine craftsmanship. Each piece tells a story rooted in tradition.</p>
+      <div class="oval-mask">atelier portrait</div>
+    </div>
+
+    <div class="whiplash-frame">
+      <svg viewBox="0 0 800 60" preserveAspectRatio="none">
+        <path class="curve-path" d="M0,30 C100,60 200,0 400,30 C600,60 700,0 800,30" stroke="var(--border-curve)" fill="none" stroke-width="2"/>
+        <path class="curve-path" d="M0,30 C100,60 200,0 400,30 C600,60 700,0 800,30" stroke="var(--border-curve)" fill="none" stroke-width="1" transform="translate(0,8)" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <!-- SECTION 2: Philosophy -->
+    <div class="section-frame reveal">
+      <span class="dropcap">O</span>
+      <h2 class="section-title" style="display:inline;">ur Philosophy</h2>
+      <div class="floral-ornament">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12,9 C8,7 6,3 12,1 C18,3 16,7 12,9 M12,15 C8,17 6,21 12,23 C18,21 16,17 12,15 M9,12 C7,8 3,6 1,12 C3,18 7,16 9,12 M15,12 C17,8 21,6 23,12 C21,18 17,16 15,12"/></svg>
+      </div>
+      <p>Rooted in the traditions of <em>Jugendstil</em>, we believe every object deserves to be beautiful. Our workshop draws inspiration from the natural world — the curve of a vine, the cup of a lily, the veins of a leaf — transforming them into furniture, textiles, and ornaments that bring warmth and grace to modern living.</p>
+      <p style="margin-top:0.8rem;">We use reclaimed materials, botanical dyes, and time-honored joinery. Each piece is signed and dated by the master artisan who shaped it.</p>
+    </div>
+
+    <div class="whiplash-frame" style="transform:scaleY(-1);">
+      <svg viewBox="0 0 800 40" preserveAspectRatio="none">
+        <path class="curve-path" d="M0,20 C150,45 300,-5 500,20 C650,40 750,5 800,20" fill="none" stroke="var(--border-curve)" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <!-- SECTION 3: Collections -->
+    <div class="section-frame reveal">
+      <span class="dropcap">C</span>
+      <h2 class="section-title" style="display:inline;">ollections</h2>
+      <div class="products-grid">
+        <div class="product-card">
+          <div class="floral-ornament" style="margin:0 0 0.5rem;">
+            <svg viewBox="0 0 24 24"><path d="M12,2 C8,6 6,12 6,18 C6,22 8,24 12,24 C16,24 18,22 18,18 C18,12 16,6 12,2" fill="none" stroke="var(--gold)" stroke-width="1.5"/><path d="M12,6 C14,10 14,14 12,18 C10,14 10,10 12,6"/></svg>
+          </div>
+          <h3>Willow Lounge</h3>
+          <p>Hand-carved armchairs with flowing vine motifs in moss green velvet.</p>
+        </div>
+        <div class="product-card">
+          <div class="floral-ornament" style="margin:0 0 0.5rem;">
+            <svg viewBox="0 0 24 24"><path d="M4,12 C4,6 8,2 12,2 C16,2 20,6 20,12 C20,18 16,22 12,22" fill="none" stroke="var(--gold)" stroke-width="1.5"/><path d="M8,12 C8,8 10,6 12,6 C14,6 16,8 16,12 C16,16 14,18 12,18"/></svg>
+          </div>
+          <h3>Lily Table</h3>
+          <p>Dining table with a pedestal base shaped like lotus petals, finished in antique gold.</p>
+        </div>
+        <div class="product-card">
+          <div class="floral-ornament" style="margin:0 0 0.5rem;">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12,8 L12,0 M12,24 L12,16 M8,12 L0,12 M24,12 L16,12"/></svg>
+          </div>
+          <h3>Iris Screen</h3>
+          <p>Three-panel folding screen with stained glass iris inserts in amber and sage.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="whiplash-frame">
+      <svg viewBox="0 0 800 50" preserveAspectRatio="none">
+        <path class="curve-path" d="M0,25 C120,55 250,5 400,25 C550,45 680,5 800,25" fill="none" stroke="var(--border-curve)" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <!-- SECTION 4: Testimonial / Quote -->
+    <div class="section-frame reveal" style="text-align:center;">
+      <div class="floral-ornament" style="margin-bottom:0.8rem;">
+        <svg viewBox="0 0 32 16" width="80" height="32">
+          <path d="M4,12 C0,8 4,2 10,4 C14,5 16,2 16,2 C16,2 18,5 22,4 C28,2 32,8 28,12" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
+          <circle cx="16" cy="10" r="2" fill="none" stroke="var(--gold)" stroke-width="1"/>
+        </svg>
+      </div>
+      <h2 class="section-title">In the Words of Our Patrons</h2>
+      <div class="quote-block">
+        The willow lounge chair is not furniture — it is a poem you sit in. Every curve invites rest, every detail rewards attention.
+      </div>
+      <div class="quote-author">— Marguerite L., Proprietor, Le Jardin Gallery</div>
+    </div>
+
+    <div class="whiplash-frame" style="transform:scaleY(-1);">
+      <svg viewBox="0 0 800 40" preserveAspectRatio="none">
+        <path class="curve-path" d="M0,20 C200,45 350,-5 500,20 C650,40 750,5 800,20" fill="none" stroke="var(--border-curve)" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <!-- SECTION 5: Atelier / Footer -->
+    <div class="section-frame reveal" style="text-align:center;">
+      <span class="dropcap" style="float:none;display:inline-block;">V</span>
+      <h2 class="section-title" style="display:inline;">isit Our Atelier</h2>
+      <p style="max-width:48ch;margin:1rem auto;">Nestled in the old quarter, our workshop doors are open. Watch artisans at work, feel the materials, and commission a piece as unique as your home.</p>
+      <p style="font-family:'Cormorant Infant',serif;font-size:1.1rem;color:var(--gold);margin-top:0.8rem;">14 Rue des Artisans · Brussels · By appointment</p>
+    </div>
+
+    <!-- Whiplash Footer Separator -->
+    <div class="footer-separator">
+      <svg viewBox="0 0 800 40" preserveAspectRatio="none">
+        <path d="M0,20 C100,0 200,40 400,20 C600,0 700,40 800,20" fill="none" stroke="var(--border-curve)" stroke-width="1.5" stroke-dasharray="400" stroke-dashoffset="0"/>
+        <path d="M0,20 C100,0 200,40 400,20 C600,0 700,40 800,20" fill="none" stroke="var(--border-curve)" stroke-width="1" transform="translate(0,6)" opacity="0.3" stroke-dasharray="400" stroke-dashoffset="0"/>
+      </svg>
+    </div>
+
+    <div class="footer">
+      <div class="footer-iris">
+        <svg viewBox="0 0 28 28">
+          <path d="M14,4 C10,8 8,14 8,20 C8,24 10,26 14,26 C18,26 20,24 20,20 C20,14 18,8 14,4" fill="none" stroke="var(--footer-gold)" stroke-width="1.5"/>
+          <path d="M14,8 C16,12 16,16 14,20 C12,16 12,12 14,8" fill="var(--footer-gold)" opacity="0.6"/>
+          <circle cx="14" cy="14" r="1.5" fill="var(--footer-gold)"/>
+        </svg>
+      </div>
+      <p>&copy; 2026 Maison Art Nouveau — Crafted with patience and passion.</p>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-section">
+      <button class="theme-btn" data-theme="camo">Camo</button>
+      <button class="theme-btn" data-theme="rose">Rose</button>
+      <button class="theme-btn" data-theme="walnut">Walnut</button>
+      <button class="theme-btn" data-theme="cream">Cream</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      // Scroll reveal
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      }, { threshold: 0.2 });
+      document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+      // Set initial theme from class
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+      });
+    });
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      try { localStorage.setItem('ui-beta-preview-theme', n); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

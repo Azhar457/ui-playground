@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Exploration Playground — Beta</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome & GSAP -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #070A13;
+      --bg-panel: #0E1325;
+      --bg-card: #151C34;
+      --border-color: #1F284B;
+      --text-white: #F1F5F9;
+      --text-gray: #7F8EA3;
+      --accent-purple: #8B5CF6;
+      --accent-lime: #A8E815;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100vw; height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .glow-blob {
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: var(--accent-purple);
+      filter: blur(120px);
+      opacity: 0.12;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    aside {
+      width: 340px; height: 100%;
+      border-right: 1px solid var(--border-color);
+      background: rgba(14, 19, 37, 0.6);
+      backdrop-filter: blur(16px);
+      display: flex; flex-direction: column;
+      position: relative; z-index: 10;
+    }
+
+    .sidebar-header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem; font-weight: 700;
+      letter-spacing: 1.5px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .sidebar-brand i { color: var(--accent-purple); }
+
+    .sidebar-subtitle {
+      font-size: 0.75rem; color: var(--text-gray);
+      margin-top: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .beta-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      background: var(--accent-lime);
+      color: #000;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      vertical-align: middle;
+    }
+
+    .style-list {
+      flex: 1; overflow-y: auto;
+      padding: 1rem 0.75rem;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    .style-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0.85rem 1rem;
+      border-radius: 8px; cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-align: left; background: transparent;
+      color: var(--text-white); width: 100%;
+    }
+
+    .style-item:hover {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.05);
+    }
+
+    .style-item.active {
+      background: rgba(139,92,246,0.12);
+      border-color: rgba(139,92,246,0.35);
+    }
+
+    .style-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; color: var(--accent-purple);
+      font-weight: bold; width: 20px;
+    }
+
+    .style-name-wrap { flex: 1; display: flex; flex-direction: column; }
+    .style-title { font-size: 0.85rem; font-weight: 600; }
+    .style-desc { font-size: 0.7rem; color: var(--text-gray); margin-top: 0.15rem; }
+
+    main {
+      flex: 1; height: 100%;
+      display: flex; flex-direction: column;
+      position: relative; z-index: 10;
+    }
+
+    .top-bar {
+      height: 60px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 2rem;
+      background: rgba(7,10,19,0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .top-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 1.1rem;
+    }
+
+    .sim-toggle-group {
+      display: flex; gap: 4px;
+      background: var(--bg-panel);
+      padding: 4px; border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .sim-btn {
+      background: transparent; border: none;
+      color: var(--text-gray);
+      padding: 6px 12px; border-radius: 6px;
+      cursor: pointer; font-size: 0.8rem; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .sim-btn.active {
+      background: var(--bg-card);
+      color: var(--text-white);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+
+    .workspace-split { flex: 1; display: flex; overflow: hidden; }
+
+    .simulator-container {
+      flex: 1.2;
+      background: #04060b;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem; position: relative; overflow: auto;
+    }
+
+    .device-shell {
+      background: #181E36;
+      border-radius: 20px; padding: 10px;
+      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.8);
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      display: flex; flex-direction: column; position: relative;
+    }
+
+    .device-screen-host {
+      border-radius: 12px; background: #000;
+      overflow: hidden; position: relative; flex: 1;
+    }
+
+    #preview-frame {
+      width: 100%; height: 100%;
+      border: none; background: var(--bg-dark);
+      transition: all 0.3s ease;
+    }
+
+    .device-desktop { width: 100%; height: 100%; border-radius: 0; padding: 0; box-shadow: none; background: transparent; }
+    .device-tablet { width: 768px; height: 520px; }
+    .device-mobile { width: 375px; height: 600px; border-radius: 36px; padding: 12px; }
+
+    .inspector-panel {
+      width: 460px;
+      border-left: 1px solid var(--border-color);
+      background: var(--bg-panel);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    .tab-header { display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.15); }
+
+    .tab-btn {
+      flex: 1; padding: 1rem 0;
+      text-align: center; font-size: 0.8rem; font-weight: 600;
+      color: var(--text-gray); background: transparent;
+      border: none; cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active { color: var(--text-white); border-bottom-color: var(--accent-purple); background: rgba(139,92,246,0.03); }
+
+    .tab-content-area { flex: 1; overflow-y: auto; padding: 1.5rem; }
+    .tab-pane { display: none; flex-direction: column; height: 100%; }
+    .tab-pane.active { display: flex; }
+
+    .prompt-box-wrap { position: relative; flex: 1; display: flex; flex-direction: column; }
+
+    .code-box {
+      width: 100%; flex: 1;
+      background: #04060b;
+      border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; color: #A8C2E5;
+      line-height: 1.6; resize: none; outline: none;
+    }
+
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(139,92,246,0.2);
+      border: 1px solid rgba(139,92,246,0.4);
+      color: var(--text-white);
+      padding: 6px 12px; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover { background: var(--accent-purple); box-shadow: 0 0 12px rgba(139,92,246,0.5); }
+
+    .guide-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent-purple); }
+    .guide-section { margin-bottom: 1.5rem; }
+    .guide-section h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-white); text-transform: uppercase; letter-spacing: 0.5px; }
+    .guide-section p { font-size: 0.8rem; color: var(--text-gray); line-height: 1.6; }
+    .guide-list { list-style-type: none; display: flex; flex-direction: column; gap: 6px; margin-top: 0.5rem; }
+    .guide-list li { font-size: 0.8rem; color: var(--text-gray); padding-left: 15px; position: relative; }
+    .guide-list li::before { content: '•'; color: var(--accent-purple); position: absolute; left: 0; font-weight: bold; }
+
+    .splash-card {
+      max-width: 480px; text-align: center;
+      padding: 3rem 2rem;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+
+    .splash-card i { font-size: 3rem; color: var(--accent-purple); margin-bottom: 1.5rem; text-shadow: 0 0 20px rgba(139,92,246,0.4); }
+    .splash-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .splash-card p { font-size: 0.85rem; color: var(--text-gray); line-height: 1.6; margin-bottom: 2rem; }
+
+    .premium-link-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, var(--accent-purple), #06B6D4);
+      color: var(--text-white); text-decoration: none;
+      font-size: 0.75rem; font-weight: 700;
+      padding: 0.6rem 1rem; border-radius: 8px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+      transition: all 0.2s ease;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .premium-link-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,92,246,0.6); filter: brightness(1.1); }
+    .premium-link-btn i { font-size: 0.85rem; animation: sparkleRotate 2.5s infinite linear; }
+
+    @keyframes sparkleRotate {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.2); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-blob" style="top:-50px; left:-50px;"></div>
+  <div class="glow-blob" style="bottom:-50px; right:-100px; background: #06B6D4;"></div>
+
+  <aside>
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <i class="fas fa-cubes"></i> UI PLAYGROUND <span class="beta-badge">BETA</span>
+      </div>
+      <div class="sidebar-subtitle">42 ARCHITECTURAL AESTHETICS</div>
+      <a href="showcase.html" target="_blank" class="premium-link-btn">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> View Premium Showcase
+      </a>
+    </div>
+    <div class="style-list" id="style-list"><!-- generated dynamically --></div>
+  </aside>
+
+  <main>
+    <div class="top-bar">
+      <div class="top-title" id="active-title">Select an Aesthetic</div>
+      <div class="sim-toggle-group">
+        <button class="sim-btn active" onclick="setDevice('desktop')"><i class="fas fa-desktop"></i> Desktop</button>
+        <button class="sim-btn" onclick="setDevice('tablet')"><i class="fas fa-tablet-alt"></i> Tablet</button>
+        <button class="sim-btn" onclick="setDevice('mobile')"><i class="fas fa-mobile-alt"></i> Mobile</button>
+      </div>
+    </div>
+
+    <div class="workspace-split">
+      <div class="simulator-container" id="sim-container">
+        <div class="splash-card" id="splash-card">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <h2>Aesthetic Explorer</h2>
+          <p>Selamat datang di laboratorium UI/UX. Pilih salah satu arah desain di bilah kiri untuk menguji demonstrasi interaktif serta mengunduh prompt rekayasa kodenya.</p>
+          <span style="font-size:0.75rem;color:var(--text-gray);font-family:'JetBrains Mono',monospace;">Select a design style to begin.</span>
+        </div>
+        <div class="device-shell device-desktop" id="device-shell" style="display:none;">
+          <div class="device-screen-host">
+            <iframe id="preview-frame" src=""></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="inspector-panel">
+        <div class="tab-header">
+          <button class="tab-btn active" onclick="switchTab('prompt')">SYSTEM PROMPT</button>
+          <button class="tab-btn" onclick="switchTab('guide')">STYLE GUIDE</button>
+        </div>
+        <div class="tab-content-area">
+          <div class="tab-pane active" id="tab-prompt">
+            <div class="prompt-box-wrap">
+              <button class="copy-btn" onclick="copyPrompt()"><i class="far fa-copy"></i> Copy Prompt</button>
+              <textarea class="code-box" id="prompt-code" readonly>Pilih arah desain untuk melihat detail prompt rekayasa di sini.</textarea>
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-guide">
+            <div id="guide-content"><p style="color:var(--text-gray);font-size:0.85rem;">Pilih arah desain untuk memuat manual panduan gaya.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const styleData = [
+      // ========== V1: Original 10 ==========
+      {
+        id: 1, title: "Neobrutalism Landing Page",
+        desc: "Border tebal, flat color neon, offset hard-shadow",
+        path: "previews/1-neobrutalism.html",
+        avoid: "border-radius > 8px, gradients, blurred/soft shadows, muted/pastel palettes, perfectly centered-everything symmetry.",
+        guide: { key: "Border hitam tegas tebal (3-4px), bayangan offset keras tanpa blur (hard-shadow), warna kontras/ngejreng polos tanpa gradasi (flat).", typo: "Display chunky (Archivo Black/Unbounded) + label monospace (JetBrains Mono).", motion: "Translasi 2px ke bawah-kanan saat diklik/hover (seolah menekan bayangannya sendiri)." },
+        prompt: "Build a Neobrutalist SaaS landing page using Next.js + Tailwind CSS.\n\nVisual language:\n- Solid 3-4px black borders on every interactive element (buttons, cards, inputs, badges)\n- Hard offset drop-shadows with zero blur: box-shadow: 4px 4px 0px #000 (no blur-radius, ever)\n- Flat, ungradiented colors — 2 loud accent colors max + black/white base (e.g. #FFEB3B, #FF5252, #000, #FFF)\n\nTypography:\n- One heavy grotesque display font for headlines — Archivo Black, Unbounded, or Clash Display at 700-900 weight\n- Headline sizes: clamp(2.5rem, 6vw, 5rem)\n- JetBrains Mono for small labels/captions, plain sans for body text\n\nInteraction:\n- Buttons shift 2px on hover/active (simulating being pressed into their own shadow), not fade/scale\n- Break the grid at least once — one element rotated 2-3deg or intentionally overflowing its container\n\nSections: hero (oversized headline + 1 primary CTA + 1 stat badge), 3-column feature grid (each card a different flat accent color), pricing table with the \"popular\" plan visually thicker-bordered."
+      },
+      {
+        id: 2, title: "Glassmorphism SaaS Dashboard",
+        desc: "Panel transparan backdrop-blur dengan ambient glow latar gelap",
+        path: "previews/2-glassmorphism.html",
+        avoid: "light-mode glassmorphism (reads flat/dated), heavy borders, drop-shadows, oversaturated glass tint.",
+        guide: { key: "Backdrop blur tinggi (blur-xl), lapisan putih transparan tipis (bg-white/5-10) dengan border highlight 1px.", typo: "Font sans modern (Geist/General Sans) dengan opasitas teks bervariasi (90% utama, 50% sekunder).", motion: "Efek gradien bersinar mengikuti posisi pointer pada tepian panel." },
+        prompt: "Build a SaaS analytics dashboard using Next.js + Tailwind CSS with a Glassmorphism aesthetic.\n\nBackground:\n- Dark gradient base (radial gradient #0F172A → #1E1B4B)\n- 2-3 large blurred color blobs behind content for ambient glow (purple #8B5CF6, cyan #22D3EE), blur-3xl, 15-25% opacity\n\nCards/panels:\n- backdrop-blur-xl, bg-white/5 to bg-white/10, border border-white/10 (1px only)\n- rounded-2xl\n- subtle 1px inner top-edge highlight (pseudo-element gradient) to simulate light catching glass\n\nTypography: Geist, General Sans, or Switzer (skip Inter). text-white/90 primary, text-white/50 secondary.\n\nData viz: charts use glow-accent colors as low-opacity fills, not solid fills.\n\nLayout: fixed glass sidebar nav, top row of 4 glass stat cards, main glass-paneled chart area, glass modal/dropdown showing blur-on-blur layering."
+      },
+      {
+        id: 3, title: "Dark Luxury Editorial Portfolio",
+        desc: "Tipografi serif besar, warna metalik, whitespace lega",
+        path: "previews/3-dark-luxury.html",
+        avoid: "rounded-full buttons, bright saturated colors, playful icons, generic 3-card-grid layouts, sans-only typography.",
+        guide: { key: "Latar hitam arang hangat, teks putih gading hangat, garis pembatas tipis beraksen warna logam/emas redup.", typo: "Kombinasi serif kontras tinggi (Fraunces/Playfair Display) dengan sans minimalis (Neue Montreal/Söhne).", motion: "Transisi scroll lembut lambat (fade + geser ke atas 8px) tanpa efek pegas." },
+        prompt: "Build a personal portfolio/brand site using Next.js + Tailwind CSS in a Dark Luxury Editorial style.\n\nPalette: near-black background (#0A0908 or #121212), warm off-white text (#F5F0E8, never pure white), one metallic accent used ONLY for thin dividers/underlines/small icons (muted brass #B8935F or #C9A961).\n\nTypography: High-contrast serif display for headlines — Fraunces or Playfair Display (italic for emphasis), clamp(3rem, 7vw, 6rem). Neue Montreal or Söhne for body/nav.\n\nLayout: asymmetric editorial grid, full-viewport hero, generous whitespace.\n\nMotion: slow fade + 8px upward translate on scroll (400-600ms ease-out, staggered 80-100ms)."
+      },
+      {
+        id: 4, title: "Bento-Grid Modern SaaS Landing",
+        desc: "Tata letak grid modular bento-box bergaya Linear/Vercel",
+        path: "previews/4-bento-grid.html",
+        avoid: "purple-to-pink gradient hero backgrounds, stock illustration people, generic 3-icon-feature-row layouts, drop shadows on cards.",
+        guide: { key: "Komposisi kotak modular bertingkat (Bento-grid) dengan sudut lengkung seragam 12px dan border kelabu tipis.", typo: "Monospace untuk label kecil/versi rilis, Geist/General Sans untuk teks sistem utama.", motion: "Hover mengangkat komponen ke atas 2px dengan transisi cepat 150ms." },
+        prompt: "Build a modern SaaS landing page using Next.js + Tailwind CSS in a Bento-Grid style (Linear/Vercel/Attio aesthetic).\n\nLayout: CSS grid bento section, 5-6 cards with varied spans (one 2x2, two 1x1, one 2x1), grid-cols-4 gap-4, every card rounded-xl (12px).\n\nPalette: ONE neutral base, single accent color (#6366F1 or #10B981) used minimally on CTAs/active states only.\n\nCards: border border-black/10 (light) or border-white/10 (dark), NO drop shadows, subtle bg differentiation only.\n\nTypography: Geist or General Sans, monospace for small labels.\n\nMicro-interaction: cards lift 2px + border brightens on hover (150ms ease). Include one \"alive\" card."
+      },
+      {
+        id: 5, title: "Maximalist / Anti-Design Layout",
+        desc: "Overlap elemen ekstrem, mix font tabrakan, warna jenuh tinggi",
+        path: "previews/5-maximalist.html",
+        avoid: "any symmetric 12-column grid, muted/pastel colors, single consistent font, calm generous whitespace, subtle animations.",
+        guide: { key: "Pemutusan grid simetris, tumpang tindih elemen (overlapping), warna-warna neon jenuh tinggi yang sengaja tabrakan.", typo: "Font display tinggi padat (Bebas Neue/Anton) disandingkan dengan monospace sangat kecil (Space Mono).", motion: "Transisi cepat berenergi tinggi (150ms) dengan akselerasi tajam/efek memantul berlebih." },
+        prompt: "Build a landing page using Next.js + Tailwind CSS in a Maximalist/Anti-Design style.\n\nComposition: overlap at least 3 elements intentionally. Use absolute/rotate/z-index liberally.\n\nTypography: mix 2 unrelated type styles — condensed bold display (Anton, Bebas Neue) + mono (Space Mono).\n\nPalette: 4-5 saturated colors, no neutral base — hot pink #FF1B6B, acid green #B6FF00, electric blue #00C2FF, black, warm orange #FF6B00.\n\nMotion: fast punchy transitions (150-200ms) with overshoot/bounce easing."
+      },
+      {
+        id: 6, title: "GSAP Scroll storytelling",
+        desc: "Transisi penceritaan yang dipin secara horizontal mengikuti gulir",
+        path: "previews/6-gsap-scroll.html",
+        avoid: "scroll-jacking that fights the user, pinning more than 2-3 sections per page, fade-only reveals with no scrub-tied transforms.",
+        guide: { key: "Pengikatan scroll (pinning) menggunakan ScrollTrigger GSAP untuk memicu animasi linear berbasis posisi scroll.", typo: "Teks judul dinamis yang membesar/mengecil dan memudar di setiap langkah penceritaan.", motion: "Gulir vertikal diterjemahkan menjadi pergeseran horizontal barisan komponen." },
+        prompt: "Build a scroll-driven narrative page using Next.js + GSAP with the ScrollTrigger plugin.\n\nCore mechanic: pin at least one full-viewport section — gsap.timeline({ scrollTrigger: { trigger: section, pin: true, scrub: 1, start: \"top top\", end: \"+=200%\" } }).\n\nInclude one horizontal-scroll-within-vertical-scroll moment. Structure as narrative beats (problem → insight → solution → result)."
+      },
+      {
+        id: 7, title: "Lenis Smooth-Scroll Parallax Hero",
+        desc: "Gulir halus bernilai inersia dengan parallax multi-layer berkedalaman",
+        path: "previews/7-lenis-parallax.html",
+        avoid: "using Lenis without syncing to GSAP ScrollTrigger, parallax speed differences under 0.2x, applying smooth-scroll without prefers-reduced-motion.",
+        guide: { key: "Inisialisasi Lenis smooth-scroll yang diselaraskan dengan ticker GSAP ScrollTrigger.", typo: "Teks judul besar dengan penataan kontras berlapis untuk efek visual kedalaman.", motion: "Kecepatan bergeser berbeda (parallax multipliers) pada elemen latar, tengah, dan depan." },
+        prompt: "Build a cinematic hero + about section using Next.js + Lenis (smooth-scroll) + GSAP/Framer Motion for parallax.\n\nInitialize Lenis with duration: 1.2, sync with GSAP ScrollTrigger. Layer 3-4 elements at different scroll-speed multipliers (0.3x, 0.6x, 1x, 1.4x). Use transform: translate3d."
+      },
+      {
+        id: 8, title: "WebGL/Three.js Interactive 3D",
+        desc: "Mesh grafis 3D real-time yang merespons pergerakan kursor",
+        path: "previews/8-webgl-3d.html",
+        avoid: "importing all of three.js unnecessarily, uncapped devicePixelRatio, plain MeshStandardMaterial without distort/transmission.",
+        guide: { key: "Canvas interaktif Three.js dengan shader terdistorsi organik/kristal transparan.", typo: "Sandingkan objek 3D dengan blok teks minimalis bersudut tajam bergaya teknologi tinggi.", motion: "Rotasi konstan halus dipadukan dengan tilt teredam (damped) mengikuti arah kursor." },
+        prompt: "Build a hero section using Next.js + React Three Fiber + @react-three/drei with one interactive 3D object.\n\nIdle loop: subtle rotation. Pointer-reactive: tilt toward cursor with damped interpolation (lerp ~0.05-0.1). Lighting: 1 key directional + soft ambient + Environment preset."
+      },
+      {
+        id: 9, title: "Cursor-Reactive Magnetic",
+        desc: "Tombol dan kartu interaktif dengan efek tarik magnetik fisik",
+        path: "previews/9-magnetic.html",
+        avoid: "applying this to more than a few key elements per page, skipping spring/damping, forgetting a touch-device check.",
+        guide: { key: "Perhitungan jarak kursor pada bounding box komponen untuk menarik posisi elemen mendekatinya.", typo: "Teks label dalam tombol ikut meluncur dengan jarak translasi lebih jauh (lapisan kedalaman).", motion: "Simulasi pegas meredam (spring physics) menggunakan parameter redaman elastis." },
+        prompt: "Build 3 interactive components with Framer Motion \"magnetic\" cursor-attraction.\n\nOn mousemove, calculate cursor offset from center, translate element by offset * 0.3, inner layer by offset * 0.5. Use useMotionValue + useSpring (stiffness ~150, damping ~15). Card variant: radial-gradient spotlight following cursor via CSS custom properties."
+      },
+      {
+        id: 10, title: "Claymorphism / Soft-UI Set",
+        desc: "Lapisan 3D lembut efek clay menggunakan dual-shadow berlawanan",
+        path: "previews/10-claymorphism.html",
+        avoid: "sharp corners anywhere, saturated/dark colors (clay is inherently soft/pastel), single-shadow-only elements.",
+        guide: { key: "Bayangan ganda lembut (dual-shadow); kiri-atas putih terang, kanan-bawah gelap lembut.", typo: "Gaya tulisan membulat manis dengan warna pastel pucat bersaturasi rendah.", motion: "Tukar bayangan timbul menjadi tenggelam (inset shadow) saat tombol aktif ditekan." },
+        prompt: "Build a component set (button, input, toggle, card) in Claymorphism/Soft-UI style.\n\nDual box-shadow: -8px -8px 16px rgba(255,255,255,0.7) top-left and 8px 8px 16px rgba(0,0,0,0.15) bottom-right. Soft pastel base (#E0E5EC). Border-radius 20-28px everywhere. Toggle: inset shadow track + outset knob. Buttons swap to inset on :active."
+      },
+      // ========== V2: 11-20 ==========
+      {
+        id: 11, title: "Y2K Retro-Futurism Landing Page",
+        desc: "Gradien krom mengkilap, pola latar grid piksel, tombol jeli 3D",
+        path: "previews/11-y2k-retro.html",
+        avoid: "flat Material Design cards, muted/pastel colors, serif fonts, excessive border-radius on main containers, generic SaaS illustrations.",
+        guide: { key: "Latar grid piksel tipis, gradien logam krom, tombol 3D mengkilap dengan highlight atas 1px, dekorasi kilatan bintang.", typo: "Kontras ekstrem antara fon piksel digital (VT323) dengan fon sans geometris modern (Outfit).", motion: "Efek menekan jeli (gel press) pada tombol, serta transisi kilau sapuan cahaya (glint sheen sweep)." },
+        prompt: "Build a Y2K Retro-Futurist brand landing page using Next.js + Tailwind CSS.\n\nBackground: fixed grid pattern, chrome gradients on headlines, 3D glossy buttons. Palette: hot pink #FF6BEC, cyber lavender #A78BFA, chrome silver #C0C0C0. Mix pixel font (VT323) with clean sans (Outfit). Marquee, gel press effect, glint animation."
+      },
+      {
+        id: 12, title: "Swiss International Style",
+        desc: "Grid matematis ketat, asimetri terkontrol, tanpa dekorasi",
+        path: "previews/12-swiss-style.html",
+        avoid: "border-radius anywhere, drop shadows, gradients, centered text blocks, decorative icons, card-based layouts, photography with filters.",
+        guide: { key: "Kisi 12-kolom sangat ketat, susunan asimetris terkontrol, ruang kosong dominan, tanpa ornamen.", typo: "Sans-serif tebal rapat (Neue Haas Grotesk/Inter) dengan gaya all-lowercase atau all-uppercase konsisten.", motion: "Elemen meluncur masuk lurus dari bawah (24px translate) tanpa efek memantul." },
+        prompt: "Build a portfolio/cultural institution site in Swiss International Style.\n\nStrict 12-column grid, asymmetric layouts, generous margins. Palette: #FAFAFA, #000000, and signal red #FF0000 for 5% of elements. Helvetica/Inter at -0.02em tracking. Sizes in strict scale (48, 64, 96, 128px). Motion: slide from bottom 24px, 500ms ease-out, staggered 100ms."
+      },
+      {
+        id: 13, title: "Cyberpunk Neon Noir Dashboard",
+        desc: "Panel terminal retro, scanlines, dan grafik kustom neon",
+        path: "previews/13-cyberpunk.html",
+        avoid: "sans-serif fonts anywhere, rounded corners > 4px, light mode, soft shadows, stock photos, pastel colors, conventional card elevations.",
+        guide: { key: "Latar hitam pekat bertekstur noise, hamparan scanlines CRT, panel hologram menyala tipis.", typo: "Monospace murni (JetBrains Mono) dengan efek bayangan cahaya pendaran (text-shadow glow).", motion: "Tombol dengan efek kedipan gangguan listrik (glitch flicker) dan kursor terminal berkedip." },
+        prompt: "Build a cyberpunk analytics dashboard. Near-black #050505 with noise + scanlines. Neon cyan #00F0FF, hot magenta #FF00A0, toxic yellow #CCFF00. All text JetBrains Mono. Fixed sidebar with terminal nav, live clock, holographic borders, glitch hover effects."
+      },
+      {
+        id: 14, title: "Japanese Minimalism / Wabi-Sabi",
+        desc: "Latar kertas washi, tipografi bernapas, ritme zen",
+        path: "previews/14-wabi-sabi.html",
+        avoid: "dense layouts, multiple accent colors, bold/bright CTAs, border-radius on images, cards with shadows, fast/snappy animations, centered symmetry everywhere.",
+        guide: { key: "Latar hangat krem washi, aksen tunggal merah tinta stempel vermillion, ruang bernapas ekstra luas.", typo: "Serif Jepang (Noto Serif) dengan tinggi spasi ganda (leading 2.0), teks vertikal di pinggiran layout.", motion: "Transisi scroll memudar masuk tanpa translasi (konten terasa selalu ada di sana)." },
+        prompt: "Build a Japanese-inspired site in Wabi-Sabi minimalism. Background #F7F5F0, text #1C1917, accent #B91C1C. Noto Serif JP headlines, line-height 2.0 body. Vertical text element. Extreme 20-30vh whitespace. Opacity fade reveals over 800ms, NO translateY. Slow incense drift animation."
+      },
+      {
+        id: 15, title: "Aurora UI / Soft Gradient Morphism",
+        desc: "Blob gradien kabur melayang di atas permukaan panel transparan",
+        path: "previews/15-aurora-ui.html",
+        avoid: "dark mode, heavy borders, drop shadows, sharp corners, neon/oversaturated colors, dense information architecture, generic stock illustrations.",
+        guide: { key: "Latar putih/abu lunak, 3-4 gelembung gradien warna (aurora blobs) melayang lambat di belakang komponen.", typo: "Geometric sans ramah membulat (Plus Jakarta Sans) dengan judul bermasker gradien pelangi.", motion: "Bentuk sirkular gelembung warna meliuk perlahan, mockup panel melayang." },
+        prompt: "Build a SaaS landing page in Aurora UI / Soft Gradient style. Light #FAFAFA base with 3-4 blurred gradient blobs animating slowly. Cards bg-white/40 backdrop-blur-md, rounded-3xl, NO drop shadows. One conic-gradient border card. Plus Jakarta Sans. Gradient text headline. Floating mockup."
+      },
+      {
+        id: 16, title: "Kinetic Typography Hero",
+        desc: "Animasi perubahan berat/lebar fon sistem secara dinamis",
+        path: "previews/16-kinetic-typo.html",
+        avoid: "images/illustrations in hero, multiple lines of headline text, decorative elements competing with type, fonts without variation axes, excessive blur/backdrop effects.",
+        guide: { key: "Tipografi variabel (Variable Font) sebagai arsitektur visual utama tanpa gambar pendukung.", typo: "Anybody/Roboto Flex dengan akses variasi lebar ('wdth') dan ketebalan ('wght') dinamis.", motion: "Animasi sumbu font merespons pergerakan kursor atau gulir secara teredam." },
+        prompt: "Build a kinetic typography hero using a variable font. One headline filling 90vw. Scroll-driven: font-weight 100→900, font-stretch 75%→125%, letter-spacing 0.05em→-0.05em. Full viewport, flex center, no decoration. Split text into individual letter spans."
+      },
+      {
+        id: 17, title: "Neo-Skeuomorphic Control Panel",
+        desc: "Panel dengan visual material realistis (kulit, logam gosok)",
+        path: "previews/17-skeuomorphic.html",
+        avoid: "flat colors without depth, neon accents, glassmorphism blur, sharp 90-degree corners on interactive elements, default HTML checkbox styling.",
+        guide: { key: "Simulasi material berkedalaman fisik (kulit berjahit, brushed metal, plastik doff).", typo: "Label teks menggunakan small-caps dengan kerenggangan spasi terlebar.", motion: "Knob melingkar berputar mengikuti gesekan kursor, tombol berayun masuk saat ditekan." },
+        prompt: "Build a neo-skeuomorphic control panel. Simulate leather (#5D4037), brushed metal (gradient + line overlay), matte plastic. Toggle switches with spring animation. Rotary dial controlled by drag. Consistent lighting from top-left at 45 degrees."
+      },
+      {
+        id: 18, title: "DIY Zine / Scrapbook Card Grid",
+        desc: "Gaya kolase fisik, sobekan kertas, selotip dekoratif",
+        path: "previews/18-diy-zine.html",
+        avoid: "perfect symmetry, consistent fonts across cards, smooth rounded corners on all cards, flat shadows, generic Unsplash photos without treatment.",
+        guide: { key: "Potongan selotip aneka warna (duct/washi tape), tepian robek (torn paper mask), rotasi sudut acak tiap kartu.", typo: "Desain campur aduk (Bebas Neue, typewriter Courier, coretan kuas, serif Times New Roman).", motion: "Hover menghilangkan rotasi kemiringan secara elastis, menebalkan warna selotip." },
+        prompt: "Build a project gallery grid in DIY Zine style. Cards with different rotations, torn paper edges, tape elements. Mismatched typography per card (handwritten, typewriter, condensed, serif). Noise background, halftone filters, stamp marks. Hover lifts card and brightens tape."
+      },
+      {
+        id: 19, title: "Retro CRT Terminal Interface",
+        desc: "Layar monitor fosfor cembung, scanlines, CLI booting",
+        path: "previews/19-crt-terminal.html",
+        avoid: "modern sans-serif fonts, rounded buttons, emoji, gradient backgrounds, card layouts, smooth animations (use step-end only).",
+        guide: { key: "Bingkai monitor tabung cembung, pendaran fosfor hijau (#33FF00), garis pemindai CRT.", typo: "Monospace retro dot-matrix (VT323/Share Tech Mono) dengan efek bayangan berpendar.", motion: "Baris pemuatan (boot sequence), cursor CLI berkedip ketat tanpa easing." },
+        prompt: "Build a retro CRT terminal interface. 4:3 screen, black bg, inset vignette shadow, scanline overlay. Phosphor green #33FF00 glow. VT323 monospace. Boot sequence with 50ms stagger. Blinking block cursor. Screen flash on command enter."
+      },
+      {
+        id: 20, title: "Organic Blob / Fluid Shape Navigation",
+        desc: "Navigasi cairan melar dinamis menggunakan elastic spring",
+        path: "previews/20-fluid-nav.html",
+        avoid: "rectangular boxes, sharp 90-degree corners, linear easing on open/close, standard hamburger-to-X animation without morphing.",
+        guide: { key: "Bentuk kontainer melingkar cair (organic blob) dengan border-radius tidak simetris.", typo: "Tipografi membulat lunak (Nunito/Quicksand) dengan garis bawah bergelombang.", motion: "Pelebaran elastis (elastic out) saat menu mekar dari titik kuncup." },
+        prompt: "Build an organic fluid navigation menu. SVG path or custom border-radius blob shape. Closed: 120x60px blob. Open: morphs to 400x500px with elastic easing. 4-5 links staggering in. Wave SVG hover underline. Floating circles in background. Blobs repel on mouse hover."
+      },
+      // ========== V2 Extras: 21-22 ==========
+      {
+        id: 21, title: "Jars UI - Particle Canvas",
+        desc: "Galaxy background interaktif dengan blackhole gravity, nebula, star trails",
+        path: "previews/21-jars-ui.html",
+        avoid: "heavy opaque boxes, static canvas bounds, standard single-direction particle streams.",
+        guide: { key: "Galaxy background interaktif, blackhole gravity, nebula, star trails.", typo: "Tipografi display bersanding kontras dengan label monospace mini.", motion: "Gaya gravitasi menarik partikel (blackhole physics) dinamis saat layar diklik." },
+        prompt: "Build an interactive galaxy backdrop dashboard using jars-particle-canvas Web Component. Controls: theme dropdown, speed/density/bhstrength/bhradius sliders. Click spawns blackhole pulling particles. Cursor leaves glowing trails."
+      },
+      {
+        id: 22, title: "Theme & Color Showcase Page",
+        desc: "Landing page 5 bagian dengan theme switcher, Y2K buttons, skeuomorphic controls, data metrics",
+        path: "previews/22-landing-showcase.html",
+        avoid: "combining all elements incoherently, hardcoding hex values outside the variables block, single-theme styles, lacking clear layout organization.",
+        guide: { key: "Landing page terorganisasi bersih dengan transisi 5 tema warna.", typo: "Outfit untuk tajuk utama bold, JetBrains Mono untuk label, VT323 digital.", motion: "Rotasi bingkai conic border, kilauan glossy button sheen sweep." },
+        prompt: "Build a 5-section multi-themed landing page. 13 CSS variables per theme (light, dark, orange, sea, rose). Sections: Hero with Y2K glossy buttons, Feature with conic gradient card, Sandbox with skeuomorphic controls, Telemetry with VT323 metrics, Footer with theme switcher."
+      },
+      // ========== V3: Batch 3 — 23-32 ==========
+      {
+        id: 23, title: "Memphis Design Revival",
+        desc: "Geometric bold, dots, zig-zag, primary colors clash",
+        path: "previews/23-memphis-design.html",
+        avoid: "gradients, soft shadows, serif fonts, muted colors, symmetric perfect grids, rounded corners > 12px, stock photos without bold graphic treatment.",
+        guide: { key: "Konfeti geometri tersebar (lingkaran, segitiga, garis zig-zag), pola titik-titik, border tidak seragam tiap kartu.", typo: "Montserrat 800-900 uppercase untuk judul outline, DM Sans untuk body.", motion: "Bentuk geometri berotasi lambat mengikuti scroll, konfeti muncul saat hover kartu." },
+        prompt: "Build a creative agency landing page in Memphis Design style. Scattered geometric confetti elements, dotted patterns, zig-zag clip-path dividers. Strict primary palette: Cyan #00D9FF, Hot Pink #FF006E, Lemon Yellow #FFEA00, Black, White. Headlines with outline text-stroke. Cards with mismatched border treatments. Floating shapes rotate on scroll."
+      },
+      {
+        id: 24, title: "Vaporwave / Synthwave Sunset",
+        desc: "Retro grid, chrome gradient text, neon sunset vibes",
+        path: "previews/24-vaporwave.html",
+        avoid: "rounded buttons, earth tones, soft pastel gradients, sans-serif friendly fonts, white backgrounds, minimal whitespace.",
+        guide: { key: "Latar navy gelap dengan sunset radial, grid perspektif retro, teks gradien krom.", typo: "Orbitron uppercase tracked 0.2em, Rajdhani body, Exo 2 subheads.", motion: "Grid berdenyut pelan, efek aberasi kromatis pada hover album card, glitch flicker acak." },
+        prompt: "Build a synthwave brand site. Dark navy #0B0D17 with sunset radial gradient, 3D perspective grid floor (cyan #00F0FF lines), chrome gradient text (cyan-magenta-orange). Palette: Deep space, Neon Cyan, Hot Magenta, Sunset Orange, Chrome Silver. Greek bust with duotone filter. Scanline overlays. Chromatic aberration hover effects."
+      },
+      {
+        id: 25, title: "Bauhaus Functionalism",
+        desc: "Primary triad, geometric shapes, asymmetric grid",
+        path: "previews/25-bauhaus.html",
+        avoid: "border-radius anywhere, gradients, serif fonts, centered text, soft shadows, organic shapes, more than 3 colors, photographs without geometric cropping.",
+        guide: { key: "Grid 12-kolom terlihat, bentuk geometri dasar (lingkaran, segitiga, persegi) sebagai blok warna solid.", typo: "Futura/Montserrat 700-900, modular scale (48/72/96px), uppercase -0.02em tracking.", motion: "Elemen masuk dari tepi terdekat, bentuk geometri rotate 90deg pada scroll." },
+        prompt: "Build an architecture studio site in Bauhaus style. Strict palette: Red #E63946, Yellow #F1C40F, Blue #0044CC, Black, White. Visible 12-column grid. Geometric shapes as solid color blocks. No centered elements. Project list as horizontal bars with red circle numbers. Elements enter from nearest edge on scroll."
+      },
+      {
+        id: 26, title: "Paper Cut / Layered Depth",
+        desc: "Stacked paper layers, torn edges, polaroid frames",
+        path: "previews/26-paper-cut.html",
+        avoid: "glassmorphism blur, neon colors, dark mode, border-radius > 4px on main layers, gradients, sans-serif-only typography, perfect alignment.",
+        guide: { key: "Efek kertas bertumpuk, hard shadow 4px tanpa blur, rotasi 0.5deg berselang-seling.", typo: "Slab serif (Zilla Slab/Georgia) untuk judul, serif untuk body, cursive (Caveat) untuk kutipan.", motion: "Hover angkat layer 4px dengan shadow lebih tebal. Klik tekan ke dalam tumpukan." },
+        prompt: "Build a storytelling site in Paper Cut style. Stacked paper sections with 0 4px 0px hard shadows, alternating rotation 0.5deg. Paper tones: white, cream, mint, peach, lavender. Torn edges via clip-path. Polaroid image frames. Slab serif headlines, serif body, handwritten cursive accents. Hover lifts layer with thicker shadow."
+      },
+      {
+        id: 27, title: "Sci-Fi HUD / FUI Dashboard",
+        desc: "Tactical wireframe, circular gauges, radar sweeps",
+        path: "previews/27-sci-fi-hud.html",
+        avoid: "solid fill cards, rounded corners > 2px, drop shadows, gradients, sans-serif fonts, neon pink/purple, decorative illustrations.",
+        guide: { key: "Wireframe aesthetic — 1px lines only, no fills, corner bracket borders.", typo: "Share Tech Mono or Rajdhani exclusively, 10px labels, 14px data, 24-32px readouts.", motion: "Radar sweep 4s rotation, slot-machine number refresh, targeting reticle follows mouse." },
+        prompt: "Build a tactical HUD dashboard. Dark #020408, teal #00D4AA, amber #FF9500, red #FF3333. Wireframe containers (no fills). SVG circular gauges, radar scan, corner brackets. Monospaced data readouts. Targeting reticle follows mouse. 3-column layout: data stream, reticle viewport, system logs. Scrolling amber ticker."
+      },
+      {
+        id: 28, title: "Steampunk / Victorian Interface",
+        desc: "Brass gears, leather texture, rivets, parchment",
+        path: "previews/28-steampunk.html",
+        avoid: "neon colors, sans-serif fonts, flat colors without texture, sharp 90-degree corners on main panels, modern minimalism, border-radius > 8px.",
+        guide: { key: "Material realistis: kuningan gradien, kulit jahitan, perkamen, paku keling sudut.", typo: "Cinzel small-caps untuk judul, Cormorant Garamond serif untuk body.", motion: "Gear berotasi 60s penuh, tuas toggle dengan spring, rotary dial mengikuti drag." },
+        prompt: "Build a steampunk settings panel. Brass gradient, leather with stitched border, parchment background, rivets at corners. SVG decorative gears rotating slowly (60s). Rotary dial, toggle lever. Cinzel headings, Cormorant Garamond body. Ornate dividers with flourishes."
+      },
+      {
+        id: 29, title: "Dark Academia Scholarly Site",
+        desc: "Deep brown, emerald, gold, serif, library feel",
+        path: "previews/29-dark-academia.html",
+        avoid: "sans-serif fonts, bright colors, animations beyond fade, cards with shadows, border-radius on images, multiple columns, social media icons.",
+        guide: { key: "Latar coklat hangat #2C1810, aksen emas #C9A961, tekstur perkamen.", typo: "Playfair Display serif untuk judul, Georgia body 17px line-height 1.8, drop caps emas.", motion: "Fade in sangat lambat (1.2s) tanpa pergerakan scroll. Hover link ke warna emas." },
+        prompt: "Build a scholarly blog in Dark Academia style. Deep brown #2C1810, antique gold #C9A961, parchment #F5F0E8. Single column reading (max 680px). Playfair Display headings, Georgia body. Gold drop caps. Ornamental fleuron dividers. 15vw margins. Slow fade-in only, no scroll animations."
+      },
+      {
+        id: 30, title: "Deconstructivist Typography",
+        desc: "Split fragments, broken grid, avant-garde layout",
+        path: "previews/30-deconstructivist.html",
+        avoid: "clean grids, centered symmetry, consistent font usage, polite whitespace, predictable hover effects, rounded corners, soft shadows.",
+        guide: { key: "Grid sengaja rusak, teks terpotong, alignment berbeda tiap baris judul.", typo: "Oswald 100px+ untuk shout words, Times New Roman body, Courier meta.", motion: "Parallax kecepatan berbeda ekstrem, muncul dari arah acak." },
+        prompt: "Build an avant-garde magazine layout in Deconstructivist style. Split headlines with different alignments per line. Images overlap text. Text rotated at extreme angles. Mix 3+ fonts. Clipped containers. Industrial palette with one blood red accent. Parallax at varying speeds. Random-direction entrance."
+      },
+      {
+        id: 31, title: "Lo-Fi / Anime Aesthetic",
+        desc: "Pastel soft, grain texture, rounded, city pop",
+        path: "previews/31-lo-fi-anime.html",
+        avoid: "dark mode, sharp corners, neon colors, heavy shadows, aggressive animations, serif fonts, dense layouts, technical/machine aesthetics.",
+        guide: { key: "Gradien pastel lembut, grain film overlay, semua rounded-3xl minimum.", typo: "Nunito/Quicksand rounded friendly, aksen Jepang (美しい, 夢).", motion: "Equalizer bars animasi, background hue-shift 30s, hover scale(1.1) + glow." },
+        prompt: "Build a lo-fi music player in Anime Aesthetic. Pastel gradient background (pink-blue-lavender) with film grain. Rounded-3xl everywhere. Cassette tape CSS art. Equalizer bars. Floating clouds/stars. Horizontal playlist scroll. Vinyl record with spiral groove. Slow hue-shift animation. Japanese text accents."
+      },
+      {
+        id: 32, title: "Constructivism / Propaganda Poster",
+        desc: "Diagonal composition, red-black-yellow, bold rules",
+        path: "previews/32-constructivism.html",
+        avoid: "rounded corners, soft shadows, pastel colors, serif fonts, centered symmetry, polite spacing, gradients, organic shapes.",
+        guide: { key: "Komposisi diagonal 15-30°, merah #CC0000 dominan, foto klip lingkaran.", typo: "Bebas Neue/Oswald uppercase 4-8rem, body Arial/Helvetica 14px hitam di off-white.", motion: "Elemen slide diagonal, CTA invert merah-kuning, bintang merah rotasi 60s." },
+        prompt: "Build a social cause landing page in Constructivism style. Diagonal composition at 20-30 degrees. Red #CC0000, Black, Yellow #FFD700, Off-white #F5F5F5 only. Bold rules at sharp angles. Photomontage with geometric clipping. Large star motif. Headlines rotated. Elements slide from diagonal directions."
+      },
+      // ========== V4: Batch 4 — 33-42 ==========
+      {
+        id: 33, title: "Art Nouveau / Jugendstil Brand",
+        desc: "Whiplash curves, floral ornaments, moss & gold palette",
+        path: "previews/33-art-nouveau.html",
+        avoid: "straight 90-degree corners on frames, sans-serif fonts, bright saturated colors, grid systems without organic curves, modern minimalism, geometric shapes.",
+        guide: { key: "Garis organik whiplash, motif flora, initial cap emas 5rem, border lengkung.", typo: "Cormorant Garamond serif dengan swash, body Sorts Mill Goudy 17px.", motion: "Elemen floral tumbuh via stroke-dashoffset, gold underline draw from center." },
+        prompt: "Build an artisanal brand site in Art Nouveau style. Organic whiplash borders, floral SVG motifs, decorative initial caps. Palette: moss green #4A6741, antique gold #C9A961, dusty rose #C4A4A4, cream #F5F0E6, deep brown #3E2723. Cormorant Garamond headings, Sorts Mill Goudy body. Hover: gold underline draws from center outward."
+      },
+      {
+        id: 34, title: "Raw Brutalist Web",
+        desc: "Monospace system fonts, exposed grid, zero polish",
+        path: "previews/34-raw-brutalist.html",
+        avoid: "any custom fonts, border-radius, gradients, shadows, animations beyond instant swap, images except pixel-perfect, flexbox centering.",
+        guide: { key: "System monospace murni, border 1px hitam, grid terekspos, zero border-radius.", typo: "Courier/Courier New 14px untuk SEMUA teks, heading bold+larger.", motion: "Hover instant color swap, 0ms transition — no smooth." },
+        prompt: "Build a portfolio in Raw Brutalist Web style. System monospace only. Colors: black, white, blue #0000EE, red, gray. Zero border-radius, shadows, gradients. Tables with visible borders. <hr> dividers. Hover: instant 0ms color swap. Links always underlined."
+      },
+      {
+        id: 35, title: "Miami Vice / Tropical Deco",
+        desc: "Sunset gradients, palm silhouettes, art deco geometry",
+        path: "previews/35-miami-vice.html",
+        avoid: "dark mode only (must have sunset warmth), sharp 90-degree corners on main containers, sans-serif heavy fonts, generic hotel stock photos.",
+        guide: { key: "Sunset gradient coral-teal-navy, palm SVG silhouettes, art deco sunburst.", typo: "Poiret One thin geometric uppercase, letter-spacing 0.25em, Quicksand body.", motion: "Palm sway rotate 6s infinite, card hover coral to gold 400ms." },
+        prompt: "Build a resort booking site in Miami Vice Tropical Deco style. Sunset gradient background (#FF6B9D→#FFA07A→#4ECDC4→#1A3A52). Palm silhouettes, art deco sunburst. Palette: coral, orange, teal, navy, gold. Poiret One headings. Stepped ziggurat borders. Palm sway animation."
+      },
+      {
+        id: 36, title: "Cottagecore / Fairycore Diary",
+        desc: "Soft sage & blush, floral pattern, lace borders",
+        path: "previews/36-cottagecore.html",
+        avoid: "neon/bright colors, sans-serif fonts for headlines, dark mode, geometric sharp borders, dense layouts, modern minimalism.",
+        guide: { key: "Sage #E8F3E8 bg, cream paper cards, lace border, floral corner.", typo: "Cormorant Garamond headline, Caveat handwritten, Literata body 16px line-height 1.9.", motion: "Hover thumbtack rotate 10deg, butterfly float, wavy underline." },
+        prompt: "Build a personal blog in Cottagecore style. Soft sage background, cream paper cards, lace borders, SVG floral motifs. Dusty rose accents, handwritten Caveat font. Torn-bottom clip-path cards with thumbtacks. Wavy underline links. Butterfly float animation on load."
+      },
+      {
+        id: 37, title: "Comic Book / Pop Art Spread",
+        desc: "Panel borders, halftone dots, speech bubbles, bold outlines",
+        path: "previews/37-comic-pop-art.html",
+        avoid: "gradients, soft shadows, serif fonts, muted colors, minimal whitespace (should be dense), rounded corners on all panels.",
+        guide: { key: "Panel grid border 4px hitam, halftone dots, speech bubble CSS tail, speed lines.", typo: "Bangers bold uppercase irregular, Comic Neue body, SFX in starburst.", motion: "Panel flip-in rotateY 90→0deg staggered, SFX jiggle on hover." },
+        prompt: "Build a creative agency site in Comic Book style. Panel grid with thick black borders. Halftone radial-gradient texture. Speed lines, speech bubbles. Palette: red #E63946, blue #0077B6, yellow #FFD60A, black, white. Bangers headlines. Sound effects in starburst shapes."
+      },
+      {
+        id: 38, title: "NASA Technical / Mission Control",
+        desc: "Engineering grid, coral/teal, mission control feel",
+        path: "previews/38-nasa-technical.html",
+        avoid: "rounded corners > 2px, sans-serif non-condensed fonts, gradients, shadows, neon colors, decorative illustrations.",
+        guide: { key: "Engineering grid paper #F5F5F0, callout CAUTION boxes, ruler ticks.", typo: "Roboto Condensed ALL text, 10px labels uppercase tracking-widest.", motion: "Timeline draggable scrubber, slot-machine number roll." },
+        prompt: "Build a mission status dashboard in NASA Technical style. Engineering grid paper bg. Callout boxes with CAUTION labels. Palette: coral #E85D4E, teal #006D77. Roboto Condensed. T-minus timeline with scrubber. Crosshair overlay. Data tables with visible borders."
+      },
+      {
+        id: 39, title: "Psychedelic 60s Poster",
+        desc: "Rainbow gradients, wavy text, paisley, concert vibe",
+        path: "previews/39-psychedelic-60s.html",
+        avoid: "straight lines, sharp corners, muted colors, sans-serif geometric fonts, minimal whitespace, dark mode without rainbow.",
+        guide: { key: "Rainbow conic-gradient slowly rotating, paisley motifs, wavy SVG textPath.", typo: "Shrikhand/Lobster rounded bold, Courier Prime body, rainbow bg-clip-text.", motion: "Bg rotation speed proportional to scroll, wobble skewX oscillate." },
+        prompt: "Build a music festival page in Psychedelic 60s style. Rotating rainbow conic-gradient background. Wavy SVG textPath headlines. Paisley motifs. Palette: full rainbow spectrum. Shrikhand headings, Courier body. Flower power motifs. Wobble animation on hover."
+      },
+      {
+        id: 40, title: "Monochrome Editorial",
+        desc: "Black & white only, high-contrast, fashion lookbook",
+        path: "previews/40-monochrome-editorial.html",
+        avoid: "any color other than black/white, border-radius, shadows, gradients, serif body text, centered symmetry, soft transitions.",
+        guide: { key: "HANYA #000 dan #FFF, zero gray, kontras murni dari shape.", typo: "Didot/Bodoni 4-8rem uppercase, Helvetica Now body 14px.", motion: "Hard cut instant load, clip-path wipe reveal, hover invert filter." },
+        prompt: "Build a fashion lookbook in strict Monochrome style. ONLY black #000 and white #FFF. Zero gray, zero shadows, zero gradients. High-contrast B&W images with filter. Didot headings 4-8rem. Inverted sections. Hover invert(1) on images. Clip-path wipe reveals on scroll."
+      },
+      {
+        id: 41, title: "Sticky Note / Cork Board",
+        desc: "Post-it notes, pushpins, cork texture, Kanban",
+        path: "previews/41-sticky-note-board.html",
+        avoid: "sans-serif fonts for note content, flat colors without texture, perfect alignment, dark mode, glassmorphism, minimalism.",
+        guide: { key: "Cork texture #C4A77D, sticky notes warna post-it, pushpin SVG, string connections.", typo: "Permanent Marker/Caveat handwritten 18px, Courier label 11px.", motion: "Drag lift rotate 0deg scale 1.05, new note peel animation." },
+        prompt: "Build a Kanban dashboard in Cork Board style. Cork texture background. Post-it notes with rotation, pushpin SVGs, string connections. Colors: yellow #FFF740, pink #FF65A3, blue #7AF5F5, green #C7F464, orange #FFA500. Permanent Marker handwritten. 4 lanes: TODO, DOING, DONE, IDEAS."
+      },
+      {
+        id: 42, title: "Gothic Horror / Victorian Macabre",
+        desc: "Dark ornate, blood drip, blackletter, candle-lit",
+        path: "previews/42-gothic-horror.html",
+        avoid: "sans-serif fonts, bright colors, rounded corners, modern minimalism, fast bouncy animations, white backgrounds, clean geometric shapes.",
+        guide: { key: "Dark #0A0A0F, cobweb texture, thorn border, candle flicker, blood drip.", typo: "UnifrakturMaguntia blackletter 3-5rem gold, Cormorant Garamond body 16px.", motion: "Candle flicker random opacity, typewriter 30ms/char, hover blood glow." },
+        prompt: "Build a dark fantasy site in Gothic Victorian style. Dark #0A0A0F with cobweb texture. Thorn/vine ornate borders. Blood drip animation. Candle flicker. Palette: blood red #4A0000, gold #8B7355. UnifrakturMaguntia blackletter headings. Typewriter text reveal. Gold baroque frames."
+      }
+    ];
+
+    let currentSelectedId = null;
+    let currentTab = 'prompt';
+
+    const styleList = document.getElementById('style-list');
+    const activeTitle = document.getElementById('active-title');
+    const previewFrame = document.getElementById('preview-frame');
+    const deviceShell = document.getElementById('device-shell');
+    const splashCard = document.getElementById('splash-card');
+    const promptCode = document.getElementById('prompt-code');
+    const guideContent = document.getElementById('guide-content');
+
+    function initDashboard() {
+      styleList.innerHTML = '';
+      styleData.forEach(style => {
+        const btn = document.createElement('button');
+        btn.className = 'style-item';
+        btn.id = `style-item-${style.id}`;
+        btn.onclick = () => selectStyle(style.id);
+        btn.innerHTML = `
+          <div class="style-num">${String(style.id).padStart(2, '0')}</div>
+          <div class="style-name-wrap">
+            <div class="style-title">${style.title}</div>
+            <div class="style-desc">${style.desc}</div>
+          </div>
+        `;
+        styleList.appendChild(btn);
+      });
+
+      gsap.from('aside', { x: -100, opacity: 0, duration: 1, ease: 'power3.out' });
+      gsap.from('.top-bar', { y: -50, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.2 });
+      gsap.from('.inspector-panel', { x: 100, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.2 });
+    }
+
+    function selectStyle(id) {
+      const prevActive = document.querySelector('.style-item.active');
+      if (prevActive) prevActive.classList.remove('active');
+
+      const currentItem = document.getElementById(`style-item-${id}`);
+      if (currentItem) currentItem.classList.add('active');
+
+      const data = styleData.find(s => s.id === id);
+      if (!data) return;
+
+      currentSelectedId = id;
+      activeTitle.textContent = data.title;
+      promptCode.value = data.prompt;
+
+      guideContent.innerHTML = `
+        <div class="guide-title">${data.title}</div>
+        <div class="guide-section">
+          <h4>Karakteristik Kunci</h4>
+          <p>${data.guide.key}</p>
+        </div>
+        <div class="guide-section">
+          <h4>Tipografi & Font</h4>
+          <p>${data.guide.typo}</p>
+        </div>
+        <div class="guide-section">
+          <h4>Motion & Transisi</h4>
+          <p>${data.guide.motion}</p>
+        </div>
+        <div class="guide-section" style="border-top:1px solid var(--border-color); padding-top:1rem;">
+          <h4 style="color:#ef4444;"><i class="fas fa-ban mr-1"></i> Hindari (Avoid)</h4>
+          <p style="color:rgba(239,68,68,0.85); font-family:'JetBrains Mono',monospace; font-size:0.75rem; line-height:1.5;">${data.avoid}</p>
+        </div>
+      `;
+
+      splashCard.style.display = 'none';
+      deviceShell.style.display = 'flex';
+      previewFrame.src = data.path;
+
+      gsap.fromTo('#device-shell',
+        { scale: 0.95, opacity: 0, y: 15 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }
+      );
+    }
+
+    function setDevice(device) {
+      const buttons = document.querySelectorAll('.sim-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(buttons).find(btn => btn.textContent.toLowerCase().includes(device));
+      if (activeBtn) activeBtn.classList.add('active');
+      deviceShell.className = `device-shell device-${device}`;
+    }
+
+    function switchTab(tab) {
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons[0].classList.toggle('active', tab === 'prompt');
+      buttons[1].classList.toggle('active', tab === 'guide');
+      document.getElementById('tab-prompt').classList.toggle('active', tab === 'prompt');
+      document.getElementById('tab-guide').classList.toggle('active', tab === 'guide');
+    }
+
+    function copyPrompt() {
+      if (!currentSelectedId) { alert("Pilih gaya desain terlebih dahulu."); return; }
+      promptCode.select();
+      document.execCommand('copy');
+      const copyBtn = document.querySelector('.copy-btn');
+      const prevHTML = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      copyBtn.style.background = 'var(--accent-lime)';
+      copyBtn.style.borderColor = 'var(--accent-lime)';
+      copyBtn.style.color = '#000';
+      setTimeout(() => {
+        copyBtn.innerHTML = prevHTML;
+        copyBtn.style.background = '';
+        copyBtn.style.borderColor = '';
+        copyBtn.style.color = '';
+      }, 1500);
+    }
+
+    initDashboard();
+  </script>
+</body>
+</html>

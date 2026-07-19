@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP Scroll Narrative Engine</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-gsap-theme') || 'dark';
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-dark';
+      }
+    })();
+  </script>
+
+  <style>
+    /* COLORING-PATTERN SEMANTIC TOKENS */
+    :root, .theme-dark {
+      --bg: #07090E;
+      --surface: #0F131C;
+      --surface-alt: #161D2B;
+      --text: #F1F5F9;
+      --text-muted: #64748B;
+      --primary: #6366F1;
+      --on-primary: #FFFFFF;
+      --secondary: #1F2937;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #6366F1;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #A855F7;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-light {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-alt: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --primary: #3B82F6;
+      --on-primary: #FFFFFF;
+      --secondary: #F1F5F9;
+      --border: rgba(0, 0, 0, 0.06);
+      --accent: #3B82F6;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #8B5CF6;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-orange {
+      --bg: #FAF6F0;
+      --surface: #FFFFFF;
+      --surface-alt: #F1E9DB;
+      --text: #2D251E;
+      --text-muted: #7C6F62;
+      --primary: #D97706;
+      --on-primary: #FFFFFF;
+      --secondary: #F7EFE2;
+      --border: rgba(139, 92, 26, 0.1);
+      --accent: #D97706;
+      --accent-cyan: #F59E0B;
+      --accent-purple: #EA580C;
+      --shadow-color: rgba(139, 92, 26, 0.05);
+    }
+
+    .theme-sea {
+      --bg: #030E12;
+      --surface: #071922;
+      --surface-alt: #0D2633;
+      --text: #E0F2FE;
+      --text-muted: #0EA5E9;
+      --primary: #0EA5E9;
+      --on-primary: #FFFFFF;
+      --secondary: #0B2535;
+      --border: rgba(14, 165, 233, 0.15);
+      --accent: #06B6D4;
+      --accent-cyan: #38BDF8;
+      --accent-purple: #2DD4BF;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-rose {
+      --bg: #0F0509;
+      --surface: #1C0A12;
+      --surface-alt: #2D111E;
+      --text: #FFE4E6;
+      --text-muted: #FB7185;
+      --primary: #F43F5E;
+      --on-primary: #FFFFFF;
+      --secondary: #2E101B;
+      --border: rgba(244, 63, 94, 0.15);
+      --accent: #F43F5E;
+      --accent-cyan: #FDA4AF;
+      --accent-purple: #EC4899;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* Reset & Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Track indicator */
+    .scroll-indicator-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .scroll-indicator-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+    }
+
+    /* Header Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 90;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-logo span {
+      color: var(--primary);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 1.5px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-cyan), var(--accent-purple), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.75rem 1.75rem;
+      width: 100%;
+      height: 100%;
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--surface-alt);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* SECTION 1: HERO HEADER */
+    .hero-sec {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 1.5rem;
+      position: relative;
+      background-color: var(--bg);
+      z-index: 10;
+    }
+
+    .badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      max-width: 600px;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* SECTION 2: PINNED VIEWPORT & HORIZONTAL SLIDES */
+    .pin-viewport {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background-color: var(--bg);
+      z-index: 5;
+    }
+
+    .horizontal-slider {
+      display: flex;
+      width: 500vw; /* 5 slides */
+      height: 100%;
+      will-change: transform;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .story-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      border-radius: 20px;
+      max-width: 550px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .slide-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h2 span {
+      color: var(--primary);
+    }
+
+    .slide p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* SECTION 3: BENTO GRID STATS */
+    .bento-sec {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      background-color: var(--bg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .sec-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .bento-card.wide {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      .bento-card.wide {
+        grid-column: span 1;
+      }
+    }
+
+    .bento-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+    }
+
+    .bento-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* SECTION 4: PLAYGROUND CONTROLS */
+    .control-sec {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      text-align: center;
+      background-color: var(--bg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .control-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .control-row label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .control-row select, .control-row input[type="range"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* SECTION 5: FOOTER & THEMES */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5rem 1.5rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .theme-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem 0;
+    }
+
+    .theme-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .footer-credit {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-indicator-wrap">
+    <div class="scroll-indicator-bar" id="indicator"></div>
+  </div>
+
+  <!-- Header Nav -->
+  <nav>
+    <div class="brand-logo">NARRATIVE<span>.IO</span></div>
+    <a href="#pin-section" class="conic-btn">
+      <span>Get Started</span>
+    </a>
+  </nav>
+
+  <!-- SECTION 1: HERO HEADER -->
+  <section class="hero-sec">
+    <div class="badge">Engine V1.2 Active</div>
+    <h1>GSAP <span>Storytelling</span> Timeline.</h1>
+    <p class="hero-desc">
+      Menghubungkan pacing cerita dengan scroll bar secara presisi. Gulir ke bawah untuk memicu pergeseran koordinat horizontal dan interaksi dinamis.
+    </p>
+    <a href="#pin-section" class="conic-btn">
+      <span>Explore Storyline <i class="fas fa-arrow-down" style="margin-left: 6px;"></i></span>
+    </a>
+  </section>
+
+  <!-- SECTION 2: PINNED VIEWPORT & SLIDES -->
+  <section class="pin-viewport" id="pin-section">
+    <div class="horizontal-slider" id="slider">
+      
+      <!-- Slide 1 -->
+      <div class="slide" style="background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.15), transparent 60%);">
+        <div class="story-card gsap-reveal">
+          <span class="slide-num">Step 01 / Narrative Focus</span>
+          <h2>The <span>Problem</span> of Scroll Syncing.</h2>
+          <p>Traditional narrative websites fade components on scroll arbitrarily, fighting the natural pacing. We need scrolling to drive timelines directly.</p>
+        </div>
+        <div class="scroll-hint">
+          <i class="fas fa-chevron-right"></i> SCROLL DOWN TO TRANSLATE HORIZONTALLY
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide" style="background: radial-gradient(circle at center, rgba(34, 211, 238, 0.1), transparent 60%); border-left: 1px solid var(--border);">
+        <div class="story-card gsap-reveal">
+          <span class="slide-num">Step 02 / The Mechanism</span>
+          <h2>Horizontal <span>Translation</span> inside Vertical space.</h2>
+          <p>GSAP ScrollTrigger pins the viewport at y-coordinates. Scrolling down shifts the slider horizontally across X-coordinates, tying layout to fingers.</p>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide" style="background: radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.15), transparent 60%); border-left: 1px solid var(--border);">
+        <div class="story-card gsap-reveal">
+          <span class="slide-num">Step 03 / Live Tuning</span>
+          <h2>Interactive <span>Scrub</span> Damping.</h2>
+          <p>Ubah koefisien redaman animasi secara langsung. Semakin tinggi nilainya, semakin lambat animasi mengejar bar gulir, menciptakan efek mengambang.</p>
+          <div style="margin-top: 1rem; padding: 1rem; background: var(--surface-alt); border-radius: 12px; border: 1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; font-family:'Space Grotesk',sans-serif; font-size:0.8rem; margin-bottom:6px;">
+              <span>Damping Speed:</span>
+              <span id="slider-scrub-val" style="color:var(--primary); font-weight:bold;">1.0s</span>
+            </div>
+            <input type="range" min="0.1" max="3" step="0.1" value="1" style="width:100%;" oninput="changeScrubSpeed(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide" style="background: radial-gradient(circle at top right, rgba(244, 63, 94, 0.1), transparent 60%); border-left: 1px solid var(--border);">
+        <div class="story-card gsap-reveal">
+          <span class="slide-num">Step 04 / Telemetry Graph</span>
+          <h2>Telemetry <span>Visualizer</span>.</h2>
+          <p>Grafik telemetri di bawah ini menyesuaikan ukurannya secara dinamis berdasarkan posisi persentase gulir Anda saat ini.</p>
+          <div style="height: 60px; display:flex; align-items:flex-end; gap:8px; border-bottom:2px solid var(--border); padding-bottom:6px; margin-top:0.5rem;">
+            <div class="telemetry-bar" style="width:20%; background:var(--primary); height:30%; transition:height 0.1s;"></div>
+            <div class="telemetry-bar" style="width:20%; background:var(--accent-cyan); height:50%; transition:height 0.1s;"></div>
+            <div class="telemetry-bar" style="width:20%; background:var(--accent-purple); height:70%; transition:height 0.1s;"></div>
+            <div class="telemetry-bar" style="width:20%; background:var(--primary); height:45%; transition:height 0.1s;"></div>
+            <div class="telemetry-bar" style="width:20%; background:var(--accent-cyan); height:90%; transition:height 0.1s;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="slide" style="background: radial-gradient(circle at bottom center, rgba(6, 182, 212, 0.15), transparent 60%); border-left: 1px solid var(--border);">
+        <div class="story-card gsap-reveal" style="text-align: center; align-items: center;">
+          <span class="slide-num">Step 05 / Deployment</span>
+          <h2>Deploy <span>Instantly</span>.</h2>
+          <p>Mulai bangun antarmuka narrative storytelling Anda sendiri sekarang. Struktur kode modular siap diintegrasikan.</p>
+          <a href="#" class="conic-btn" style="margin-top: 1rem;">
+            <span>Get Starter Template <i class="fas fa-arrow-right" style="margin-left:6px;"></i></span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: BENTO GRID STATS -->
+  <section class="bento-sec">
+    <div class="sec-header">
+      <div class="badge">Narrative Stats</div>
+      <h2>Engine Telemetry & Analytics</h2>
+    </div>
+    <div class="bento-grid">
+      <div class="bento-card">
+        <span class="bento-title">Render Rate</span>
+        <span class="bento-val" id="fps-val">60 FPS</span>
+      </div>
+      <div class="bento-card wide">
+        <span class="bento-title">Scroll Progress</span>
+        <span class="bento-val" id="progress-val">0.0%</span>
+      </div>
+      <div class="bento-card">
+        <span class="bento-title">Damping Delay</span>
+        <span class="bento-val" id="damping-val">1.0s</span>
+      </div>
+      <div class="bento-card wide">
+        <span class="bento-title">Active Layers</span>
+        <span class="bento-val">5 Canvas Slides</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: PLAYGROUND CONTROLS -->
+  <section class="control-sec">
+    <div class="badge">Configuration Console</div>
+    <h2>Scroll Engine Sandbox</h2>
+    <p style="color:var(--text-muted); margin-top:0.5rem;">Sesuaikan mode transisi slide dan parameter ScrollTrigger secara global.</p>
+    
+    <div class="control-box">
+      <div class="control-row">
+        <label for="scrub-range">Global Scrub Damping (Detik)</label>
+        <div style="display:flex; width:100%; gap:15px; align-items:center;">
+          <input type="range" id="scrub-range" min="0.1" max="3" step="0.1" value="1" oninput="changeScrubSpeed(this.value)">
+          <span id="global-scrub-lbl" style="font-family:'Space Grotesk',sans-serif; font-weight:bold; min-width:40px;">1.0s</span>
+        </div>
+      </div>
+      <div class="control-row">
+        <label for="reveal-mode">Slide Reveal Transition</label>
+        <select id="reveal-mode" onchange="changeTransitionMode(this.value)">
+          <option value="y-slide">Vertical Slide-up (Power2)</option>
+          <option value="fade">Pure Opacity Fade</option>
+          <option value="zoom">Scale Zoom (Elastic)</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FOOTER & THEMES -->
+  <footer>
+    <h3 class="brand-logo" style="font-size: 1.5rem; margin-bottom: 1rem;">NARRATIVE<span>.IO</span></h3>
+    <p style="color: var(--text-muted);">Eksplorasi layout interaktif dengan visual premium.</p>
+    
+    <div class="theme-row">
+      <button class="theme-btn" id="theme-btn-dark" onclick="setTheme('dark')">Cyber Dark</button>
+      <button class="theme-btn" id="theme-btn-light" onclick="setTheme('light')">Modern Light</button>
+      <button class="theme-btn" id="theme-btn-orange" onclick="setTheme('orange')">Warm Tech</button>
+      <button class="theme-btn" id="theme-btn-sea" onclick="setTheme('sea')">Neon Depths</button>
+      <button class="theme-btn" id="theme-btn-rose" onclick="setTheme('rose')">Cyber Rose</button>
+    </div>
+
+    <div style="margin: 2rem 0;">
+      <a href="#" class="conic-btn">
+        <span>Back to Top <i class="fas fa-chevron-up" style="margin-left: 6px;"></i></span>
+      </a>
+    </div>
+    <p class="footer-credit">&copy; 2026 Wide Note - Antigravity UI Engine. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Register GSAP ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+
+    let scrollTriggerInstance = null;
+    let currentRevealMode = 'y-slide';
+    let currentScrubVal = 1;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Sync Theme Buttons UI
+      const activeTheme = localStorage.getItem('playground-gsap-theme') || 'dark';
+      document.getElementById('theme-btn-' + activeTheme).classList.add('active');
+
+      initScrollAnimation();
+      initFPSTracker();
+    });
+
+    function setTheme(themeName) {
+      document.documentElement.className = 'theme-' + themeName;
+      localStorage.setItem('playground-gsap-theme', themeName);
+      
+      // Update Active class in buttons
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('theme-btn-' + themeName).classList.add('active');
+    }
+
+    function changeScrubSpeed(val) {
+      currentScrubVal = parseFloat(val);
+      document.getElementById('slider-scrub-val').innerText = val + 's';
+      document.getElementById('global-scrub-lbl').innerText = val + 's';
+      document.getElementById('damping-val').innerText = val + 's';
+      document.getElementById('scrub-range').value = val;
+
+      if (scrollTriggerInstance) {
+        scrollTriggerInstance.vars.scrub = currentScrubVal;
+        scrollTriggerInstance.init();
+      }
+    }
+
+    function changeTransitionMode(mode) {
+      currentRevealMode = mode;
+      
+      // Kill old scroll trigger animation and re-initialize
+      if (scrollTriggerInstance) {
+        scrollTriggerInstance.kill();
+      }
+      initScrollAnimation();
+    }
+
+    function initScrollAnimation() {
+      const slider = document.getElementById('slider');
+      const pinSection = document.getElementById('pin-section');
+      
+      const getScrollAmount = () => -(slider.offsetWidth - window.innerWidth);
+
+      const mainTimeline = gsap.timeline();
+
+      scrollTriggerInstance = ScrollTrigger.create({
+        trigger: pinSection,
+        pin: true,
+        scrub: currentScrubVal,
+        start: "top top",
+        end: () => `+=${slider.offsetWidth}`,
+        invalidateOnRefresh: true,
+        animation: mainTimeline.to(slider, {
+          x: getScrollAmount,
+          ease: "none"
+        }),
+        onUpdate: (self) => {
+          // Update indicator bar
+          document.getElementById('indicator').style.width = `${self.progress * 100}%`;
+          
+          // Update progress text
+          document.getElementById('progress-val').innerText = `${(self.progress * 100).toFixed(1)}%`;
+          
+          // Telemetry bars modulation in Slide 4
+          const bars = document.querySelectorAll('.telemetry-bar');
+          if (bars.length > 0) {
+            bars.forEach((bar, idx) => {
+              const modifier = Math.sin(self.progress * Math.PI * 2 + idx) * 25 + 50;
+              bar.style.height = `${Math.max(10, Math.min(100, modifier))}%`;
+            });
+          }
+        }
+      });
+
+      // Animate individual card reveals
+      const cards = document.querySelectorAll('.gsap-reveal');
+      cards.forEach(card => {
+        let fromProps = { opacity: 0 };
+        
+        if (currentRevealMode === 'y-slide') {
+          fromProps.y = 40;
+        } else if (currentRevealMode === 'zoom') {
+          fromProps.scale = 0.8;
+          fromProps.y = 20;
+        } else {
+          // Pure fade
+          fromProps.y = 0;
+        }
+
+        gsap.from(card, {
+          ...fromProps,
+          duration: 0.6,
+          ease: currentRevealMode === 'zoom' ? "elastic.out(1, 0.75)" : "power2.out",
+          scrollTrigger: {
+            trigger: card,
+            containerAnimation: scrollTriggerInstance.animation,
+            start: "left center",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+    }
+
+    function initFPSTracker() {
+      let lastTime = performance.now();
+      let frameCount = 0;
+      const fpsEl = document.getElementById('fps-val');
+
+      function updateFPS() {
+        const now = performance.now();
+        frameCount++;
+        
+        if (now - lastTime >= 1000) {
+          const fps = Math.round((frameCount * 1000) / (now - lastTime));
+          fpsEl.innerText = `${fps} FPS`;
+          frameCount = 0;
+          lastTime = now;
+        }
+        
+        requestAnimationFrame(updateFPS);
+      }
+      requestAnimationFrame(updateFPS);
+    }
+  </script>
+</body>
+</html>

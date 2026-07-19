@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Neon Noir Dashboard</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('ui-beta-preview-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-cyber';
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Cyber (default) ===== */
+    :root, .theme-cyber {
+      --cyan: #00F0FF;
+      --magenta: #FF00A0;
+      --yellow: #CCFF00;
+      --bg-dark: #050508;
+      --bg-panel: #0A0A10;
+      --border-color: #1A1A30;
+      --text-main: #E2E8F0;
+      --text-dim: rgba(255,255,255,0.65);
+    }
+
+    .theme-blood {
+      --cyan: #FF3333;
+      --magenta: #FF0066;
+      --yellow: #FF9900;
+      --bg-dark: #0A0505;
+      --bg-panel: #140A0A;
+      --border-color: #3A1A1A;
+      --text-main: #FCE8E8;
+      --text-dim: rgba(255,180,180,0.65);
+    }
+
+    .theme-ghost {
+      --cyan: #94A3B8;
+      --magenta: #CBD5E1;
+      --yellow: #E2E8F0;
+      --bg-dark: #0F0F13;
+      --bg-panel: #1A1A24;
+      --border-color: #2A2A3A;
+      --text-main: #F1F5F9;
+      --text-dim: rgba(255,255,255,0.5);
+    }
+
+    .theme-neon {
+      --cyan: #00FF88;
+      --magenta: #00FFCC;
+      --yellow: #88FF00;
+      --bg-dark: #050A05;
+      --bg-panel: #0A140A;
+      --border-color: #1A3A1A;
+      --text-main: #E8FCE8;
+      --text-dim: rgba(180,255,180,0.65);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      position: relative;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Noise texture overlay */
+    .noise-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 8px 8px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* CRT Scanlines */
+    .scanlines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 3px);
+      background-size: 100% 4px;
+      z-index: 11;
+      pointer-events: none;
+    }
+
+    /* Glow utility */
+    .glow-cyan { text-shadow: 0 0 8px var(--cyan); color: var(--cyan); }
+    .glow-magenta { text-shadow: 0 0 8px var(--magenta); color: var(--magenta); }
+    .glow-yellow { text-shadow: 0 0 8px var(--yellow); color: var(--yellow); }
+
+    /* Left Terminal Sidebar */
+    aside {
+      width: 220px;
+      border-right: 1px solid var(--border-color);
+      background: var(--bg-panel);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      z-index: 20;
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+
+    .brand-glow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .nav-prompt {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .nav-prompt a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.75rem;
+      display: block;
+      transition: all 0.2s ease;
+    }
+
+    .nav-prompt a:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 5px var(--cyan);
+    }
+
+    /* Main Console Area */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 20;
+      overflow-y: auto;
+    }
+
+    /* Top stats indicators */
+    .dashboard-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .clock {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.15rem;
+    }
+
+    /* Section tag */
+    .sec-tag {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Hologram Cards grid */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .holo-card {
+      background: rgba(10, 10, 16, 0.65);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.25rem;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.05);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .holo-card:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+
+    .holo-card::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 6px; height: 6px;
+      background: var(--cyan);
+    }
+
+    .holo-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .holo-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    /* Console Panel */
+    .console-panel {
+      flex: 1;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .terminal-box {
+      background: #000;
+      border: 1px solid #1f2937;
+      padding: 1rem;
+      border-radius: 4px;
+      height: 100px;
+      overflow-y: auto;
+      font-size: 0.75rem;
+      color: var(--cyan);
+    }
+
+    .caret {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--cyan);
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+      margin-left: 4px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* Sandbox buttons */
+    .sandbox-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .cyber-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      color: var(--cyan);
+      padding: 0.5rem 1rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .cyber-btn:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    .cyber-btn.danger {
+      color: var(--magenta);
+    }
+    .cyber-btn.danger:hover {
+      border-color: var(--magenta);
+      box-shadow: 0 0 12px var(--magenta);
+    }
+
+    /* Spec grid */
+    .spec-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .spec-node {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .spec-node .spec-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--yellow);
+    }
+
+    .spec-node .spec-lbl {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 0.35rem;
+    }
+
+    /* Footer */
+    .cyber-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 1rem;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--cyan);
+    }
+
+    .theme-btn.active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen overlays -->
+  <div class="noise-overlay"></div>
+  <div class="scanlines"></div>
+
+  <!-- Terminal Sidebar -->
+  <aside>
+    <div class="brand-glow glow-cyan">SYS_CORE</div>
+    <ul class="nav-prompt">
+      <li><a href="#">> DASHBOARD</a></li>
+      <li><a href="#">> TERMINAL</a></li>
+      <li><a href="#">> NETWORK_LINK</a></li>
+    </ul>
+  </aside>
+
+  <!-- Console Main -->
+  <main>
+
+    <!-- SECTION 1: HERO -->
+    <section>
+      <div class="sec-tag">SECTION 1 // Hero</div>
+      <div class="dashboard-top">
+        <div style="font-size:0.75rem;"><span class="glow-cyan">> HOST: MEMPUL</span></div>
+        <div class="clock glow-yellow" id="live-clock">12:00:00</div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: FEATURES / GALLERY (Holo Stats) -->
+    <section>
+      <div class="sec-tag">SECTION 2 // Features Gallery</div>
+      <div class="stat-grid">
+        <div class="holo-card">
+          <span class="holo-label">Link Status</span>
+          <div class="holo-value glow-cyan">SECURE</div>
+        </div>
+        <div class="holo-card">
+          <span class="holo-label">Warning Matrix</span>
+          <div class="holo-value glow-magenta">03 ALERTS</div>
+        </div>
+        <div class="holo-card">
+          <span class="holo-label">Bandwidth Load</span>
+          <div class="holo-value glow-yellow">88.42%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE SANDBOX -->
+    <section>
+      <div class="sec-tag">SECTION 3 // Interactive Sandbox</div>
+      <div class="console-panel">
+        <div style="font-size:0.75rem; color:var(--magenta); margin-bottom:1rem;">[ TELEMETRY TERMINAL INTERFACES ]</div>
+        <div class="terminal-box">
+          <div id="terminal-text">> INTRUSION DETECTED IN SEC-A. INITIALIZING PORT SHIELD BLOCKERS...</div>
+          <div id="terminal-action">> ALL CONNECTIONS FILTERED ON EN-7890.<span class="caret"></span></div>
+        </div>
+        <div class="sandbox-buttons" style="margin-top:1rem;">
+          <button class="cyber-btn" onclick="alert('> SCAN INITIATED')">SCAN</button>
+          <button class="cyber-btn danger" onclick="alert('> PURGE EXECUTED')">PURGE</button>
+          <button class="cyber-btn" onclick="document.getElementById('terminal-text').textContent = '> SYSTEM REBOOT CYCLE STARTED...'">REBOOT</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SPECS / TECHNICAL -->
+    <section>
+      <div class="sec-tag">SECTION 4 // Technical Specs</div>
+      <div class="spec-row">
+        <div class="spec-node">
+          <div class="spec-val">60Hz</div>
+          <div class="spec-lbl">Scan Rate</div>
+        </div>
+        <div class="spec-node">
+          <div class="spec-val">4px</div>
+          <div class="spec-lbl">Grid Unit</div>
+        </div>
+        <div class="spec-node">
+          <div class="spec-val">4K</div>
+          <div class="spec-lbl">Res</div>
+        </div>
+        <div class="spec-node">
+          <div class="spec-val">128bit</div>
+          <div class="spec-lbl">Encryption</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: THEME SWITCHER FOOTER -->
+    <footer class="cyber-footer">
+      <div class="sec-tag">SECTION 5 // Theme Switcher</div>
+      <div class="theme-btn-row">
+        <button class="theme-btn active" onclick="setTheme('cyber')">Cyber</button>
+        <button class="theme-btn" onclick="setTheme('blood')">Blood</button>
+        <button class="theme-btn" onclick="setTheme('ghost')">Ghost</button>
+        <button class="theme-btn" onclick="setTheme('neon')">Neon</button>
+      </div>
+      <span style="font-size:0.5rem; opacity:0.3; letter-spacing:2px;">CYBERPUNK NEON NOIR // v1.0</span>
+    </footer>
+
+  </main>
+
+  <script>
+    window.setTheme = function(name) {
+      document.documentElement.className = 'theme-' + name;
+      localStorage.setItem('ui-beta-preview-theme', name);
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === name);
+      });
+    };
+
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        if (b.textContent.toLowerCase() === current) b.classList.add('active');
+      });
+    })();
+
+    // Live Terminal Clock
+    function updateClock() {
+      var el = document.getElementById('live-clock');
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      var s = String(now.getSeconds()).padStart(2, '0');
+      el.textContent = h + ':' + m + ':' + s;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIY Zine / Scrapbook Card Grid</title>
+
+  <!-- ANTI-FLASH IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Bebas+Neue&family=Courier+Prime&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEMES ===== */
+    :root, .theme-zine {
+      --bg: #F3F4F6;
+      --text: #111111;
+      --card-bg: #FFFFFF;
+      --accent: #DC2626;
+      --accent2: #2563EB;
+      --tape-1: rgba(254,243,199,0.55);
+      --tape-2: rgba(252,165,165,0.55);
+      --tape-3: rgba(209,213,219,0.65);
+      --grid-line: rgba(0,0,0,0.03);
+      --card-shadow: rgba(0,0,0,0.06);
+      --card-text: #374151;
+    }
+    .theme-magenta {
+      --bg: #FDF2F8;
+      --text: #1A0D14;
+      --card-bg: #FFFFFF;
+      --accent: #DB2777;
+      --accent2: #7C3AED;
+      --tape-1: rgba(254,205,222,0.55);
+      --tape-2: rgba(244,114,182,0.45);
+      --tape-3: rgba(209,213,219,0.65);
+      --grid-line: rgba(219,39,119,0.05);
+      --card-shadow: rgba(219,39,119,0.08);
+      --card-text: #4A1D32;
+    }
+    .theme-cyan {
+      --bg: #ECFEFF;
+      --text: #0C1A1A;
+      --card-bg: #FFFFFF;
+      --accent: #0891B2;
+      --accent2: #06B6D4;
+      --tape-1: rgba(167,243,208,0.55);
+      --tape-2: rgba(103,232,249,0.45);
+      --tape-3: rgba(209,213,219,0.65);
+      --grid-line: rgba(8,145,178,0.05);
+      --card-shadow: rgba(8,145,178,0.08);
+      --card-text: #1A3D3D;
+    }
+    .theme-sepia {
+      --bg: #FEF9EF;
+      --text: #1A1510;
+      --card-bg: #FDF6E3;
+      --accent: #92400E;
+      --accent2: #78350F;
+      --tape-1: rgba(252,231,184,0.6);
+      --tape-2: rgba(251,191,143,0.5);
+      --tape-3: rgba(214,194,166,0.65);
+      --grid-line: rgba(146,64,14,0.04);
+      --card-shadow: rgba(146,64,14,0.08);
+      --card-text: #5C4033;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .washi-grid-bg {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background-size:20px 20px;
+      background-image:linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                       linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      z-index:1; pointer-events:none;
+    }
+
+    .section { position:relative; z-index:10; max-width:520px; margin:0 auto; padding:2rem 0; }
+
+    /* SECTION 1: HEADER */
+    #zine-header { text-align:center; padding:1rem 0 2rem; }
+    .zine-masthead {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(2.5rem,8vw,4.5rem);
+      color:var(--accent); letter-spacing:2px;
+    }
+    .zine-subhead { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--text); opacity:0.6; margin-top:0.25rem; }
+
+    /* SECTION 2: GALLERY GRID */
+    .zine-container { display:flex; flex-direction:column; gap:2rem; }
+
+    .zine-card {
+      background:var(--card-bg);
+      border:1px dashed rgba(0,0,0,0.15);
+      padding:2rem;
+      position:relative;
+      box-shadow:2px 8px 20px var(--card-shadow);
+      transition:all 0.25s cubic-bezier(0.175,0.885,0.32,1.275), background 0.3s ease;
+      clip-path:polygon(0% 2%,4% 0%,9% 3%,15% 1%,21% 4%,28% 1%,34% 3%,41% 0%,47% 2%,55% 0%,63% 3%,72% 1%,79% 4%,86% 1%,93% 3%,100% 0%,98% 25%,100% 48%,97% 72%,100% 100%,94% 97%,85% 100%,78% 96%,69% 99%,60% 97%,52% 100%,44% 96%,33% 99%,24% 97%,15% 100%,9% 96%,0% 98%,2% 75%,0% 50%,3% 22%);
+    }
+    .card-1 { transform:rotate(-2deg); }
+    .card-2 { transform:rotate(1.5deg); margin-top:-15px; }
+    .card-3 { transform:rotate(-1deg); }
+    .zine-card:hover { transform:translateY(-5px) rotate(0deg); box-shadow:2px 12px 28px rgba(0,0,0,0.12); }
+
+    .tape {
+      position:absolute; height:20px; width:70px;
+      box-shadow:0 1px 3px rgba(0,0,0,0.05); z-index:30; opacity:0.75;
+      transition:opacity 0.2s ease, background 0.3s ease;
+    }
+    .zine-card:hover .tape { opacity:0.95; }
+    .tape-top-left { top:-6px; left:15px; transform:rotate(-12deg); background:var(--tape-1); }
+    .tape-top-right { top:-8px; right:20px; transform:rotate(8deg); background:var(--tape-2); }
+
+    .stamped-date {
+      position:absolute; bottom:15px; right:15px; width:46px; height:46px;
+      border:2px dashed var(--accent); border-radius:50%; color:var(--accent);
+      display:flex; align-items:center; justify-content:center;
+      font-size:8px; font-weight:bold; transform:rotate(-15deg); text-transform:uppercase; opacity:0.7;
+    }
+
+    .typo-brush { font-family:'Permanent Marker',cursive; color:var(--accent); font-size:1.55rem; margin-bottom:0.5rem; line-height:1.1; }
+    .typo-typewriter { font-family:'Courier Prime',monospace; font-size:1.15rem; font-weight:bold; margin-bottom:0.5rem; }
+    .typo-bebas { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--accent2); letter-spacing:1px; margin-bottom:0.5rem; }
+    .card-body { font-family:'Inter',sans-serif; font-size:0.8rem; color:var(--card-text); line-height:1.5; }
+
+    /* SECTION 3: SANDBOX */
+    #sandbox { background:var(--card-bg); border-radius:12px; padding:2rem; border:1px dashed rgba(0,0,0,0.12); transition:background 0.3s ease; }
+    .sandbox-title { font-family:'Permanent Marker',cursive; font-size:1.2rem; color:var(--accent); margin-bottom:1rem; }
+    .sandbox-row { display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-bottom:1rem; }
+    .sandbox-btn {
+      font-family:'Courier Prime',monospace; font-size:0.7rem;
+      padding:0.5rem 1rem; border:2px dashed var(--accent); border-radius:4px;
+      background:transparent; color:var(--text); cursor:pointer; transition:all 0.2s;
+    }
+    .sandbox-btn:hover { background:var(--accent); color:var(--card-bg); }
+    .sandbox-btn.active { background:var(--accent); color:var(--card-bg); }
+    .sandbox-label { font-family:'Inter',sans-serif; font-size:0.7rem; color:var(--card-text); }
+
+    /* SECTION 4: SPECS */
+    #specs { text-align:center; }
+    .specs-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+    .spec-item { padding:1rem; background:var(--card-bg); border-radius:8px; box-shadow:2px 4px 12px var(--card-shadow); transition:background 0.3s ease; }
+    .spec-item .val { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--accent); }
+    .spec-item .lbl { font-family:'Courier Prime',monospace; font-size:0.6rem; color:var(--card-text); text-transform:uppercase; }
+
+    /* SECTION 5: THEME FOOTER */
+    #theme-footer { text-align:center; }
+    .theme-buttons { display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap; }
+    .theme-btn {
+      font-family:'Courier Prime',monospace; font-size:0.65rem; font-weight:700;
+      padding:0.5rem 1rem; border:2px dashed var(--accent); border-radius:4px;
+      background:var(--card-bg); color:var(--text); cursor:pointer; transition:all 0.2s;
+    }
+    .theme-btn:hover { background:var(--accent); color:var(--card-bg); }
+    .footer-credit { font-family:'Courier Prime',monospace; font-size:0.55rem; color:var(--text); opacity:0.4; margin-top:1.5rem; }
+  </style>
+</head>
+<body>
+
+<div class="washi-grid-bg"></div>
+
+<!-- SECTION 1: HEADER -->
+<section id="zine-header" class="section">
+  <div class="zine-masthead">DIY ZINE</div>
+  <div class="zine-subhead">Scrapbook Collage &middot; Handmade Aesthetic</div>
+</section>
+
+<!-- SECTION 2: GALLERY GRID -->
+<section class="section">
+  <div class="zine-container">
+    <div class="zine-card card-1">
+      <div class="tape tape-top-left"></div>
+      <h3 class="typo-brush">HANDMADE COLLAGE.</h3>
+      <p class="card-body">Torn paper edge overlays generated dynamically using geometric polygon masks. Slightly angled cards stack with negative margin offsets.</p>
+    </div>
+    <div class="zine-card card-2">
+      <div class="tape tape-top-right"></div>
+      <div class="stamped-date">JUL 19</div>
+      <h3 class="typo-typewriter">System Typewriter //</h3>
+      <p class="card-body">Courier fonts mixed beside brushed marker headlines. Mismatched typography styles represent physical zine publications.</p>
+    </div>
+    <div class="zine-card card-3">
+      <div class="tape tape-top-left" style="background:var(--tape-3);"></div>
+      <h3 class="typo-bebas">CONDENSED BLOCK NEWS</h3>
+      <p class="card-body">Acid colors, scrapbook grids, tape masking anchors, and old newspaper editorial grids.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: SANDBOX -->
+<section id="sandbox" class="section">
+  <h3 class="sandbox-title">Stamp &amp; Tape Lab</h3>
+  <div class="sandbox-row">
+    <button class="sandbox-btn" id="stamp-btn" onclick="toggleStamp()">STAMP</button>
+    <button class="sandbox-btn" id="tape-btn" onclick="toggleTape()">+TAPE</button>
+    <button class="sandbox-btn" id="rotate-btn" onclick="toggleRotate()">ROTATE</button>
+  </div>
+  <div class="sandbox-label" id="sandbox-status">Click stamps to apply effects to the gallery cards.</div>
+</section>
+
+<!-- SECTION 4: SPECS -->
+<section id="specs" class="section">
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="val">3</div>
+      <div class="lbl">Cards</div>
+    </div>
+    <div class="spec-item">
+      <div class="val">4</div>
+      <div class="lbl">Fonts</div>
+    </div>
+    <div class="spec-item">
+      <div class="val">3</div>
+      <div class="lbl">Tape Types</div>
+    </div>
+    <div class="spec-item">
+      <div class="val">Poly</div>
+      <div class="lbl">Clip Mask</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: THEME FOOTER -->
+<section id="theme-footer" class="section">
+  <h3 class="sandbox-title" style="font-size:1rem;">Theme Switcher</h3>
+  <div class="theme-buttons">
+    <button class="theme-btn" onclick="setTheme('zine')">Zine</button>
+    <button class="theme-btn" onclick="setTheme('magenta')">Magenta</button>
+    <button class="theme-btn" onclick="setTheme('cyan')">Cyan</button>
+    <button class="theme-btn" onclick="setTheme('sepia')">Sepia</button>
+  </div>
+  <p class="footer-credit">UI PLAYGROUND BETA &middot; 18-DIY-ZINE</p>
+</section>
+
+<script>
+  // ===== THEME SWITCHER API =====
+  window.setTheme = function(name){document.documentElement.className='theme-'+name;localStorage.setItem('ui-beta-preview-theme',name);};
+
+  // ===== SANDBOX CONTROLS =====
+  var stampsOn = false, tapeOn = false, rotateOn = false;
+  function toggleStamp() {
+    stampsOn = !stampsOn;
+    document.getElementById('stamp-btn').classList.toggle('active');
+    document.getElementById('sandbox-status').textContent = stampsOn ? 'Stamp overlays active on all cards.' : 'Stamps removed.';
+  }
+  function toggleTape() {
+    tapeOn = !tapeOn;
+    document.getElementById('tape-btn').classList.toggle('active');
+    var tapes = document.querySelectorAll('.tape');
+    tapes.forEach(function(t){ t.style.opacity = tapeOn ? '1' : '0.75'; });
+    document.getElementById('sandbox-status').textContent = tapeOn ? 'Tape emphasis enabled.' : 'Tape opacity normalized.';
+  }
+  function toggleRotate() {
+    rotateOn = !rotateOn;
+    document.getElementById('rotate-btn').classList.toggle('active');
+    var cards = document.querySelectorAll('.zine-card');
+    cards.forEach(function(c){ c.style.transform = rotateOn ? 'rotate(0deg)' : ''; });
+    document.getElementById('sandbox-status').textContent = rotateOn ? 'Card angles reset to flat.' : 'Card angles restored.';
+  }
+</script>
+</body>
+</html>

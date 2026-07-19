@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neobrutalist SaaS Portal</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Neobrutalist Theme Variables */
+    :root {
+      --bg: #F3F4F6;
+      --primary: #FFEB3B; /* Brutal Yellow */
+      --secondary: #FFFFFF;
+      --accent: #FF5252;
+      --text: #000000;
+      --border-color: #000000;
+      --card-bg: #FFFFFF;
+      --accent-cyan: #00C2FF;
+      --accent-purple: #E040FB;
+    }
+
+    .theme-cyan {
+      --bg: #E0F7FA;
+      --primary: #00E5FF; /* Cyber Cyan */
+      --accent: #E040FB;
+      --card-bg: #FFFFFF;
+    }
+
+    .theme-lime {
+      --bg: #F9FBE7;
+      --primary: #AEEA00; /* Toxic Lime */
+      --accent: #FF6D00;
+      --card-bg: #FFFFFF;
+    }
+
+    .theme-magenta {
+      --bg: #FCE4EC;
+      --primary: #FF4081; /* Hot Magenta */
+      --accent: #00E5FF;
+      --card-bg: #FFFFFF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      padding: 2rem 1rem;
+      transition: background 0.3s ease;
+    }
+
+    /* Helper utility classes */
+    .neo-border {
+      border: 4px solid var(--border-color);
+    }
+
+    .neo-shadow {
+      box-shadow: 6px 6px 0px var(--border-color);
+    }
+
+    .neo-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0.8rem 1.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: var(--primary);
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .neo-btn:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0px var(--border-color);
+    }
+
+    .neo-btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 3px 3px 0px var(--border-color);
+    }
+
+    /* Container lock */
+    .app-shell {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* SECTION 1: HEADER & HERO */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem;
+      background: var(--secondary);
+    }
+
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    .hero {
+      background: var(--primary);
+      padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--secondary);
+      padding: 6px 12px;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      letter-spacing: -2px;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      max-width: 600px;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    .rotated-tag {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: var(--accent);
+      color: var(--secondary);
+      padding: 8px 16px;
+      font-weight: 800;
+      transform: rotate(6deg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    /* SECTION 2: FEATURES GRID */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: rotate(-1.5deg) scale(1.01);
+    }
+
+    .feature-card.alt:hover {
+      transform: rotate(1.5deg) scale(1.01);
+    }
+
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    /* SECTION 3: INTERACTIVE TERMINAL MOCKUP */
+    .terminal-box {
+      background: var(--secondary);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .terminal-header {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .console-screen {
+      background: #000000;
+      color: #00FF66;
+      border: 4px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      min-height: 150px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(0,255,102,0.3);
+    }
+
+    .console-line {
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .console-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* SECTION 4: PRICING PLANS */
+    .pricing-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .pricing-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .pricing-plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .plan-card {
+      background: var(--card-bg);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .plan-card.popular {
+      background: var(--primary);
+      transform: scale(1.03);
+    }
+
+    .plan-header h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+    }
+
+    .plan-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .plan-features {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .plan-features li i {
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    /* SECTION 5: FAQ ACCORDION */
+    .faq-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .faq-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+    }
+
+    .faq-item {
+      background: var(--secondary);
+      padding: 1.25rem;
+      cursor: pointer;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+    }
+
+    .faq-answer {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #374151;
+      display: none;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    /* BRUTAL THEME SWITCHER FOOTER */
+    .switcher-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 2rem 0;
+      border-top: 4px solid var(--border-color);
+    }
+
+    .switcher-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .switcher-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .switcher-btn {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      border: 3px solid var(--border-color);
+      box-shadow: 3px 3px 0px var(--border-color);
+      transition: transform 0.1s ease;
+    }
+
+    .switcher-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--border-color);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 3px !important;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      text-decoration: none;
+      margin-top: 1rem;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-cyan), var(--accent-purple), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: var(--secondary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0.75rem 2rem;
+      width: 100%;
+      height: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background 0.1s ease, color 0.1s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--secondary);
+      color: var(--accent);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Theme Switcher buttons in footer */
+    .theme-foot-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--secondary); border: 3px solid var(--border-color);
+      color: var(--text); padding: 6px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; font-weight: 700; cursor: pointer;
+      box-shadow: 3px 3px 0 var(--border-color);
+      transition: all 0.1s ease; text-transform: uppercase;
+    }
+    .theme-foot-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--border-color); }
+    .theme-foot-btn.active { background: var(--primary); }
+  </style>
+</head>
+<body class="theme-yellow">
+
+  <div class="app-shell">
+    
+    <!-- Navbar -->
+    <nav class="neo-border neo-shadow">
+      <div class="brand-name">BRUTAL.IO</div>
+      <a href="#" class="neo-btn neo-border neo-shadow">Sign In</a>
+    </nav>
+
+    <!-- SECTION 1: HERO -->
+    <header class="hero neo-border neo-shadow">
+      <div class="rotated-tag neo-border">V2.5 LIVE</div>
+      <span class="hero-badge neo-border">INTELLIGENT COMPILER ENGINE</span>
+      <h1>DECODE. BUILD.<br>SHATTER THE GRID.</h1>
+      <p class="hero-desc">
+        Antarmuka Saas Neobrutalist tanpa gradien halus, tanpa bayangan samar. Hanya fungsionalitas murni yang menabrak aturan simetri standar.
+      </p>
+      <a href="#" class="conic-btn neo-shadow">
+        <span>GET STARTED NOW</span>
+      </a>
+    </header>
+
+    <!-- SECTION 2: FEATURES GRID -->
+    <section class="feature-grid">
+      <div class="feature-card neo-border neo-shadow">
+        <span class="hero-badge neo-border" style="align-self:flex-start; margin-bottom:0.5rem;">01 / COMPRESS</span>
+        <h3>FAST COMPILE</h3>
+        <p>Proses kompilasi instan tanpa rendering berulang. Kode mentah langsung dieksekusi dalam waktu kurang dari 8ms.</p>
+      </div>
+
+      <div class="feature-card alt neo-border neo-shadow" style="background:var(--accent-cyan);">
+        <span class="hero-badge neo-border" style="align-self:flex-start; margin-bottom:0.5rem;">02 / OVERFLOW</span>
+        <h3>GRID BREAKOUT</h3>
+        <p>Bebas keluar dari pakem kolom statis. Elemen desain secara sengaja bertumpuk memberikan efek visual yang dominan.</p>
+      </div>
+
+      <div class="feature-card neo-border neo-shadow" style="background:var(--accent-purple); color:var(--secondary);">
+        <span class="hero-badge neo-border" style="align-self:flex-start; margin-bottom:0.5rem; color:var(--text)">03 / LOGIC</span>
+        <h3>BRUTAL CONTROL</h3>
+        <p>Kontrol logika penuh di tangan Anda. Dapatkan performa terbaik dengan arsitektur flat-design mutakhir.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE TERMINAL -->
+    <section class="terminal-box neo-border neo-shadow">
+      <h2 class="terminal-header">Interactive Terminal Console</h2>
+      <div class="console-screen" id="console-screen">
+        <div class="console-line">> System initialized. Waiting for trigger input...</div>
+      </div>
+      <div class="console-actions">
+        <button class="neo-btn neo-border neo-shadow" onclick="triggerConsole('compile')">Run Compile</button>
+        <button class="neo-btn neo-border neo-shadow" onclick="triggerConsole('deploy')" style="background:var(--accent-cyan)">Deploy Stack</button>
+        <button class="neo-btn neo-border neo-shadow" onclick="triggerConsole('clear')" style="background:var(--secondary)">Clear Logs</button>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PRICING PLANS -->
+    <section class="pricing-wrap">
+      <h2 class="pricing-title">Simple Flat Pricing</h2>
+      <div class="pricing-plans">
+        <div class="plan-card neo-border neo-shadow">
+          <div class="plan-header">
+            <h4>Developer</h4>
+            <p>Sandbox development environment</p>
+          </div>
+          <div class="plan-price">$0</div>
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> 1 Sandbox Instance</li>
+            <li><i class="fa-solid fa-check"></i> Standard API keys</li>
+            <li><i class="fa-solid fa-check"></i> Community support</li>
+          </ul>
+          <a href="#" class="neo-btn neo-border neo-shadow" style="background:var(--secondary)">Choose Plan</a>
+        </div>
+
+        <div class="plan-card popular neo-border neo-shadow">
+          <div class="plan-header">
+            <h4>Pro Builder</h4>
+            <p>Uncapped builds and dynamic assets</p>
+          </div>
+          <div class="plan-price">$49/mo</div>
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> Unlimited sandboxes</li>
+            <li><i class="fa-solid fa-check"></i> Production-ready APIs</li>
+            <li><i class="fa-solid fa-check"></i> Priority direct Slack support</li>
+          </ul>
+          <a href="#" class="neo-btn neo-border neo-shadow" style="background:var(--accent); color:var(--secondary)">Go Pro</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: FAQ ACCORDION -->
+    <section class="faq-wrap">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-item neo-border neo-shadow" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Apakah ini kompatibel dengan React/Next.js?</span>
+          <i class="fa-solid fa-plus"></i>
+        </div>
+        <div class="faq-answer">
+          Ya! Seluruh kelas CSS dan token yang ditunjukkan di sini sepenuhnya kompatibel dengan ekosistem Tailwind CSS v3 maupun v4 pada React dan Next.js.
+        </div>
+      </div>
+
+      <div class="faq-item neo-border neo-shadow" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Mengapa warna yang digunakan menabrak aturan standar?</span>
+          <i class="fa-solid fa-plus"></i>
+        </div>
+        <div class="faq-answer">
+          Ini adalah filosofi dasar Neobrutalisme—mengedepankan visual yang jujur, tajam, serta langsung tanpa ornamen bayangan atau gradien yang menyembunyikan struktur elemen asli.
+        </div>
+      </div>
+    </section>
+
+    <!-- BRUTAL THEME SWITCHER FOOTER -->
+    <footer class="switcher-footer">
+      <span class="switcher-label">🎨 COLOR SCHEME</span>
+      <div class="switcher-buttons">
+        <button class="theme-foot-btn active" onclick="setTheme('yellow')" data-theme="yellow">Yellow</button>
+        <button class="theme-foot-btn" onclick="setTheme('cyan')" data-theme="cyan">Cyan</button>
+        <button class="theme-foot-btn" onclick="setTheme('lime')" data-theme="lime">Lime</button>
+        <button class="theme-foot-btn" onclick="setTheme('magenta')" data-theme="magenta">Magenta</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Interactive terminal logging
+    function triggerConsole(action) {
+      const screen = document.getElementById('console-screen');
+      if (action === 'clear') {
+        screen.innerHTML = '<div class="console-line">> Logs cleared. Ready.</div>';
+        return;
+      }
+      
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      if (action === 'compile') {
+        line.innerHTML = `> [${new Date().toLocaleTimeString()}] COMPILING pipeline components... SUCCESS in 4.2ms.`;
+      } else if (action === 'deploy') {
+        line.innerHTML = `> [${new Date().toLocaleTimeString()}] DEPLOYING static bundle. Routing endpoints... LIVE at host.brutal.io/v2.`;
+        line.style.color = '#00E5FF';
+      }
+      screen.appendChild(line);
+      screen.scrollTop = screen.scrollHeight;
+    }
+
+    // Toggle FAQAccordion
+    function toggleFaq(item) {
+      item.classList.toggle('open');
+      const icon = item.querySelector('.faq-question i');
+      if (item.classList.contains('open')) {
+        icon.className = 'fa-solid fa-minus';
+      } else {
+        icon.className = 'fa-solid fa-plus';
+      }
+    }
+
+    // Dynamic theme changer
+    window.setTheme = function(themeName) {
+      document.documentElement.className = 'theme-' + themeName;
+      localStorage.setItem('ui-beta-preview-theme', themeName);
+      document.querySelectorAll('.theme-foot-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-theme') === themeName);
+      });
+    }
+  </script>
+</body>
+</html>

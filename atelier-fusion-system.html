@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atelier Fusion System — UI Playground Beta</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('atelier-fusion-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    .theme-dark,:root{--bg:#020617;--surface:#0f172a;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--a1:#6366f1;--a2:#a855f7;--a3:#06b6d4;--text:#f8fafc;--muted:#94a3b8;--dim:#64748b;--a1r:99,102,241;--preview-bg:#0a0e1a}
+    .theme-light{--bg:#fafaf9;--surface:#f5f5f4;--card:rgba(0,0,0,0.02);--border:rgba(0,0,0,0.08);--a1:#4f46e5;--a2:#7c3aed;--a3:#0891b2;--text:#1c1917;--muted:#44403c;--dim:#78716c;--a1r:79,70,229;--preview-bg:#f0efed}
+    .theme-orange{--bg:#0c0602;--surface:#180d05;--card:rgba(251,146,60,0.05);--border:rgba(251,146,60,0.15);--a1:#f97316;--a2:#ea580c;--a3:#facc15;--text:#fff7ed;--muted:#fed7aa;--dim:#a16207;--a1r:249,115,22;--preview-bg:#120803}
+    .theme-sea{--bg:#011116;--surface:#02202a;--card:rgba(20,184,166,0.05);--border:rgba(20,184,166,0.12);--a1:#0ea5e9;--a2:#14b8a6;--a3:#2dd4bf;--text:#ecfeff;--muted:#a5f3fc;--dim:#0891b2;--a1r:14,165,233;--preview-bg:#02151e}
+    .theme-rose{--bg:#0c0208;--surface:#16040d;--card:rgba(244,63,94,0.05);--border:rgba(244,63,94,0.12);--a1:#e11d48;--a2:#be123c;--a3:#fb7185;--text:#fff1f2;--muted:#fda4af;--dim:#be123c;--a1r:225,29,72;--preview-bg:#14030a}
+
+    *,*::before,*::after{box-sizing:border-box;transition:background-color .3s,border-color .3s,color .3s}
+    body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif}
+
+    .shell{max-width:1280px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:24px}
+    .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:16px 24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+    .header-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}.header-brand i{color:var(--a1);font-size:1.2rem}
+    .badge{font-family:'JetBrains Mono',monospace;font-size:.65rem;background:rgba(var(--a1r),.1);border:1px solid rgba(var(--a1r),.25);padding:3px 10px;border-radius:9999px;color:var(--a1);font-weight:700}
+    .thgroup{display:flex;gap:3px;background:var(--bg);padding:3px;border-radius:8px;border:1px solid var(--border)}
+    .thbtn{width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;transition:.15s;background:var(--bg);color:var(--text)}
+    .thbtn:hover{transform:scale(1.1)}.thbtn.active{border-color:var(--a1);box-shadow:0 0 0 2px var(--bg)}
+    .sec-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--a1);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+    .sec-title{font-size:1.3rem;font-weight:900;letter-spacing:-.5px;margin:0}
+    .hero-zone{text-align:center;padding:48px 20px 24px}
+    .hero-zone h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;letter-spacing:-1.5px;margin:0;background:linear-gradient(135deg,var(--text),var(--a1));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-zone p{max-width:600px;margin:12px auto 0;color:var(--muted);font-size:.9rem;line-height:1.5}
+    .picker-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .picker{flex:1;min-width:240px;max-width:400px}
+    .picker label{display:block;font-size:.7rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+    .picker select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-size:.85rem;outline:none;cursor:pointer}
+    .picker select:focus{border-color:var(--a1)}
+    .ratio-zone{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+    .ratio-zone .rlabel{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--dim);font-weight:700;width:100px;text-align:center}
+    .ratio-track{flex:1;min-width:200px;max-width:400px}
+    .ratio-track input[type=range]{width:100%;-webkit-appearance:none;height:6px;background:var(--border);border-radius:9999px;outline:none}
+    .ratio-track input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--a1);cursor:pointer;box-shadow:0 0 8px rgba(var(--a1r),.4)}
+    .fusion-badge{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:9999px;padding:8px 20px;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;margin:8px 0}
+    .fusion-badge i{color:var(--a2)}
+    .preview-panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .preview-pane{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .preview-pane .pane-head{padding:8px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+    .preview-pane .pane-head .pname{font-size:.75rem;font-weight:700;display:flex;align-items:center;gap:6px}
+    .preview-pane .pane-head .pnum{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--a1);font-weight:700}
+    .preview-pane .pane-frame{aspect-ratio:16/9;background:var(--preview-bg);overflow:hidden;position:relative}
+    .preview-pane .pane-frame iframe{width:300%;height:300%;border:none;transform:scale(.33);transform-origin:0 0}
+    .prompt-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
+    .prompt-box textarea{width:100%;min-height:100px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.5;resize:vertical;outline:none}
+    .prompt-box textarea:focus{border-color:var(--a1)}
+    .copy-btn{position:absolute;top:24px;right:24px;background:rgba(var(--a1r),.1);border:1px solid rgba(var(--a1r),.25);color:var(--a1);padding:6px 12px;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace}
+    .copy-btn:hover{background:rgba(var(--a1r),.2)}
+    .preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+    .preset-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;font-size:.7rem;font-weight:600;color:var(--text);transition:.15s;text-align:center}
+    .preset-btn:hover{border-color:var(--a1);background:rgba(var(--a1r),.05)}
+    .preset-btn .pbc{display:block;font-size:.55rem;color:var(--dim);margin-top:2px;font-family:'JetBrains Mono',monospace}
+    .fusion-footer{text-align:center;padding:24px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--dim)}
+    @media(max-width:720px){.preview-panels{grid-template-columns:1fr}.picker-row{flex-direction:column;align-items:center}}
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand"><i class="fas fa-flask"></i> Atelier Fusion <span class="badge">FUSE · A · B</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="thgroup">
+        <button class="thbtn active" data-thbtn="dark" onclick="setTheme('dark')"><i class="fas fa-moon"></i></button>
+        <button class="thbtn" data-thbtn="light" onclick="setTheme('light')"><i class="fas fa-sun"></i></button>
+        <button class="thbtn" data-thbtn="orange" onclick="setTheme('orange')"><i class="fas fa-fire"></i></button>
+        <button class="thbtn" data-thbtn="sea" onclick="setTheme('sea')"><i class="fas fa-droplet"></i></button>
+        <button class="thbtn" data-thbtn="rose" onclick="setTheme('rose')"><i class="fas fa-heart"></i></button>
+      </div>
+      <a href="index.html" style="color:var(--dim);font-size:.75rem;text-decoration:none;"><i class="fas fa-arrow-left"></i> Playground</a>
+    </div>
+  </header>
+
+  <!-- SECTION 1: HERO -->
+  <section class="hero-zone">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--a1);text-transform:uppercase;letter-spacing:2px;font-weight:700;"><i class="fas fa-wand-magic-sparkles"></i> Style Fusion Engine</span>
+    <h1>Fuse. Blend. Discover.</h1>
+    <p>Pilih 2 gaya arsitektur UI dari 32 yang tersedia, atur rasio fusion-nya, dan lihat bagaimana dua bahasa visual bergabung menjadi sesuatu yang baru. Dapatkan prompt siap pakai untuk AI coding tool.</p>
+  </section>
+
+  <!-- SECTION 2: PICKER + RATIO -->
+  <section>
+    <div class="sec-head">
+      <div><span class="sec-label"><i class="fas fa-cubes"></i> Step 1 · Select Two Styles</span><h2 class="sec-title">Choose A + B</h2></div>
+      <span class="badge" id="fusion-count">32 styles</span>
+    </div>
+    <div class="picker-row">
+      <div class="picker"><label>Style A <span style="color:var(--a1)">●</span></label><select id="styleA" onchange="updateFusion()"></select></div>
+      <div class="picker"><label>Style B <span style="color:var(--a2)">●</span></label><select id="styleB" onchange="updateFusion()"></select></div>
+    </div>
+    <div class="sec-head" style="margin-top:20px">
+      <div><span class="sec-label"><i class="fas fa-sliders-h"></i> Step 2 · Blend Ratio</span><h2 class="sec-title">Adjust Proportion</h2></div>
+    </div>
+    <div class="ratio-zone">
+      <span class="rlabel" id="ratioALabel">A · 50%</span>
+      <div class="ratio-track"><input type="range" id="ratioSlider" min="0" max="100" value="50" oninput="updateFusion()"></div>
+      <span class="rlabel" id="ratioBLabel">B · 50%</span>
+    </div>
+    <div style="text-align:center;margin-top:6px;"><span class="fusion-badge" id="fusionBadge">—</span></div>
+  </section>
+
+  <!-- SECTION 3: PREVIEW -->
+  <section>
+    <div class="sec-head">
+      <div><span class="sec-label"><i class="fas fa-eye"></i> Step 3 · Preview</span><h2 class="sec-title">Side-by-Side</h2></div>
+      <span class="badge" id="fusionNameBadge" style="color:var(--a1);font-size:.75rem;">&lt;FUSION&gt;</span>
+    </div>
+    <div class="preview-panels">
+      <div class="preview-pane">
+        <div class="pane-head"><span class="pname"><span class="pnum" id="pnumA">A</span> <span id="pnameA">Select a style</span></span></div>
+        <div class="pane-frame"><iframe id="iframeA" loading="lazy"></iframe></div>
+      </div>
+      <div class="preview-pane">
+        <div class="pane-head"><span class="pname"><span class="pnum" id="pnumB">B</span> <span id="pnameB">Select a style</span></span></div>
+        <div class="pane-frame"><iframe id="iframeB" loading="lazy"></iframe></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: PROMPT + PRESETS -->
+  <section>
+    <div class="sec-head">
+      <div><span class="sec-label"><i class="fas fa-code"></i> Step 4 · Fusion Output</span><h2 class="sec-title">Generated Prompt</h2></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge" style="background:rgba(var(--a1r),.05);color:var(--dim)">↓ Exportable</span>
+      <button class="badge copy-btn" onclick="downloadFusion()" style="position:static;"><i class="fas fa-download"></i> Download HTML</button>
+      <button class="badge copy-btn" onclick="copyPrompt()" style="position:static;"><i class="far fa-copy"></i> Copy</button>
+    </div>
+    </div>
+    <div class="prompt-box">
+      <textarea id="fusionPrompt" readonly>Pilih dua gaya desain untuk melihat prompt fusion.</textarea>
+    </div>
+    <div class="sec-head" style="margin-top:20px">
+      <div><span class="sec-label"><i class="fas fa-star"></i> Preset Fusions</span><h2 class="sec-title">Quick Combinations</h2></div>
+    </div>
+    <div class="preset-grid" id="presetGrid"></div>
+  </section>
+
+  <!-- SECTION 5: FOOTER -->
+  <footer class="fusion-footer">
+    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px">
+      <button class="thbtn" onclick="setTheme('dark')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-moon"></i> Dark</button>
+      <button class="thbtn" onclick="setTheme('light')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-sun"></i> Light</button>
+      <button class="thbtn" onclick="setTheme('orange')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-fire"></i> Orange</button>
+      <button class="thbtn" onclick="setTheme('sea')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-droplet"></i> Sea</button>
+      <button class="thbtn" onclick="setTheme('rose')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-heart"></i> Rose</button>
+    </div>
+    ATELIER FUSION SYSTEM // UI PLAYGROUND BETA // 32 STYLES // 2026
+  </footer>
+</div>
+
+<script>
+const STYLES = [
+  {id:1,title:"Neobrutalism",path:"previews/1-neobrutalism.html",key:"border tebal 3-4px, offset hard-shadow hitam, flat color, 2 accent + BW"},
+  {id:2,title:"Glassmorphism",path:"previews/2-glassmorphism.html",key:"backdrop-blur-xl, transparan, dark radial bg, ambient glow blobs, glass border 1px"},
+  {id:3,title:"Dark Luxury",path:"previews/3-dark-luxury.html",key:"near-black bg #0A0908, warm off-white text, brass dividers, serif display, asymmetric grid"},
+  {id:4,title:"Bento Grid",path:"previews/4-bento-grid.html",key:"grid bento modular, 1 accent color, no shadow, rounded-xl 12px, card lift 2px"},
+  {id:5,title:"Maximalist",path:"previews/5-maximalist.html",key:"overlap 3+ elem, clash 4-5 warna, 2 font beda ekstrem (Anton+Space Mono), fast bounce 150ms"},
+  {id:6,title:"GSAP Scroll",path:"previews/6-gsap-scroll.html",key:"ScrollTrigger pin, scrub timeline, horizontal-in-vertical scroll, narrative beats"},
+  {id:7,title:"Lenis Parallax",path:"previews/7-lenis-parallax.html",key:"smooth-scroll inersia, multi-layer 0.3x-1.4x, velocity blur, GSAP sync"},
+  {id:8,title:"Three.js 3D",path:"previews/8-webgl-3d.html",key:"React Three Fiber, damped lerp tilt, environment lighting, MeshDistortMaterial"},
+  {id:9,title:"Magnetic",path:"previews/9-magnetic.html",key:"spring physics, useSpring, offset*0.3/0.5, spotlight radial-gradient, touch guard"},
+  {id:10,title:"Claymorphism",path:"previews/10-claymorphism.html",key:"dual shadow (-8px 8px), soft pastel #E0E5EC, rounded-3xl, toggle inset/outset"},
+  {id:11,title:"Y2K Retro",path:"previews/11-y2k-retro.html",key:"grid bg, chrome gradient, pixel font VT323, glossy gel button, sheen sweep, marquee"},
+  {id:12,title:"Swiss Style",path:"previews/12-swiss-style.html",key:"12-col strict grid, 3 warna (FAFAFA/000/FF0000), uppercase, zero border-radius"},
+  {id:13,title:"Cyberpunk",path:"previews/13-cyberpunk.html",key:"noise+scanline, neon cyan #00F0FF/magenta #FF00A0, glitch, monospace all"},
+  {id:14,title:"Wabi-Sabi",path:"previews/14-wabi-sabi.html",key:"washi #F7F5F0, sumi ink wash, vertical-rl text, vermillion seal, opacity-only reveal"},
+  {id:15,title:"Aurora UI",path:"previews/15-aurora-ui.html",key:"blob gradient float 20s, backdrop-blur-md, conic border, Plus Jakarta Sans"},
+  {id:16,title:"Kinetic Typo",path:"previews/16-kinetic-typo.html",key:"variable font wght/wdth, proximity trigger 280px, full viewport, letter-spacing shift"},
+  {id:17,title:"Skeuomorphic",path:"previews/17-skeuomorphic.html",key:"leather stitched, brushed metal, matte plastic, rotary dial, 45deg lighting"},
+  {id:18,title:"DIY Zine",path:"previews/18-diy-zine.html",key:"tape #FEF3C7/#FCA5A5, torn clip-path, mismatch 4 fonts, halftone, stamp rotate"},
+  {id:19,title:"CRT Terminal",path:"previews/19-crt-terminal.html",key:"CRT vignette+scanline, phosphor #33FF00, boot sequence, blinking cursor"},
+  {id:20,title:"Organic Blob",path:"previews/20-fluid-nav.html",key:"border-radius morph, elastic spring, SVG wave underline, blob repel hover"},
+  {id:21,title:"Particle Canvas",path:"previews/21-jars-ui.html",key:"galaxy canvas, blackhole click, mouse trail, nebula, 5 theme color"},
+  {id:22,title:"Showcase",path:"previews/22-landing-showcase.html",key:"5 theme CSS vars, conic border rotate, Y2K glossy, skeuo toggle, VT323 metrics"},
+  {id:23,title:"Memphis",path:"previews/23-memphis-design.html",key:"SVG confetti, zig-zag clip-path, dotted bg, mismatched border, outline text-stroke"},
+  {id:24,title:"Vaporwave",path:"previews/24-vaporwave.html",key:"sunset radial grid, perspective rotateX, chrome text, duotone bust, aberration hover"},
+  {id:25,title:"Bauhaus",path:"previews/25-bauhaus.html",key:"primary triad (red/yellow/blue), circle/triangle/rect blocks, 12-col, 0 radius"},
+  {id:26,title:"Paper Cut",path:"previews/26-paper-cut.html",key:"paper stacking, 0 4px 0 shadow, polaroid frame, torn edge, slab serif"},
+  {id:27,title:"Sci-Fi HUD",path:"previews/27-sci-fi-hud.html",key:"wireframe no-fill, SVG gauge, radar sweep 4s, corner bracket, reticle mouse"},
+  {id:28,title:"Steampunk",path:"previews/28-steampunk.html",key:"brass gradient, leather stitched, parchment, gear SVG, rotary dial, toggle lever"},
+  {id:29,title:"Dark Academia",path:"previews/29-dark-academia.html",key:"deep brown #2C1810, gold drop cap, single col 680px, fleuron, 1.2s fade"},
+  {id:30,title:"Deconstructivist",path:"previews/30-deconstructivist.html",key:"broken grid, split alignment per line, rotated text, glitch clip-path, parallax"},
+  {id:31,title:"Lo-Fi Anime",path:"previews/31-lo-fi-anime.html",key:"pastel gradient pink/blue/lavender, film grain, cassette art, equalizer bars"},
+  {id:32,title:"Constructivism",path:"previews/32-constructivism.html",key:"diagonal 20-30deg, red #CC0000/black/yellow #FFD700, photomontage, star motif"},
+  // V4
+  {id:33,title:"Art Nouveau",path:"previews/33-art-nouveau.html",key:"organic whiplash curves, floral SVG, gold initial cap, moss green/cream/rose palette"},
+  {id:34,title:"Raw Brutalist",path:"previews/34-raw-brutalist.html",key:"system monospace only, zero radius/shadow/gradient, black/white/blue/red, 0ms hover"},
+  {id:35,title:"Miami Vice",path:"previews/35-miami-vice.html",key:"sunset gradient, palm silhouettes, art deco sunburst, coral/teal/navy/gold"},
+  {id:36,title:"Cottagecore",path:"previews/36-cottagecore.html",key:"sage green bg, cream paper cards, lace borders, floral motifs, handwritten script"},
+  {id:37,title:"Comic Pop Art",path:"previews/37-comic-pop-art.html",key:"panel grid, halftone dots, speech bubbles, starburst SFX, red/blue/yellow/black"},
+  {id:38,title:"NASA Technical",path:"previews/38-nasa-technical.html",key:"grid paper bg, coral/teal, callout CAUTION boxes, condensed sans, T-minus timeline"},
+  {id:39,title:"Psychedelic 60s",path:"previews/39-psychedelic-60s.html",key:"rainbow conic-gradient, wavy textPath, paisley, Shrikhand, wobble animation"},
+  {id:40,title:"Monochrome",path:"previews/40-monochrome-editorial.html",key:"ONLY black #000 and white #FFF, Didot 4-8rem, invert hover, clip-path wipe"},
+  {id:41,title:"Sticky Note Board",path:"previews/41-sticky-note-board.html",key:"cork texture, post-it colors, pushpin SVG, string connections, handwritten"},
+  {id:42,title:"Gothic Horror",path:"previews/42-gothic-horror.html",key:"cobweb texture, thorn borders, blood drip, blackletter, candle flicker"},
+];
+
+const PRESETS = [
+  {a:13,b:27,name:"Tactical HUD",desc:"Cyberpunk + Sci-Fi HUD"},
+  {a:11,b:24,name:"Retrowave",desc:"Y2K Retro + Vaporwave"},
+  {a:1,b:13,name:"Brutal Punk",desc:"Neobrutalism + Cyberpunk"},
+  {a:12,b:25,name:"Swiss Bauhaus",desc:"Swiss Style + Bauhaus"},
+  {a:14,b:29,name:"Dark Zen",desc:"Wabi-Sabi + Dark Academia"},
+  {a:23,b:32,name:"Propaganda Pop",desc:"Memphis + Constructivism"},
+  {a:3,b:17,name:"Victorian Luxury",desc:"Dark Luxury + Skeuomorphic"},
+  {a:15,b:31,name:"Dreamy Lo-Fi",desc:"Aurora UI + Lo-Fi Anime"},
+  {a:18,b:30,name:"Chaos Grid",desc:"DIY Zine + Deconstructivist"},
+  {a:7,b:6,name:"Scroll Cinema",desc:"Lenis + GSAP Scroll"},
+  {a:28,b:29,name:"Gothic Atelier",desc:"Steampunk + Dark Academia"},
+  {a:26,b:14,name:"Paper Zen",desc:"Paper Cut + Wabi-Sabi"},
+  // V4 fusions
+  {a:33,b:3,name:"Nouveau Luxury",desc:"Art Nouveau + Dark Luxury"},
+  {a:37,b:23,name:"Pop Memphis",desc:"Comic Pop Art + Memphis"},
+  {a:42,b:28,name:"Gothic Steampunk",desc:"Gothic Horror + Steampunk"},
+  {a:38,b:27,name:"Mission HUD",desc:"NASA Technical + Sci-Fi HUD"},
+];
+
+const FUSION_PREFIXES = ['Neo','Hyper','Super','Ultra','Mega','Meta','Retro','Proto','Dark','Light','Pixel','Chrome','Frost','Ghost','Cyber','Solar','Lunar','Vapor','Quantum','Fusion','Hybrid','Cross','Liquid','Solid','Flux','Core','Nexus','Aether','Zen','Acid'];
+const FUSION_SUFFIXES = ['Core','Wave','Form','Pulse','Drift','Shift','Forge','Craft','Portal','Engine','Nova','Punk','Dust','Fiber','Phase','Grid','Field','Vault','Weave','Flare','Haze','Flow','Edge','Morph','Node','Bloom','Surge','Glide','Trace','Beam'];
+
+const selA=document.getElementById('styleA'),selB=document.getElementById('styleB');
+const ifrA=document.getElementById('iframeA'),ifrB=document.getElementById('iframeB');
+const pnA=document.getElementById('pnameA'),pnB=document.getElementById('pnameB');
+const pnumA=document.getElementById('pnumA'),pnumB=document.getElementById('pnumB');
+const fusionBadge=document.getElementById('fusionBadge'),fusionPrompt=document.getElementById('fusionPrompt');
+const rSlider=document.getElementById('ratioSlider'),nmBadge=document.getElementById('fusionNameBadge');
+const rAL=document.getElementById('ratioALabel'),rBL=document.getElementById('ratioBLabel');
+
+function getStyle(id){return STYLES.find(s=>s.id==id)}
+
+function populateSelects(){
+  const a=selA.value,b=selB.value;selA.innerHTML='';selB.innerHTML='';
+  STYLES.forEach(s=>{
+    const o1=document.createElement('option');o1.value=s.id;o1.textContent='#'+String(s.id).padStart(2,'0')+' '+s.title;
+    const o2=o1.cloneNode(true);if(s.id==a)o1.selected=true;if(s.id==b)o2.selected=true;
+    selA.appendChild(o1);selB.appendChild(o2);
+  });
+  document.getElementById('fusion-count').textContent=STYLES.length+' styles · '+PRESETS.length+' presets';
+}
+
+function genName(a,b,r){
+  if(!a||!b)return'—';
+  const p=FUSION_PREFIXES[Math.floor(Math.random()*FUSION_PREFIXES.length)];
+  const s=FUSION_SUFFIXES[Math.floor(Math.random()*FUSION_SUFFIXES.length)];
+  const aW=a.title.split(' ')[0],bW=b.title.split(' ')[0];
+  const aP=aW.substring(0,Math.ceil(aW.length*0.5)).toLowerCase();
+  const bP=bW.substring(0,Math.ceil(bW.length*0.5)).toLowerCase();
+  const c=[p+aP.charAt(0).toUpperCase()+aP.slice(1)+bP.charAt(0).toUpperCase()+bP.slice(1),aP.charAt(0).toUpperCase()+aP.slice(1)+bP.charAt(0).toUpperCase()+bP.slice(1)+s,p+bP.charAt(0).toUpperCase()+bP.slice(1)+s,aP.charAt(0).toUpperCase()+aP.slice(1)+bP.charAt(0).toUpperCase()+bP.slice(1)];
+  return c[Math.floor(Math.random()*c.length)];
+}
+
+function genPrompt(a,b,r){
+  if(!a||!b)return'Pilih dua gaya desain dari menu di atas.';
+  const pA=r,pB=100-r,d=pA>=pB?a:b,s=pA>=pB?b:a;
+  return`Build a UI concept fusing "${a.title}" (${pA}%) with "${b.title}" (${pB}%) using HTML/CSS/JS.\n\nDOMINANT (${d.title}):\n${d.key}\n\nSECONDARY (${s.title}):\n${s.key}\n\nFUSION RULES:\n- Start with dominant's layout and color logic\n- Overlay secondary's surface treatment on key interactive elements\n- Where palettes conflict, use dominant's base colors + secondary's accents\n- Keep interactive behaviors from both where they don't conflict\n- One "signature element" per section that purely represents the secondary style\n\nCommit to the fusion — do not fall back to generic defaults.`;
+}
+
+function updateFusion(){
+  const idA=parseInt(selA.value),idB=parseInt(selB.value);
+  const sA=getStyle(idA),sB=getStyle(idB),r=parseInt(rSlider.value);
+  rAL.textContent=(sA?sA.title.split(' ').slice(0,2).join(' '):'A')+' · '+r+'%';
+  rBL.textContent=(sB?sB.title.split(' ').slice(0,2).join(' '):'B')+' · '+(100-r)+'%';
+  pnA.textContent=sA?sA.title:'Select';pnB.textContent=sB?sB.title:'Select';
+  pnumA.textContent=sA?'#'+String(sA.id).padStart(2,'0'):'A';
+  pnumB.textContent=sB?'#'+String(sB.id).padStart(2,'0'):'B';
+  ifrA.src=sA?sA.path:'';ifrB.src=sB?sB.path:'';
+  const n=genName(sA,sB,r);
+  nmBadge.textContent=n;
+  fusionBadge.textContent=sA&&sB?'#'+String(sA.id).padStart(2,'0')+' × #'+String(sB.id).padStart(2,'0')+' · '+n:'—';
+  fusionPrompt.value=genPrompt(sA,sB,r);
+}
+
+function loadPreset(p){selA.value=p.a;selB.value=p.b;updateFusion();}
+
+function renderPresets(){
+  const g=document.getElementById('presetGrid');
+  PRESETS.forEach(p=>{
+    const a=getStyle(p.a),b=getStyle(p.b);if(!a||!b)return;
+    const btn=document.createElement('button');btn.className='preset-btn';
+    btn.innerHTML='<strong>'+p.name+'</strong><span class="pbc">#'+String(p.a).padStart(2,'0')+' × #'+String(p.b).padStart(2,'0')+' · '+p.desc+'</span>';
+    btn.onclick=()=>loadPreset(p);g.appendChild(btn);
+  });
+}
+
+window.copyPrompt=function(){fusionPrompt.select();navigator.clipboard.writeText(fusionPrompt.value);};
+
+/** Download the current fusion as a self-contained HTML file.
+ *  Combines the active iframes' document HTML + active theme variant + ratio comment.
+ *  Zero-dependency — uses Blob + ObjectURL. Works offline. */
+window.downloadFusion = async function() {
+  const selA = document.getElementById('styleA');
+  const selB = document.getElementById('styleB');
+  const ratio = document.getElementById('ratioSlider').value;
+  const sA = STYLES.find(s => s.id == selA.value);
+  const sB = STYLES.find(s => s.id == selB.value);
+  if (!sA || !sB) return;
+
+  const fetchHtml = async (path) => (await fetch(path)).text();
+  let [htmlA, htmlB] = await Promise.all([fetchHtml(sA.path), fetchHtml(sB.path)]);
+
+  // Strip head/script noise, keep visual fidelity per side by ratio
+  // Simple strategy: bracket A on top with ratio%, B on bottom with (100-ratio)%
+  const tag = `
+<!-- Atelier Fusion System · Auto-generated zero-dep demo -->
+<!-- Left: #${String(sA.id).padStart(2,'0')} ${sA.title} (${ratio}%) -->
+<!-- Right: #${String(sB.id).padStart(2,'0')} ${sB.title} (${100-ratio}%) -->
+<!-- Prompt:
+${document.getElementById('fusionPrompt').value.trim()}
+-->
+<style>
+  body { margin: 0; font-family: 'JetBrains Mono', monospace; background: #0a0e1a; color: #cbd5e1; }
+  .fusion-split { display: grid; grid-template-rows: ${ratio}fr ${100-ratio}fr; height: 100vh; }
+  .fusion-pane { overflow: hidden; position: relative; }
+  .fusion-pane iframe { width: 300%; height: 300%; border: 0;
+                        transform: scale(0.33); transform-origin: 0 0; }
+  .fusion-label { position: absolute; top: 8px; left: 8px; z-index: 9;
+                  background: rgba(0,0,0,.7); color: #fff; padding: 4px 10px;
+                  border-radius: 6px; font-size: 12px; }
+</style>
+<div class="fusion-split">
+  <div class="fusion-pane">
+    <span class="fusion-label">A · #${String(sA.id).padStart(2,'0')} ${sA.title}</span>
+    <iframe srcdoc="${htmlA.replace(/"/g, '"')}"></iframe>
+  </div>
+  <div class="fusion-pane">
+    <span class="fusion-label">B · #${String(sB.id).padStart(2,'0')} ${sB.title}</span>
+    <iframe srcdoc="${htmlB.replace(/"/g, '"')}"></iframe>
+  </div>
+</div>
+`;
+
+  const blob = new Blob([tag], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fusion-#${String(sA.id).padStart(2,'0')}-${sA.title.toLowerCase().replace(/\s+/g,'-')}_x_#${String(sB.id).padStart(2,'0')}-${sB.title.toLowerCase().replace(/\s+/g,'-')}.html`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+};
+
+window.setTheme=function(t){document.documentElement.className='theme-'+t;localStorage.setItem('atelier-fusion-theme',t);document.querySelectorAll('.thbtn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-thbtn')===t));};
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const s=localStorage.getItem('atelier-fusion-theme');if(s)window.setTheme(s);else window.setTheme(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  populateSelects();renderPresets();updateFusion();
+});
+</script>
+</body>
+</html>

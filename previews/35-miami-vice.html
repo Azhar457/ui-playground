@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miami Vice / Tropical Deco</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Montserrat+Alternates:wght@200;300;400&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1A3A52; --fg: #FFF8E7; --coral: #FF6B9D; --sunset: #FFA07A; --teal: #4ECDC4; --navy: #1A3A52; --gold: #FFD700; --cream: #FFF8E7;
+      --card-bg: rgba(255,255,255,0.06); --card-border: #4ECDC4; --card-hover: #FFD700; --stepped-bg: rgba(255,255,255,0.04);
+      --btn-border: #FFD700; --btn-hover-bg: #FFD700; --btn-hover-fg: #1A3A52; --sunburst-line: #FFD700;
+      --gradient: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 30%, #4ECDC4 70%, #1A3A52 100%);
+    }
+    html.theme-vice { --bg: #1A3A52; --fg: #FFF8E7; --coral: #FF6B9D; --sunset: #FFA07A; --teal: #4ECDC4; --navy: #1A3A52; --gold: #FFD700; --cream: #FFF8E7; --card-bg: rgba(255,255,255,0.06); --card-border: #4ECDC4; --card-hover: #FFD700; --stepped-bg: rgba(255,255,255,0.04); --btn-border: #FFD700; --btn-hover-bg: #FFD700; --btn-hover-fg: #1A3A52; --sunburst-line: #FFD700; --gradient: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 30%, #4ECDC4 70%, #1A3A52 100%); }
+    html.theme-sunset { --bg: #2D1B2E; --fg: #FFF8E7; --coral: #FF6B9D; --sunset: #FF8C42; --teal: #2EC4B6; --navy: #2D1B2E; --gold: #FFB347; --cream: #FFF8E7; --card-bg: rgba(255,255,255,0.06); --card-border: #FF8C42; --card-hover: #FFB347; --stepped-bg: rgba(255,255,255,0.04); --btn-border: #FFB347; --btn-hover-bg: #FFB347; --btn-hover-fg: #2D1B2E; --sunburst-line: #FFB347; --gradient: linear-gradient(135deg, #FF6B9D 0%, #FF8C42 30%, #2EC4B6 70%, #2D1B2E 100%); }
+    html.theme-ocean { --bg: #0B2D45; --fg: #E0F7FA; --coral: #FF5252; --sunset: #FFAB91; --teal: #26C6DA; --navy: #0B2D45; --gold: #FFD740; --cream: #E0F7FA; --card-bg: rgba(255,255,255,0.06); --card-border: #26C6DA; --card-hover: #FFD740; --stepped-bg: rgba(255,255,255,0.04); --btn-border: #FFD740; --btn-hover-bg: #FFD740; --btn-hover-fg: #0B2D45; --sunburst-line: #FFD740; --gradient: linear-gradient(135deg, #FF5252 0%, #FFAB91 30%, #26C6DA 70%, #0B2D45 100%); }
+    html.theme-neon { --bg: #0D0D2B; --fg: #FFFFFF; --coral: #FF2A6D; --sunset: #FFA07A; --teal: #05D9E8; --navy: #0D0D2B; --gold: #D3008A; --cream: #FFFFFF; --card-bg: rgba(255,255,255,0.04); --card-border: #05D9E8; --card-hover: #D3008A; --stepped-bg: rgba(255,255,255,0.03); --btn-border: #D3008A; --btn-hover-bg: #D3008A; --btn-hover-fg: #FFF; --sunburst-line: #05D9E8; --gradient: linear-gradient(135deg, #FF2A6D 0%, #FFA07A 30%, #05D9E8 70%, #0D0D2B 100%); }
+
+    body {
+      background: var(--navy); color: var(--fg);
+      font-family: 'Quicksand', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.6;
+      min-height: 100vh; overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    /* sunset gradient bg (fixed) */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: var(--gradient);
+      opacity: 0.35; pointer-events: none; z-index: 0;
+    }
+
+    /* diamond grid overlay */
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 21px);
+      pointer-events: none; z-index: 1;
+    }
+
+    .page { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 1rem; }
+
+    /* palm silhouettes */
+    .palm { position: fixed; pointer-events: none; z-index: 0; opacity: 0.15; animation: sway 6s ease-in-out infinite; }
+    .palm-left { top: -20px; left: -40px; width: 280px; }
+    .palm-right { top: -10px; right: -30px; width: 240px; animation-delay: -3s; }
+    .palm-bottom { bottom: 0; left: 10%; width: 200px; animation-delay: -1.5s; }
+    @keyframes sway { 0%,100%{transform:rotate(-1.5deg)} 50%{transform:rotate(1.5deg)} }
+
+    /* sunburst */
+    .sunburst { position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 500px; height: 300px; pointer-events: none; z-index: 0; }
+    .sunburst svg { width: 100%; height: 100%; }
+    .sunburst-line { stroke: var(--sunburst-line); fill: none; opacity: 0.3; }
+
+    /* nav */
+    .nav { display: flex; justify-content: center; gap: 2rem; padding: 1.2rem 0 0; flex-wrap: wrap; position: relative; z-index: 5; }
+    .nav a { font-family: 'Poiret One', sans-serif; font-size: 0.9rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--cream); text-decoration: none; opacity: 0.8; transition: opacity 0.3s; }
+    .nav a:hover { opacity: 1; color: var(--gold); }
+
+    /* hero */
+    .hero { text-align: center; padding: 3rem 1rem 2rem; position: relative; min-height: 70vh; display: flex; flex-direction: column; justify-content: center; }
+    .hero h1 { font-family: 'Montserrat Alternates', sans-serif; font-weight: 200; font-size: clamp(2.8rem,8vw,5rem); letter-spacing: 0.3em; text-transform: uppercase; color: var(--cream); line-height: 1.15; position: relative; z-index: 3; }
+    .hero h1 .palm-icon { display: inline-block; margin: 0 0.1em; }
+    .hero h1 .palm-icon svg { width: 1.2em; height: 1.2em; vertical-align: middle; }
+    .hero-sub { font-family: 'Quicksand', sans-serif; font-weight: 300; font-size: 1.1rem; color: var(--coral); margin: 1rem 0 1.5rem; letter-spacing: 0.1em; position: relative; z-index: 3; }
+
+    /* stepped ziggurat border */
+    .stepped-border { clip-path: polygon(0% 20px, 20px 0%, calc(100% - 20px) 0%, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0% calc(100% - 20px)); padding: 1.5rem; position: relative; z-index: 3; }
+    .stepped-inner { background: var(--stepped-bg); border: 1px solid var(--teal); padding: 1.2rem 1.5rem; }
+
+    /* section */
+    .section { margin: 3rem 0; position: relative; z-index: 3; }
+    .section-title { font-family: 'Montserrat Alternates', sans-serif; font-weight: 200; font-size: 2rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+
+    /* rooms grid */
+    .rooms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+    .room-card { background: var(--card-bg); border-top: 3px solid var(--card-border); clip-path: polygon(0% 20px, 20px 0%, calc(100% - 20px) 0%, 100% 20px, 100% 100%, 0% 100%); padding: 1.5rem; text-align: center; transition: border-color 0.4s; backdrop-filter: blur(4px); }
+    .room-card:hover { border-color: var(--card-hover); }
+    .room-card h3 { font-family: 'Poiret One', sans-serif; font-size: 1.5rem; letter-spacing: 0.15em; color: var(--cream); margin-bottom: 0.5rem; }
+    .room-card p { font-size: 0.9rem; opacity: 0.8; }
+
+    /* amenities horizontal strip */
+    .amenities { display: flex; gap: 1.5rem; overflow-x: auto; padding: 1rem 0; }
+    .amenity { flex: 0 0 100px; text-align: center; }
+    .amenity-circle { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; }
+    .amenity-circle svg { width: 36px; height: 36px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+    .amenity span { font-family: 'Poiret One', sans-serif; font-size: 0.8rem; letter-spacing: 0.15em; color: var(--cream); }
+
+    /* booking button */
+    .booking-btn { display: inline-block; border: 2px solid var(--btn-border); color: var(--gold); background: transparent; padding: 0.7rem 2.5rem; font-family: 'Montserrat Alternates', sans-serif; font-weight: 300; font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: background 0.3s, color 0.3s; cursor: pointer; }
+    .booking-btn:hover { background: var(--btn-hover-bg); color: var(--btn-hover-fg); }
+
+    /* footer */
+    .footer { text-align: center; padding: 2rem 0; position: relative; z-index: 3; }
+    .footer p { font-size: 0.8rem; opacity: 0.6; letter-spacing: 0.1em; }
+
+    /* theme */
+    .theme-section { text-align: center; padding: 1.5rem 0 0.5rem; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 1.5rem; position: relative; z-index: 3; }
+    .theme-btn { font-family: 'Poiret One', sans-serif; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 0.4rem 1rem; cursor: pointer; margin: 0 0.3rem; transition: background 0.3s, color 0.3s; }
+    .theme-btn:hover, .theme-btn.active { background: var(--gold); color: var(--navy); }
+  </style>
+</head>
+<body>
+  <!-- Palm silhouettes -->
+  <div class="palm palm-left">
+    <svg viewBox="0 0 200 300" preserveAspectRatio="none">
+      <path d="M100,300 L100,80 M100,80 C60,40 20,10 10,30 C30,30 60,50 100,70 M100,80 C80,50 60,20 50,10 C60,25 80,55 100,75 M100,80 C120,50 140,20 150,10 C140,25 120,55 100,75 M100,80 C140,40 180,10 190,30 C170,30 140,50 100,70" stroke="#000" stroke-width="6" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="palm palm-right">
+    <svg viewBox="0 0 180 260" preserveAspectRatio="none">
+      <path d="M90,260 L90,70 M90,70 C50,35 15,10 8,28 C28,28 55,48 90,65 M90,70 C70,42 50,18 42,8 C52,22 72,48 90,65 M90,70 C110,42 130,18 138,8 C128,22 108,48 90,65 M90,70 C130,35 165,10 172,28 C152,28 125,48 90,65" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="page">
+    <!-- Sunburst -->
+    <div class="sunburst">
+      <svg viewBox="0 0 500 300">
+        <path d="M250,180 L250,0" class="sunburst-line" stroke-width="1"/>
+        <path d="M250,180 L480,50" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L480,180" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L480,310" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L250,320" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L20,310" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L20,180" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L20,50" class="sunburst-line" stroke-width="0.8"/>
+        <path d="M250,180 L80,10" class="sunburst-line" stroke-width="0.5"/>
+        <path d="M250,180 L420,10" class="sunburst-line" stroke-width="0.5"/>
+        <path d="M250,180 L10,120" class="sunburst-line" stroke-width="0.5"/>
+        <path d="M250,180 L490,120" class="sunburst-line" stroke-width="0.5"/>
+        <path d="M250,180 L10,250" class="sunburst-line" stroke-width="0.5"/>
+        <path d="M250,180 L490,250" class="sunburst-line" stroke-width="0.5"/>
+        <path d="M250,180 L120,20" class="sunburst-line" stroke-width="0.4"/>
+        <path d="M250,180 L380,20" class="sunburst-line" stroke-width="0.4"/>
+      </svg>
+    </div>
+
+    <!-- SECTION 1: Hero -->
+    <nav class="nav">
+      <a href="#">Resort</a>
+      <a href="#">Rooms</a>
+      <a href="#">Amenities</a>
+      <a href="#">Gallery</a>
+      <a href="#">Book</a>
+    </nav>
+
+    <div class="hero">
+      <h1>
+        <span class="palm-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12,2 C8,8 6,14 6,22 L12,22 L18,22 C18,14 16,8 12,2" fill="none" stroke="var(--cream)" stroke-width="1.5"/><path d="M12,6 L12,22 M8,12 L16,12 M6,17 L18,17" stroke="var(--cream)" stroke-width="1" opacity="0.6"/></svg>
+        </span>
+        WELCOME
+        <span class="palm-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12,22 C8,16 6,10 6,2 L12,2 L18,2 C18,10 16,16 12,22" fill="none" stroke="var(--cream)" stroke-width="1.5"/><path d="M12,18 L12,2 M8,8 L16,8 M6,13 L18,13" stroke="var(--cream)" stroke-width="1" opacity="0.6"/></svg>
+        </span>
+      </h1>
+      <div class="hero-sub">Where the sunset meets the shore</div>
+      <div class="stepped-border" style="max-width:500px;margin:0 auto;">
+        <div class="stepped-inner">
+          <p style="margin-bottom:0.5rem;font-family:'Quicksand',sans-serif;font-weight:300;">Check-in &mdash; Check-out</p>
+          <p style="font-family:'Poiret One',sans-serif;font-size:0.9rem;letter-spacing:0.15em;color:var(--gold);">Arrive · Relax · Repeat</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Rooms -->
+    <div class="section">
+      <h2 class="section-title">Suites</h2>
+      <div class="rooms-grid">
+        <div class="room-card">
+          <h3>Ocean Front</h3>
+          <p>King bed, private balcony, sunrise view over the Atlantic.</p>
+          <p style="color:var(--gold);margin-top:0.5rem;font-family:'Poiret One',sans-serif;font-size:1.1rem;">$420/night</p>
+        </div>
+        <div class="room-card">
+          <h3>Palm Cabana</h3>
+          <p>Garden level with plunge pool, hammock, and tropical foliage.</p>
+          <p style="color:var(--gold);margin-top:0.5rem;font-family:'Poiret One',sans-serif;font-size:1.1rem;">$320/night</p>
+        </div>
+        <div class="room-card">
+          <h3>Penthouse</h3>
+          <p>Top floor, 360&deg; view, private jacuzzi, butler service.</p>
+          <p style="color:var(--gold);margin-top:0.5rem;font-family:'Poiret One',sans-serif;font-size:1.1rem;">$850/night</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Amenities -->
+    <div class="section">
+      <h2 class="section-title">Amenities</h2>
+      <div class="amenities">
+        <div class="amenity">
+          <div class="amenity-circle">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M4,12 C4,6 8,2 12,2 C16,2 20,6 20,12"/></svg>
+          </div>
+          <span>Pool</span>
+        </div>
+        <div class="amenity">
+          <div class="amenity-circle">
+            <svg viewBox="0 0 24 24"><path d="M12,2 C8,8 6,14 6,22 M12,2 C16,8 18,14 18,22 M6,10 L18,10 M6,16 L18,16"/></svg>
+          </div>
+          <span>Palm</span>
+        </div>
+        <div class="amenity">
+          <div class="amenity-circle">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12,2 L12,4 M12,20 L12,22 M2,12 L4,12 M20,12 L22,12 M4.9,4.9 L6.3,6.3 M17.7,17.7 L19.1,19.1 M4.9,19.1 L6.3,17.7 M17.7,6.3 L19.1,4.9"/></svg>
+          </div>
+          <span>Sun</span>
+        </div>
+        <div class="amenity">
+          <div class="amenity-circle">
+            <svg viewBox="0 0 24 24"><path d="M12,22 C17,22 22,17 22,12 M12,22 C7,22 2,17 2,12 M12,2 C17,2 22,7 22,12 M12,2 C7,2 2,7 2,12"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <span>Spa</span>
+        </div>
+        <div class="amenity">
+          <div class="amenity-circle">
+            <svg viewBox="0 0 24 24"><path d="M2,12 L22,12 M2,12 L6,8 M22,12 L18,8 M2,12 L6,16 M22,12 L18,16"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <span>Dine</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Booking CTA -->
+    <div class="section" style="text-align:center;">
+      <h2 class="section-title">Reserve Your Stay</h2>
+      <p style="max-width:45ch;margin:1rem auto;opacity:0.8;">Early booking rate includes complimentary breakfast, airport transfer, and a sunset cruise.</p>
+      <a href="#" class="booking-btn">Book Now</a>
+    </div>
+
+    <!-- SECTION 5: Gallery / Info -->
+    <div class="section" style="text-align:center;">
+      <h2 class="section-title">The Vibe</h2>
+      <p style="max-width:50ch;margin:1rem auto;opacity:0.8;">Pastel neon meets art deco geometry. White linen suits, coconut cocktails, and the sound of waves. Miami 1986 never ended — it just got better.</p>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 Tropical Deco Resort — South Beach, Miami</p>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-section">
+      <button class="theme-btn" data-theme="vice">Vice</button>
+      <button class="theme-btn" data-theme="sunset">Sunset</button>
+      <button class="theme-btn" data-theme="ocean">Ocean</button>
+      <button class="theme-btn" data-theme="neon">Neon</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+      });
+    });
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      try { localStorage.setItem('ui-beta-preview-theme', n); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

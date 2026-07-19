@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paper Cut / Layered Depth</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: paper (current warm) ===== */
+    .theme-paper {
+      --p1: #FFFFFF; --p2: #FEF3C7; --p3: #D1FAE5; --p4: #FED7AA; --p5: #E9D5FF;
+      --bg: #D1D5DB;
+      --shadow: #D1D5DB;
+      --shadow-hover: #9CA3AF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --label-color: #6B7280;
+      --border-color: #D1D5DB;
+    }
+    /* ===== THEME: ocean ===== */
+    .theme-ocean {
+      --p1: #E0F7FA; --p2: #B2EBF2; --p3: #80DEEA; --p4: #4DD0E1; --p5: #26C6DA;
+      --bg: #B0BEC5;
+      --shadow: #90A4AE;
+      --shadow-hover: #78909C;
+      --text: #002F35;
+      --text-muted: #4B6A70;
+      --label-color: #4B6A70;
+      --border-color: #90A4AE;
+    }
+    /* ===== THEME: vintage ===== */
+    .theme-vintage {
+      --p1: #F5E6C8; --p2: #EED9B2; --p3: #E6CC9C; --p4: #DDBF86; --p5: #D4B270;
+      --bg: #C4A882;
+      --shadow: #A68B6A;
+      --shadow-hover: #8C7254;
+      --text: #3D2B1F;
+      --text-muted: #6B5744;
+      --label-color: #6B5744;
+      --border-color: #A68B6A;
+    }
+    /* ===== THEME: mint ===== */
+    .theme-mint {
+      --p1: #F0FFF4; --p2: #D4F5E2; --p3: #B8EBD0; --p4: #9CE1BE; --p5: #80D7AC;
+      --bg: #A8D5BA;
+      --shadow: #8FC0A0;
+      --shadow-hover: #76AB86;
+      --text: #1A3A2A;
+      --text-muted: #4A705A;
+      --label-color: #4A705A;
+      --border-color: #8FC0A0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, 'Times New Roman', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .paper-section {
+      width: 100%;
+      max-width: 720px;
+      padding: 2.5rem 2.5rem;
+      position: relative;
+      box-shadow: 0 4px 0px var(--shadow);
+      transition: all 0.25s ease, background 0.3s, box-shadow 0.3s, color 0.3s;
+      transform-origin: center center;
+    }
+
+    .paper-section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 0px var(--shadow-hover);
+    }
+
+    .paper-section:nth-child(even) { transform: rotate(0.5deg); }
+    .paper-section:nth-child(odd) { transform: rotate(-0.5deg); }
+    .paper-section:nth-child(even):hover { transform: rotate(0.5deg) translateY(-4px); }
+    .paper-section:nth-child(odd):hover { transform: rotate(-0.5deg) translateY(-4px); }
+
+    .paper-section.p1 { background: var(--p1); }
+    .paper-section.p2 { background: var(--p2); }
+    .paper-section.p3 { background: var(--p3); }
+    .paper-section.p4 { background: var(--p4); }
+    .paper-section.p5 { background: var(--p5); }
+
+    .paper-section.torn-edge {
+      clip-path: polygon(
+        0% 0%, 3% 2%, 7% 0%, 12% 3%, 16% 1%, 20% 3%, 24% 0%, 28% 2%,
+        33% 1%, 38% 3%, 43% 0%, 48% 2%, 52% 1%, 57% 3%, 62% 0%, 67% 2%,
+        72% 1%, 77% 3%, 82% 0%, 86% 2%, 91% 1%, 96% 3%, 100% 0%,
+        100% 97%, 97% 100%, 93% 98%, 88% 100%, 83% 97%, 78% 100%,
+        73% 98%, 68% 100%, 63% 97%, 58% 100%, 53% 98%, 48% 100%,
+        43% 97%, 38% 100%, 33% 98%, 28% 100%, 23% 97%, 18% 100%,
+        13% 98%, 8% 100%, 3% 97%, 0% 100%
+      );
+      padding: 3rem;
+    }
+
+    .paper-label {
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      transition: color 0.3s;
+    }
+
+    .paper-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .paper-body {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.85;
+      max-width: 55ch;
+    }
+
+    .callout-quote {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      line-height: 1.4;
+      color: var(--text);
+      padding: 1.5rem 0;
+      border-left: 3px solid var(--text-muted);
+      padding-left: 1.25rem;
+      margin: 1.5rem 0;
+      transition: border-color 0.3s;
+    }
+
+    .polaroid {
+      background: var(--p1);
+      padding: 12px 12px 40px 12px;
+      box-shadow: 0 4px 0px var(--shadow);
+      display: inline-block;
+      transform: rotate(1deg);
+      margin: 1.5rem 0;
+      transition: all 0.25s ease, background 0.3s;
+    }
+
+    .polaroid:hover {
+      transform: rotate(0deg) translateY(-4px);
+      box-shadow: 0 8px 0px var(--shadow-hover);
+    }
+
+    .polaroid-image {
+      width: 200px;
+      height: 200px;
+      background: var(--p4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-style: italic;
+      transition: background 0.3s;
+    }
+
+    .polaroid-image.p3-bg { background: var(--p3); }
+    .polaroid-image.p5-bg { background: var(--p5); }
+
+    .polaroid-caption {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .polaroid-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ===== SECTION 3: Layer Stacking Tool ===== */
+    .sandbox-stack {
+      width: 100%;
+      max-width: 720px;
+      padding: 2.5rem;
+      background: var(--p1);
+      box-shadow: 0 4px 0px var(--shadow);
+      text-align: center;
+      transition: all 0.3s, background 0.3s;
+    }
+
+    .stack-layers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      min-height: 160px;
+      margin: 1.5rem 0;
+    }
+
+    .stack-layer {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.8rem 1.5rem;
+      text-align: center;
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      box-shadow: 0 3px 0px var(--shadow);
+      cursor: pointer;
+      transition: all 0.2s, background 0.3s;
+      user-select: none;
+    }
+
+    .stack-layer:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 0px var(--shadow-hover);
+    }
+
+    .stack-layer.l1 { background: var(--p2); }
+    .stack-layer.l2 { background: var(--p3); }
+    .stack-layer.l3 { background: var(--p4); }
+    .stack-layer.l4 { background: var(--p5); }
+
+    .paper-btn {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      padding: 0.5rem 2rem;
+      background: transparent;
+      border: 2px solid var(--text);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .paper-btn:hover {
+      background: var(--text);
+      color: var(--p1);
+    }
+
+    .paper-footer {
+      width: 100%;
+      max-width: 720px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: color 0.3s;
+    }
+
+    .theme-btns {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .theme-btn {
+      font-family: Georgia, serif;
+      font-size: 0.75rem;
+      font-style: italic;
+      padding: 0.4rem 1rem;
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      border-color: var(--text);
+      color: var(--text);
+      background: rgba(0,0,0,0.05);
+    }
+
+    .footer-sig {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: Georgia, serif;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body class="theme-paper">
+
+  <!-- ===== SECTION 1: Hero / Header ===== -->
+  <section class="paper-section p1">
+    <div class="paper-label">Chapter One</div>
+    <div class="paper-title">The Art of Layering</div>
+    <div class="paper-body">
+      Each sheet is a canvas. Stacked, shifted, and shadowed, they create depth
+      where none existed. Paper cutting is one of the oldest forms of dimensional storytelling.
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: Features / Gallery ===== -->
+  <section class="paper-section p2 torn-edge">
+    <div class="paper-label">A Closer Look</div>
+    <div class="paper-title">Torn Edges &amp; Imperfection</div>
+    <div class="paper-body">
+      The rough edge is not a mistake. It signals authenticity — a hand-made quality
+      that perfectly smooth vectors can never replicate.
+    </div>
+    <div class="callout-quote">
+      "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away."
+    </div>
+  </section>
+
+  <!-- Gallery with polaroids -->
+  <section class="paper-section p3">
+    <div class="paper-label">Gallery</div>
+    <div class="paper-title">Polaroid Frames</div>
+    <div class="paper-body" style="margin-bottom: 1rem;">
+      Instant photographs pinned to the page. Each one tilted just so, capturing a fragment of memory.
+    </div>
+    <div class="polaroid-row">
+      <div class="polaroid">
+        <div class="polaroid-image">[ paper texture ]</div>
+        <div class="polaroid-caption">Forest floor, 2026</div>
+      </div>
+      <div class="polaroid">
+        <div class="polaroid-image p3-bg">[ linen grain ]</div>
+        <div class="polaroid-caption">Studio light</div>
+      </div>
+      <div class="polaroid">
+        <div class="polaroid-image p5-bg">[ soft fold ]</div>
+        <div class="polaroid-caption">Corner detail</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: Interactive Sandbox ===== -->
+  <section class="sandbox-stack">
+    <div class="paper-label" style="text-align:center;">Layer Stacker</div>
+    <div class="paper-title" style="text-align:center;">Build Your Stack</div>
+    <p class="paper-body" style="margin:0 auto 1rem;text-align:center;">Click layers to reorder. Click "Add" to insert a new sheet.</p>
+    <div class="stack-layers" id="stack-layers">
+      <div class="stack-layer l1" data-idx="0">Foundation Sheet</div>
+      <div class="stack-layer l2" data-idx="1">Texture Layer</div>
+      <div class="stack-layer l3" data-idx="2">Photo Sheet</div>
+      <div class="stack-layer l4" data-idx="3">Top Note</div>
+    </div>
+    <div>
+      <button class="paper-btn" id="add-layer-btn">+ Add Layer</button>
+      <button class="paper-btn" id="reset-stack-btn">Reset</button>
+    </div>
+    <p id="stack-count" class="footer-sig" style="margin-top:1rem;">4 layers in stack</p>
+  </section>
+
+  <!-- ===== SECTION 4: Specs / Stats ===== -->
+  <section class="paper-section p4 torn-edge">
+    <div class="paper-label">Depth Study</div>
+    <div class="paper-title">Stacked Shadows</div>
+    <div class="paper-body">
+      A hard shadow beneath each layer creates the illusion of physical thickness.
+      Four pixels of offset. Eight of hover. The paper stack breathes.
+    </div>
+    <div class="callout-quote">
+      Lift. Shift. Layer. Repeat.
+    </div>
+  </section>
+
+  <section class="paper-section p5">
+    <div class="paper-label">Final Sheet</div>
+    <div class="paper-title">Back to Flat</div>
+    <div class="paper-body">
+      All layers return to the stack. The depth was temporary, but the composition remains.
+      Paper has memory.
+    </div>
+  </section>
+
+  <!-- ===== SECTION 5: Theme Switcher Footer ===== -->
+  <footer class="paper-footer">
+    <div class="theme-btns">
+      <button class="theme-btn" data-theme="paper">Paper</button>
+      <button class="theme-btn" data-theme="ocean">Ocean</button>
+      <button class="theme-btn" data-theme="vintage">Vintage</button>
+      <button class="theme-btn" data-theme="mint">Mint</button>
+    </div>
+    <div class="footer-sig">&copy; 2026 Paper Cut Studio &mdash; Handmade layers for digital screens</div>
+  </footer>
+
+  <script>
+    window.setTheme = function(n){
+      document.body.className = 'theme-'+n;
+      localStorage.setItem('ui-beta-preview-theme',n);
+      document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.theme===n);});
+    };
+
+    window.addEventListener('DOMContentLoaded', function(){
+      var saved = localStorage.getItem('ui-beta-preview-theme') || 'paper';
+      document.body.className = 'theme-'+saved;
+      document.querySelectorAll('.theme-btn').forEach(function(b){
+        if(b.dataset.theme===saved) b.classList.add('active');
+        b.addEventListener('click',function(){window.setTheme(this.dataset.theme);});
+      });
+
+      // Layer stacking sandbox
+      var stackEl = document.getElementById('stack-layers');
+      var stackCountEl = document.getElementById('stack-count');
+      var layerNames = ['Note Sheet', 'Sketch Layer', 'Photo Backing', 'Cover Page', 'Insert', 'Memo', 'Draft', 'Final'];
+      var layerClasses = ['l1','l2','l3','l4','l1','l2','l3','l4'];
+
+      function reindexLayers(){
+        var children = stackEl.children;
+        for(var i=0; i<children.length; i++){
+          children[i].dataset.idx = i;
+        }
+        stackCountEl.textContent = children.length + ' layers in stack';
+      }
+
+      function makeLayer(text, cls){
+        var div = document.createElement('div');
+        div.className = 'stack-layer '+cls;
+        div.textContent = text;
+        div.addEventListener('click', function(e){
+          // Move clicked layer to top
+          var parent = this.parentNode;
+          parent.removeChild(this);
+          parent.appendChild(this);
+          reindexLayers();
+        });
+        return div;
+      }
+
+      // Attach click-to-top to existing layers
+      var existing = stackEl.querySelectorAll('.stack-layer');
+      existing.forEach(function(el){
+        el.addEventListener('click', function(e){
+          var parent = this.parentNode;
+          parent.removeChild(this);
+          parent.appendChild(this);
+          reindexLayers();
+        });
+      });
+
+      document.getElementById('add-layer-btn').addEventListener('click', function(){
+        var name = layerNames[Math.floor(Math.random() * layerNames.length)];
+        var cls = layerClasses[Math.floor(Math.random() * layerClasses.length)];
+        var div = makeLayer(name, cls);
+        stackEl.appendChild(div);
+        reindexLayers();
+      });
+
+      document.getElementById('reset-stack-btn').addEventListener('click', function(){
+        stackEl.innerHTML = '';
+        var defaults = [
+          {text:'Foundation Sheet',cls:'l1'},
+          {text:'Texture Layer',cls:'l2'},
+          {text:'Photo Sheet',cls:'l3'},
+          {text:'Top Note',cls:'l4'},
+        ];
+        defaults.forEach(function(d){
+          var div = makeLayer(d.text, d.cls);
+          stackEl.appendChild(div);
+        });
+        reindexLayers();
+      });
+    });
+  </script>
+</body>
+</html>

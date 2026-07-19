@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comic Book / Pop Art Spread</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,400&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red: #E63946; --blue: #0077B6; --yellow: #FFD60A; --black: #000; --white: #FFF;
+      --panel-bg: #FFF; --panel-border: 3px solid #000; --speech-bg: #FFF; --caption-bg: #FFD60A;
+      --halftone-color: #000; --halftone-bg: #FFF; --noir-bg: #000; --noir-dot: #FFF;
+      --body-fg: #000; --headline-shadow: #000;
+    }
+    html.theme-classic { --red: #E63946; --blue: #0077B6; --yellow: #FFD60A; --black: #000; --white: #FFF; --panel-bg: #FFF; --panel-border: 3px solid #000; --speech-bg: #FFF; --caption-bg: #FFD60A; --halftone-color: #000; --halftone-bg: #FFF; --noir-bg: #000; --noir-dot: #FFF; --body-fg: #000; --headline-shadow: #000; }
+    html.theme-noir { --red: #222; --blue: #444; --yellow: #555; --black: #000; --white: #EEE; --panel-bg: #111; --panel-border: 3px solid #EEE; --speech-bg: #222; --caption-bg: #333; --halftone-color: #FFF; --halftone-bg: #111; --noir-bg: #000; --noir-dot: #666; --body-fg: #DDD; --headline-shadow: #000; }
+    html.theme-hero { --red: #D62828; --blue: #1D3557; --yellow: #E9C46A; --black: #000; --white: #FFF; --panel-bg: #F0F8FF; --panel-border: 3px solid #1D3557; --speech-bg: #FFF; --caption-bg: #E9C46A; --halftone-color: #1D3557; --halftone-bg: #F0F8FF; --noir-bg: #1D3557; --noir-dot: #FFF; --body-fg: #000; --headline-shadow: #1D3557; }
+    html.theme-villain { --red: #6A040F; --blue: #10002B; --yellow: #E0AA00; --black: #0A0A0A; --white: #EAEAEA; --panel-bg: #1A1A1A; --panel-border: 3px solid #6A040F; --speech-bg: #2A2A2A; --caption-bg: #3A1A1A; --halftone-color: #6A040F; --halftone-bg: #1A1A1A; --noir-bg: #0A0A0A; --noir-dot: #6A040F; --body-fg: #CCC; --headline-shadow: #6A040F; }
+
+    body {
+      background: var(--white); color: var(--body-fg);
+      font-family: 'Comic Neue', cursive; font-size: 16px; line-height: 1.6;
+      min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* panel base */
+    .panel { border: var(--panel-border); background: var(--panel-bg); padding: 1.2rem; position: relative; overflow: hidden; transition: border-width 0.15s, transform 0.15s; }
+    .panel:hover { border-width: 5px; transform: scale(1.02); }
+    .panel-rounded { border-radius: 12px; }
+    .panel-sharp { border-radius: 0; }
+
+    /* halftone texture */
+    .halftone { background-color: var(--halftone-bg); background-image: radial-gradient(circle, var(--halftone-color) 1px, transparent 1px); background-size: 6px 6px; }
+    .noir-panel { background: var(--noir-bg); background-image: radial-gradient(circle, var(--noir-dot) 1.5px, transparent 1.5px); background-size: 8px 8px; color: var(--white); }
+
+    /* speed lines */
+    .speed-lines { background: repeating-linear-gradient(-45deg, transparent, transparent 6px, rgba(0,0,0,0.06) 6px, rgba(0,0,0,0.06) 7px); }
+
+    /* speech bubble */
+    .speech-bubble { background: var(--speech-bg); border: 3px solid var(--black); border-radius: 16px; padding: 1rem 1.5rem; position: relative; margin: 1rem 0; font-family: 'Comic Neue', cursive; font-weight: 700; font-size: 0.95rem; }
+    .speech-bubble::after { content: ''; position: absolute; bottom: -16px; left: 30px; border: 8px solid transparent; border-top: 10px solid var(--speech-bg); }
+    .speech-bubble::before { content: ''; position: absolute; bottom: -20px; left: 28px; border: 10px solid transparent; border-top: 12px solid var(--black); }
+
+    /* starburst */
+    .starburst { display: inline-block; background: var(--yellow); color: var(--black); font-family: 'Bangers', sans-serif; font-size: 2rem; padding: 0.6rem 1.5rem; transform: rotate(-15deg); border: 3px solid var(--black); position: relative; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); margin: 1rem 0; text-align: center; }
+    .starburst-red { background: var(--red); color: var(--white); }
+    .starburst-blue { background: var(--blue); color: var(--white); }
+
+    /* sound effect word */
+    .sfx { display: inline-block; font-family: 'Bangers', sans-serif; font-size: 3rem; text-transform: uppercase; transform: rotate(-15deg); margin: 0.5rem; text-shadow: 3px 3px 0 var(--headline-shadow); cursor: default; transition: transform 0.2s; }
+    .sfx:hover { animation: jiggle 0.2s ease-in-out infinite; }
+    @keyframes jiggle { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+
+    /* panel flip in */
+    .panel-flip { transform: rotateY(90deg); animation: flipIn 0.5s ease-out forwards; }
+    @keyframes flipIn { to { transform: rotateY(0deg); } }
+
+    /* headline */
+    .comic-headline { font-family: 'Bangers', sans-serif; font-size: clamp(2.5rem,6vw,4.5rem); text-transform: uppercase; color: var(--red); text-shadow: 3px 3px 0 var(--headline-shadow); line-height: 1; letter-spacing: 0.02em; }
+
+    /* caption box */
+    .caption-box { background: var(--caption-bg); border: 2px solid var(--black); padding: 0.4rem 0.8rem; font-family: 'Bangers', sans-serif; font-size: 0.8rem; text-transform: uppercase; display: inline-block; margin-bottom: 0.5rem; }
+
+    /* page grid */
+    .page { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+
+    /* hero 2-panel */
+    .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+
+    /* services grid */
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 6px 0; }
+    @media (max-width:640px) { .services-grid { grid-template-columns: 1fr 1fr; } .hero-split { grid-template-columns: 1fr; } }
+
+    /* cta */
+    .cta-panel { margin: 6px 0; text-align: center; }
+    .comic-btn { display: inline-block; font-family: 'Bangers', sans-serif; font-size: 1.8rem; text-transform: uppercase; padding: 0.8rem 2.5rem; background: var(--yellow); color: var(--black); border: 3px solid var(--black); box-shadow: 4px 4px 0 var(--black); text-decoration: none; cursor: pointer; transition: box-shadow 0.1s, transform 0.1s; }
+    .comic-btn:hover { box-shadow: 6px 6px 0 var(--black); transform: translate(-2px,-2px); }
+    .comic-btn:active { box-shadow: 2px 2px 0 var(--black); transform: translate(2px,2px); }
+
+    /* theme */
+    .theme-section { text-align: center; padding: 1.5rem 0 0.5rem; border-top: 3px solid var(--black); margin-top: 1rem; }
+    .theme-btn { font-family: 'Bangers', sans-serif; font-size: 1rem; text-transform: uppercase; background: var(--white); border: 3px solid var(--black); color: var(--black); padding: 0.4rem 1rem; cursor: pointer; margin: 0 0.3rem; transition: background 0.1s, color 0.1s; box-shadow: 2px 2px 0 var(--black); }
+    .theme-btn:hover, .theme-btn.active { background: var(--yellow); color: var(--black); }
+
+    /* footer */
+    .footer { text-align: center; padding: 1rem 0; border-top: 3px solid var(--black); margin-top: 6px; }
+    .footer p { font-family: 'Bangers', sans-serif; font-size: 1rem; letter-spacing: 0.1em; }
+
+    /* 3D extruded */
+    .extrude { box-shadow: 4px 4px 0 var(--black); }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- SECTION 1: Hero (2-panel split) -->
+    <div class="hero-split">
+      <div class="panel panel-rounded panel-flip speed-lines" style="display:flex;flex-direction:column;justify-content:center;align-items:center;animation-delay:0.1s;">
+        <span class="sfx" style="font-size:4rem;color:var(--red);text-shadow:4px 4px 0 var(--black);">POW!</span>
+        <h1 class="comic-headline" style="font-size:clamp(2rem,5vw,3.5rem);">Creative<br>Heroes</h1>
+        <div class="speech-bubble" style="margin-top:0.5rem;max-width:90%;">We make your brand legendary!</div>
+      </div>
+      <div class="panel panel-sharp panel-flip halftone" style="display:flex;flex-direction:column;justify-content:center;align-items:center;animation-delay:0.2s;">
+        <div class="caption-box" style="position:absolute;top:8px;left:8px;">Issue #1</div>
+        <div style="font-family:'Bangers',sans-serif;font-size:2rem;text-transform:uppercase;color:var(--blue);text-shadow:2px 2px 0 var(--black);">Origin Story</div>
+        <p style="font-family:'Patrick Hand',cursive;font-size:1.1rem;max-width:90%;text-align:center;">Every brand has an origin. Ours started with a sketch on a napkin and a dream to change the world.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Services (3-col grid) -->
+    <div class="services-grid">
+      <div class="panel panel-sharp panel-flip" style="background:var(--red);color:var(--white);animation-delay:0.3s;">
+        <div style="font-size:2.5rem;font-family:'Bangers',sans-serif;">&#9998;</div>
+        <h3 style="font-family:'Bangers',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:0.3rem 0;">Design</h3>
+        <div class="speech-bubble" style="background:var(--white);color:var(--black);font-size:0.85rem;padding:0.6rem 1rem;">Bold visuals that stop the scroll!</div>
+      </div>
+      <div class="panel panel-rounded panel-flip" style="background:var(--blue);color:var(--white);animation-delay:0.4s;">
+        <div style="font-size:2.5rem;font-family:'Bangers',sans-serif;">&lt;/&gt;</div>
+        <h3 style="font-family:'Bangers',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:0.3rem 0;">Code</h3>
+        <div class="speech-bubble" style="background:var(--white);color:var(--black);font-size:0.85rem;padding:0.6rem 1rem;">Pixel-perfect, every time!</div>
+      </div>
+      <div class="panel panel-sharp panel-flip" style="background:var(--yellow);color:var(--black);animation-delay:0.5s;">
+        <div style="font-size:2.5rem;font-family:'Bangers',sans-serif;">&#9889;</div>
+        <h3 style="font-family:'Bangers',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:0.3rem 0;">Strategy</h3>
+        <div class="speech-bubble" style="background:var(--white);color:var(--black);font-size:0.85rem;padding:0.6rem 1rem;">Plans that pack a punch!</div>
+      </div>
+      <div class="panel panel-rounded panel-flip" style="background:var(--yellow);color:var(--black);animation-delay:0.6s;">
+        <div style="font-size:2.5rem;font-family:'Bangers',sans-serif;">&#128247;</div>
+        <h3 style="font-family:'Bangers',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:0.3rem 0;">Video</h3>
+        <div class="speech-bubble" style="background:var(--white);color:var(--black);font-size:0.85rem;padding:0.6rem 1rem;">Motion that tells a story!</div>
+      </div>
+      <div class="panel panel-sharp panel-flip" style="background:var(--red);color:var(--white);animation-delay:0.7s;">
+        <div style="font-size:2.5rem;font-family:'Bangers',sans-serif;">&#9835;</div>
+        <h3 style="font-family:'Bangers',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:0.3rem 0;">Audio</h3>
+        <div class="speech-bubble" style="background:var(--white);color:var(--black);font-size:0.85rem;padding:0.6rem 1rem;">Sound that hits hard!</div>
+      </div>
+      <div class="panel panel-rounded panel-flip" style="background:var(--blue);color:var(--white);animation-delay:0.8s;">
+        <div style="font-size:2.5rem;font-family:'Bangers',sans-serif;">&#128752;</div>
+        <h3 style="font-family:'Bangers',sans-serif;font-size:1.3rem;text-transform:uppercase;margin:0.3rem 0;">Launch</h3>
+        <div class="speech-bubble" style="background:var(--white);color:var(--black);font-size:0.85rem;padding:0.6rem 1rem;">Ship it like a hero!</div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: CTA / Starburst -->
+    <div class="panel cta-panel panel-flip speed-lines" style="animation-delay:0.9s;">
+      <div class="starburst starburst-red" style="font-size:3.5rem;margin:0.5rem auto;">ACTION!</div>
+      <p style="font-family:'Patrick Hand',cursive;font-size:1.2rem;max-width:40ch;margin:0.5rem auto;">Ready to make your brand the hero of its own story?</p>
+      <a href="#" class="comic-btn" style="margin-top:0.5rem;">Get Started</a>
+    </div>
+
+    <!-- SECTION 4: Noir Panel (full black bg) -->
+    <div class="panel panel-rounded panel-flip noir-panel" style="animation-delay:1s;">
+      <div class="caption-box" style="background:var(--white);color:var(--black);">Meanwhile...</div>
+      <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;">
+        <span class="sfx" style="color:var(--red);font-size:2.5rem;">ZAP!</span>
+        <p style="flex:1;font-family:'Patrick Hand',cursive;font-size:1.1rem;color:var(--noir-dot);">Every villain was once a hero who lost their way. We make sure your brand stays on the right side of the story.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Process / Speed lines -->
+    <div class="panel panel-sharp panel-flip speed-lines" style="animation-delay:1.1s;">
+      <div class="caption-box">The Method</div>
+      <h2 style="font-family:'Bangers',sans-serif;font-size:2rem;text-transform:uppercase;color:var(--blue);text-shadow:2px 2px 0 var(--black);">How We Roll</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.8rem;margin-top:0.8rem;">
+        <div class="speech-bubble" style="font-size:0.85rem;padding:0.6rem;">1. Sketch the dream</div>
+        <div class="speech-bubble" style="font-size:0.85rem;padding:0.6rem;">2. Build the world</div>
+        <div class="speech-bubble" style="font-size:0.85rem;padding:0.6rem;">3. Test the powers</div>
+        <div class="speech-bubble" style="font-size:0.85rem;padding:0.6rem;">4. Launch the legend</div>
+      </div>
+      <p style="font-family:'Patrick Hand',cursive;margin-top:0.5rem;font-size:1rem;">From splash page to final panel, we've got your back.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <span class="sfx" style="font-size:1.2rem;transform:none;">BAM!</span>
+        <span class="sfx" style="font-size:1.2rem;transform:none;">WHAM!</span>
+        <span class="sfx" style="font-size:1.2rem;transform:none;">ZOWIE!</span>
+      </div>
+      <p style="margin-top:0.3rem;">&copy; 2026 — Comic Agency, Inc. All rights reserved.</p>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-section">
+      <button class="theme-btn" data-theme="classic">Classic</button>
+      <button class="theme-btn" data-theme="noir">Noir</button>
+      <button class="theme-btn" data-theme="hero">Hero</button>
+      <button class="theme-btn" data-theme="villain">Villain</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      // Flip in animation sequentially
+      document.querySelectorAll('.panel-flip').forEach(function(el, i) {
+        setTimeout(function() { el.style.animationPlayState = 'running'; }, i * 100 + 100);
+      });
+
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+      });
+    });
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      try { localStorage.setItem('ui-beta-preview-theme', n); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

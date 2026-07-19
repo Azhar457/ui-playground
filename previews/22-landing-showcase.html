@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme & Color Showcase Page</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- 1. ANTI-FLASH HEAD SCRIPT (WAJIB) -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-showcase-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'scroll-smooth theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'scroll-smooth theme-dark';
+      }
+    })();
+  </script>
+
+  <style>
+    /* 2. COLORING-PATTERN SEMANTIC TOKENS */
+    :root {
+      /* Theme 1: Light (Modern Minimal Neutral) */
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --surface-alt: #F1F1F3;
+      --text: #18181B;
+      --text-muted: #71717A;
+      --primary: #18181B;
+      --on-primary: #FFFFFF;
+      --secondary: #E4E4E7;
+      --on-secondary: #18181B;
+      --border: #E4E4E7;
+      --accent: #2563EB;
+      --success: #16A34A;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-dark {
+      /* Theme 2: Dark (Dark Glassmorphism) */
+      --bg: #0B0E14;
+      --surface: #131722;
+      --surface-alt: #1B2130;
+      --text: #E6E8EC;
+      --text-muted: #9CA3AF;
+      --primary: #6366F1;
+      --on-primary: #FFFFFF;
+      --secondary: #232A3B;
+      --on-secondary: #E6E8EC;
+      --border: #262D3D;
+      --accent: #22D3EE;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #F87171;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .theme-orange {
+      /* Theme 3: Orange (Warm Editorial) */
+      --bg: #FBF7F0;
+      --surface: #FFFFFF;
+      --surface-alt: #F2E9DC;
+      --text: #2B2118;
+      --text-muted: #7A6A58;
+      --primary: #8B4513;
+      --on-primary: #FFFFFF;
+      --secondary: #E8D5B7;
+      --on-secondary: #2B2118;
+      --border: #E5D9C5;
+      --accent: #C2703D;
+      --success: #4D7C4D;
+      --warning: #B8860B;
+      --danger: #A94442;
+      --shadow-color: rgba(139, 69, 19, 0.05);
+    }
+
+    .theme-sea {
+      /* Theme 4: Sea (Neon Cyberpunk Accent) */
+      --bg: #0A0A0F;
+      --surface: #14141F;
+      --surface-alt: #1E1E2E;
+      --text: #F0F0F5;
+      --text-muted: #8B8B9E;
+      --primary: #FF2E63;
+      --on-primary: #FFFFFF;
+      --secondary: #252538;
+      --on-secondary: #F0F0F5;
+      --border: #2A2A3D;
+      --accent: #00F0FF;
+      --success: #39FF88;
+      --warning: #FFD23F;
+      --danger: #FF3860;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-rose {
+      /* Theme 5: Rose (Warm Rosy Editorial) */
+      --bg: #FFF5F7;
+      --surface: #FFFFFF;
+      --surface-alt: #FFE4E6;
+      --text: #4C0519;
+      --text-muted: #9F1239;
+      --primary: #BE123C;
+      --on-primary: #FFFFFF;
+      --secondary: #FDA4AF;
+      --on-secondary: #4C0519;
+      --border: #FECDD3;
+      --accent: #E11D48;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --shadow-color: rgba(190, 18, 60, 0.05);
+    }
+
+    /* Reset & Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.2s ease;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    section {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* SECTION 1: HERO (Featuring Y2K Glossy Button style) */
+    .hero-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.5rem;
+      padding-top: 7rem;
+    }
+
+    .system-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subhead {
+      color: var(--text-muted);
+      max-width: 550px;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    /* Y2K Glossy Button */
+    .y2k-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, var(--accent), var(--primary));
+      color: var(--on-primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.8rem 2.2rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      box-shadow: 0 8px 20px var(--shadow-color),
+                  inset 0 2px 0px rgba(255, 255, 255, 0.4); /* top reflection highlight */
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+
+    .y2k-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .y2k-btn:active {
+      transform: scale(0.97) translateY(1px);
+    }
+
+    /* Marquee logo loops */
+    .y2k-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 30%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: skewX(-30deg);
+      animation: sheen 4s infinite ease-in-out;
+    }
+
+    @keyframes sheen {
+      0% { left: -50%; }
+      20%, 100% { left: 150%; }
+    }
+
+    /* SECTION 2: FEATURES (Featuring Conic Rotating Card from Aurora UI) */
+    .features-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      border-left: 4px solid var(--accent);
+      padding-left: 0.75rem;
+    }
+
+    /* Conic Border Card */
+    .conic-card-wrap {
+      position: relative;
+      border-radius: 20px;
+      padding: 1px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .conic-card-wrap::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: conic-gradient(from 0deg, var(--accent), var(--primary), var(--secondary), var(--accent));
+      animation: rotateBorder 8s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    .conic-card {
+      background: var(--surface);
+      border-radius: 19px;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .conic-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .conic-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* SECTION 3: INTERACTIVE SANDBOX (Featuring Skeuomorphic Controls style) */
+    .sandbox-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skeuo-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4),
+                  0 4px 10px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Skeuomorphic Switch */
+    .switch-track {
+      width: 50px;
+      height: 26px;
+      background: var(--border);
+      border-radius: 9999px;
+      padding: 2px;
+      cursor: pointer;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .switch-knob {
+      width: 22px;
+      height: 22px;
+      background: var(--surface);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2),
+                  inset 0 1px 0 rgba(255,255,255,0.5);
+      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .switch-track.active {
+      background: var(--accent);
+    }
+
+    .switch-track.active .switch-knob {
+      transform: translateX(24px);
+    }
+
+    /* Skeuomorphic Range Slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 9999px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* SECTION 4: STATS GRID (Featuring CRT Terminal style display typography) */
+    .stats-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .stats-grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .stats-grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-holo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-holo-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: var(--accent);
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      font-family: 'VT323', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 5px var(--accent);
+      margin-top: 0.5rem;
+      line-height: 1;
+    }
+
+    /* SECTION 5: THEME SWITCHER FOOTER (Theme Switcher API) */
+    .footer-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      border-bottom: none;
+      padding-bottom: 7rem;
+    }
+
+    .switcher-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Theme buttons */
+    .theme-select-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 1.2rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+
+    .theme-select-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* Active outline highlight ring */
+    .theme-select-btn.active {
+      box-shadow: 0 0 0 2px var(--bg),
+                  0 0 0 4px var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SECTION 1: HERO -->
+  <section class="hero-layout">
+    <span class="system-label">[ MULTI-THEMED ENVIRONMENT ]</span>
+    <h1>THEME SHIFTING ENGINE</h1>
+    <p class="subhead">
+      A single semantic coloring stylesheet mapping variables to 5 actual themes dynamically. Experience fluid color adjustments without raw hex styling leaks.
+    </p>
+    <button class="y2k-btn">ENTER ENVIRONMENT</button>
+  </section>
+
+  <!-- SECTION 2: FEATURE MATRIX -->
+  <section class="features-layout">
+    <h2 class="section-title">THE CONIC HIGHLIGHT</h2>
+    <div class="conic-card-wrap">
+      <div class="conic-card">
+        <h3>Aurora Conic Loop</h3>
+        <p>This panel uses a rotating conic-gradient mask beneath a solid surface card, creating a high-fidelity glowing border frame effect.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: INTERACTIVE SANDBOX -->
+  <section class="sandbox-layout">
+    <h2 class="section-title">MATERIAL SANDBOX</h2>
+    <div class="controls-grid">
+      <!-- Skeuomorphic toggles -->
+      <div class="skeuo-box">
+        <span class="system-label" style="font-size:0.65rem;">System Compressor</span>
+        
+        <div class="control-row">
+          <span style="font-size:0.85rem; font-weight:700;">PWR_LINK</span>
+          <div class="switch-track" onclick="toggleSkeuo(this)">
+            <div class="switch-knob"></div>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <span style="font-size:0.85rem; font-weight:700;">VALVE_BYPASS</span>
+          <div class="switch-track active" onclick="toggleSkeuo(this)">
+            <div class="switch-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skeuomorphic range sliders -->
+      <div class="skeuo-box">
+        <span class="system-label" style="font-size:0.65rem;">Modulation Frequency</span>
+        <div class="control-row" style="flex-direction:column; gap:10px; align-items:stretch;">
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
+            <span>FREQ_HZ</span>
+            <span id="slider-num" style="color:var(--accent)">75%</span>
+          </div>
+          <input type="range" min="10" max="100" value="75" oninput="document.getElementById('slider-num').textContent = this.value + '%'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: STATS GRID -->
+  <section class="stats-layout">
+    <h2 class="section-title">METRICS TELEMETRY</h2>
+    <div class="stats-grid-container">
+      <div class="stat-holo-card">
+        <span class="stat-label">Active Nodes</span>
+        <div class="stat-value">4,819</div>
+      </div>
+      <div class="stat-holo-card">
+        <span class="stat-label">Response Time</span>
+        <div class="stat-value">12MS</div>
+      </div>
+      <div class="stat-holo-card">
+        <span class="stat-label">System Temp</span>
+        <div class="stat-value">042C</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: SWITCHER FOOTER -->
+  <section class="footer-layout">
+    <span class="system-label">Theme Switcher Console</span>
+    
+    <div class="switcher-container">
+      <!-- Selector buttons -->
+      <button class="theme-select-btn" data-theme-btn="light" onclick="setTheme('light')">
+        <i class="fa-solid fa-sun" style="color:#D97706;"></i> Light
+      </button>
+      
+      <button class="theme-select-btn" data-theme-btn="dark" onclick="setTheme('dark')">
+        <i class="fa-solid fa-moon" style="color:#6366F1;"></i> Dark
+      </button>
+      
+      <button class="theme-select-btn" data-theme-btn="orange" onclick="setTheme('orange')">
+        <i class="fa-solid fa-fire" style="color:#C2703D;"></i> Orange
+      </button>
+      
+      <button class="theme-select-btn" data-theme-btn="sea" onclick="setTheme('sea')">
+        <i class="fa-solid fa-terminal" style="color:#00F0FF;"></i> Sea
+      </button>
+
+      <button class="theme-select-btn" data-theme-btn="rose" onclick="setTheme('rose')">
+        <i class="fa-solid fa-heart" style="color:#E11D48;"></i> Rose
+      </button>
+    </div>
+    
+    <span style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--text-muted);">
+      © 2026 SEMANTIC ENGINE. PERSISTED VIA LOCALSTORAGE.
+    </span>
+  </section>
+
+  <!-- JavaScript Switcher APIs -->
+  <script>
+    // Theme Switcher API
+    window.setTheme = function(themeName) {
+      const root = document.documentElement;
+      root.className = 'scroll-smooth theme-' + themeName;
+      localStorage.setItem('playground-showcase-theme', themeName);
+      updateSwitcherUI(themeName);
+    }
+
+    // Initialize theme state
+    function initTheme() {
+      var saved = localStorage.getItem('playground-showcase-theme');
+      if (saved) {
+        window.setTheme(saved);
+      } else {
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        window.setTheme(prefersDark ? 'dark' : 'light');
+      }
+    }
+
+    // Active outline highlight switcher rings
+    function updateSwitcherUI(activeTheme) {
+      document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
+        if (btn.getAttribute('data-theme-btn') === activeTheme) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Skeuomorphic toggle helper
+    window.toggleSkeuo = function(track) {
+      track.classList.toggle('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</body>
+</html>

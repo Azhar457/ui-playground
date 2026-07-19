@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vaporwave / Synthwave</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Exo+2:wght@300;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: synth (current) ===== */
+    .theme-synth {
+      --bg: #0B0D17;
+      --sunset-1: #FF006E;
+      --sunset-2: #FF4D00;
+      --c1: #00FFF0;
+      --c2: #FF00A0;
+      --c3: #FF6B00;
+      --text: #D0D0E0;
+      --text-dim: #8A8AA8;
+      --border: rgba(0,255,240,0.3);
+      --chrome-from: #00FFF0;
+      --chrome-via: #FF00A0;
+      --chrome-to: #FF6B00;
+      --card-bg: rgba(11,13,23,0.8);
+    }
+    /* ===== THEME: cyber ===== */
+    .theme-cyber {
+      --bg: #0A0E0A;
+      --sunset-1: #00FF41;
+      --sunset-2: #003B00;
+      --c1: #00FF41;
+      --c2: #00BFFF;
+      --c3: #FFFFFF;
+      --text: #B0FFB0;
+      --text-dim: #5A8A5A;
+      --border: rgba(0,255,65,0.3);
+      --chrome-from: #00FF41;
+      --chrome-via: #00BFFF;
+      --chrome-to: #FFFFFF;
+      --card-bg: rgba(10,14,10,0.8);
+    }
+    /* ===== THEME: sunset ===== */
+    .theme-sunset {
+      --bg: #1A0D1A;
+      --sunset-1: #FF4500;
+      --sunset-2: #FFD700;
+      --c1: #FFD700;
+      --c2: #FF4500;
+      --c3: #FF1493;
+      --text: #F0D0C0;
+      --text-dim: #A08070;
+      --border: rgba(255,215,0,0.3);
+      --chrome-from: #FFD700;
+      --chrome-via: #FF4500;
+      --chrome-to: #FF1493;
+      --card-bg: rgba(26,13,26,0.8);
+    }
+    /* ===== THEME: midnight ===== */
+    .theme-midnight {
+      --bg: #05080F;
+      --sunset-1: #4169E1;
+      --sunset-2: #1a0a2e;
+      --c1: #7B68EE;
+      --c2: #4169E1;
+      --c3: #00CED1;
+      --text: #B0C4DE;
+      --text-dim: #5A6A8A;
+      --border: rgba(123,104,238,0.3);
+      --chrome-from: #7B68EE;
+      --chrome-via: #4169E1;
+      --chrome-to: #00CED1;
+      --card-bg: rgba(5,8,15,0.8);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Radial sunset gradient at low-center */
+    .sunset-bg {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%;
+      height: 70vh;
+      background: radial-gradient(ellipse at 50% 100%, var(--sunset-1) 0%, var(--sunset-2) 30%, transparent 70%);
+      opacity: 0.4;
+      z-index: 0;
+      pointer-events: none;
+      transition: background 0.3s;
+    }
+
+    /* Scanline overlay */
+    .scanlines {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 3px);
+      background-size: 100% 4px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* 3D Perspective Grid Floor */
+    .grid-floor {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%;
+      height: 50vh;
+      z-index: 1;
+      pointer-events: none;
+      perspective: 500px;
+      overflow: hidden;
+    }
+
+    .grid-inner {
+      width: 100%;
+      height: 200vh;
+      transform: rotateX(60deg);
+      transform-origin: bottom center;
+      background-image:
+        linear-gradient(90deg, var(--border) 1px, transparent 1px),
+        linear-gradient(var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridPulse 4s ease-in-out infinite;
+      position: absolute;
+      bottom: 0;
+      transition: opacity 0.3s;
+    }
+
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Content wrapper */
+    .content {
+      position: relative;
+      z-index: 5;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem 25vh;
+    }
+
+    /* Chrome gradient text */
+    .chrome-text {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--chrome-from) 0%, var(--chrome-via) 40%, var(--chrome-to) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: background 0.3s;
+    }
+
+    .chrome-sub {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      background: linear-gradient(135deg, var(--chrome-from), var(--chrome-via));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    /* Greek bust SVG with duotone filter */
+    .bust-container {
+      display: flex;
+      justify-content: center;
+      margin: 4rem 0;
+    }
+
+    .greek-bust {
+      width: 160px;
+      height: 200px;
+    }
+
+    /* Album cards */
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    .album-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease, background 0.3s, border-color 0.3s;
+    }
+
+    .album-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,240,0.03) 3px);
+      background-size: 100% 3px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .album-card:hover {
+      border-color: var(--c1);
+      transform: translateY(-4px);
+    }
+
+    .album-art {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--c2), var(--c1), var(--c3));
+      margin-bottom: 1rem;
+      transition: box-shadow 0.3s ease, background 0.3s;
+      position: relative;
+    }
+
+    .album-art-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .album-label {
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+    }
+
+    .album-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--c1);
+      margin-top: 0.25rem;
+      transition: color 0.3s;
+    }
+
+    /* Stat columns */
+    .stat-row {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--chrome-from), var(--chrome-via));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* SECTION 3: Interactive grid controls */
+    .sandbox-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin: 3rem 0;
+      text-align: center;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .sandbox-panel label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+    }
+
+    .sandbox-panel input[type="range"] {
+      -webkit-appearance: none;
+      width: 200px;
+      height: 2px;
+      background: var(--border);
+      outline: none;
+      margin: 0.5rem 1rem;
+    }
+
+    .sandbox-panel input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--c1);
+      cursor: pointer;
+    }
+
+    .sandbox-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      color: var(--c1);
+      margin-left: 0.25rem;
+    }
+
+    /* SECTION 5: Theme buttons */
+    .vapor-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      margin-top: 4rem;
+      transition: border-color 0.3s;
+    }
+
+    .theme-btns {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .theme-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 0.6rem 1.2rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      border-color: var(--c1);
+      color: var(--c1);
+      background: rgba(0,255,240,0.05);
+    }
+
+    .footer-sig {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-family: 'Exo 2', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      padding-top: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .content { padding: 2rem 1.25rem 20vh; }
+    }
+  </style>
+</head>
+<body class="theme-synth">
+
+  <div class="sunset-bg"></div>
+  <div class="grid-floor">
+    <div class="grid-inner" id="grid-inner"></div>
+  </div>
+  <div class="scanlines"></div>
+
+  <div class="content">
+    <!-- ===== SECTION 1: Hero / Header ===== -->
+    <div style="text-align: center;">
+      <div class="chrome-text">FAREWELL<br>NEO TOKYO</div>
+      <div class="chrome-sub">Digital Dreamscape</div>
+    </div>
+
+    <!-- Greek bust duotone -->
+    <div class="bust-container">
+      <svg class="greek-bust" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bustGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="var(--c2)"/>
+            <stop offset="100%" stop-color="var(--c1)"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="50" cy="30" rx="24" ry="28" fill="url(#bustGrad)" opacity="0.9"/>
+        <path d="M 50 2 Q 68 2 72 20 Q 74 28 70 34 Q 68 38 64 36 L 62 42 Q 58 50 54 52 L 50 58 Q 48 60 46 58 L 42 52 Q 38 48 36 42 L 34 36 Q 30 38 28 34 Q 24 28 26 20 Q 30 2 50 2 Z" fill="url(#bustGrad)" opacity="0.7"/>
+        <rect x="40" y="54" width="20" height="10" rx="2" fill="url(#bustGrad)" opacity="0.6"/>
+        <path d="M 12 80 Q 20 64 40 62 L 60 62 Q 80 64 88 80 L 90 120 L 10 120 Z" fill="url(#bustGrad)" opacity="0.5"/>
+        <line x1="20" y1="75" x2="80" y2="75" stroke="var(--c1)" stroke-width="0.5" opacity="0.3"/>
+        <line x1="15" y1="85" x2="85" y2="85" stroke="var(--c1)" stroke-width="0.5" opacity="0.3"/>
+        <line x1="12" y1="95" x2="88" y2="95" stroke="var(--c1)" stroke-width="0.5" opacity="0.3"/>
+        <line x1="10" y1="105" x2="90" y2="105" stroke="var(--c1)" stroke-width="0.5" opacity="0.3"/>
+        <pattern id="scan" width="2" height="3" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="2" y2="0" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+        </pattern>
+        <rect x="10" y="62" width="80" height="58" fill="url(#scan)" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- ===== SECTION 2: Features / Gallery ===== -->
+    <div class="album-grid">
+      <div class="album-card">
+        <div class="album-art">
+          <div class="album-art-inner">FLORAL</div>
+        </div>
+        <div class="album-label">SIDE A</div>
+        <div class="album-title">PALM MALLOW</div>
+      </div>
+      <div class="album-card">
+        <div class="album-art" style="background: linear-gradient(135deg, var(--c1), var(--c2), #6B00FF);">
+          <div class="album-art-inner">STATUE</div>
+        </div>
+        <div class="album-label">SIDE B</div>
+        <div class="album-title">TELEPATH 3000</div>
+      </div>
+      <div class="album-card">
+        <div class="album-art" style="background: linear-gradient(135deg, var(--c3), var(--c2), var(--c1));">
+          <div class="album-art-inner">WAVE</div>
+        </div>
+        <div class="album-label">SIDE C</div>
+        <div class="album-title">SUNSET OASIS</div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 3: Interactive Sandbox ===== -->
+    <div class="sandbox-panel">
+      <div style="margin-bottom:0.5rem;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:3px;color:var(--c1);">~ GRID CONTROLS ~</div>
+      <div style="margin:1rem 0;">
+        <label>SPACING</label>
+        <input type="range" id="grid-spacing" min="20" max="120" value="60">
+        <span class="sandbox-value" id="spacing-val">60</span>
+      </div>
+      <div style="margin:1rem 0;">
+        <label>OPACITY</label>
+        <input type="range" id="grid-opacity" min="5" max="100" value="60">
+        <span class="sandbox-value" id="opacity-val">60</span>
+      </div>
+      <div style="margin:1rem 0;">
+        <label>SPEED</label>
+        <input type="range" id="grid-speed" min="0" max="8" value="4">
+        <span class="sandbox-value" id="speed-val">4</span>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 4: Specs / Stats ===== -->
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-value">808</div>
+        <div class="stat-label">BPM</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">84.2</div>
+        <div class="stat-label">FM FREQ</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">999</div>
+        <div class="stat-label">DISTANCE</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">4</div>
+        <div class="stat-label">THEMES</div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 5: Theme Switcher Footer ===== -->
+    <footer class="vapor-footer">
+      <div class="theme-btns">
+        <button class="theme-btn" data-theme="synth">Synth</button>
+        <button class="theme-btn" data-theme="cyber">Cyber</button>
+        <button class="theme-btn" data-theme="sunset">Sunset</button>
+        <button class="theme-btn" data-theme="midnight">Midnight</button>
+      </div>
+      <div class="footer-sig">
+        <span>&copy; 2026 AESTHETIC SYSTEMS</span>
+        <span>PRESET // VAPOR99</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    window.setTheme = function(n){
+      document.body.className = 'theme-'+n;
+      localStorage.setItem('ui-beta-preview-theme',n);
+      document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.theme===n);});
+    };
+
+    window.addEventListener('DOMContentLoaded', function(){
+      var saved = localStorage.getItem('ui-beta-preview-theme') || 'synth';
+      document.body.className = 'theme-'+saved;
+      document.querySelectorAll('.theme-btn').forEach(function(b){
+        if(b.dataset.theme===saved) b.classList.add('active');
+        b.addEventListener('click',function(){window.setTheme(this.dataset.theme);});
+      });
+
+      var gridInner = document.getElementById('grid-inner');
+
+      // Sandbox: grid spacing
+      var spacingInput = document.getElementById('grid-spacing');
+      var spacingVal = document.getElementById('spacing-val');
+      spacingInput.addEventListener('input', function(){
+        var v = this.value;
+        spacingVal.textContent = v;
+        gridInner.style.backgroundSize = v+'px '+v+'px';
+      });
+
+      // Sandbox: grid opacity
+      var opacityInput = document.getElementById('grid-opacity');
+      var opacityVal = document.getElementById('opacity-val');
+      opacityInput.addEventListener('input', function(){
+        var v = this.value / 100;
+        opacityVal.textContent = this.value;
+        gridInner.style.opacity = v;
+      });
+
+      // Sandbox: grid speed
+      var speedInput = document.getElementById('grid-speed');
+      var speedVal = document.getElementById('speed-val');
+      speedInput.addEventListener('input', function(){
+        var v = parseFloat(this.value);
+        speedVal.textContent = v;
+        gridInner.style.animationDuration = (4 / (v||0.25))+'s';
+      });
+    });
+  </script>
+</body>
+</html>

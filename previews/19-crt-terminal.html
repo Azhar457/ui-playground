@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro CRT Terminal Interface</title>
+
+  <!-- ANTI-FLASH IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEMES ===== */
+    :root, .theme-green {
+      --phosphor: #33FF00;
+      --glow: 0 0 6px #33FF00, 0 0 12px rgba(51,255,0,0.4);
+      --bezel: #2A2A2E;
+      --screen-bg: #050505;
+      --body-bg: #0D0D11;
+      --boot-dim: 0.65;
+    }
+    .theme-amber {
+      --phosphor: #FFB000;
+      --glow: 0 0 6px #FFB000, 0 0 12px rgba(255,176,0,0.4);
+      --bezel: #2A2822;
+      --screen-bg: #080602;
+      --body-bg: #100D08;
+      --boot-dim: 0.65;
+    }
+    .theme-white {
+      --phosphor: #E0E0E0;
+      --glow: 0 0 4px #E0E0E0, 0 0 8px rgba(224,224,224,0.3);
+      --bezel: #2A2A2E;
+      --screen-bg: #080808;
+      --body-bg: #0D0D11;
+      --boot-dim: 0.55;
+    }
+    .theme-matrix {
+      --phosphor: #00FF41;
+      --glow: 0 0 8px #00FF41, 0 0 16px rgba(0,255,65,0.5);
+      --bezel: #0A1A0A;
+      --screen-bg: #020502;
+      --body-bg: #050A05;
+      --boot-dim: 0.7;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--body-bg);
+      color: var(--phosphor);
+      font-family: 'VT323', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .section { width:100%; max-width:520px; margin:0 auto; padding:2rem 0; }
+
+    /* SECTION 1: MONITOR SCREEN */
+    .crt-monitor {
+      width:100%; max-width:460px;
+      aspect-ratio:4/3;
+      background:var(--screen-bg);
+      border:14px solid var(--bezel);
+      border-radius:20px;
+      position:relative; overflow:hidden;
+      box-shadow:0 25px 50px rgba(0,0,0,0.8), inset 0 4px 6px rgba(255,255,255,0.1), inset 0 -4px 6px rgba(0,0,0,0.8);
+      transition:border-color 0.3s ease, background 0.3s ease;
+    }
+    .crt-screen-overlay {
+      position:absolute; top:0; left:0; width:100%; height:100%;
+      z-index:100; pointer-events:none;
+      box-shadow:inset 0 0 60px rgba(0,0,0,0.95);
+      background:radial-gradient(circle,transparent 50%,rgba(0,0,0,0.4) 100%);
+    }
+    .crt-scanlines {
+      position:absolute; top:0; left:0; width:100%; height:100%;
+      z-index:99; pointer-events:none;
+      background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+    }
+    .screen-flash {
+      position:absolute; top:0; left:0; width:100%; height:100%;
+      background:#FFFFFF; opacity:0; z-index:98; pointer-events:none;
+      transition:opacity 0.05s ease-out;
+    }
+
+    .terminal-container {
+      width:100%; height:100%; padding:1.5rem;
+      display:flex; flex-direction:column; justify-content:space-between;
+      overflow-y:auto; text-shadow:var(--glow);
+      font-size:1.25rem; letter-spacing:0.5px;
+    }
+    .output-history { display:flex; flex-direction:column; gap:4px; }
+    .boot-line { opacity:var(--boot-dim); }
+    .cli-row { display:flex; align-items:center; gap:8px; margin-top:1rem; }
+    .prompt-indicator { font-weight:bold; }
+    .cli-input {
+      background:transparent; border:none; outline:none;
+      color:var(--phosphor); font-family:'VT323',monospace;
+      font-size:1.25rem; text-shadow:var(--glow); flex:1;
+    }
+    .block-cursor {
+      display:inline-block; width:10px; height:16px;
+      background:var(--phosphor); box-shadow:var(--glow);
+      animation:blink 1s step-end infinite; vertical-align:middle;
+    }
+    @keyframes blink { 0%,100%{opacity:0} 50%{opacity:1} }
+
+    /* SECTION 2: BOOT / OUTPUT AREA is inside the CRT */
+
+    /* SECTION 3: KEYBOARD INPUT SANDBOX */
+    #sandbox { text-align:center; }
+    .sandbox-input-area { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; margin-top:0.5rem; }
+    .sandbox-input-area input {
+      background:var(--screen-bg); border:1px solid var(--bezel); border-radius:4px;
+      color:var(--phosphor); font-family:'VT323',monospace; font-size:1rem;
+      padding:0.4rem 0.6rem; width:180px; text-shadow:var(--glow);
+    }
+    .sandbox-input-area input:focus { outline:1px solid var(--phosphor); }
+    .sandbox-btn {
+      font-family:'VT323',monospace; font-size:0.85rem;
+      padding:0.4rem 0.8rem; background:var(--screen-bg);
+      border:1px solid var(--bezel); border-radius:4px;
+      color:var(--phosphor); cursor:pointer; text-shadow:var(--glow);
+      transition:background 0.2s;
+    }
+    .sandbox-btn:hover { background:var(--phosphor); color:var(--screen-bg); }
+
+    /* SECTION 4: STATS */
+    #stats { text-align:center; }
+    .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
+    .stat-item { background:var(--screen-bg); border:1px solid var(--bezel); border-radius:8px; padding:1rem; }
+    .stat-item .val { font-size:1.8rem; text-shadow:var(--glow); }
+    .stat-item .lbl { font-size:0.65rem; opacity:var(--boot-dim); text-transform:uppercase; margin-top:0.25rem; }
+
+    /* SECTION 5: THEME FOOTER */
+    #theme-footer { text-align:center; }
+    .theme-buttons { display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem; }
+    .theme-btn {
+      font-family:'VT323',monospace; font-size:0.85rem;
+      padding:0.4rem 0.8rem; background:var(--screen-bg);
+      border:1px solid var(--bezel); border-radius:4px;
+      color:var(--phosphor); cursor:pointer; text-shadow:var(--glow);
+      transition:all 0.2s;
+    }
+    .theme-btn:hover { background:var(--phosphor); color:var(--screen-bg); }
+    .footer-credit { font-size:0.6rem; opacity:var(--boot-dim); margin-top:1.5rem; }
+
+    .cmd-feedback { margin-top:0.5rem; font-size:0.9rem; }
+  </style>
+</head>
+<body>
+
+<!-- SECTION 1: MONITOR SCREEN -->
+<section class="section" style="padding-bottom:0;">
+  <div class="crt-monitor">
+    <div class="crt-screen-overlay"></div>
+    <div class="crt-scanlines"></div>
+    <div class="screen-flash" id="flash-layer"></div>
+
+    <div class="terminal-container" onclick="focusCLI()">
+      <div class="output-history" id="terminal-history"></div>
+      <div class="cli-row">
+        <span class="prompt-indicator">&gt;</span>
+        <input type="text" class="cli-input" id="cli-input" autocomplete="off" autofocus onkeydown="handleInput(event)">
+        <span class="block-cursor" id="cursor-indicator"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: BOOT SEQUENCE LOG (displayed inside CRT; this label is for section demarcation) -->
+<!-- Boot lines rendered by JS into terminal-history above -->
+
+<!-- SECTION 3: KEYBOARD INPUT SANDBOX -->
+<section id="sandbox" class="section">
+  <div style="font-size:1.1rem;text-shadow:var(--glow);">Command Sandbox</div>
+  <div class="sandbox-input-area">
+    <input type="text" id="sandbox-cmd" placeholder="type a command..." onkeydown="if(event.key==='Enter')sendSandboxCmd()">
+    <button class="sandbox-btn" onclick="sendSandboxCmd()">SEND</button>
+  </div>
+  <div class="cmd-feedback" id="sandbox-feedback">HELP, MATRIX, CLEAR, or any text</div>
+</section>
+
+<!-- SECTION 4: STATS -->
+<section id="stats" class="section">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="val" id="stat-lines">05</div>
+      <div class="lbl">Lines Output</div>
+    </div>
+    <div class="stat-item">
+      <div class="val">0.84</div>
+      <div class="lbl">Kernel Rev</div>
+    </div>
+    <div class="stat-item">
+      <div class="val">100%</div>
+      <div class="lbl">Memory OK</div>
+    </div>
+    <div class="stat-item">
+      <div class="val">VT323</div>
+      <div class="lbl">Font</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: THEME FOOTER -->
+<section id="theme-footer" class="section">
+  <div style="font-size:1.1rem;text-shadow:var(--glow);">Theme Switcher</div>
+  <div class="theme-buttons">
+    <button class="theme-btn" onclick="setTheme('green')">Green</button>
+    <button class="theme-btn" onclick="setTheme('amber')">Amber</button>
+    <button class="theme-btn" onclick="setTheme('white')">White</button>
+    <button class="theme-btn" onclick="setTheme('matrix')">Matrix</button>
+  </div>
+  <p class="footer-credit">UI PLAYGROUND BETA &middot; 19-CRT-TERMINAL</p>
+</section>
+
+<script>
+  // ===== THEME SWITCHER API =====
+  window.setTheme = function(name){document.documentElement.className='theme-'+name;localStorage.setItem('ui-beta-preview-theme',name);};
+
+  // ===== ORIGINAL CRT TERMINAL (preserved) =====
+  var history = document.getElementById('terminal-history');
+  var input = document.getElementById('cli-input');
+  var flash = document.getElementById('flash-layer');
+  var cursor = document.getElementById('cursor-indicator');
+
+  var bootSequence = [
+    "SYSTEM BOOT: V.0.84-BETA",
+    "CHECKING CHIP MEMORY REGISTERS... OK",
+    "LOADING KERNEL GATE MODULES... DONE",
+    "ESTABLISHING PHOSPHOR GREEN SIGNAL MATRIX...",
+    "SYSTEM ONLINE. TYPE 'HELP' FOR COMMANDS."
+  ];
+
+  var bootIndex = 0;
+  function runBoot() {
+    if (bootIndex < bootSequence.length) {
+      var line = document.createElement('div');
+      line.className = 'boot-line';
+      line.textContent = bootSequence[bootIndex];
+      history.appendChild(line);
+      bootIndex++;
+      updateStatLines();
+      setTimeout(runBoot, 350);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    runBoot();
+    input.focus();
+  });
+
+  function focusCLI() { input.focus(); }
+  input.addEventListener('focus', function(){ cursor.style.display = 'none'; });
+  input.addEventListener('blur', function(){ cursor.style.display = 'inline-block'; });
+
+  function handleInput(e) {
+    if (e.key === 'Enter') {
+      var cmd = input.value.trim().toLowerCase();
+      if (cmd === '') return;
+
+      var cmdLine = document.createElement('div');
+      cmdLine.style.opacity = '1.0';
+      cmdLine.textContent = '> ' + input.value;
+      history.appendChild(cmdLine);
+
+      flash.style.opacity = '0.25';
+      setTimeout(function(){ flash.style.opacity = '0'; }, 50);
+
+      var responseLine = document.createElement('div');
+      responseLine.className = 'boot-line';
+
+      if (cmd === 'help') {
+        responseLine.innerHTML = "AVAILABLE MODULES:<br>- HELP: SHOW COMMANDS<br>- MATRIX: INJECT NOISE STREAM<br>- CLEAR: SCRUB BUFFER SCREEN";
+      } else if (cmd === 'matrix') {
+        responseLine.textContent = "INTRUSION SYSTEM SCAN: 100% OK. NO LEAKS.";
+      } else if (cmd === 'clear') {
+        history.innerHTML = '';
+        input.value = '';
+        updateStatLines();
+        return;
+      } else {
+        responseLine.textContent = "ERR: COMMAND NOT FOUND: '" + cmd + "'";
+      }
+
+      history.appendChild(responseLine);
+      input.value = '';
+      updateStatLines();
+
+      var container = document.querySelector('.terminal-container');
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  function updateStatLines() {
+    var count = history.children.length;
+    document.getElementById('stat-lines').textContent = String(count).padStart(2,'0');
+  }
+
+  // ===== SANDBOX COMMAND =====
+  function sendSandboxCmd() {
+    var sbInput = document.getElementById('sandbox-cmd');
+    var cmd = sbInput.value.trim().toLowerCase();
+    if (cmd === '') return;
+    var fb = document.getElementById('sandbox-feedback');
+
+    // Inject into terminal
+    input.value = sbInput.value;
+    var fakeEvent = { key: 'Enter' };
+    handleInput(fakeEvent);
+    sbInput.value = '';
+
+    if (cmd === 'help') fb.textContent = 'HELP dispatched to terminal.';
+    else if (cmd === 'matrix') fb.textContent = 'MATRIX scan triggered.';
+    else if (cmd === 'clear') fb.textContent = 'Terminal buffer cleared.';
+    else fb.textContent = 'Command "' + cmd + '" sent to terminal.';
+  }
+</script>
+</body>
+</html>

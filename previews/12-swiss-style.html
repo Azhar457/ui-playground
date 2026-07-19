@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swiss International Style</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('ui-beta-preview-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-light';
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Light (default white) ===== */
+    :root, .theme-light {
+      --bg-body: #FAFAFA;
+      --black: #000000;
+      --signal-red: #FF0000;
+      --grid-line: #E5E5E5;
+      --text-body: #000000;
+      --text-soft: #4B5563;
+      --border-color: #000000;
+    }
+
+    .theme-dark {
+      --bg-body: #111111;
+      --black: #FFFFFF;
+      --signal-red: #FF3333;
+      --grid-line: #2A2A2A;
+      --text-body: #F4F4F5;
+      --text-soft: #A1A1AA;
+      --border-color: #FFFFFF;
+    }
+
+    .theme-signal {
+      --bg-body: #FFF5F5;
+      --black: #7F1D1D;
+      --signal-red: #DC2626;
+      --grid-line: #FECACA;
+      --text-body: #7F1D1D;
+      --text-soft: #B91C1C;
+      --border-color: #DC2626;
+    }
+
+    .theme-minimal {
+      --bg-body: #F3F3F3;
+      --black: #1A1A1A;
+      --signal-red: #CCCCCC;
+      --grid-line: #D4D4D4;
+      --text-body: #1A1A1A;
+      --text-soft: #737373;
+      --border-color: #1A1A1A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 8vw;
+      display: flex;
+      flex-direction: column;
+      gap: 6rem;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Staggered entrance translation on load */
+    .swiss-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+
+    .swiss-reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Asymmetric Hero section */
+    .swiss-hero {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Visual anchor: 20x20px red square */
+    .red-anchor {
+      width: 20px;
+      height: 20px;
+      background: var(--signal-red);
+      grid-column: 1;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title-wrap {
+      grid-column: 1 / 10;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      color: var(--text-body);
+    }
+
+    .hero-body-wrap {
+      grid-column: 2 / 7;
+      text-align: left;
+    }
+
+    p.body-text {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--text-body);
+      max-width: 60ch;
+      text-align: left;
+    }
+
+    /* Hairline grid showcase section */
+    .swiss-grid-section {
+      border-top: 1px solid var(--border-color);
+      padding-top: 4rem;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+
+    .section-title {
+      grid-column: 1 / 13;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      margin-bottom: 3rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--signal-red);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Visible grid hair lines columns */
+    .grid-col-guide {
+      grid-column: span 1;
+      height: 120px;
+      border-left: 1px solid var(--grid-line);
+      padding-left: 8px;
+      font-size: 0.7rem;
+      color: var(--signal-red);
+      font-weight: bold;
+    }
+
+    /* Project table */
+    .project-table {
+      grid-column: 2 / 12;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      margin-top: 2rem;
+    }
+
+    .project-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .project-num {
+      color: var(--signal-red);
+      font-weight: 700;
+      width: 40px;
+    }
+
+    .project-name {
+      flex: 1;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+
+    .project-meta {
+      opacity: 0.6;
+    }
+
+    .swiss-link {
+      color: var(--text-body);
+      text-decoration: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-top: 2rem;
+    }
+
+    .swiss-link:hover {
+      color: var(--signal-red);
+    }
+
+    /* Sandbox interactive */
+    .sandbox-area {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toggle-switch {
+      appearance: none;
+      width: 40px;
+      height: 20px;
+      background: var(--grid-line);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .toggle-switch:checked {
+      background: var(--signal-red);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: var(--bg-body);
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle-switch:checked::after {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Specs compact grid */
+    .spec-compact {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1px;
+      background: var(--border-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .spec-cell {
+      background: var(--bg-body);
+      padding: 1.25rem;
+    }
+
+    .spec-cell .val {
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+
+    .spec-cell .lbl {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.6;
+      margin-top: 0.25rem;
+    }
+
+    /* Footer theme switcher */
+    .footer-swiss {
+      border-top: 1px solid var(--border-color);
+      padding-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .theme-btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-body);
+      padding: 0.5rem 1.2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      background: var(--signal-red);
+      color: var(--bg-body);
+      border-color: var(--signal-red);
+    }
+
+    .theme-btn.active {
+      background: var(--signal-red);
+      color: var(--bg-body);
+      border-color: var(--signal-red);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="swiss-hero swiss-reveal">
+    <div class="red-anchor"></div>
+    <div class="section-tag" style="grid-column:1/13;">SECTION 1 // Hero</div>
+
+    <div class="hero-title-wrap">
+      <h1>GRID<br>INTELLIGENCE</h1>
+    </div>
+
+    <div class="hero-body-wrap">
+      <p class="body-text">
+        typographic grid alignment systems originated from basel and zurich schools. absolute asymmetrical rhythm without decorative elements. focus locked on information density.
+      </p>
+      <a href="#" class="swiss-link">view manual →</a>
+    </div>
+  </section>
+
+  <!-- FEATURES / GALLERY -->
+  <section class="swiss-grid-section swiss-reveal">
+    <div class="section-tag" style="grid-column:1/13;">SECTION 2 // Grid Gallery</div>
+    <div class="section-title" style="grid-column:1/13;">THE UNDERLYING STRUCTURE</div>
+
+    <div class="grid-col-guide">COL-1</div>
+    <div class="grid-col-guide">COL-2</div>
+    <div class="grid-col-guide">COL-3</div>
+    <div class="grid-col-guide">COL-4</div>
+    <div class="grid-col-guide">COL-5</div>
+    <div class="grid-col-guide">COL-6</div>
+    <div class="grid-col-guide">COL-7</div>
+    <div class="grid-col-guide">COL-8</div>
+    <div class="grid-col-guide">COL-9</div>
+    <div class="grid-col-guide">COL-10</div>
+    <div class="grid-col-guide">COL-11</div>
+    <div class="grid-col-guide" style="border-right: 1px solid var(--grid-line);">COL-12</div>
+
+    <div class="project-table">
+      <div class="project-row">
+        <span class="project-num">01</span>
+        <span class="project-name">Typographic Grid Manual</span>
+        <span class="project-meta">1965 / Zurich</span>
+      </div>
+      <div class="project-row">
+        <span class="project-num">02</span>
+        <span class="project-name">International Poster Exhibition</span>
+        <span class="project-meta">1959 / Basel</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE SANDBOX -->
+  <section class="swiss-reveal" style="border-top:1px solid var(--border-color); padding-top:4rem;">
+    <div class="section-tag">SECTION 3 // Interactive Sandbox</div>
+    <div class="section-title" style="margin-bottom:2rem;">CONTROL PANEL</div>
+    <div class="sandbox-area">
+      <label class="toggle-label">
+        <input type="checkbox" class="toggle-switch" checked onchange="toggleReveal(this.checked)">
+        Stagger Reveal
+      </label>
+      <label class="toggle-label">
+        <input type="checkbox" class="toggle-switch" checked onchange="toggleGridLines(this.checked)">
+        Grid Lines
+      </label>
+      <button class="swiss-link" onclick="alert('Swiss precision activated.')" style="border:none; background:none; cursor:pointer;">RESET →</button>
+    </div>
+  </section>
+
+  <!-- SPECS / TECHNICAL -->
+  <section class="swiss-reveal" style="border-top:1px solid var(--border-color); padding-top:4rem;">
+    <div class="section-tag">SECTION 4 // Technical Specs</div>
+    <div class="section-title" style="margin-bottom:2rem;">SPECIFICATIONS</div>
+    <div class="spec-compact">
+      <div class="spec-cell">
+        <div class="val">12</div>
+        <div class="lbl">Grid Columns</div>
+      </div>
+      <div class="spec-cell">
+        <div class="val">1fr</div>
+        <div class="lbl">Column Width</div>
+      </div>
+      <div class="spec-cell">
+        <div class="val">1.5rem</div>
+        <div class="lbl">Gap</div>
+      </div>
+      <div class="spec-cell">
+        <div class="val">Inter</div>
+        <div class="lbl">Typeface</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THEME SWITCHER FOOTER -->
+  <footer class="footer-swiss swiss-reveal">
+    <div class="section-tag">SECTION 5 // Theme Switcher</div>
+    <div class="theme-btn-row">
+      <button class="theme-btn active" onclick="setTheme('light')">Light</button>
+      <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+      <button class="theme-btn" onclick="setTheme('signal')">Signal</button>
+      <button class="theme-btn" onclick="setTheme('minimal')">Minimal</button>
+    </div>
+    <span style="font-size:0.55rem; opacity:0.4; letter-spacing:1px; text-transform:uppercase;">INTERNATIONAL STYLE // BASEL ZURICH</span>
+  </footer>
+
+  <script>
+    window.setTheme = function(name) {
+      document.documentElement.className = 'theme-' + name;
+      localStorage.setItem('ui-beta-preview-theme', name);
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === name);
+      });
+    };
+
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        if (b.textContent.toLowerCase() === current) b.classList.add('active');
+      });
+    })();
+
+    function toggleReveal(on) {
+      document.querySelectorAll('.swiss-reveal').forEach(function(el, i) {
+        if (on) {
+          setTimeout(function() { el.classList.add('active'); }, i * 120);
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    }
+
+    function toggleGridLines(on) {
+      document.querySelectorAll('.grid-col-guide').forEach(function(el) {
+        el.style.opacity = on ? '1' : '0';
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var items = document.querySelectorAll('.swiss-reveal');
+      setTimeout(function() {
+        items.forEach(function(item, index) {
+          setTimeout(function() {
+            item.classList.add('active');
+          }, index * 120);
+        });
+      }, 100);
+    });
+  </script>
+</body>
+</html>

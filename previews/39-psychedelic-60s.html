@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychedelic / 60s Concert Poster</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme');if(t)document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-psychedelic'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Lobster&family=Courier+Prime:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Psychedelic (default) ===== */
+    :root, .theme-psychedelic {
+      --r: #FF0000; --o: #FF7F00; --y: #FFFF00; --g: #00FF00; --b: #0000FF; --i: #4B0082; --v: #9400D3;
+      --bg: conic-gradient(from 0deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #9400D3, #FF0000);
+      --text-bg: #2E003E;
+      --text-color: #FFFFFF;
+      --card-bg: rgba(46,0,62,0.85);
+    }
+
+    .theme-sunset {
+      --r: #FF4500; --o: #FF6347; --y: #FFD700; --g: #FFA500; --b: #FF8C00; --i: #8B0000; --v: #DC143C;
+      --bg: conic-gradient(from 0deg, #FF4500, #FF6347, #FFD700, #FFA500, #FF8C00, #8B0000, #DC143C, #FF4500);
+      --text-bg: #3E0010;
+      --text-color: #FFE4B5;
+      --card-bg: rgba(62,0,16,0.85);
+    }
+
+    .theme-monochrome {
+      --r: #000; --o: #333; --y: #666; --g: #999; --b: #BBB; --i: #DDD; --v: #FFF;
+      --bg: conic-gradient(from 0deg, #000, #333, #666, #999, #BBB, #DDD, #FFF, #000);
+      --text-bg: #000;
+      --text-color: #FFF;
+      --card-bg: rgba(0,0,0,0.8);
+    }
+
+    .theme-neon {
+      --r: #FF00FF; --o: #00FFFF; --y: #FFFF00; --g: #00FF00; --b: #00BFFF; --i: #FF1493; --v: #7B68EE;
+      --bg: conic-gradient(from 0deg, #FF00FF, #00FFFF, #FFFF00, #00FF00, #00BFFF, #FF1493, #7B68EE, #FF00FF);
+      --text-bg: #0A0020;
+      --text-color: #FFF;
+      --card-bg: rgba(10,0,32,0.85);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Courier Prime', 'Special Elite', monospace;
+      background: var(--text-bg);
+      color: var(--text-color);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 1;
+      background: var(--bg);
+      background-size: 100% 100%;
+      animation: bgRotate 60s linear infinite;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    @keyframes bgRotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Paisley motifs */
+    .paisley-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0.08;
+    }
+    .paisley-bg svg { position: absolute; width: 120px; height: 120px; }
+    .paisley-bg svg:nth-child(1) { top: 5%; left: 3%; transform: rotate(15deg); }
+    .paisley-bg svg:nth-child(2) { top: 30%; right: 8%; transform: rotate(-20deg) scale(0.8); }
+    .paisley-bg svg:nth-child(3) { bottom: 20%; left: 10%; transform: rotate(40deg) scale(1.2); }
+    .paisley-bg svg:nth-child(4) { bottom: 5%; right: 5%; transform: rotate(-10deg) scale(0.7); }
+
+    .app-shell {
+      position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 20px;
+    }
+
+    /* Rainbow wavy border (main container) */
+    .rainbow-border {
+      position: relative; border: none;
+    }
+    .rainbow-border::before {
+      content: ''; position: absolute; inset: -3px; z-index: -1;
+      background: conic-gradient(from 0deg, var(--r), var(--o), var(--y), var(--g), var(--b), var(--i), var(--v), var(--r));
+      animation: hueSpin 8s linear infinite;
+      filter: url(#wavy);
+    }
+    @keyframes hueSpin {
+      100% { filter: hue-rotate(360deg) url(#wavy); }
+    }
+
+    /* === SECTION 1: HERO === */
+    .hero-section {
+      text-align: center; padding: 60px 40px 40px; position: relative;
+    }
+    .hero-headline {
+      font-family: 'Shrikhand', 'Lobster', cursive;
+      font-size: 4rem; line-height: 1.1; letter-spacing: 2px; margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--r), var(--o), var(--y), var(--g), var(--b), var(--i), var(--v));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    .hero-wobble {
+      display: inline-block;
+      animation: wobble 2s ease-in-out infinite;
+    }
+    @keyframes wobble {
+      0%, 100% { transform: skewX(0deg); }
+      25% { transform: skewX(-3deg); }
+      75% { transform: skewX(3deg); }
+    }
+    .hero-sub {
+      font-size: 1rem; letter-spacing: 0.2em; margin: 10px 0; background: var(--text-bg);
+      display: inline-block; padding: 4px 20px; border-radius: 0; text-transform: uppercase;
+    }
+    .hero-date {
+      font-family: 'Courier Prime', monospace; font-size: 0.85rem; margin-top: 12px; letter-spacing: 0.1em;
+    }
+    /* Daisy chain SVG */
+    .daisy-chain { margin: 20px auto; text-align: center; }
+    .daisy-chain svg { width: 100%; height: 80px; }
+    .hero-cta {
+      display: inline-block; margin-top: 16px; padding: 12px 40px; border-radius: 0;
+      font-family: 'Shrikhand', cursive; font-size: 1.2rem; text-transform: uppercase;
+      background: var(--text-bg); color: var(--text-color); border: 3px solid;
+      border-image: linear-gradient(135deg, var(--r), var(--o), var(--y), var(--g), var(--b), var(--i), var(--v)) 1;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .hero-cta:hover {
+      animation: hueSpinBtn 2s linear infinite;
+    }
+    @keyframes hueSpinBtn {
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    /* Wavy text via SVG textPath */
+    .wavy-text-container { margin: 20px 0; text-align: center; }
+    .wavy-text-container svg { width: 100%; max-width: 700px; height: 100px; }
+    .wavy-text-container text { font-family: 'Shrikhand', cursive; font-size: 32px; fill: var(--y); }
+
+    /* === SECTION 2: LINEUP === */
+    .lineup-section { padding: 40px 30px; margin: 20px 0; background: var(--card-bg); }
+    .lineup-title {
+      font-family: 'Shrikhand', cursive; font-size: 2.5rem; text-align: center; margin-bottom: 24px;
+      background: linear-gradient(135deg, var(--r), var(--o), var(--y));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .artist-list { display: flex; flex-direction: column; gap: 6px; }
+    .artist-row {
+      font-family: 'Shrikhand', 'Lobster', cursive;
+      font-size: 1.6rem; padding: 6px 0; cursor: default;
+      transition: letter-spacing 0.3s; text-transform: uppercase; text-align: center;
+    }
+    .artist-row:nth-child(1) { color: var(--r); }
+    .artist-row:nth-child(2) { color: var(--o); }
+    .artist-row:nth-child(3) { color: var(--y); }
+    .artist-row:nth-child(4) { color: var(--g); }
+    .artist-row:nth-child(5) { color: var(--b); }
+    .artist-row:nth-child(6) { color: var(--i); }
+    .artist-row:nth-child(7) { color: var(--v); }
+    .artist-row:nth-child(odd) { transform: translateY(2px); }
+    .artist-row:nth-child(even) { transform: translateY(-2px); }
+    .artist-row:hover { letter-spacing: 0.1em; }
+
+    /* === SECTION 3: TICKETS / BADGES === */
+    .tickets-section { padding: 40px 30px; margin: 20px 0; text-align: center; }
+    .tickets-title {
+      font-family: 'Shrikhand', cursive; font-size: 2.5rem; margin-bottom: 24px;
+      background: linear-gradient(135deg, var(--y), var(--g), var(--b));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .ticket-grid { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .ticket-badge {
+      width: 140px; height: 140px; border-radius: 50%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; background: var(--text-bg);
+      border: 3px solid var(--y); position: relative; cursor: pointer;
+      font-family: 'Shrikhand', cursive; text-transform: uppercase; font-size: 0.9rem;
+    }
+    .ticket-badge::before {
+      content: ''; position: absolute; inset: -3px; border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--r), var(--o), var(--y), var(--g), var(--b), var(--i), var(--v), var(--r));
+      z-index: -1;
+    }
+    .ticket-badge .badge-price { font-size: 1.6rem; color: var(--y); }
+    .ticket-badge .badge-label { font-size: 0.6rem; letter-spacing: 0.15em; margin-top: 4px; }
+    .ticket-badge:hover {
+      animation: hueSpinBtn 2s linear infinite; transform: scale(1.05);
+    }
+
+    /* Spiral bg for badge */
+    .spiral-bg { position: absolute; inset: 10px; border-radius: 50%; opacity: 0.15; overflow: hidden; }
+    .spiral-bg svg { width: 100%; height: 100%; }
+
+    /* === SECTION 4: SOUND/VISUALIZER === */
+    .visualizer-section { padding: 40px 30px; margin: 20px 0; background: var(--card-bg); }
+    .vis-title {
+      font-family: 'Shrikhand', cursive; font-size: 2rem; text-align: center; margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--b), var(--i), var(--v));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .wave-container { display: flex; align-items: flex-end; justify-content: center; height: 120px; gap: 4px; }
+    .wave-bar {
+      width: 8px; background: linear-gradient(to top, var(--r), var(--y), var(--g));
+      animation: waveAnim 0.6s ease-in-out infinite alternate;
+      border-radius: 0;
+    }
+    .wave-bar:nth-child(1) { height: 30%; animation-delay: 0s; }
+    .wave-bar:nth-child(2) { height: 60%; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { height: 90%; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { height: 50%; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { height: 100%; animation-delay: 0.4s; }
+    .wave-bar:nth-child(6) { height: 70%; animation-delay: 0.25s; }
+    .wave-bar:nth-child(7) { height: 85%; animation-delay: 0.15s; }
+    .wave-bar:nth-child(8) { height: 45%; animation-delay: 0.35s; }
+    .wave-bar:nth-child(9) { height: 75%; animation-delay: 0.05s; }
+    .wave-bar:nth-child(10) { height: 55%; animation-delay: 0.45s; }
+    @keyframes waveAnim {
+      0% { transform: scaleY(0.5); opacity: 0.6; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+    .vis-caption { text-align: center; margin-top: 12px; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; }
+
+    /* === SECTION 5: EVENT DETAILS / MERCH === */
+    .details-section { padding: 40px 30px; margin: 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .detail-block { background: var(--card-bg); padding: 20px; }
+    .detail-block h3 {
+      font-family: 'Shrikhand', cursive; font-size: 1.4rem; margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--o), var(--y), var(--g));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .detail-block p { font-size: 0.85rem; line-height: 1.8; letter-spacing: 0.02em; }
+    .detail-block ul { list-style: none; }
+    .detail-block li { font-size: 0.85rem; padding: 4px 0; line-height: 1.6; }
+    .detail-block li::before { content: '~ '; }
+
+    /* Rainbow divider */
+    .rainbow-hr {
+      height: 3px; margin: 20px 0;
+      background: linear-gradient(90deg, var(--r), var(--o), var(--y), var(--g), var(--b), var(--i), var(--v));
+      border: none;
+    }
+
+    /* Switcher */
+    .switcher-footer {
+      display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px 0;
+      border-top: 3px solid; border-image: linear-gradient(90deg, var(--r), var(--o), var(--y), var(--g), var(--b), var(--i), var(--v)) 1;
+      margin-top: 24px;
+    }
+    .switcher-label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; background: var(--text-bg); padding: 2px 12px; }
+    .switcher-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .switcher-btn {
+      padding: 8px 20px; border: 2px solid var(--text-color); background: transparent;
+      color: var(--text-color); font-family: 'Shrikhand', cursive; font-size: 0.9rem;
+      cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+    }
+    .switcher-btn:hover {
+      border-color: var(--y); color: var(--y);
+    }
+    .switcher-btn.active {
+      background: linear-gradient(135deg, var(--r), var(--o));
+      color: #fff; border-color: transparent;
+    }
+  </style>
+</head>
+<body class="theme-psychedelic">
+
+<!-- Paisley motif bg -->
+<div class="paisley-bg">
+  <svg viewBox="0 0 100 100"><path d="M50 10 Q70 30 60 60 Q40 70 30 50 Q20 30 50 10Z" fill="none" stroke="white" stroke-width="1"/><path d="M50 30 Q60 40 55 55 Q40 55 40 45 Q38 35 50 30Z" fill="none" stroke="white" stroke-width="1"/><circle cx="50" cy="55" r="2" fill="white"/></svg>
+  <svg viewBox="0 0 100 100"><path d="M50 10 Q70 30 60 60 Q40 70 30 50 Q20 30 50 10Z" fill="none" stroke="white" stroke-width="1"/><path d="M50 30 Q60 40 55 55 Q40 55 40 45 Q38 35 50 30Z" fill="none" stroke="white" stroke-width="1"/><circle cx="50" cy="55" r="2" fill="white"/></svg>
+  <svg viewBox="0 0 100 100"><path d="M50 10 Q70 30 60 60 Q40 70 30 50 Q20 30 50 10Z" fill="none" stroke="white" stroke-width="1"/><path d="M50 30 Q60 40 55 55 Q40 55 40 45 Q38 35 50 30Z" fill="none" stroke="white" stroke-width="1"/><circle cx="50" cy="55" r="2" fill="white"/></svg>
+  <svg viewBox="0 0 100 100"><path d="M50 10 Q70 30 60 60 Q40 70 30 50 Q20 30 50 10Z" fill="none" stroke="white" stroke-width="1"/><path d="M50 30 Q60 40 55 55 Q40 55 40 45 Q38 35 50 30Z" fill="none" stroke="white" stroke-width="1"/><circle cx="50" cy="55" r="2" fill="white"/></svg>
+</div>
+
+<svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+  <filter id="wavy">
+    <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" result="turbulence">
+      <animate attributeName="baseFrequency" values="0.02;0.03;0.02" dur="4s" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="app-shell">
+
+  <!-- SECTION 1: HERO -->
+  <section class="hero-section rainbow-border">
+    <p class="hero-sub">Fillmore East &bull; Presented by Bill Graham</p>
+    <h1 class="hero-headline">SUMMER OF <span class="hero-wobble">LOVE</span></h1>
+
+    <!-- Wavy text via SVG textPath -->
+    <div class="wavy-text-container">
+      <svg viewBox="0 0 700 100">
+        <path id="wavePath" d="M0 60 Q175 20 350 60 T700 60" fill="transparent"/>
+        <text><textPath href="#wavePath" startOffset="50%" text-anchor="middle" font-family="Shrikhand,cursive" font-size="28" fill="var(--y)" letter-spacing="3">AUGUST 15-17 1967</textPath></text>
+      </svg>
+    </div>
+
+    <div class="daisy-chain">
+      <svg viewBox="0 0 400 80">
+        <g fill="none" stroke-width="2">
+          <circle cx="60" cy="40" r="14" stroke="var(--y)" fill="var(--y)" fill-opacity="0.3"/>
+          <circle cx="110" cy="40" r="14" stroke="var(--o)" fill="var(--o)" fill-opacity="0.3"/>
+          <circle cx="160" cy="40" r="14" stroke="var(--r)" fill="var(--r)" fill-opacity="0.3"/>
+          <circle cx="210" cy="40" r="14" stroke="var(--i)" fill="var(--i)" fill-opacity="0.3"/>
+          <circle cx="260" cy="40" r="14" stroke="var(--b)" fill="var(--b)" fill-opacity="0.3"/>
+          <circle cx="310" cy="40" r="14" stroke="var(--g)" fill="var(--g)" fill-opacity="0.3"/>
+          <circle cx="360" cy="40" r="14" stroke="var(--v)" fill="var(--v)" fill-opacity="0.3"/>
+        </g>
+        <line x1="60" y1="40" x2="110" y2="40" stroke="var(--y)" stroke-width="1" stroke-dasharray="4 2"/>
+        <line x1="110" y1="40" x2="160" y2="40" stroke="var(--o)" stroke-width="1" stroke-dasharray="4 2"/>
+        <line x1="160" y1="40" x2="210" y2="40" stroke="var(--r)" stroke-width="1" stroke-dasharray="4 2"/>
+        <line x1="210" y1="40" x2="260" y2="40" stroke="var(--i)" stroke-width="1" stroke-dasharray="4 2"/>
+        <line x1="260" y1="40" x2="310" y2="40" stroke="var(--b)" stroke-width="1" stroke-dasharray="4 2"/>
+        <line x1="310" y1="40" x2="360" y2="40" stroke="var(--g)" stroke-width="1" stroke-dasharray="4 2"/>
+      </svg>
+    </div>
+
+    <p class="hero-date">Fillmore Auditorium &bull; San Francisco &bull; Doors 7PM</p>
+    <button class="hero-cta">Get Tickets</button>
+  </section>
+
+  <!-- SECTION 2: LINEUP -->
+  <section class="lineup-section rainbow-border">
+    <h2 class="lineup-title">~ The Lineup ~</h2>
+    <div class="artist-list">
+      <div class="artist-row">Jimi Hendrix Experience</div>
+      <div class="artist-row">The Grateful Dead</div>
+      <div class="artist-row">Jefferson Airplane</div>
+      <div class="artist-row">The Doors</div>
+      <div class="artist-row">Big Brother &amp; Holding Co.</div>
+      <div class="artist-row">Santana</div>
+      <div class="artist-row">Country Joe &amp; The Fish</div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: TICKETS -->
+  <section class="tickets-section">
+    <h2 class="tickets-title">~ Admission ~</h2>
+    <div class="ticket-grid">
+      <div class="ticket-badge">
+        <div class="spiral-bg">
+          <svg viewBox="0 0 100 100"><path d="M50 50 Q60 40 70 50 Q80 60 70 70 Q60 80 50 70 Q40 60 50 50" fill="none" stroke="white" stroke-width="1.5"/></svg>
+        </div>
+        <span class="badge-price">$5</span>
+        <span class="badge-label">General</span>
+      </div>
+      <div class="ticket-badge">
+        <div class="spiral-bg">
+          <svg viewBox="0 0 100 100"><path d="M50 50 Q60 40 70 50 Q80 60 70 70 Q60 80 50 70 Q40 60 50 50" fill="none" stroke="white" stroke-width="1.5"/></svg>
+        </div>
+        <span class="badge-price">$10</span>
+        <span class="badge-label">Balcony</span>
+      </div>
+      <div class="ticket-badge">
+        <div class="spiral-bg">
+          <svg viewBox="0 0 100 100"><path d="M50 50 Q60 40 70 50 Q80 60 70 70 Q60 80 50 70 Q40 60 50 50" fill="none" stroke="white" stroke-width="1.5"/></svg>
+        </div>
+        <span class="badge-price">$25</span>
+        <span class="badge-label">VIP</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SOUND VISUALIZER -->
+  <section class="visualizer-section rainbow-border">
+    <h2 class="vis-title">~ Feel the Music ~</h2>
+    <div class="wave-container">
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+    <p class="vis-caption">Live sound wave modulation &mdash; turn it up!</p>
+  </section>
+
+  <!-- SECTION 5: DETAILS / MERCH -->
+  <section class="details-section">
+    <div class="detail-block rainbow-border">
+      <h3>Event Details</h3>
+      <p>Three nights of peace, music, and love in the heart of Haight-Ashbury. Bring flowers, bring your vibes, and leave your shoes at the door.</p>
+      <div class="rainbow-hr"></div>
+      <ul>
+        <li>Doors open 7:00 PM nightly</li>
+        <li>All ages welcome</li>
+        <li>Free flower crown with entry</li>
+        <li>Psychedelic light show by The Brotherhood</li>
+      </ul>
+    </div>
+    <div class="detail-block rainbow-border">
+      <h3>Merch &amp; Vinyl</h3>
+      <p>Limited edition screen-printed posters by Mouse Studios. Hand-painted vinyl LPs and 45s available at the booth.</p>
+      <div class="rainbow-hr"></div>
+      <ul>
+        <li>Poster &mdash; $3</li>
+        <li>Tie-dye tee &mdash; $5</li>
+        <li>Vinyl LP &mdash; $4</li>
+        <li>Incense stick pack &mdash; $1</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- THEME SWITCHER -->
+  <footer class="switcher-footer">
+    <span class="switcher-label">Color Trip</span>
+    <div class="switcher-buttons">
+      <button class="switcher-btn active" onclick="setTheme('psychedelic')" data-theme="psychedelic">Psychedelic</button>
+      <button class="switcher-btn" onclick="setTheme('sunset')" data-theme="sunset">Sunset</button>
+      <button class="switcher-btn" onclick="setTheme('monochrome')" data-theme="monochrome">Monochrome</button>
+      <button class="switcher-btn" onclick="setTheme('neon')" data-theme="neon">Neon</button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  window.setTheme = function(themeName) {
+    document.documentElement.className = 'theme-' + themeName;
+    localStorage.setItem('ui-beta-preview-theme', themeName);
+    document.querySelectorAll('.switcher-btn').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-theme') === themeName);
+    });
+  };
+
+  // Scroll-based background rotation speed
+  (function() {
+    var speed = 60;
+    var bg = document.querySelector('body > .paisley-bg');
+    document.addEventListener('scroll', function() {
+      var scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      var newSpeed = Math.max(10, 60 - scrollPct * 50);
+      document.body.style.setProperty('--scroll-speed', newSpeed + 's');
+    });
+  })();
+</script>
+
+</body>
+</html>

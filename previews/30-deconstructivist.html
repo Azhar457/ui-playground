@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deconstructivist Typography</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;400;700&family=Inter:wght@300;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---- Theme Variants ---- */
+    :root { --bg: #E8E4DF; --fg: #1F1F1F; --accent1: #B45309; --accent2: #991B1B; --accent3: #9CA3AF; --glitch-bg: #E8E4DF; --parallax-slow: rgba(156,163,175,0.15); --parallax-fast: rgba(185,83,9,0.12); --swatch-border: rgba(0,0,0,0.1); --clip-border: #1F1F1F; }
+    html.theme-neon { --bg: #0F0A1A; --fg: #E0E0FF; --accent1: #FF2D95; --accent2: #00E5FF; --accent3: #7B2FF7; --glitch-bg: #0F0A1A; --parallax-slow: rgba(123,47,247,0.15); --parallax-fast: rgba(255,45,149,0.12); --swatch-border: rgba(255,255,255,0.15); --clip-border: #00E5FF; }
+    html.theme-monochrome { --bg: #F0F0F0; --fg: #000; --accent1: #666; --accent2: #333; --accent3: #999; --glitch-bg: #F0F0F0; --parallax-slow: rgba(0,0,0,0.08); --parallax-fast: rgba(0,0,0,0.05); --swatch-border: rgba(0,0,0,0.15); --clip-border: #000; }
+    html.theme-blood { --bg: #1A0A0A; --fg: #FFD0D0; --accent1: #CC0000; --accent2: #8B0000; --accent3: #4A0000; --glitch-bg: #1A0A0A; --parallax-slow: rgba(204,0,0,0.15); --parallax-fast: rgba(139,0,0,0.12); --swatch-border: rgba(255,0,0,0.15); --clip-border: #CC0000; }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      font-family: 'Times New Roman', Times, serif;
+      transition: background 0.3s;
+    }
+
+    .broken-grid {
+      position: relative;
+      width: 100%;
+      min-height: 200vh;
+    }
+
+    .block { position: absolute; overflow: hidden; }
+
+    .headline-line {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 0.9;
+    }
+    .hl1 {
+      font-size: clamp(4rem, 8vw, 7rem);
+      text-align: left;
+      left: 4%;
+      top: 6%;
+      width: 60%;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+    }
+    .hl2 {
+      font-size: clamp(5rem, 10vw, 9rem);
+      text-align: right;
+      right: 2%;
+      top: 18%;
+      width: 70%;
+      color: var(--accent1);
+      letter-spacing: -0.04em;
+      font-weight: 200;
+      mix-blend-mode: multiply;
+    }
+    .hl3 {
+      font-size: clamp(3rem, 7vw, 6rem);
+      text-align: center;
+      left: 15%;
+      top: 35%;
+      width: 70%;
+      color: var(--accent2);
+      font-weight: 400;
+      transform: rotate(-3deg);
+    }
+
+    .overlap-img {
+      position: absolute;
+      top: 12%;
+      right: -5%;
+      width: 45%;
+      height: 300px;
+      background:
+        linear-gradient(135deg, var(--accent3) 25%, transparent 25%),
+        linear-gradient(225deg, var(--fg) 25%, transparent 25%),
+        linear-gradient(315deg, var(--accent1) 25%, transparent 25%);
+      background-size: 40px 40px;
+      opacity: 0.5;
+      z-index: 2;
+      mix-blend-mode: multiply;
+      clip-path: polygon(20% 0%, 100% 10%, 85% 100%, 0% 90%);
+    }
+    .overlap-img:hover {
+      transform: translate(10px, -8px);
+      transition: transform 0.3s ease;
+    }
+
+    .rotate-90 {
+      position: absolute;
+      left: 1%;
+      top: 25%;
+      transform: rotate(90deg);
+      transform-origin: left center;
+      font-family: 'Times New Roman', serif;
+      font-size: 14px;
+      color: var(--fg);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0.6;
+    }
+    .rotate-neg5 {
+      position: absolute;
+      left: 20%;
+      top: 52%;
+      transform: rotate(-5deg);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--accent3);
+      max-width: 300px;
+      line-height: 1.3;
+    }
+    .rotate-15 {
+      position: absolute;
+      right: 8%;
+      top: 45%;
+      transform: rotate(15deg);
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5em;
+      color: var(--accent2);
+    }
+
+    .tiny-text {
+      position: absolute;
+      left: 8%;
+      top: 60%;
+      width: 35%;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 10px;
+      line-height: 1.6;
+      color: var(--fg);
+      opacity: 0.7;
+      max-height: 150px;
+      overflow: hidden;
+    }
+
+    .glitch-word {
+      position: absolute;
+      left: 45%;
+      top: 55%;
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--fg);
+      position: relative;
+      display: inline-block;
+    }
+    .glitch-word::before,
+    .glitch-word::after {
+      content: 'DECONSTRUCT';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--glitch-bg);
+    }
+    .glitch-word::before {
+      color: var(--accent1);
+      clip-path: inset(10% 0 60% 0);
+      transform: translate(-3px, -2px);
+      animation: glitch1 2s infinite;
+    }
+    .glitch-word::after {
+      color: var(--accent2);
+      clip-path: inset(55% 0 5% 0);
+      transform: translate(3px, 2px);
+      animation: glitch2 2s infinite;
+    }
+    @keyframes glitch1 {
+      0%, 100% { transform: translate(-3px, -2px); }
+      30% { transform: translate(2px, -1px); }
+      60% { transform: translate(-5px, 3px); }
+    }
+    @keyframes glitch2 {
+      0%, 100% { transform: translate(3px, 2px); }
+      40% { transform: translate(-1px, -3px); }
+      70% { transform: translate(4px, -1px); }
+    }
+
+    /* Palette swatches */
+    .swatch-section {
+      position: absolute;
+      bottom: 5%;
+      left: 5%;
+      display: flex;
+      gap: 0;
+      z-index: 10;
+    }
+    .swatch {
+      width: 40px; height: 40px;
+      border: 1px solid var(--swatch-border);
+    }
+    .swatch-a1 { background: var(--accent1); }
+    .swatch-a2 { background: var(--accent2); }
+    .swatch-fg { background: var(--fg); }
+    .swatch-bg { background: var(--bg); }
+    .swatch-a3 { background: var(--accent3); }
+
+    .clipped-box {
+      position: absolute;
+      bottom: 10%;
+      right: 5%;
+      width: 180px;
+      height: 120px;
+      overflow: hidden;
+      border: 2px solid var(--clip-border);
+      padding: 0.2rem;
+    }
+    .clipped-box p {
+      font-family: 'Times New Roman', serif;
+      font-size: 10px;
+      line-height: 1.2;
+      color: var(--fg);
+      transform: rotate(-2deg);
+    }
+
+    .parallax-slow, .parallax-fast {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .parallax-slow {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      color: var(--parallax-slow);
+      text-transform: uppercase;
+      letter-spacing: 1em;
+      bottom: 2%;
+      right: 2%;
+      will-change: transform;
+    }
+    .parallax-fast {
+      font-family: 'Courier New', monospace;
+      font-size: 0.5rem;
+      color: var(--parallax-fast);
+      top: 5%;
+      left: 2%;
+      writing-mode: vertical-rl;
+      will-change: transform;
+    }
+
+    /* Chaos button */
+    .chaos-btn {
+      position: absolute;
+      bottom: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      padding: 0.8rem 2rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      background: var(--fg);
+      color: var(--bg);
+      border: 3px solid var(--accent2);
+      cursor: pointer;
+    }
+    .chaos-btn:active { transform: translateX(-50%) scale(0.95); }
+
+    /* Theme buttons */
+    .theme-section {
+      position: absolute;
+      bottom: 1%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .theme-btn {
+      padding: 0.3rem 0.7rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: transparent;
+      color: var(--fg);
+      border: 2px solid var(--fg);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { background: var(--fg); color: var(--bg); }
+    .theme-btn.active { background: var(--fg); color: var(--bg); }
+  </style>
+</head>
+<body>
+
+  <div class="broken-grid">
+
+    <!-- SECTION 1: Hero / Header -->
+    <div class="block hl1 headline-line">FRAGMENTED</div>
+    <div class="block hl2 headline-line">INTERRUPTED</div>
+    <div class="block hl3 headline-line">DECONSTRUCT</div>
+
+    <div class="overlap-img"></div>
+
+    <div class="rotate-90">The rupture of form is the birth of meaning</div>
+    <div class="rotate-neg5">
+      Typography is not a vessel for content — it is content itself. To break the grid is to acknowledge that the grid was always an illusion.
+    </div>
+    <div class="rotate-15">OSWALD COMPRESSED 100PX</div>
+
+    <div class="tiny-text">
+      The deconstructivist approach rejects the notion of a unified, coherent composition. Instead, it embraces fragmentation, dislocation, and the deliberate subversion of readability. Meaning emerges from the gaps, the overlaps, the elements that refuse to align.
+    </div>
+
+    <!-- SECTION 2: Features / Gallery -->
+    <div class="glitch-word">DECONSTRUCT</div>
+
+    <div class="clipped-box">
+      <p>This text is intentionally clipped by its container. The reader is given fragments, not wholes — and must construct meaning from the edges. Overflow hidden is not a bug; it is a deliberate formal constraint.</p>
+    </div>
+
+    <div class="swatch-section">
+      <div class="swatch swatch-a1" title="Accent 1"></div>
+      <div class="swatch swatch-a2" title="Accent 2"></div>
+      <div class="swatch swatch-fg" title="Foreground"></div>
+      <div class="swatch swatch-bg" title="Background"></div>
+      <div class="swatch swatch-a3" title="Accent 3"></div>
+    </div>
+
+    <!-- SECTION 3: Interactive Sandbox -->
+    <button class="chaos-btn" id="chaosBtn">SCATTER</button>
+
+    <!-- SECTION 4: Specs / Stats / Technical -->
+    <!-- (Swatches and clipped box serve as technical spec display) -->
+
+    <!-- SECTION 5: Theme Switcher Footer -->
+    <div class="theme-section" id="themeSection">
+      <button class="theme-btn" data-theme="decon">Decon</button>
+      <button class="theme-btn" data-theme="neon">Neon</button>
+      <button class="theme-btn" data-theme="monochrome">Mono</button>
+      <button class="theme-btn" data-theme="blood">Blood</button>
+    </div>
+
+  </div>
+
+  <div class="parallax-slow" id="parallaxSlow">INDUSTRIAL LAYER</div>
+  <div class="parallax-fast" id="parallaxFast">RUST CLOUD // CONCRETE DUST // STEEL GRIT</div>
+
+  <script>
+    // Parallax — different speeds
+    window.addEventListener('scroll', function() {
+      const scrollY = window.scrollY;
+      const slow = document.getElementById('parallaxSlow');
+      const fast = document.getElementById('parallaxFast');
+      slow.style.transform = `translateY(${scrollY * 0.15}px)`;
+      fast.style.transform = `translateY(${-scrollY * 0.6}px)`;
+    });
+
+    // Chaos Button — randomize positions
+    (function() {
+      const btn = document.getElementById('chaosBtn');
+      const targets = document.querySelectorAll('.block, .glitch-word, .clipped-box, .rotate-90, .rotate-neg5, .rotate-15, .tiny-text, .overlap-img');
+      btn.addEventListener('click', function() {
+        targets.forEach(function(el) {
+          if (el.classList.contains('glitch-word')) return;
+          var w = window.innerWidth;
+          var h = window.innerHeight;
+          var tw = el.offsetWidth || 100;
+          var th = el.offsetHeight || 50;
+          var x = Math.random() * (w - tw);
+          var y = Math.random() * (h - th);
+          el.style.left = x + 'px';
+          el.style.top = y + 'px';
+          el.style.right = 'auto';
+          el.style.bottom = 'auto';
+        });
+      });
+    })();
+
+    // Theme Switcher
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+      });
+    })();
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      localStorage.setItem('ui-beta-preview-theme', n);
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

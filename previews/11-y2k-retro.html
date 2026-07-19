@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Y2K Retro-Futurism</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('ui-beta-preview-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-y2k';
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Outfit:wght@400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Y2K (default hot pink) ===== */
+    :root, .theme-y2k {
+      --hot-pink: #FF6BEC;
+      --cyber-purple: #A78BFA;
+      --chrome-silver: #C0C0C0;
+      --bg-dark: #0A0A0A;
+      --bg-body: #FFFFFF;
+      --text-body: #0A0A0A;
+      --text-soft: #4B5563;
+      --grid-color: #E5E7EB;
+      --btn-from: #FF6BEC;
+      --btn-to: #C026D3;
+      --btn-shadow: 0 8px 20px rgba(192, 38, 211, 0.4);
+      --btn-shadow-hover: 0 10px 24px rgba(192, 38, 211, 0.55);
+    }
+
+    .theme-cyber {
+      --hot-pink: #22D3EE;
+      --cyber-purple: #818CF8;
+      --chrome-silver: #A5F3FC;
+      --bg-dark: #0A0A14;
+      --bg-body: #020617;
+      --text-body: #E2E8F0;
+      --text-soft: #94A3B8;
+      --grid-color: #1E293B;
+      --btn-from: #22D3EE;
+      --btn-to: #0891B2;
+      --btn-shadow: 0 8px 20px rgba(34, 211, 238, 0.4);
+      --btn-shadow-hover: 0 10px 24px rgba(34, 211, 238, 0.55);
+    }
+
+    .theme-chrome {
+      --hot-pink: #D4D4D8;
+      --cyber-purple: #A1A1AA;
+      --chrome-silver: #E4E4E7;
+      --bg-dark: #09090B;
+      --bg-body: #FAFAFA;
+      --text-body: #18181B;
+      --text-soft: #71717A;
+      --grid-color: #D4D4D8;
+      --btn-from: #A1A1AA;
+      --btn-to: #52525B;
+      --btn-shadow: 0 8px 20px rgba(82, 82, 91, 0.4);
+      --btn-shadow-hover: 0 10px 24px rgba(82, 82, 91, 0.55);
+    }
+
+    .theme-dark {
+      --hot-pink: #E879F9;
+      --cyber-purple: #C084FC;
+      --chrome-silver: #6B7280;
+      --bg-dark: #000000;
+      --bg-body: #0A0A0A;
+      --text-body: #F4F4F5;
+      --text-soft: #A1A1AA;
+      --grid-color: #27272A;
+      --btn-from: #A78BFA;
+      --btn-to: #7C3AED;
+      --btn-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+      --btn-shadow-hover: 0 10px 24px rgba(124, 58, 237, 0.55);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      padding: 2rem 1.5rem;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Fixed Y2K Grid Pattern Background */
+    .bg-grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+      background-size: 24px 24px;
+      z-index: 1;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .y2k-content {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Sparkle characters */
+    .sparkle {
+      color: var(--hot-pink);
+      font-size: 1.25rem;
+      animation: flash 1.5s infinite alternate;
+      display: inline-block;
+    }
+
+    @keyframes flash {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* Headlines: Chrome gradient + emboss shadow */
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -1.5px;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--chrome-silver) 50%, #6B7280 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.9));
+    }
+
+    .pixel-label {
+      font-family: 'VT323', monospace;
+      font-size: 1.35rem;
+      color: var(--cyber-purple);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.4s ease;
+    }
+
+    /* 3D Glossy Buttons */
+    .y2k-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, var(--btn-from), var(--btn-to));
+      color: #FFFFFF;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.8rem 2rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      box-shadow: var(--btn-shadow),
+                  inset 0 2px 0px rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .y2k-btn:hover {
+      box-shadow: var(--btn-shadow-hover),
+                  inset 0 1px 0px rgba(255, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .y2k-btn:active {
+      transform: scale(0.97) translateY(2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Sheen glint animation */
+    .y2k-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 30%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: skewX(-30deg);
+      animation: sheenSweep 6s infinite ease-in-out;
+    }
+
+    @keyframes sheenSweep {
+      0% { left: -50%; }
+      15%, 100% { left: 150%; }
+    }
+
+    /* Marquee */
+    .marquee-container {
+      width: 100%;
+      overflow: hidden;
+      background: var(--bg-dark);
+      color: var(--chrome-silver);
+      padding: 0.75rem 0;
+      border-top: 2px solid var(--bg-dark);
+      border-bottom: 2px solid var(--bg-dark);
+      margin-top: 1.5rem;
+      transition: background 0.4s ease;
+    }
+
+    .marquee-content {
+      display: flex;
+      gap: 3rem;
+      white-space: nowrap;
+      animation: scrollMarquee 15s linear infinite;
+      font-family: 'VT323', monospace;
+      font-size: 1.5rem;
+    }
+
+    @keyframes scrollMarquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Cards */
+    .y2k-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .y2k-card {
+      background: var(--bg-body);
+      border: 1px solid var(--chrome-silver);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05),
+                  inset 0 0 10px rgba(167, 139, 250, 0.08);
+      position: relative;
+    }
+
+    .y2k-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      font-size: 1.15rem;
+    }
+
+    .y2k-card p {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    /* Section labels */
+    .section-tag {
+      font-family: 'VT323', monospace;
+      font-size: 0.85rem;
+      color: var(--cyber-purple);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--grid-color);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Spec badges */
+    .spec-badges {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .spec-badge {
+      background: var(--bg-body);
+      border: 1px solid var(--chrome-silver);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .spec-badge .num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--hot-pink);
+    }
+
+    .spec-badge .desc {
+      font-family: 'VT323', monospace;
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* Sandbox interactive */
+    .sandbox-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .toggle-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--hot-pink);
+    }
+
+    /* Footer theme swapper */
+    .footer-themes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      border-top: 1px solid var(--grid-color);
+      padding-top: 2rem;
+      margin-top: 2rem;
+    }
+
+    .theme-btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      background: var(--bg-body);
+      border: 1px solid var(--chrome-silver);
+      color: var(--text-body);
+      padding: 0.5rem 1.2rem;
+      border-radius: 9999px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--hot-pink);
+    }
+
+    .theme-btn.active {
+      border-color: var(--hot-pink);
+      background: var(--hot-pink);
+      color: var(--bg-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background grid layer -->
+  <div class="bg-grid-overlay"></div>
+
+  <div class="y2k-content">
+
+    <!-- SECTION 1: HERO -->
+    <section>
+      <div class="section-tag">SECTION 1 // Hero</div>
+      <div style="text-align:center; padding: 2rem 0;">
+        <span class="pixel-label">[ SYSTEM BOOT ONLINE ]</span>
+        <h1 style="margin-top:0.5rem; margin-bottom:1.5rem;">CHROME<br>NEO-GENERATION ✦</h1>
+        <p style="font-size:0.95rem; max-width:500px; margin:0 auto 2rem auto; color:var(--text-soft); line-height:1.6;">
+          Welcome back to year 2000. Reconstructed chrome gloss vectors, pixel-to-sans typography arrays, and gel button parameters.
+        </p>
+
+        <a href="#" class="y2k-btn">ENTER CYBERSPACE</a>
+      </div>
+
+      <div class="marquee-container">
+        <div class="marquee-content">
+          <span>* Y2K FUTURE INTERACTION ONLINE *</span>
+          <span>* MEMPUL SYSTEMS CONFIRMED *</span>
+          <span>* Y2K FUTURE INTERACTION ONLINE *</span>
+          <span>* MEMPUL SYSTEMS CONFIRMED *</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: FEATURES / GALLERY -->
+    <section>
+      <div class="section-tag">SECTION 2 // Features Gallery</div>
+      <div class="y2k-grid">
+        <div class="y2k-card">
+          <h3>01 / GLOSS 3D</h3>
+          <p>White 1px top-inner borders simulate shiny gel interfaces catching neon lights.</p>
+        </div>
+        <div class="y2k-card">
+          <h3>02 / PIXEL STACK</h3>
+          <p>Low-res monospace label indicators placed side-by-side with high-end editorial display sans.</p>
+        </div>
+        <div class="y2k-card">
+          <h3>03 / CHROME TYPE</h3>
+          <p>Embossed metallic lettering with gradient fills recreates the glossy magazine aesthetic of 1999.</p>
+        </div>
+        <div class="y2k-card">
+          <h3>04 / SHEEN GLINT</h3>
+          <p>Animated specular highlight sweeps across buttons simulating reflexive plastic surfaces.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE SANDBOX -->
+    <section>
+      <div class="section-tag">SECTION 3 // Interactive Sandbox</div>
+      <div class="sandbox-row">
+        <label class="toggle-label">
+          <input type="checkbox" id="glint-toggle" checked onchange="toggleGlint(this.checked)">
+          Sheen Glint
+        </label>
+        <label class="toggle-label">
+          <input type="checkbox" id="marquee-toggle" checked onchange="toggleMarquee(this.checked)">
+          Marquee Scroll
+        </label>
+        <button class="y2k-btn" onclick="alert('✦ Y2K VIBE ACTIVATED ✦')">PULSE ME</button>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SPECS / TECHNICAL -->
+    <section>
+      <div class="section-tag">SECTION 4 // Specs & Technical</div>
+      <div class="spec-badges">
+        <div class="spec-badge">
+          <div class="num">1998</div>
+          <div class="desc">Era Reference</div>
+        </div>
+        <div class="spec-badge">
+          <div class="num">24px</div>
+          <div class="desc">Grid Unit</div>
+        </div>
+        <div class="spec-badge">
+          <div class="num">3D</div>
+          <div class="desc">Gloss Depth</div>
+        </div>
+        <div class="spec-badge">
+          <div class="num">VT323</div>
+          <div class="desc">Pixel Font</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: THEME SWITCHER FOOTER -->
+    <footer class="footer-themes">
+      <div class="section-tag" style="border:none; padding:0; margin:0;">SECTION 5 // Theme Switcher</div>
+      <div class="theme-btn-row">
+        <button class="theme-btn active" onclick="setTheme('y2k')">Y2K</button>
+        <button class="theme-btn" onclick="setTheme('cyber')">Cyber</button>
+        <button class="theme-btn" onclick="setTheme('chrome')">Chrome</button>
+        <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+      </div>
+      <span style="font-size:0.6rem; opacity:0.4; font-family:'VT323',monospace;">✦ Y2K RETRO FUTURISM ✦</span>
+    </footer>
+
+  </div>
+
+  <script>
+    window.setTheme = function(name) {
+      document.documentElement.className = 'theme-' + name;
+      localStorage.setItem('ui-beta-preview-theme', name);
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === name);
+      });
+    };
+
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        if (b.textContent.toLowerCase() === current) b.classList.add('active');
+      });
+    })();
+
+    function toggleGlint(on) {
+      document.querySelectorAll('.y2k-btn').forEach(function(btn) {
+        btn.style.setProperty('--glint-vis', on ? 'visible' : 'hidden');
+        btn.querySelector('::after') && (btn.style.background = '');
+      });
+      document.querySelectorAll('.y2k-btn').forEach(function(btn) {
+        btn.style.animation = on ? '' : 'none';
+      });
+      // Simpler: re-attach sheen by toggling class
+      document.querySelectorAll('.y2k-btn').forEach(function(btn) {
+        btn.style.setProperty('animation-play-state', on ? 'running' : 'paused');
+      });
+    }
+
+    function toggleMarquee(on) {
+      var mc = document.querySelector('.marquee-content');
+      if (mc) mc.style.animationPlayState = on ? 'running' : 'paused';
+    }
+  </script>
+</body>
+</html>

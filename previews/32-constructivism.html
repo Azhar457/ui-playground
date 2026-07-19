@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constructivism / Propaganda Poster</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ---- Theme Variants ---- */
+    :root { --bg: #F5F5F5; --fg: #000; --red: #CC0000; --yellow: #FFD700; --hero-red: #CC0000; --hero-yellow-bg: #FFD700; --rule-red: #CC0000; --rule-black: #000; --cta-bg: #000; --cta-fg: #FFD700; --cta-hover-bg: #FFD700; --cta-hover-fg: #000; --fact-bg: #F5F5F5; --cell-red: #CC0000; --cell-num: #FFD700; --marker-shadow: #000; --propaganda-sub: #000; --star-fill: #CC0000; --ray-yellow: #FFD700; --ray-red: #CC0000; }
+    html.theme-propaganda { --bg: #111; --fg: #E0E0E0; --red: #CC0000; --yellow: #FFD700; --hero-red: #CC0000; --hero-yellow-bg: #CC0000; --rule-red: #CC0000; --rule-black: #FFD700; --cta-bg: #FFD700; --cta-fg: #000; --cta-hover-bg: #CC0000; --cta-hover-fg: #FFF; --fact-bg: #1A1A1A; --cell-red: #CC0000; --cell-num: #FFD700; --marker-shadow: #FFD700; --propaganda-sub: #E0E0E0; --star-fill: #CC0000; --ray-yellow: #CC0000; --ray-red: #FFD700; }
+    html.theme-manifesto { --bg: #FFF9E0; --fg: #000; --red: #CC0000; --yellow: #FFD700; --hero-red: #000; --hero-yellow-bg: #FFD700; --rule-red: #000; --rule-black: #FFD700; --cta-bg: #CC0000; --cta-fg: #FFF; --cta-hover-bg: #000; --cta-hover-fg: #FFD700; --fact-bg: #FFF9E0; --cell-red: #000; --cell-num: #CC0000; --marker-shadow: #000; --propaganda-sub: #000; --star-fill: #000; --ray-yellow: #FFD700; --ray-red: #CC0000; }
+    html.theme-poster { --bg: #FFFFFF; --fg: #1A1A1A; --red: #CC0000; --yellow: #FFD700; --hero-red: #1A1A1A; --hero-yellow-bg: #CC0000; --rule-red: #1A1A1A; --rule-black: #CC0000; --cta-bg: #1A1A1A; --cta-fg: #FFF; --cta-hover-bg: #CC0000; --cta-hover-fg: #FFF; --fact-bg: #FFFFFF; --cell-red: #CC0000; --cell-num: #1A1A1A; --marker-shadow: #1A1A1A; --propaganda-sub: #1A1A1A; --star-fill: #CC0000; --ray-yellow: #CC0000; --ray-red: #1A1A1A; }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Oswald', sans-serif;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    /* Star/sunburst background */
+    .sunburst {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1200px; height: 1200px;
+      z-index: 0;
+      pointer-events: none;
+      animation: starRotate 60s linear infinite;
+    }
+    @keyframes starRotate { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 3rem;
+    }
+
+    /* Red massive headline angled */
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      color: var(--hero-red);
+      text-transform: uppercase;
+      transform: rotate(-20deg);
+      transform-origin: left center;
+      line-height: 0.85;
+      letter-spacing: -0.02em;
+      margin: 3rem 0 2rem -2rem;
+      position: relative;
+      z-index: 5;
+    }
+
+    .hero-headline-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+    .hero-yellow-bar {
+      position: absolute;
+      left: -4rem; right: -2rem; top: 30%; bottom: 5%;
+      background: var(--hero-yellow-bg);
+      z-index: -1;
+      transform: rotate(-3deg);
+    }
+
+    .diagonal-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 2rem 0;
+      align-items: flex-start;
+    }
+
+    .diagonal-text {
+      flex: 1;
+      min-width: 280px;
+      transform: rotate(-15deg);
+      transform-origin: top left;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      line-height: 1.3;
+      text-transform: uppercase;
+      color: var(--fg);
+      padding: 0.5rem;
+    }
+    .diagonal-text p { margin-bottom: 0.5rem; }
+
+    .photo-circle {
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, #666 10%, #333 50%, var(--fg) 90%);
+      flex-shrink: 0;
+      margin-left: -3rem;
+      margin-top: 2rem;
+      border: 4px solid var(--fg);
+      position: relative;
+      overflow: hidden;
+    }
+    .photo-circle::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent, transparent 8px,
+        rgba(255,255,255,0.05) 8px, rgba(255,255,255,0.05) 10px
+      );
+    }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--fg);
+      border: 4px solid var(--fg);
+      margin: 2rem 0;
+    }
+    .fact-cell {
+      background: var(--fact-bg);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .fact-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--cell-num);
+      line-height: 1;
+    }
+    .fact-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--fg);
+      margin: 0.5rem 0;
+    }
+    .fact-cell::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; width: 6px; height: 100%;
+      background: var(--cell-red);
+      transform: rotate(15deg) translateX(10px);
+    }
+
+    .diagonal-rule {
+      height: 6px;
+      background: var(--rule-red);
+      width: 120%;
+      margin: 1rem -10%;
+      transform: rotate(-8deg);
+    }
+    .diagonal-rule-black {
+      height: 8px;
+      background: var(--rule-black);
+      width: 80%;
+      margin: 1rem 10%;
+      transform: rotate(12deg);
+    }
+
+    .cta-block {
+      display: inline-block;
+      background: var(--cta-bg);
+      color: var(--cta-fg);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      padding: 0.8rem 3rem;
+      transform: rotate(5deg);
+      margin-left: -2rem;
+      margin-right: -2rem;
+      margin-top: 2rem;
+      align-self: flex-start;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .cta-block:hover {
+      background: var(--cta-hover-bg);
+      color: var(--cta-hover-fg);
+    }
+
+    .section-marker {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--yellow);
+      text-shadow: 2px 2px 0 var(--marker-shadow);
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-diagonal {
+      opacity: 0;
+      transform: translateX(-80px) translateY(80px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .slide-diagonal.active {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+    .slide-diagonal-right {
+      opacity: 0;
+      transform: translateX(80px) translateY(-80px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .slide-diagonal-right.active {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+
+    .propaganda-sub {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--propaganda-sub);
+    }
+
+    .red-star {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      width: 60px; height: 60px;
+      z-index: 2;
+      animation: starRotate 60s linear infinite;
+    }
+    .red-star polygon { fill: var(--star-fill); }
+
+    /* Theme buttons */
+    .theme-section {
+      display: flex;
+      flex-wrap: wrap; gap: 0.5rem;
+      justify-content: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 4px solid var(--fg);
+    }
+    .theme-btn {
+      padding: 0.3rem 0.8rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: transparent;
+      color: var(--fg);
+      border: 3px solid var(--fg);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { background: var(--fg); color: var(--bg); }
+    .theme-btn.active { background: var(--fg); color: var(--bg); }
+
+    /* Poster layer sandbox toggle */
+    .layer-toggle {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .layer-btn {
+      padding: 0.5rem 1.2rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: var(--fg);
+      color: var(--bg);
+      border: 2px solid var(--fg);
+      cursor: pointer;
+    }
+    .layer-btn.inactive { opacity: 0.3; }
+    .layer-toggle-label {
+      width: 100%;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--red);
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sunburst background -->
+  <svg class="sunburst" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <defs><clipPath id="c"><circle cx="100" cy="100" r="90"/></clipPath></defs>
+    <g clip-path="url(#c)">
+      <g id="rays">
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-yellow)" opacity="0.12"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-red)" opacity="0.10" transform="rotate(15 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-yellow)" opacity="0.10" transform="rotate(30 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-red)" opacity="0.08" transform="rotate(45 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-yellow)" opacity="0.10" transform="rotate(60 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-red)" opacity="0.08" transform="rotate(75 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-yellow)" opacity="0.10" transform="rotate(90 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-red)" opacity="0.08" transform="rotate(105 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-yellow)" opacity="0.10" transform="rotate(120 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-red)" opacity="0.08" transform="rotate(135 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-yellow)" opacity="0.10" transform="rotate(150 100 100)"/>
+        <polygon points="100,10 105,100 100,190 95,100" fill="var(--ray-red)" opacity="0.08" transform="rotate(165 100 100)"/>
+      </g>
+    </g>
+  </svg>
+
+  <!-- Red Star (fixed) -->
+  <svg class="red-star" viewBox="0 0 100 100">
+    <polygon points="50,5 61,38 95,38 68,60 79,94 50,72 21,94 32,60 5,38 39,38"/>
+  </svg>
+
+  <div class="container">
+
+    <!-- SECTION 1: Hero / Header -->
+    <div class="hero-headline slide-diagonal">
+      <div class="hero-headline-wrapper" style="display:inline-block;">
+        <div class="hero-yellow-bar"></div>
+        <span>WORKERS</span>
+      </div>
+      <br>
+      <span style="color:var(--fg);">UNITE</span>
+    </div>
+
+    <div class="propaganda-sub slide-diagonal" style="margin-bottom:1rem;">
+      The means of production belong to the people
+    </div>
+
+    <!-- SECTION 2: Features / Gallery -->
+    <div class="diagonal-section">
+      <div class="diagonal-text slide-diagonal" style="padding:1rem; background:var(--fg); color:var(--yellow);">
+        <p class="section-marker">01</p>
+        <p>industry shall be nationalized. every worker a shareholder. every factory a school.</p>
+      </div>
+
+      <div class="photo-circle slide-diagonal-right"></div>
+
+      <div class="diagonal-text slide-diagonal" style="transform:rotate(10deg); background:var(--red); color:#FFF; padding:1rem;">
+        <p class="section-marker" style="text-shadow:none; color:var(--yellow);">02</p>
+        <p>all power to the soviets. land, peace, bread. the future is collective.</p>
+      </div>
+    </div>
+
+    <div class="diagonal-rule slide-diagonal"></div>
+
+    <div class="facts-grid slide-diagonal">
+      <div class="fact-cell">
+        <div class="fact-num">01</div>
+        <div class="fact-text">industry</div>
+        <div style="font-size:0.7rem; font-family:'Oswald',sans-serif; color:var(--fg);">nationalized across all sectors</div>
+      </div>
+      <div class="fact-cell">
+        <div class="fact-num">02</div>
+        <div class="fact-text">education</div>
+        <div style="font-size:0.7rem; font-family:'Oswald',sans-serif; color:var(--fg);">universal access for all citizens</div>
+      </div>
+      <div class="fact-cell">
+        <div class="fact-num">03</div>
+        <div class="fact-text">equality</div>
+        <div style="font-size:0.7rem; font-family:'Oswald',sans-serif; color:var(--fg);">no class distinction under law</div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Interactive Sandbox (Poster Layer Toggle) -->
+    <div class="slide-diagonal" style="margin:1rem 0;">
+      <div class="layer-toggle-label">POSTER LAYER SANDBOX</div>
+      <div class="layer-toggle">
+        <button class="layer-btn" data-layer="sunburst">Sunburst</button>
+        <button class="layer-btn" data-layer="star">Red Star</button>
+        <button class="layer-btn" data-layer="diagonal">Diagonals</button>
+        <button class="layer-btn" data-layer="slide">Animations</button>
+      </div>
+    </div>
+
+    <div class="diagonal-rule-black slide-diagonal-right"></div>
+
+    <!-- CTA -->
+    <a class="cta-block slide-diagonal">JOIN THE MOVEMENT</a>
+
+    <!-- SECTION 4: Specs / Stats / Technical -->
+    <div style="margin-top:2rem; display:flex; justify-content:space-between; font-size:0.65rem; font-family:'Oswald',sans-serif; text-transform:uppercase; color:var(--fg); letter-spacing:0.3em;">
+      <span>propaganda poster series no. 32</span>
+      <span>1917 — 2026</span>
+    </div>
+
+    <!-- SECTION 5: Theme Switcher Footer -->
+    <div class="theme-section">
+      <button class="theme-btn" data-theme="construct">Construct</button>
+      <button class="theme-btn" data-theme="propaganda">Propaganda</button>
+      <button class="theme-btn" data-theme="manifesto">Manifesto</button>
+      <button class="theme-btn" data-theme="poster">Poster</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const items = document.querySelectorAll('.slide-diagonal, .slide-diagonal-right');
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          item.classList.add('active');
+        }, 150 + index * 120);
+      });
+    });
+
+    // Poster Layer Sandbox
+    (function() {
+      var layers = {
+        sunburst: document.querySelector('.sunburst'),
+        star: document.querySelector('.red-star'),
+        diagonal: null,
+        slide: null
+      };
+      var diagRules = document.querySelectorAll('.diagonal-rule, .diagonal-rule-black');
+      var slideItems = document.querySelectorAll('.slide-diagonal, .slide-diagonal-right');
+
+      document.querySelectorAll('.layer-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var layer = this.getAttribute('data-layer');
+          if (layer === 'sunburst') {
+            var s = layers.sunburst;
+            s.style.display = s.style.display === 'none' ? 'block' : 'none';
+          } else if (layer === 'star') {
+            var s = layers.star;
+            s.style.display = s.style.display === 'none' ? 'block' : 'none';
+          } else if (layer === 'diagonal') {
+            diagRules.forEach(function(r) {
+              r.style.opacity = r.style.opacity === '0' ? '1' : '0';
+            });
+          } else if (layer === 'slide') {
+            var vis = slideItems[0].style.opacity === '0' ? '1' : '0';
+            slideItems.forEach(function(s) { s.style.opacity = vis; });
+          }
+          this.classList.toggle('inactive');
+        });
+      });
+    })();
+
+    // Theme Switcher
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+      });
+    })();
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      localStorage.setItem('ui-beta-preview-theme', n);
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

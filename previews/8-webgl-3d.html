@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGL Interactive 3D Arena</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-webgl-theme') || 'dark';
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-dark';
+      }
+    })();
+  </script>
+
+  <style>
+    /* COLORING-PATTERN SEMANTIC TOKENS */
+    :root, .theme-dark {
+      --bg: #04060A;
+      --surface: #0B0E14;
+      --surface-alt: #121824;
+      --text: #F1F5F9;
+      --text-muted: #64748B;
+      --primary: #8B5CF6;
+      --on-primary: #FFFFFF;
+      --secondary: #1E1B4B;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #8B5CF6;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #C084FC;
+      --shadow-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .theme-light {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-alt: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --primary: #7C3AED;
+      --on-primary: #FFFFFF;
+      --secondary: #F1F5F9;
+      --border: rgba(0, 0, 0, 0.06);
+      --accent: #7C3AED;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #A78BFA;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-orange {
+      --bg: #FAF6F0;
+      --surface: #FFFFFF;
+      --surface-alt: #F1E9DB;
+      --text: #2D251E;
+      --text-muted: #7C6F62;
+      --primary: #D97706;
+      --on-primary: #FFFFFF;
+      --secondary: #F7EFE2;
+      --border: rgba(139, 92, 26, 0.1);
+      --accent: #D97706;
+      --accent-cyan: #F59E0B;
+      --accent-purple: #FDBA74;
+      --shadow-color: rgba(139, 92, 26, 0.05);
+    }
+
+    .theme-sea {
+      --bg: #030E12;
+      --surface: #071922;
+      --surface-alt: #0D2633;
+      --text: #E0F2FE;
+      --text-muted: #38BDF8;
+      --primary: #0EA5E9;
+      --on-primary: #FFFFFF;
+      --secondary: #0B2535;
+      --border: rgba(14, 165, 233, 0.15);
+      --accent: #0EA5E9;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #38BDF8;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-rose {
+      --bg: #0F0509;
+      --surface: #1C0A12;
+      --surface-alt: #2D111E;
+      --text: #FFE4E6;
+      --text-muted: #FB7185;
+      --primary: #F43F5E;
+      --on-primary: #FFFFFF;
+      --secondary: #2E101B;
+      --border: rgba(244, 63, 94, 0.15);
+      --accent: #F43F5E;
+      --accent-cyan: #FDA4AF;
+      --accent-purple: #EC4899;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* Reset & Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* WebGL Canvas Background */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none; /* Let pointer events pass to UI elements */
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .scroll-indicator-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+    }
+
+    /* Header Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 90;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-logo span {
+      color: var(--primary);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 1.5px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-cyan), var(--accent-purple), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.75rem 1.75rem;
+      width: 100%;
+      height: 100%;
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--surface-alt);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Sections Container */
+    .ui-wrapper {
+      position: relative;
+      z-index: 2;
+    }
+
+    section {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      margin-bottom: 0.5rem;
+      align-self: center;
+    }
+
+    /* SECTION 1: HERO OVERLAY */
+    .hero-sec {
+      min-height: 100vh;
+      justify-content: center;
+      text-align: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    h1 span {
+      color: var(--primary);
+      text-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      max-width: 550px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* SECTION 2: 3D MATERIAL CONTROLS (SANDBOX) */
+    .control-box {
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      box-shadow: 0 10px 35px var(--shadow-color);
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .control-row label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .control-row select, .control-row input[type="range"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* SECTION 3: BENTO GRID STATS */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bento-card {
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .bento-card.wide {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      .bento-card.wide {
+        grid-column: span 1;
+      }
+    }
+
+    .bento-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+    }
+
+    .bento-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* SECTION 4: WEBGL DETAILS */
+    .details-box {
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      box-shadow: 0 10px 35px var(--shadow-color);
+    }
+
+    .details-box h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+    }
+
+    .details-box p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* SECTION 5: FOOTER & THEMES */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+
+    .theme-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem 0;
+    }
+
+    .theme-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    }
+
+    .footer-credit {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-indicator-wrap">
+    <div class="scroll-indicator-bar" id="indicator"></div>
+  </div>
+
+  <!-- WebGL Render Canvas background -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand-logo">3D<span>.MESH</span></div>
+    <a href="#control-sec" class="conic-btn">
+      <span>Get Started</span>
+    </a>
+  </nav>
+
+  <!-- Foreground UI Wrapper -->
+  <div class="ui-wrapper">
+    
+    <!-- SECTION 1: HERO OVERLAY -->
+    <section class="hero-sec">
+      <div class="badge">Shaders Engine active</div>
+      <h1>WebGL <span>Interaction</span>.</h1>
+      <p class="hero-desc">
+        Torus Knot abstrak dipoles menggunakan MeshPhysicalMaterial dan flat shading. Gerakkan mouse atau scroll ke bawah untuk modulasi visual 3D yang mulus.
+      </p>
+      <a href="#control-sec" class="conic-btn">
+        <span>Tune Material Console <i class="fas fa-arrow-down" style="margin-left: 6px;"></i></span>
+      </a>
+    </section>
+
+    <!-- SECTION 2: 3D MATERIAL CONTROLS (SANDBOX) -->
+    <section id="control-sec">
+      <div class="badge" style="align-self: flex-start;">Configuration Console</div>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem;">Interactive Material Console</h2>
+      
+      <div class="control-box">
+        <div class="control-row">
+          <label for="mesh-select">Mesh Geometry Preset</label>
+          <select id="mesh-select" onchange="changeGeometry(this.value)">
+            <option value="torusKnot">Torus Knot (Glossy Faceted)</option>
+            <option value="torus">Standard Torus Ring</option>
+            <option value="sphere">Faceted Sphere</option>
+            <option value="octahedron">Minimalist Octahedron</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label for="roughness-range">Material Surface Roughness: <span id="roughness-lbl" style="color:var(--primary);">0.15</span></label>
+          <input type="range" id="roughness-range" min="0.0" max="1.0" step="0.05" value="0.15" oninput="updateRoughness(this.value)">
+        </div>
+        <div class="control-row">
+          <label for="metalness-range">Material Metalness: <span id="metalness-lbl" style="color:var(--primary);">0.8</span></label>
+          <input type="range" id="metalness-range" min="0.0" max="1.0" step="0.05" value="0.8" oninput="updateMetalness(this.value)">
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: BENTO GRID STATS -->
+    <section>
+      <div class="sec-header" style="text-align: center; margin-bottom: 2rem;">
+        <div class="badge">Performance Telemetry</div>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem;">Live GPU Mesh Stats</h2>
+      </div>
+      
+      <div class="bento-grid">
+        <div class="bento-card">
+          <span class="bento-title">Triangles Count</span>
+          <span class="bento-val" id="tri-val">3,840</span>
+        </div>
+        <div class="bento-card wide">
+          <span class="bento-title">WebGL Render Rate</span>
+          <span class="bento-val" id="fps-val">60 FPS</span>
+        </div>
+        <div class="bento-card">
+          <span class="bento-title">Scroll Modulation</span>
+          <span class="bento-val" id="scroll-val">0%</span>
+        </div>
+        <div class="bento-card wide">
+          <span class="bento-title">Physics Math</span>
+          <span class="bento-val" style="font-size: clamp(1.2rem, 3.5vw, 1.8rem); line-height: 1.4;">Damped Spring Lerp (0.05s)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: WEBGL DETAILS -->
+    <section>
+      <div class="badge" style="align-self: flex-start;">Theory & Concepts</div>
+      <div class="details-box">
+        <h3>Matrix Transform & Flat Shading</h3>
+        <p>
+          Flat shading diaktifkan dengan kalkulasi normal untuk setiap wajah poligon (face) secara independen, membuang interpolasi halus antar vertex. Ini menghasilkan gaya brutalist tech yang bersinar tajam saat terkena sumber cahaya keylight dan fill-light.
+        </p>
+        <p>
+          Gulir ke bawah untuk melihat rotasi otomatis mesh yang disesuaikan secara linier dengan koordinat sumbu-Y scroll progress Anda.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 5: FOOTER & THEMES -->
+    <footer>
+      <h3 class="brand-logo" style="font-size: 1.5rem; margin-bottom: 1rem;">3D<span>.MESH</span></h3>
+      <p style="color: var(--text-muted); margin-bottom: 2rem;">Desain interaktif modern terintegrasi dengan akselerasi GPU 3D.</p>
+      
+      <div class="theme-row">
+        <button class="theme-btn" id="theme-btn-dark" onclick="setTheme('dark')">Cyber Dark</button>
+        <button class="theme-btn" id="theme-btn-light" onclick="setTheme('light')">Modern Light</button>
+        <button class="theme-btn" id="theme-btn-orange" onclick="setTheme('orange')">Warm Tech</button>
+        <button class="theme-btn" id="theme-btn-sea" onclick="setTheme('sea')">Neon Depths</button>
+        <button class="theme-btn" id="theme-btn-rose" onclick="setTheme('rose')">Cyber Rose</button>
+      </div>
+
+      <div style="margin: 2rem 0;">
+        <a href="#" class="conic-btn">
+          <span>Back to Top <i class="fas fa-chevron-up" style="margin-left: 6px;"></i></span>
+        </a>
+      </div>
+      <p class="footer-credit">&copy; 2026 Wide Note - Antigravity 3D Shaders. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // THREE.JS RENDERER & INTERACTIVE SCENE
+    // ============================================================
+    const canvas = document.getElementById('webgl-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.z = 8;
+
+    // Geometry Definitions
+    const geometries = {
+      torusKnot: new THREE.TorusKnotGeometry(1.2, 0.4, 120, 16),
+      torus: new THREE.TorusGeometry(1.2, 0.5, 16, 100),
+      sphere: new THREE.SphereGeometry(1.4, 16, 16),
+      octahedron: new THREE.OctahedronGeometry(1.5, 0)
+    };
+
+    const triangles = {
+      torusKnot: "3,840",
+      torus: "3,200",
+      sphere: "480",
+      octahedron: "8"
+    };
+
+    let currentGeometry = 'torusKnot';
+
+    // Material
+    const material = new THREE.MeshPhysicalMaterial({
+      color: 0x8B5CF6,
+      roughness: 0.15,
+      metalness: 0.8,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      flatShading: true
+    });
+
+    let mesh = new THREE.Mesh(geometries.torusKnot, material);
+    scene.add(mesh);
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.DirectionalLight(0x8B5CF6, 1.5);
+    keyLight.position.set(5, 5, 5);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x22D3EE, 0.8);
+    fillLight.position.set(-5, -3, 2);
+    scene.add(fillLight);
+
+    // Pointer Tracking
+    let targetX = 0;
+    let targetY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Scroll Modulation
+    let scrollPercent = 0;
+    window.addEventListener('scroll', () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        scrollPercent = window.scrollY / scrollHeight;
+      }
+      
+      document.getElementById('indicator').style.width = `${scrollPercent * 100}%`;
+      document.getElementById('scroll-val').innerText = `${Math.round(scrollPercent * 100)}%`;
+    });
+
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Constant idle rotation speed increases with scroll progress
+      const rotSpeed = 0.003 + scrollPercent * 0.02;
+      mesh.rotation.y += rotSpeed;
+      mesh.rotation.x += rotSpeed * 0.3;
+
+      // Pointer reactive tilt (lerp logic)
+      mesh.rotation.x += (targetY * 0.8 - mesh.rotation.x) * 0.05;
+      mesh.rotation.z += (targetX * 0.8 - mesh.rotation.z) * 0.05;
+
+      // Subtle scaling of mesh based on scroll Y
+      const scaleVal = 1 + scrollPercent * 0.4;
+      mesh.scale.set(scaleVal, scaleVal, scaleVal);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ============================================================
+    // DOM INTERACTIONS & THEMES
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const activeTheme = localStorage.getItem('playground-webgl-theme') || 'dark';
+      document.getElementById('theme-btn-' + activeTheme).classList.add('active');
+      syncThreeColors();
+      initFPSTracker();
+    });
+
+    function changeGeometry(type) {
+      scene.remove(mesh);
+      mesh = new THREE.Mesh(geometries[type], material);
+      scene.add(mesh);
+      currentGeometry = type;
+      
+      // Update statistics
+      document.getElementById('tri-val').innerText = triangles[type];
+    }
+
+    function updateRoughness(val) {
+      material.roughness = parseFloat(val);
+      document.getElementById('roughness-lbl').innerText = val;
+    }
+
+    function updateMetalness(val) {
+      material.metalness = parseFloat(val);
+      document.getElementById('metalness-lbl').innerText = val;
+    }
+
+    function setTheme(themeName) {
+      document.documentElement.className = 'theme-' + themeName;
+      localStorage.setItem('playground-webgl-theme', themeName);
+      
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('theme-btn-' + themeName).classList.add('active');
+      
+      syncThreeColors();
+    }
+
+    function syncThreeColors() {
+      // Sync ThreeJS light color with current CSS theme variables
+      setTimeout(() => {
+        const style = getComputedStyle(document.documentElement);
+        const primaryCol = style.getPropertyValue('--primary').trim();
+        const accentCyanCol = style.getPropertyValue('--accent-cyan').trim();
+        const textMutedCol = style.getPropertyValue('--text-muted').trim();
+        
+        material.color.set(primaryCol);
+        keyLight.color.set(primaryCol);
+        fillLight.color.set(accentCyanCol);
+      }, 50);
+    }
+
+    function initFPSTracker() {
+      let lastTime = performance.now();
+      let frameCount = 0;
+      const fpsEl = document.getElementById('fps-val');
+
+      function updateFPS() {
+        const now = performance.now();
+        frameCount++;
+        
+        if (now - lastTime >= 1000) {
+          const fps = Math.round((frameCount * 1000) / (now - lastTime));
+          fpsEl.innerText = `${fps} FPS`;
+          frameCount = 0;
+          lastTime = now;
+        }
+        
+        requestAnimationFrame(updateFPS);
+      }
+      requestAnimationFrame(updateFPS);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Glassmorphism Portal</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Default: Frosted White Glass */
+    :root {
+      --bg-gradient: radial-gradient(circle at top left, #1c1537, #07090e 80%);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --text-main: rgba(255, 255, 255, 0.95);
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --accent: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.3);
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --glass-blur: 24px;
+    }
+
+    .theme-obsidian {
+      --bg-gradient: radial-gradient(circle at top right, #0a0e1a, #020306 90%);
+      --bg-glass: rgba(10, 14, 26, 0.65);
+      --border-glass: rgba(255, 255, 255, 0.04);
+      --accent: #00f0ff;
+      --accent-glow: rgba(0, 240, 255, 0.3);
+    }
+
+    .theme-gold {
+      --bg-gradient: radial-gradient(circle at bottom left, #2a1b0c, #070402 75%);
+      --bg-glass: rgba(212, 163, 89, 0.04);
+      --border-glass: rgba(212, 163, 89, 0.16);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 3rem 1.5rem;
+      transition: background 0.4s ease;
+    }
+
+    /* Floating ambient color lights */
+    .glow-dot {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.12;
+      animation: drift 15s infinite alternate ease-in-out;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, -50px) scale(1.2); }
+    }
+
+    .app-wrap {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Core Glass Container styling */
+    .glass-panel {
+      background: var(--bg-glass);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      position: relative;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      padding: 2.5rem;
+    }
+
+    .glass-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.01) 80%);
+      border-radius: 20px 20px 0 0;
+      pointer-events: none;
+    }
+
+    .glass-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+    }
+
+    /* SECTION 1: HEADER & HERO */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+    }
+
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-banner {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 4rem 2.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 550px;
+    }
+
+    /* Glass action button */
+    .glass-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      color: var(--text-main);
+      padding: 0.8rem 1.8rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      align-self: flex-start;
+    }
+
+    .glass-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    /* SECTION 2: METRIC HIGHLIGHTS */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .metric-card {
+      padding: 1.5rem;
+    }
+
+    .metric-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 0.25rem;
+    }
+
+    .metric-change {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: #34d399;
+      margin-top: 0.25rem;
+    }
+
+    /* SECTION 3: INTERACTIVE SETTINGS BENCH */
+    .settings-bench {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .glass-select-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .glass-option-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-glass);
+      color: var(--text-main);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .glass-option-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .glass-option-btn.active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    /* SECTION 4: SVG DYNAMIC GRAPH */
+    .graph-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .svg-container {
+      width: 100%;
+      height: 180px;
+      position: relative;
+    }
+
+    .svg-container svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .area-fill {
+      fill: url(#graph-gradient);
+      opacity: 0.2;
+    }
+
+    .stroke-line {
+      stroke: var(--accent);
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: drawLine 3s forwards cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* SECTION 5: FROSTED SYSTEM FEEDBACK */
+    .feedback-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .alert-glass {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .alert-glass i {
+      color: var(--accent);
+      font-size: 1.1rem;
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    /* Global theme switcher indicators */
+    footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 1.5px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      text-decoration: none;
+      margin-top: 1rem;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), rgba(255,255,255,0.1), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.8rem 2rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: #1e293b;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Ambient Colors -->
+  <div class="glow-dot" style="width:300px; height:300px; background:#a855f7; top:10%; left:15%;"></div>
+  <div class="glow-dot" style="width:250px; height:250px; background:#00f0ff; bottom:15%; right:20%;"></div>
+
+  <div class="app-wrap">
+    
+    <!-- Navbar Glass -->
+    <nav class="glass-panel" style="padding:1rem 2rem;">
+      <div class="nav-logo">NEXUS.IO</div>
+      <a href="#" class="glass-btn" style="padding:0.5rem 1.25rem;">Sign In</a>
+    </nav>
+
+    <!-- SECTION 1: HERO -->
+    <header class="glass-panel hero-banner">
+      <span class="glass-label">Translucent Experience</span>
+      <h1>OBSERVE DATA IN<br>HIGHEST CLARITY</h1>
+      <p class="subtitle">
+        Antarmuka glassmorphism canggih dengan dynamic blur level, top light catches, dan pemisahan lapisan data yang diatur secara presisi.
+      </p>
+      <a href="#" class="conic-btn">
+        <span>Explore Features</span>
+      </a>
+    </header>
+
+    <!-- SECTION 2: METRIC HIGHLIGHTS -->
+    <section class="metrics-row">
+      <div class="glass-panel metric-card">
+        <span class="glass-label">Total Load</span>
+        <div class="metric-val">1.48 TB</div>
+        <div class="metric-change">+12.8% vs last week</div>
+      </div>
+      <div class="glass-panel metric-card">
+        <span class="glass-label">Active Nodes</span>
+        <div class="metric-val">12,842</div>
+        <div class="metric-change" style="color:var(--accent);">+4.1% latency decrease</div>
+      </div>
+      <div class="glass-panel metric-card">
+        <span class="glass-label">Bandwidth</span>
+        <div class="metric-val">94.2 Gbps</div>
+        <div class="metric-change">+8.9% optimize rate</div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE SETTINGS BENCH -->
+    <section class="glass-panel settings-bench">
+      <div class="panel-header">
+        <span class="glass-label">MODULATION SANDBOX</span>
+        <h3 style="margin-top:0.25rem; font-weight:800;">Glass Texture Switcher</h3>
+      </div>
+      
+      <div class="setting-group">
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
+          Ubah tipe tekstur kaca secara dinamis di bawah ini untuk melihat transisi variabel warna pada border dan background panel.
+        </p>
+        
+        <div class="glass-select-row">
+          <button class="glass-option-btn active" data-opt="white" onclick="setGlassTheme('white', this)">
+            <i class="fa-solid fa-sun" style="color:#FFF;"></i> Frosted White
+          </button>
+          <button class="glass-option-btn" data-opt="obsidian" onclick="setGlassTheme('obsidian', this)">
+            <i class="fa-solid fa-moon" style="color:#00f0ff;"></i> Deep Obsidian
+          </button>
+          <button class="glass-option-btn" data-opt="gold" onclick="setGlassTheme('gold', this)">
+            <i class="fa-solid fa-star" style="color:#f59e0b;"></i> Golden Dust
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SVG DYNAMIC GRAPH -->
+    <section class="glass-panel graph-panel">
+      <span class="glass-label">Realtime Telemetry Stream</span>
+      <div class="svg-container">
+        <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="graph-gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Graph Path -->
+          <path class="area-fill" d="M 0 100 C 50 120, 100 40, 150 70 C 200 100, 250 20, 300 50 C 350 80, 400 120, 500 40 L 500 150 L 0 150 Z"/>
+          <path class="stroke-line" d="M 0 100 C 50 120, 100 40, 150 70 C 200 100, 250 20, 300 50 C 350 80, 400 120, 500 40"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- SECTION 5: SYSTEM FEEDBACK ALERTS -->
+    <section class="glass-panel feedback-panel">
+      <span class="glass-label">Network Alerts</span>
+      <div class="alert-glass">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Server region AP-Southeast-1 response status optimized to 12ms.</span>
+      </div>
+      <div class="alert-glass">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Security certificate verification completed. SSL payload locked.</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <span>NEXUS GLASS PORTAL // 2026 // BACKDROP FILTER ACTIVE</span>
+    </footer>
+
+  </div>
+
+  <script>
+    // Theme setter for glass styles
+    window.setGlassTheme = function(themeName, btn) {
+      const root = document.documentElement;
+      root.className = '';
+      if (themeName !== 'white') {
+        root.classList.add('theme-' + themeName);
+      }
+      
+      document.querySelectorAll('.glass-option-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+
+      // Restart stroke animation on graph
+      const path = document.querySelector('.stroke-line');
+      path.style.animation = 'none';
+      path.offsetHeight; // trigger reflow
+      path.style.animation = 'drawLine 3s forwards cubic-bezier(0.4, 0, 0.2, 1)';
+    }
+  </script>
+</body>
+</html>

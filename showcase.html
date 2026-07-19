@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Playground - Premium Showcase (Beta)</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&family=VT323&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-showcase-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'scroll-smooth theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'scroll-smooth theme-dark';
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --surface-alt: #F1F1F3;
+      --text: #18181B;
+      --text-muted: #71717A;
+      --primary: #18181B;
+      --on-primary: #FFFFFF;
+      --secondary: #E4E4E7;
+      --on-secondary: #18181B;
+      --border: #E4E4E7;
+      --accent: #2563EB;
+      --success: #16A34A;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --shadow-color: rgba(0, 0, 0, 0.04);
+      --accent-rgb: 37, 99, 235;
+    }
+
+    .theme-dark {
+      --bg: #0B0E14;
+      --surface: #131722;
+      --surface-alt: #1B2130;
+      --text: #E6E8EC;
+      --text-muted: #9CA3AF;
+      --primary: #6366F1;
+      --on-primary: #FFFFFF;
+      --secondary: #232A3B;
+      --on-secondary: #E6E8EC;
+      --border: #262D3D;
+      --accent: #22D3EE;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #F87171;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --accent-rgb: 34, 211, 238;
+    }
+
+    .theme-orange {
+      --bg: #FBF7F0;
+      --surface: #FFFFFF;
+      --surface-alt: #F2E9DC;
+      --text: #2B2118;
+      --text-muted: #7A6A58;
+      --primary: #8B4513;
+      --on-primary: #FFFFFF;
+      --secondary: #E8D5B7;
+      --on-secondary: #2B2118;
+      --border: #E5D9C5;
+      --accent: #C2703D;
+      --success: #4D7C4D;
+      --warning: #B8860B;
+      --danger: #A94442;
+      --shadow-color: rgba(139, 69, 19, 0.05);
+      --accent-rgb: 194, 112, 61;
+    }
+
+    .theme-sea {
+      --bg: #0A0A0F;
+      --surface: #14141F;
+      --surface-alt: #1E1E2E;
+      --text: #F0F0F5;
+      --text-muted: #8B8B9E;
+      --primary: #FF2E63;
+      --on-primary: #FFFFFF;
+      --secondary: #252538;
+      --on-secondary: #F0F0F5;
+      --border: #2A2A3D;
+      --accent: #00F0FF;
+      --success: #39FF88;
+      --warning: #FFD23F;
+      --danger: #FF3860;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+      --accent-rgb: 0, 240, 255;
+    }
+
+    .theme-rose {
+      --bg: #FFF5F7;
+      --surface: #FFFFFF;
+      --surface-alt: #FFE4E6;
+      --text: #4C0519;
+      --text-muted: #9F1239;
+      --primary: #BE123C;
+      --on-primary: #FFFFFF;
+      --secondary: #FDA4AF;
+      --on-secondary: #4C0519;
+      --border: #FECDD3;
+      --accent: #E11D48;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --shadow-color: rgba(190, 18, 60, 0.05);
+      --accent-rgb: 225, 29, 72;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.4s ease, border-color 0.4s ease; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .grid-backdrop {
+      position: fixed; inset: 0;
+      background-size: 32px 32px;
+      background-image: linear-gradient(to right, var(--border) 1px, transparent 1px),
+                        linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+      opacity: 0.15; z-index: 1; pointer-events: none;
+    }
+
+    .blob-layer { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(120px);
+      opacity: 0.08; mix-blend-mode: multiply;
+      animation: float 25s infinite alternate ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(60px, -45px) scale(1.15); }
+    }
+
+    section {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 1100px;
+      margin: 0 auto; padding: 6rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-layout {
+      min-height: 90vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; gap: 1.75rem; padding-top: 8rem;
+    }
+
+    .badge-mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.08);
+      border: 1px solid var(--accent);
+      padding: 4px 12px; border-radius: 9999px;
+      text-transform: uppercase; font-weight: 700; letter-spacing: 1px;
+    }
+
+    h1.display-title {
+      font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 900;
+      line-height: 0.9; letter-spacing: -3px;
+      background: linear-gradient(135deg, var(--text), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    p.display-desc {
+      font-size: 1.1rem; color: var(--text-muted);
+      max-width: 600px; line-height: 1.6;
+    }
+
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+    .y2k-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(to bottom, var(--accent), var(--primary));
+      color: var(--on-primary); font-weight: 700; font-size: 0.9rem;
+      padding: 0.9rem 2.2rem; border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.15); cursor: pointer;
+      box-shadow: 0 10px 25px var(--shadow-color), inset 0 2px 0px rgba(255,255,255,0.4);
+      position: relative; overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275);
+      text-decoration: none;
+    }
+
+    .y2k-btn:hover { transform: translateY(-2px); }
+    .y2k-btn:active { transform: scale(0.97) translateY(1px); }
+
+    .y2k-btn::after {
+      content: ''; position: absolute; top: 0; left: -50%;
+      width: 30%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: skewX(-30deg); animation: sheen 4s infinite ease-in-out;
+    }
+
+    .y2k-btn.outline { background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: 0 4px 10px var(--shadow-color); }
+    .y2k-btn.outline::after { display: none; }
+
+    .section-header { margin-bottom: 3.5rem; }
+    .section-title { font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0.5rem; }
+    .section-subtitle { color: var(--text-muted); font-size: 0.95rem; }
+
+    .highlights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+    .conic-card-wrap {
+      position: relative; border-radius: 24px; padding: 1px;
+      overflow: hidden; box-shadow: 0 12px 36px var(--shadow-color);
+    }
+
+    .conic-card-wrap::before {
+      content: ''; position: absolute; width: 200%; height: 200%;
+      top: -50%; left: -50%;
+      background: var(--conic-gradient, conic-gradient(from 0deg, var(--accent), var(--primary), var(--secondary), var(--accent)));
+      animation: rotateBorder var(--rotate-speed-card, 6s) linear infinite; z-index: 1;
+    }
+
+    .conic-card {
+      background: var(--surface); border-radius: 23px;
+      padding: 2.5rem; position: relative; z-index: 2;
+      height: 100%; display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .conic-card h3 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; }
+    .conic-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+    .conic-btn-wrap {
+      position: relative; border-radius: 9999px; padding: 1.5px;
+      overflow: hidden; display: inline-flex; cursor: pointer;
+      box-shadow: 0 4px 15px var(--shadow-color); z-index: 5;
+    }
+
+    .conic-btn-wrap::before {
+      content: ''; position: absolute; width: 250%; height: 250%;
+      top: -75%; left: -75%;
+      background: var(--conic-gradient, conic-gradient(from 0deg, var(--accent), var(--primary), var(--secondary), var(--accent)));
+      animation: rotateBorder var(--rotate-speed-btn, 4s) linear infinite; z-index: 1;
+    }
+
+    .conic-btn-inner {
+      background: var(--surface); color: var(--text); font-weight: 700;
+      font-size: 0.75rem; padding: 0.5rem 1.4rem; border-radius: 9999px;
+      position: relative; z-index: 2; display: flex; align-items: center; gap: 6px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn-wrap:hover .conic-btn-inner { background: var(--surface-alt); }
+
+    .conic-badge-wrap { position: relative; border-radius: 4px; padding: 1px; overflow: hidden; display: inline-flex; }
+
+    .conic-badge-wrap::before {
+      content: ''; position: absolute; width: 300%; height: 300%;
+      top: -100%; left: -100%;
+      background: var(--conic-gradient, conic-gradient(from 0deg, var(--accent), var(--primary), var(--secondary), var(--accent)));
+      animation: rotateBorder var(--rotate-speed-badge, 3s) linear infinite; z-index: 1;
+    }
+
+    .conic-badge-inner {
+      background: var(--surface); color: var(--accent);
+      font-family: 'JetBrains Mono', monospace; font-weight: 700;
+      font-size: 0.6rem; padding: 2px 8px; border-radius: 3px;
+      position: relative; z-index: 2; letter-spacing: 0.5px;
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    .sandbox-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+
+    .skeuo-box {
+      background: var(--surface-alt); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 6px 16px var(--shadow-color);
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    .control-row { display: flex; justify-content: space-between; align-items: center; }
+
+    .switch-track {
+      width: 52px; height: 28px; background: var(--border);
+      border-radius: 9999px; padding: 2px; cursor: pointer;
+      position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .switch-knob {
+      width: 24px; height: 24px; background: var(--surface);
+      border-radius: 50%;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.5);
+      transition: transform 0.2s cubic-bezier(0.25,1,0.5,1);
+    }
+
+    .switch-track.active { background: var(--accent); }
+    .switch-track.active .switch-knob { transform: translateX(24px); }
+
+    .catalog-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2rem; }
+
+    .filter-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 0.5rem 1.2rem; border-radius: 9999px;
+      font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+    }
+
+    .filter-btn.active, .filter-btn:hover { background: var(--accent); color: var(--on-primary); border-color: var(--accent); }
+
+    .search-box-wrap { width: 100%; max-width: 320px; position: relative; margin-bottom: 2rem; }
+
+    .search-input {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      padding: 0.75rem 1rem 0.75rem 2.5rem; font-size: 0.85rem; outline: none;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; }
+
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+
+    .catalog-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      gap: 1.25rem; box-shadow: 0 4px 12px var(--shadow-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .catalog-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--shadow-color); }
+
+    .card-top { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .card-meta { display: flex; justify-content: space-between; align-items: center; }
+
+    .card-id { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); }
+
+    .card-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+      background: var(--surface-alt); border: 1px solid var(--border);
+      color: var(--text-muted); padding: 2px 8px; border-radius: 4px;
+      text-transform: uppercase; font-weight: 700;
+    }
+
+    .card-title { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.3px; }
+    .card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+    .card-actions { display: flex; gap: 8px; }
+
+    .card-btn {
+      flex: 1; padding: 0.6rem 0; border-radius: 8px;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer;
+      text-align: center; text-decoration: none; transition: all 0.2s ease;
+    }
+
+    .card-btn.primary { background: var(--accent); color: var(--on-primary); border: 1px solid var(--accent); }
+    .card-btn.primary:hover { opacity: 0.9; }
+    .card-btn.secondary { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+    .card-btn.secondary:hover { background: var(--border); }
+
+    .footer-layout { border-bottom: none; display: flex; flex-direction: column; align-items: center; gap: 2rem; padding-bottom: 8rem; }
+
+    .switcher-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+    .theme-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 0.65rem 1.25rem; border-radius: 9999px;
+      font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: all 0.2s ease; box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    .theme-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .theme-btn.active { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+  </style>
+</head>
+<body>
+
+  <div class="grid-backdrop"></div>
+  <div class="blob-layer">
+    <div class="blob" style="width:500px; height:500px; background:var(--accent); top:-100px; left:-100px;"></div>
+    <div class="blob" style="width:400px; height:400px; background:var(--primary); bottom:-100px; right:-100px;"></div>
+  </div>
+
+  <!-- SECTION 1: HERO -->
+  <section class="hero-layout">
+    <span class="badge-mono">Semantic Environment Portal (Beta)</span>
+    <h1 class="display-title">UI EXPLORATION<br>SHOWCASE</h1>
+    <p class="display-desc">
+      Galeri portal visual premium berisi 32+ gaya desain web modern, mikro-interaksi dinamis, serta prompt kode siap pakai untuk mendukung AI-first engineering.
+    </p>
+    <div class="hero-ctas">
+      <a href="index.html" class="y2k-btn">
+        <i class="fa-solid fa-play"></i> Launch Simulator
+      </a>
+      <a href="#catalog" class="y2k-btn outline">
+        Explore 32 Styles
+      </a>
+    </div>
+  </section>
+
+  <!-- SECTION 2: HIGHLIGHTS -->
+  <section id="highlights">
+    <div class="section-header">
+      <span class="badge-mono">Featured Concepts</span>
+      <h2 class="section-title">CONCEPT HIGHLIGHTS</h2>
+      <p class="section-subtitle">Dua kombinasi gaya desain terpopuler yang memadukan visual dramatis dengan interaksi cair.</p>
+    </div>
+
+    <div class="highlights-grid">
+      <div class="conic-card-wrap">
+        <div class="conic-card">
+          <span class="badge-mono" style="align-self:flex-start;">Style 27 / Sci-Fi HUD</span>
+          <h3>FUI Tactical Dashboard</h3>
+          <p>Wireframe murni tanpa fill, radar sweeps, circular gauges, targeting reticle, dan data readouts monospaced — semua dalam 1px lines only.</p>
+        </div>
+      </div>
+
+      <div class="conic-card-wrap">
+        <div class="conic-card">
+          <span class="badge-mono" style="align-self:flex-start;">Style 15 / Aurora UI</span>
+          <h3>Aurora Conic Elements</h3>
+          <p>Koleksi elemen antarmuka yang memanfaatkan gradien conic berputar di balik lapisan solid:</p>
+
+          <div style="display:flex; flex-direction:column; gap:1.25rem; margin:1rem 0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span class="conic-badge-wrap">
+                <span class="conic-badge-inner">ACTIVE FLOW</span>
+              </span>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Micro-label status berpendar</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="conic-btn-wrap" onclick="alert('Conic Action Executed!')">
+                <span class="conic-btn-inner">
+                  <i class="fa-solid fa-bolt"></i> Deploy System
+                </span>
+              </div>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Tombol aksi berputar</span>
+            </div>
+          </div>
+
+          <div style="margin-top:0.75rem; display:flex; flex-direction:column; gap:8px;">
+            <span style="font-weight:700; font-size:0.7rem; text-transform:uppercase; font-family:'JetBrains Mono', monospace; color:var(--text-muted);">Border Effect Style:</span>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <button class="filter-btn active" style="padding:4px 8px; font-size:0.65rem;" data-border-preset="neon" onclick="setConicPreset('neon', this)">Neon Glow</button>
+              <button class="filter-btn" style="padding:4px 8px; font-size:0.65rem;" data-border-preset="pastel" onclick="setConicPreset('pastel', this)">Subtle Pastel</button>
+              <button class="filter-btn" style="padding:4px 8px; font-size:0.65rem;" data-border-preset="mono" onclick="setConicPreset('mono', this)">Monochrome</button>
+            </div>
+          </div>
+
+          <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; font-size:0.7rem; text-transform:uppercase; font-family:'JetBrains Mono', monospace; color:var(--text-muted);">Theme Fit:</span>
+              <span id="conic-suitability" class="badge-mono" style="font-size:0.6rem; padding:2px 8px; border-radius:4px;">CHECKING...</span>
+            </div>
+            <p id="conic-suitability-desc" style="font-size:0.75rem; line-height:1.5; color:var(--text-muted);">
+              Menganalisis kecocokan kontras warna border...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: INTERACTIVE SANDBOX -->
+  <section>
+    <div class="section-header">
+      <span class="badge-mono">Modulation Bench</span>
+      <h2 class="section-title">PHYSICS SANDBOX</h2>
+      <p class="section-subtitle">Kontrol skeuomorphic responsif yang menyesuaikan visualnya secara instan mengikuti perubahan tema.</p>
+    </div>
+
+    <div class="sandbox-container">
+      <div class="skeuo-box">
+        <span class="badge-mono" style="font-size:0.6rem; align-self:flex-start;">Hardware Link</span>
+        <div class="control-row">
+          <span style="font-size:0.85rem; font-weight:700;">PWR_STG1</span>
+          <div class="switch-track active" onclick="this.classList.toggle('active')">
+            <div class="switch-knob"></div>
+          </div>
+        </div>
+        <div class="control-row">
+          <span style="font-size:0.85rem; font-weight:700;">VALVE_GATE</span>
+          <div class="switch-track" onclick="this.classList.toggle('active')">
+            <div class="switch-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="skeuo-box">
+        <span class="badge-mono" style="font-size:0.6rem; align-self:flex-start;">Signal Gain</span>
+        <div class="control-row" style="flex-direction:column; gap:10px; align-items:stretch;">
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
+            <span>MOD_FREQ</span>
+            <span id="slider-num" style="color:var(--accent);">82%</span>
+          </div>
+          <input type="range" min="10" max="100" value="82" oninput="document.getElementById('slider-num').textContent = this.value + '%'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: THE 42 STYLES CATALOG -->
+  <section id="catalog">
+    <div class="section-header">
+      <span class="badge-mono">Library Catalog</span>
+      <h2 class="section-title">THE 42 STYLES ARCHIVE</h2>
+      <p class="section-subtitle">Daftar lengkap instruksi prompt dan halaman demo lokal yang siap di-copypaste. 42 gaya dari V1 hingga V4.</p>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div class="catalog-filters">
+        <button class="filter-btn active" data-filter="all" onclick="filterCatalog('all')">All Styles</button>
+        <button class="filter-btn" data-filter="minimalist" onclick="filterCatalog('minimalist')">Minimalist</button>
+        <button class="filter-btn" data-filter="retro" onclick="filterCatalog('retro')">Retro / CRT</button>
+        <button class="filter-btn" data-filter="experimental" onclick="filterCatalog('experimental')">Experimental</button>
+      </div>
+
+      <div class="search-box-wrap">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" class="search-input" id="search-input" placeholder="Search styles..." oninput="searchCatalog()">
+      </div>
+    </div>
+
+    <div class="catalog-grid" id="catalog-grid">
+      <!-- Populated via JS -->
+    </div>
+  </section>
+
+  <!-- SECTION 5: SWITCHER FOOTER -->
+  <section class="footer-layout">
+    <span class="badge-mono">Global Console Settings</span>
+
+    <div class="switcher-row">
+      <button class="theme-btn" data-theme-btn="light" onclick="setTheme('light')">
+        <i class="fa-solid fa-sun" style="color:#D97706;"></i> Minimal Light
+      </button>
+      <button class="theme-btn" data-theme-btn="dark" onclick="setTheme('dark')">
+        <i class="fa-solid fa-moon" style="color:#6366F1;"></i> Dark Glass
+      </button>
+      <button class="theme-btn" data-theme-btn="orange" onclick="setTheme('orange')">
+        <i class="fa-solid fa-mug-hot" style="color:#C2703D;"></i> Warm Wabi
+      </button>
+      <button class="theme-btn" data-theme-btn="sea" onclick="setTheme('sea')">
+        <i class="fa-solid fa-terminal" style="color:#00F0FF;"></i> Neon Cyber
+      </button>
+      <button class="theme-btn" data-theme-btn="rose" onclick="setTheme('rose')">
+        <i class="fa-solid fa-heart" style="color:#E11D48;"></i> Cosmic Rose
+      </button>
+    </div>
+
+    <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--text-muted); text-align:center; line-height:1.6; margin-top:2rem;">
+      UI PLAYGROUND BETA // 2026 // 42 ARCHITECTURAL AESTHETICS
+    </div>
+  </section>
+
+  <script>
+    const stylesData = [
+      { id: 1, tag: "experimental", title: "Neobrutalism UI", desc: "SaaS neobrutalist dengan warna cerah datar, border tebal, dan bayangan offset hitam padat.", prompt: "Build a neobrutalist UI using Next.js + Tailwind CSS. 3px solid black borders, offset black shadows, flat colors.", path: "previews/1-neobrutalism.html" },
+      { id: 2, tag: "experimental", title: "Glassmorphism Dashboard", desc: "Dasbor transparan dengan backdrop blur tinggi, bayangan lunak, dan garis pembatas berkilau.", prompt: "Build a Glassmorphism analytics dashboard. backdrop-blur-xl, thin translucent borders, ambient glow blobs.", path: "previews/2-glassmorphism.html" },
+      { id: 3, tag: "minimalist", title: "Dark Luxury Editorial", desc: "Portofolio pameran seni mewah asimetris dengan font serif klasik dan aksen kuningan.", prompt: "Build a Dark Luxury portfolio. High-contrast serif typography, warm brass accents, asymmetric editorial grid.", path: "previews/3-dark-luxury.html" },
+      { id: 4, tag: "minimalist", title: "Bento Grid Dashboard", desc: "Tata letak kartu bento modular berstruktur rapi lengkap dengan sparkline monitoring.", prompt: "Build a Bento Grid dashboard. Varied card spans, subtle status pulses, no drop shadows.", path: "previews/4-bento-grid.html" },
+      { id: 5, tag: "experimental", title: "Maximalist Anti-Design", desc: "Desain radikal anti-kemapanan dengan warna bersaturasi tinggi, font Anton, dan overlap.", prompt: "Build a maximalist anti-design site. Neon clashing colors, overlapping grids, massive headings.", path: "previews/5-maximalist.html" },
+      { id: 6, tag: "experimental", title: "GSAP Horizontal Scroll", desc: "Navigasi bercerita horizontal yang dikendalikan oleh pergerakan gulir vertikal.", prompt: "Build a horizontal storytelling page with GSAP ScrollTrigger. Pin sections, scrub timelines.", path: "previews/6-gsap-scroll.html" },
+      { id: 7, tag: "experimental", title: "Lenis Scroll Parallax", desc: "Eksplorasi parallax berlapis dengan inersia gulir Lenis yang halus.", prompt: "Build a smooth parallax portfolio with Lenis Scroll. Velocity-based blur, multi-layer parallax.", path: "previews/7-lenis-parallax.html" },
+      { id: 8, tag: "experimental", title: "Three.js WebGL 3D", desc: "Integrasi kanvas 3D interaktif yang berputar mengikuti sudut arah kursor.", prompt: "Build a landing page with Three.js WebGL Canvas. Torus Knot tilting on mousemove with damped lerp.", path: "previews/8-webgl-3d.html" },
+      { id: 9, tag: "experimental", title: "Magnetic Button Parallax", desc: "Tombol interaktif bermagnet dengan tarikan elastis mendekati pointer.", prompt: "Build magnetic button behaviors. Elastic transform shift toward pointer using spring physics.", path: "previews/9-magnetic.html" },
+      { id: 10, tag: "minimalist", title: "Claymorphism Soft-UI", desc: "Komponen antarmuka 3D lembut bergaya tanah liat dengan bayangan ganda.", prompt: "Build claymorphic components. Dual light-source shadows, soft pastel base, aggressive border-radius.", path: "previews/10-claymorphism.html" },
+      { id: 11, tag: "retro", title: "Y2K Retro-Futurism", desc: "Gaya visual 2000-an dengan gradien krom, font piksel, dan tombol glossy jeli.", prompt: "Build a Y2K brand page. Chrome gradients, VT323 pixel labels, 3D gel-buttons, sheen sweep.", path: "previews/11-y2k-retro.html" },
+      { id: 12, tag: "minimalist", title: "Swiss International Style", desc: "Kisi 12-kolom matematis ketat, all-uppercase, aksen merah 5%.", prompt: "Build a Swiss grid catalog. Asymmetric alignments, strict type scales, signal red accents only.", path: "previews/12-swiss-style.html" },
+      { id: 13, tag: "retro", title: "Cyberpunk Command Center", desc: "Dasbor gelap militer fiksi dengan scanlines, pendaran teks, dan panel terminal.", prompt: "Build a Cyberpunk console. CRT scanlines, monospaced glow text, noise texture, glitch effects.", path: "previews/13-cyberpunk.html" },
+      { id: 14, tag: "minimalist", title: "Japanese Wabi-Sabi", desc: "Desain zen washi dengan spasi lebar, penulisan vertikal, dan stempel tinta merah.", prompt: "Build a zen wabi-sabi site. Warm sand background, vertical text, vermillion seal mark.", path: "previews/14-wabi-sabi.html" },
+      { id: 15, tag: "experimental", title: "Aurora UI Gradient", desc: "Panel transparan di atas gelembung warna melayang dengan bingkai gradien berputar.", prompt: "Build an Aurora UI layout. Floating blurred backdrop blobs, conic rotating border cards.", path: "previews/15-aurora-ui.html" },
+      { id: 16, tag: "experimental", title: "Kinetic Typography", desc: "Hurut variabel yang melar lebar dan ketebalannya secara dinamis.", prompt: "Build a kinetic typography hero. Variable font wght/wdth axes animating on mouse proximity.", path: "previews/16-kinetic-typo.html" },
+      { id: 17, tag: "retro", title: "Neo-Skeuomorphic Panel", desc: "Papan kontrol fisik dengan tekstur kulit berjahit, brushed metal, dan dial putar.", prompt: "Build a skeuomorphic control panel. Stitched leather, brushed metal dials, spring toggles.", path: "previews/17-skeuomorphic.html" },
+      { id: 18, tag: "retro", title: "DIY Zine Scrapbook", desc: "Kolase tidak beraturan dengan tepian sobek, coretan marker, dan selotip.", prompt: "Build a zine scrapbook grid. Torn paper clip-paths, masking tape, mismatched fonts per card.", path: "previews/18-diy-zine.html" },
+      { id: 19, tag: "retro", title: "Retro CRT Terminal", desc: "Simulasi tabung monitor CRT dengan boot sequence dan efek getar.", prompt: "Build a retro CRT terminal. Vignette shadow, scanline overlays, phosphor green glow, blinking cursor.", path: "previews/19-crt-terminal.html" },
+      { id: 20, tag: "experimental", title: "Organic Blob Navigation", desc: "Navigasi amoeba cair yang melebar elastis menjadi menu.", prompt: "Build fluid organic blob menu. Shifting border-radius, elastic spring, bubble hover repel.", path: "previews/20-fluid-nav.html" },
+      { id: 21, tag: "experimental", title: "Jars UI - Particle Canvas", desc: "Galaxy background interaktif dengan blackhole gravity dan star trails.", prompt: "Build an interactive galaxy backdrop with jars-particle-canvas Web Component.", path: "previews/21-jars-ui.html" },
+      { id: 22, tag: "experimental", title: "Theme & Color Showcase", desc: "Landing page multi-tema dengan Y2K buttons, skeuomorphic controls, dan metrics.", prompt: "Build a 5-section multi-themed landing page with theme switcher, glossy buttons, skeuo controls.", path: "previews/22-landing-showcase.html" },
+      { id: 23, tag: "experimental", title: "Memphis Design Revival", desc: "Konfeti geometri, zig-zag borders, warna primer ngejreng gaya 80s.", prompt: "Build a Memphis Design agency page. Geometric confetti, dotted patterns, mismatched borders, outline text.", path: "previews/23-memphis-design.html" },
+      { id: 24, tag: "retro", title: "Vaporwave Synthwave", desc: "Sunset neon, grid perspektif retro, chrome gradient, duotone Yunani.", prompt: "Build a synthwave brand site. Perspective grid floor, chrome gradient text, scanline cards, aberration hover.", path: "previews/24-vaporwave.html" },
+      { id: 25, tag: "minimalist", title: "Bauhaus Functionalism", desc: "Geometri dasar, warna primer murni, grid asimetris, tanpa border-radius.", prompt: "Build a Bauhaus studio site. Primary triad palette, geometric shape blocks, visible 12-column grid.", path: "previews/25-bauhaus.html" },
+      { id: 26, tag: "minimalist", title: "Paper Cut Layered Depth", desc: "Kertas bertumpuk, tepi robek, polaroid, bayangan kertas hard-shadow.", prompt: "Build a Paper Cut storytelling site. Stacked paper layers, torn edges, polaroid frames, slab serif.", path: "previews/26-paper-cut.html" },
+      { id: 27, tag: "experimental", title: "Sci-Fi HUD Dashboard", desc: "Wireframe militer, circular gauges, radar sweep, targeting reticle.", prompt: "Build a tactical HUD dashboard. Wireframe containers, 1px lines only, SVG gauges, radar sweep, corner brackets.", path: "previews/27-sci-fi-hud.html" },
+      { id: 28, tag: "retro", title: "Steampunk Victorian", desc: "Brass gears, leather, parchment, rivets, rotarty dials Victorian feel.", prompt: "Build a steampunk panel. Brass gradients, stitched leather, parchment, rotating gears, rotary dials.", path: "previews/28-steampunk.html" },
+      { id: 29, tag: "minimalist", title: "Dark Academia", desc: "Coklat tua, emerald, gold, drop caps serif, feel perpustakaan Oxford.", prompt: "Build a Dark Academia blog. Deep brown, gold accents, serif drop caps, single column reading, minimal motion.", path: "previews/29-dark-academia.html" },
+      { id: 30, tag: "experimental", title: "Deconstructivist Typography", desc: "Grid rusak, teks terpotong, alignment acak, fragmentasi avant-garde.", prompt: "Build a deconstructivist magazine layout. Broken grid, split headlines, mixed alignments, glitch text.", path: "previews/30-deconstructivist.html" },
+      { id: 31, tag: "minimalist", title: "Lo-Fi Anime Aesthetic", desc: "Pastel lembut, grain texture, rounded, city pop, cassette art.", prompt: "Build a lo-fi music player. Pastel gradient, film grain, rounded-3xl everywhere, cassette CSS art.", path: "previews/31-lo-fi-anime.html" },
+      { id: 32, tag: "experimental", title: "Constructivism Poster", desc: "Diagonal composition, merah-hitam-kuning, photomontage, gaya Soviet.", prompt: "Build a constructivism activism page. Diagonal composition, strict red/black/yellow palette, photomontage.", path: "previews/32-constructivism.html" },
+      // V4
+      { id: 33, tag: "minimalist", title: "Art Nouveau", desc: "Whiplash curves, floral ornaments, gold accents, moss green.", prompt: "Build an artisanal brand site in Art Nouveau style. Organic whiplash borders, floral motifs, gold initial cap.", path: "previews/33-art-nouveau.html" },
+      { id: 34, tag: "experimental", title: "Raw Brutalist Web", desc: "System monospace, exposed grid, zero border-radius, 0ms hover.", prompt: "Build a portfolio in Raw Brutalist style. System monospace only. Black/white/blue/red only.", path: "previews/34-raw-brutalist.html" },
+      { id: 35, tag: "retro", title: "Miami Vice Tropical", desc: "Sunset gradient, palm silhouettes, art deco geometry.", prompt: "Build a resort site in Miami Vice style. Sunset gradient, palm silhouettes, art deco sunburst.", path: "previews/35-miami-vice.html" },
+      { id: 36, tag: "minimalist", title: "Cottagecore Diary", desc: "Soft sage, floral, lace borders, handwritten accents.", prompt: "Build a personal blog in Cottagecore style. Sage green, cream paper, lace borders, handwritten Caveat.", path: "previews/36-cottagecore.html" },
+      { id: 37, tag: "retro", title: "Comic Pop Art", desc: "Panel borders, halftone dots, speech bubbles, SFX.", prompt: "Build a creative site in Comic Book style. Thick panel borders, halftone dots, speech bubbles, starburst SFX.", path: "previews/37-comic-pop-art.html" },
+      { id: 38, tag: "experimental", title: "NASA Mission Control", desc: "Engineering grid, coral/teal, callout boxes, T-minus.", prompt: "Build a mission dashboard in NASA Technical style. Grid paper, coral callout boxes, Roboto Condensed.", path: "previews/38-nasa-technical.html" },
+      { id: 39, tag: "retro", title: "Psychedelic 60s", desc: "Rainbow gradients, wavy text, paisley, concert poster.", prompt: "Build a festival page in Psychedelic style. Rotating rainbow background, wavy textPath, paisley.", path: "previews/39-psychedelic-60s.html" },
+      { id: 40, tag: "minimalist", title: "Monochrome Editorial", desc: "Strict black/white, high-contrast, zero gray.", prompt: "Build a fashion lookbook in strict Monochrome. ONLY #000 and #FFF, Didot headlines, invert hover.", path: "previews/40-monochrome-editorial.html" },
+      { id: 41, tag: "experimental", title: "Sticky Note Board", desc: "Cork board, post-its, pushpins, Kanban layout.", prompt: "Build a Kanban in Cork Board style. Post-it notes with rotations, pushpins, handwritten font.", path: "previews/41-sticky-note-board.html" },
+      { id: 42, tag: "retro", title: "Gothic Horror", desc: "Dark ornate, blackletter, blood drip, candle flicker.", prompt: "Build a dark fantasy site in Gothic style. Cobweb texture, thorn borders, blackletter headings.", path: "previews/42-gothic-horror.html" }
+    ];
+
+    let currentFilter = 'all';
+
+    function populateCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = '';
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const filtered = stylesData.filter(s => {
+        const matchesFilter = currentFilter === 'all' || s.tag === currentFilter;
+        const matchesSearch = s.title.toLowerCase().includes(query) || s.desc.toLowerCase().includes(query);
+        return matchesFilter && matchesSearch;
+      });
+
+      filtered.forEach(style => {
+        const card = document.createElement('div');
+        card.className = 'catalog-card';
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="card-meta">
+              <span class="card-id">STYLE #${String(style.id).padStart(2, '0')}</span>
+              <span class="card-badge">${style.tag}</span>
+            </div>
+            <h3 class="card-title">${style.title}</h3>
+            <p class="card-desc">${style.desc}</p>
+          </div>
+          <div class="card-actions">
+            <button class="card-btn primary" onclick="copyPrompt('${style.prompt.replace(/'/g, "\\'")}', this)">
+              <i class="fa-solid fa-copy"></i> Copy Prompt
+            </button>
+            <a href="${style.path}" target="_blank" class="card-btn secondary">
+              <i class="fa-solid fa-up-right-from-square"></i> Demo
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    window.filterCatalog = function(category) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === category);
+      });
+      populateCatalog();
+    }
+
+    window.searchCatalog = function() { populateCatalog(); }
+
+    window.copyPrompt = function(promptText, button) {
+      navigator.clipboard.writeText(promptText).then(() => {
+        const original = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        button.style.background = 'var(--success)';
+        button.style.borderColor = 'var(--success)';
+        setTimeout(() => {
+          button.innerHTML = original;
+          button.style.background = '';
+          button.style.borderColor = '';
+        }, 1500);
+      });
+    }
+
+    const suitabilityTexts = {
+      light: { status: "LOW CONTRAST (GLARE)", desc: "Kurang cocok. Pendaran neon border kurang terlihat kontras di latar belakang putih terang." },
+      dark: { status: "HIGH CONTRAST", desc: "Sangat cocok! Warna border gradien terlihat kontras dan elegan di atas permukaan gelap." },
+      orange: { status: "MUDDY CONTRAST", desc: "Kurang optimal. Efek glow jingga memudar di atas warna krem washi yang hangat." },
+      sea: { status: "OPTIMAL GLOW", desc: "Sangat cocok! Latar gelap pekat membuat gradien neon cyan bercahaya maksimal." },
+      rose: { status: "HIGH CONTRAST", desc: "Sangat cocok! Kepekatan mawar gelap memberikan fondasi untuk pendaran border merah." }
+    };
+
+    window.setTheme = function(themeName) {
+      const root = document.documentElement;
+      root.className = 'scroll-smooth theme-' + themeName;
+      localStorage.setItem('playground-showcase-theme', themeName);
+      updateSwitcherUI(themeName);
+      const fit = suitabilityTexts[themeName];
+      if (fit) {
+        const badge = document.getElementById('conic-suitability');
+        const desc = document.getElementById('conic-suitability-desc');
+        if (badge && desc) {
+          badge.textContent = fit.status;
+          desc.textContent = fit.desc;
+          const isBad = fit.status.includes("LOW") || fit.status.includes("MUDDY");
+          badge.style.borderColor = isBad ? "var(--danger)" : "var(--success)";
+          badge.style.color = isBad ? "var(--danger)" : "var(--success)";
+          badge.style.background = isBad ? "rgba(220,38,38,0.08)" : "rgba(22,163,74,0.08)";
+        }
+      }
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem('playground-showcase-theme');
+      if (saved) { window.setTheme(saved); }
+      else { window.setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    }
+
+    function updateSwitcherUI(activeTheme) {
+      document.querySelectorAll('[data-theme-btn]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === activeTheme);
+      });
+    }
+
+    window.setConicPreset = function(presetName, btn) {
+      const root = document.documentElement;
+      document.querySelectorAll('[data-border-preset]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (presetName === 'neon') {
+        root.style.setProperty('--conic-gradient', 'conic-gradient(from 0deg, var(--accent), var(--primary), var(--secondary), var(--accent))');
+        root.style.setProperty('--rotate-speed-card', '6s');
+        root.style.setProperty('--rotate-speed-btn', '4s');
+        root.style.setProperty('--rotate-speed-badge', '3s');
+      } else if (presetName === 'pastel') {
+        root.style.setProperty('--conic-gradient', 'conic-gradient(from 0deg, rgba(var(--accent-rgb), 0.5), rgba(var(--accent-rgb), 0.15), rgba(var(--accent-rgb), 0.5))');
+        root.style.setProperty('--rotate-speed-card', '10s');
+        root.style.setProperty('--rotate-speed-btn', '7s');
+        root.style.setProperty('--rotate-speed-badge', '5s');
+      } else if (presetName === 'mono') {
+        root.style.setProperty('--conic-gradient', 'conic-gradient(from 0deg, var(--text-muted), var(--border), var(--text-muted))');
+        root.style.setProperty('--rotate-speed-card', '14s');
+        root.style.setProperty('--rotate-speed-btn', '10s');
+        root.style.setProperty('--rotate-speed-badge', '8s');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { initTheme(); populateCatalog(); });
+  </script>
+</body>
+</html>

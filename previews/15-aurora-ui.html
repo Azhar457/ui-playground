@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aurora UI / Soft Gradient Morphism</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('ui-beta-preview-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-light';
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Light (default) ===== */
+    :root, .theme-light {
+      --bg-body: #FAFAFA;
+      --text-primary: #1E293B;
+      --text-muted: #64748B;
+      --purple: #C084FC;
+      --indigo: #818CF8;
+      --pink: #F472B6;
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.65);
+      --card-hover-bg: rgba(255, 255, 255, 0.65);
+      --blob-opacity: 0.18;
+      --blob-opacity-2: 0.15;
+      --gradient-from: #7C3AED;
+      --gradient-to: #DB2777;
+    }
+
+    .theme-dark {
+      --bg-body: #0C0A1A;
+      --text-primary: #E2E8F0;
+      --text-muted: #94A3B8;
+      --purple: #8B5CF6;
+      --indigo: #6366F1;
+      --pink: #EC4899;
+      --glass-bg: rgba(12, 10, 26, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --card-hover-bg: rgba(12, 10, 26, 0.7);
+      --blob-opacity: 0.25;
+      --blob-opacity-2: 0.2;
+      --gradient-from: #8B5CF6;
+      --gradient-to: #EC4899;
+    }
+
+    .theme-sunset {
+      --bg-body: #1C0F1A;
+      --text-primary: #FFEDE6;
+      --text-muted: #E8AFA6;
+      --purple: #FF7B54;
+      --indigo: #FF4D6D;
+      --pink: #FF8FA3;
+      --glass-bg: rgba(28, 15, 26, 0.5);
+      --glass-border: rgba(255, 125, 85, 0.2);
+      --card-hover-bg: rgba(28, 15, 26, 0.7);
+      --blob-opacity: 0.3;
+      --blob-opacity-2: 0.25;
+      --gradient-from: #FF7B54;
+      --gradient-to: #FF4D6D;
+    }
+
+    .theme-ocean {
+      --bg-body: #0A1428;
+      --text-primary: #E0F2FE;
+      --text-muted: #7DD3FC;
+      --purple: #38BDF8;
+      --indigo: #22D3EE;
+      --pink: #67E8F9;
+      --glass-bg: rgba(10, 20, 40, 0.5);
+      --glass-border: rgba(56, 189, 248, 0.15);
+      --card-hover-bg: rgba(10, 20, 40, 0.7);
+      --blob-opacity: 0.25;
+      --blob-opacity-2: 0.2;
+      --gradient-from: #38BDF8;
+      --gradient-to: #22D3EE;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Aurora Gradient Blobs */
+    .aurora-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      mix-blend-mode: multiply;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+
+    .blob-1 {
+      top: -100px;
+      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: var(--purple);
+      opacity: var(--blob-opacity);
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      bottom: -150px;
+      right: -100px;
+      width: 550px;
+      height: 550px;
+      background: var(--indigo);
+      opacity: var(--blob-opacity-2);
+      animation-delay: -5s;
+    }
+
+    .blob-3 {
+      top: 30%;
+      left: 40%;
+      width: 400px;
+      height: 400px;
+      background: var(--pink);
+      opacity: var(--blob-opacity-2);
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-40px) scale(1.1) rotate(15deg); }
+      100% { transform: translateY(20px) scale(0.95) rotate(-15deg); }
+    }
+
+    /* Glass card elements */
+    .aurora-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      position: relative;
+      z-index: 5;
+      transition: all 0.3s ease;
+    }
+
+    .aurora-card:hover {
+      background: var(--card-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    /* Conic Gradient Border rotating mask card */
+    .featured-card-wrap {
+      position: relative;
+      border-radius: 24px;
+      padding: 1px;
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .featured-card-wrap::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: conic-gradient(from 0deg, var(--purple), var(--pink), var(--indigo), var(--purple));
+      animation: rotateBorder 6s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    .featured-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: 23px;
+      padding: 1.5rem;
+      position: relative;
+      z-index: 2;
+      height: 100%;
+    }
+
+    /* Typography */
+    .gradient-text {
+      background: linear-gradient(90deg, var(--gradient-from), var(--gradient-to));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p.subhead {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      max-width: 500px;
+      margin-bottom: 2rem;
+    }
+
+    /* Grid */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Section tag */
+    .sec-tag {
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 0.4rem;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Sandbox */
+    .sandbox-glass {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .sandbox-glass button {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 0.6rem 1.4rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sandbox-glass button:hover {
+      background: var(--card-hover-bg);
+      transform: translateY(-1px);
+    }
+
+    .glass-slider {
+      -webkit-appearance: none;
+      width: 140px;
+      height: 6px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 999px;
+      outline: none;
+      border: 1px solid var(--glass-border);
+    }
+
+    .glass-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--gradient-from);
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid var(--glass-border);
+    }
+
+    /* Specs */
+    .spec-glass {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      position: relative;
+      z-index: 5;
+    }
+
+    .spec-item-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .spec-item-glass .val {
+      font-weight: 800;
+      font-size: 1.25rem;
+      background: linear-gradient(90deg, var(--gradient-from), var(--gradient-to));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .spec-item-glass .lbl {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 0.25rem;
+    }
+
+    /* Footer */
+    .aurora-footer {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 2.5rem;
+    }
+
+    .theme-btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 9999px;
+      padding: 0.4rem 1.2rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .theme-btn:hover {
+      background: var(--card-hover-bg);
+    }
+
+    .theme-btn.active {
+      background: linear-gradient(90deg, var(--gradient-from), var(--gradient-to));
+      color: #FFFFFF;
+      border-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating aurora elements -->
+  <div class="aurora-container">
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+  </div>
+
+  <!-- SECTION 1: HERO -->
+  <section style="position:relative; z-index:10; max-width:600px;">
+    <div class="sec-tag">SECTION 1 // Hero</div>
+    <h1>IMAGINE THE <span class="gradient-text">LIGHT.</span></h1>
+    <p class="subhead">Aurora UI wraps friendly geometric cards on top of slow-morphing blurred ambient morning light blobs, generating deep DREAMY visual presence.</p>
+  </section>
+
+  <!-- SECTION 2: FEATURES / GALLERY -->
+  <section>
+    <div class="sec-tag">SECTION 2 // Features Gallery</div>
+    <div class="grid-container">
+
+      <div class="aurora-card">
+        <span style="font-size:1.5rem; margin-bottom:1rem; display:block;">✦</span>
+        <h3 style="font-weight:700; margin-bottom:0.5rem;">Soft Glass</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">Frosted transparent backings filter the colorful gradients floating in behind.</p>
+      </div>
+
+      <div class="featured-card-wrap">
+        <div class="featured-card">
+          <span style="font-size:1.5rem; margin-bottom:1rem; display:block; color:var(--gradient-to);">★</span>
+          <h3 style="font-weight:700; margin-bottom:0.5rem; color:var(--gradient-from);">Active Conic</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">Border masks draw color coordinates continually in a 360-degree rotation.</p>
+        </div>
+      </div>
+
+      <div class="aurora-card">
+        <span style="font-size:1.5rem; margin-bottom:1rem; display:block;">◈</span>
+        <h3 style="font-weight:700; margin-bottom:0.5rem;">Blur Morph</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">Floating blobs slowly drift and morph behind glass panels, creating depth without clutter.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: INTERACTIVE SANDBOX -->
+  <section>
+    <div class="sec-tag">SECTION 3 // Interactive Sandbox</div>
+    <div class="grid-container" style="grid-template-columns:1fr;">
+      <div class="aurora-card">
+        <div class="sandbox-glass">
+          <button onclick="toggleBlobMotion()">Toggle Float</button>
+          <button onclick="alert('✦ Dreamy vibes activated ✦')">Dream</button>
+          <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem;">
+            <span>Blur:</span>
+            <input type="range" class="glass-slider" min="40" max="160" value="100" oninput="adjustBlur(this.value)">
+            <span id="blur-val">100px</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SPECS / TECHNICAL -->
+  <section>
+    <div class="sec-tag">SECTION 4 // Technical Specs</div>
+    <div class="spec-glass">
+      <div class="spec-item-glass">
+        <div class="val">25px</div>
+        <div class="lbl">Blur Radius</div>
+      </div>
+      <div class="spec-item-glass">
+        <div class="val">24px</div>
+        <div class="lbl">Card Radius</div>
+      </div>
+      <div class="spec-item-glass">
+        <div class="val">20s</div>
+        <div class="lbl">Float Cycle</div>
+      </div>
+      <div class="spec-item-glass">
+        <div class="val">3</div>
+        <div class="lbl">Blob Layers</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: THEME SWITCHER FOOTER -->
+  <footer class="aurora-footer">
+    <div class="sec-tag" style="border:none; padding:0; margin:0;">SECTION 5 // Theme Switcher</div>
+    <div class="theme-btn-row">
+      <button class="theme-btn active" onclick="setTheme('light')">Light</button>
+      <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+      <button class="theme-btn" onclick="setTheme('sunset')">Sunset</button>
+      <button class="theme-btn" onclick="setTheme('ocean')">Ocean</button>
+    </div>
+    <span style="font-size:0.55rem; opacity:0.4; letter-spacing:1px;">AURORA UI // SOFT GRADIENT MORPHISM</span>
+  </footer>
+
+  <script>
+    window.setTheme = function(name) {
+      document.documentElement.className = 'theme-' + name;
+      localStorage.setItem('ui-beta-preview-theme', name);
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === name);
+      });
+    };
+
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        if (b.textContent.toLowerCase() === current) b.classList.add('active');
+      });
+    })();
+
+    function toggleBlobMotion() {
+      document.querySelectorAll('.aurora-blob').forEach(function(el) {
+        el.style.animationPlayState = el.style.animationPlayState === 'paused' ? 'running' : 'paused';
+      });
+    }
+
+    function adjustBlur(val) {
+      document.querySelectorAll('.aurora-blob').forEach(function(el) {
+        el.style.filter = 'blur(' + val + 'px)';
+      });
+      document.getElementById('blur-val').textContent = val + 'px';
+    }
+  </script>
+</body>
+</html>

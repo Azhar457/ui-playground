@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japanese Wabi-Sabi Minimalism</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('ui-beta-preview-theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-washi';
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== THEME: Washi (default warm) ===== */
+    :root, .theme-washi {
+      --bg-body: #F7F5F0;
+      --text-ink: #1C1917;
+      --text-muted: #78716C;
+      --accent-verm: #B91C1C;
+      --wash-bg: #E7E5E4;
+      --border-light: rgba(0,0,0,0.05);
+    }
+
+    .theme-stone {
+      --bg-body: #E2E4E1;
+      --text-ink: #1C1C1A;
+      --text-muted: #6B6E6A;
+      --accent-verm: #5B7B6A;
+      --wash-bg: #D1D5D0;
+      --border-light: rgba(0,0,0,0.04);
+    }
+
+    .theme-ink {
+      --bg-body: #1A1A1A;
+      --text-ink: #F0F0E8;
+      --text-muted: #8C8C80;
+      --accent-verm: #C43A3A;
+      --wash-bg: #2A2A2A;
+      --border-light: rgba(255,255,255,0.06);
+    }
+
+    .theme-sakura {
+      --bg-body: #FDF5F2;
+      --text-ink: #4A2C2A;
+      --text-muted: #B88A85;
+      --accent-verm: #E88D8A;
+      --wash-bg: #F3E0DB;
+      --border-light: rgba(180,100,90,0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-ink);
+      font-family: 'Noto Serif JP', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding: 4rem 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* Paper grain overlay */
+    .washi-grain {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(0,0,0,0.015) 1px, transparent 1px);
+      background-size: 4px 4px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Sumi ink wash corner */
+    .sumi-wash {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle at top right, var(--wash-bg), transparent 70%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .zen-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 8vh;
+      width: 100%;
+    }
+
+    /* Vertical Text writing-mode */
+    .vertical-brand {
+      writing-mode: vertical-rl;
+      position: absolute;
+      right: 1rem;
+      top: 4rem;
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Section tag */
+    .sec-tag {
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Hero */
+    .zen-hero {
+      padding-top: 2rem;
+      max-width: 650px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.45;
+      margin-bottom: 2rem;
+    }
+
+    h1 em {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--accent-verm);
+    }
+
+    p.zen-body {
+      font-size: 0.9rem;
+      line-height: 2.0;
+      color: var(--text-ink);
+      max-width: 45ch;
+      opacity: 0.85;
+    }
+
+    /* Slow floating drift element (incense effect) */
+    .incense-float {
+      margin-top: 2rem;
+      align-self: flex-start;
+      animation: incenseDrift 8s ease-in-out infinite alternate;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    @keyframes incenseDrift {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(10px) translateY(-5px); }
+    }
+
+    .red-seal {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--accent-verm);
+      color: var(--accent-verm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border-radius: 2px;
+    }
+
+    /* Feature cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-item {
+      border-top: 1px solid var(--border-light);
+      padding-top: 1.25rem;
+    }
+
+    .feature-item .zh {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-verm);
+    }
+
+    .feature-item h3 {
+      font-weight: 400;
+      font-size: 1rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .feature-item p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Sandbox */
+    .sandbox-zen {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .sandbox-zen button {
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-ink);
+      font-family: 'Noto Serif JP', serif;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sandbox-zen button:hover {
+      border-color: var(--accent-verm);
+      color: var(--accent-verm);
+    }
+
+    .seal-toggle {
+      writing-mode: vertical-rl;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.3s ease;
+    }
+
+    .seal-toggle:hover {
+      border-color: var(--accent-verm);
+    }
+
+    /* Spec grid */
+    .spec-zen {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border-light);
+      border: 1px solid var(--border-light);
+    }
+
+    .spec-zen > div {
+      background: var(--bg-body);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .spec-zen .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--accent-verm);
+    }
+
+    .spec-zen .lbl {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* Footer */
+    .zen-footer {
+      border-top: 1px solid var(--border-light);
+      padding-top: 2rem;
+      margin-top: 4rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .theme-btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .theme-btn {
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-ink);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.65rem;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent-verm);
+      color: var(--accent-verm);
+    }
+
+    .theme-btn.active {
+      border-color: var(--accent-verm);
+      color: var(--accent-verm);
+      background: rgba(185, 28, 28, 0.04);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Textures -->
+  <div class="washi-grain"></div>
+  <div class="sumi-wash"></div>
+
+  <!-- Vertical text right -->
+  <div class="vertical-brand">侘寂 / WABI-SABI INTERFACES</div>
+
+  <div class="zen-container">
+
+    <!-- SECTION 1: HERO -->
+    <section class="zen-hero">
+      <div class="sec-tag">SECTION 1 // Hero</div>
+      <h1>侘び寂び<br>Embrace the <em>imperfect</em> and quiet space.</h1>
+      <p class="zen-body">
+        Japanese minimalism focuses on wabi-sabi philosophy: recognizing beauty in simple, transient, and natural states. Double line-height typography spacing permits the user's mind to rest and breathe.
+      </p>
+    </section>
+
+    <!-- SECTION 2: FEATURES / GALLERY -->
+    <section>
+      <div class="sec-tag">SECTION 2 // Features Gallery</div>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <div class="zh">佗</div>
+          <h3>Imperfect Beauty</h3>
+          <p>Wabi finds elegance in asymmetry, rough textures, and the natural cycle of growth and decay.</p>
+        </div>
+        <div class="feature-item">
+          <div class="zh">寂</div>
+          <h3>Quiet Patina</h3>
+          <p>Sabi celebrates the passage of time — faded ink, worn edges, and the warmth of aged materials.</p>
+        </div>
+        <div class="feature-item">
+          <div class="zh">墨</div>
+          <h3>Sumi Wash</h3>
+          <p>Ink-wash gradients dissolve hard boundaries, leaving atmospheric space for the eye to wander.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE SANDBOX -->
+    <section>
+      <div class="sec-tag">SECTION 3 // Interactive Sandbox</div>
+      <div class="sandbox-zen">
+        <button onclick="toggleFloat()">Toggle Incense Drift</button>
+        <button onclick="alert('静寂 — silence settled.')">静寂 (Silence)</button>
+        <span class="seal-toggle" id="seal-toggle-el" onclick="this.style.opacity=this.style.opacity==='0.3'?'1':'0.3'">墨 SEAL</span>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SPECS / TECHNICAL -->
+    <section>
+      <div class="sec-tag">SECTION 4 // Technical Specs</div>
+      <div class="spec-zen">
+        <div>
+          <div class="num">2.0</div>
+          <div class="lbl">Line Height</div>
+        </div>
+        <div>
+          <div class="num">45ch</div>
+          <div class="lbl">Max Width</div>
+        </div>
+        <div>
+          <div class="num">4px</div>
+          <div class="lbl">Grain Size</div>
+        </div>
+        <div>
+          <div class="num">300</div>
+          <div class="lbl">Font Weight</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- SECTION 5: THEME SWITCHER FOOTER -->
+  <footer class="zen-footer">
+    <div class="sec-tag" style="border:none; padding:0; margin:0;">SECTION 5 // Theme Switcher</div>
+    <div class="theme-btn-row">
+      <button class="theme-btn active" onclick="setTheme('washi')">Washi</button>
+      <button class="theme-btn" onclick="setTheme('stone')">Stone</button>
+      <button class="theme-btn" onclick="setTheme('ink')">Ink</button>
+      <button class="theme-btn" onclick="setTheme('sakura')">Sakura</button>
+    </div>
+    <span>© 2026 WASI.CO &nbsp;—&nbsp; REST IN WHITESPACE</span>
+  </footer>
+
+  <script>
+    window.setTheme = function(name) {
+      document.documentElement.className = 'theme-' + name;
+      localStorage.setItem('ui-beta-preview-theme', name);
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === name);
+      });
+    };
+
+    (function() {
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(b) {
+        if (b.textContent.toLowerCase() === current) b.classList.add('active');
+      });
+    })();
+
+    function toggleFloat() {
+      var el = document.querySelector('.incense-float');
+      if (el) {
+        el.style.animationPlayState = el.style.animationPlayState === 'paused' ? 'running' : 'paused';
+      }
+    }
+  </script>
+</body>
+</html>

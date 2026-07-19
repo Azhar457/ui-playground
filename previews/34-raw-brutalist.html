@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raw Brutalist Web / Exposed Structure</title>
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-dark'}}();</script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #FFF; --fg: #000; --link: #0000EE; --link-visited: #551A8B; --accent: #FF0000; --gray: #808080;
+      --code-bg: #F0F0F0; --btn-bg: #E0E0E0; --btn-hover-bg: #000; --btn-hover-fg: #FFF; --border-color: #000;
+    }
+    html.theme-inverted {
+      --bg: #000; --fg: #FFF; --link: #66B0FF; --link-visited: #CC88FF; --accent: #FF4444; --gray: #808080;
+      --code-bg: #222; --btn-bg: #333; --btn-hover-bg: #FFF; --btn-hover-fg: #000; --border-color: #FFF;
+    }
+    html.theme-blood {
+      --bg: #FFF; --fg: #000; --link: #0000EE; --link-visited: #551A8B; --accent: #FF0000; --gray: #808080;
+      --code-bg: #FFF0F0; --btn-bg: #FF0000; --btn-hover-bg: #000; --btn-hover-fg: #FFF; --border-color: #FF0000;
+    }
+    html.theme-blue {
+      --bg: #000; --fg: #FFF; --link: #66B0FF; --link-visited: #CC88FF; --accent: #0000EE; --gray: #808080;
+      --code-bg: #001030; --btn-bg: #0000EE; --btn-hover-bg: #FFF; --btn-hover-fg: #000; --border-color: #0000EE;
+    }
+
+    body {
+      background: var(--bg); color: var(--fg);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px; line-height: 1.4;
+      min-height: 100vh;
+    }
+
+    a { color: var(--link); text-decoration: underline; }
+    a:visited { color: var(--link-visited); }
+    a:hover { color: var(--accent); }
+
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 14px; }
+    th, td { border: 1px solid var(--border-color); padding: 6px 10px; text-align: left; font-family: 'Courier New', Courier, monospace; font-size: 14px; }
+    th { background: var(--fg); color: var(--bg); font-weight: bold; }
+
+    hr { border: none; border-top: 2px solid var(--border-color); margin: 1.5rem 0; }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 2rem 1rem; }
+
+    /* header */
+    .header { margin-bottom: 1.5rem; }
+    .header h1 { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+    .nav-bar { margin: 0.8rem 0; }
+    .nav-bar a { margin-right: 0; }
+    .nav-bar span.sep { color: var(--gray); }
+
+    /* hero */
+    .hero { margin: 2rem 0 1.5rem; }
+    .hero h2 { font-size: 32px; font-weight: bold; line-height: 1.1; }
+    .hero p { margin: 0.8rem 0; max-width: 65ch; }
+
+    /* button */
+    .btn { display: inline-block; background: var(--btn-bg); border: 1px solid var(--border-color); color: var(--fg); padding: 6px 16px; font-family: 'Courier New', Courier, monospace; font-size: 14px; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: var(--btn-hover-bg); color: var(--btn-hover-fg); }
+
+    /* code block */
+    code { font-family: 'Courier New', Courier, monospace; font-size: 13px; background: var(--code-bg); border: 1px solid var(--border-color); padding: 1px 4px; }
+    pre { font-family: 'Courier New', Courier, monospace; font-size: 13px; background: var(--code-bg); border: 1px solid var(--border-color); padding: 12px; margin: 1rem 0; white-space: pre-wrap; color: var(--fg); }
+
+    /* list */
+    ul, ol { margin: 0.8rem 0 0.8rem 2rem; }
+    li { margin-bottom: 0.3rem; }
+
+    /* section */
+    .section-title { font-size: 24px; font-weight: bold; margin: 1.5rem 0 0.8rem; }
+
+    /* footer */
+    .footer { text-align: center; margin-top: 2rem; padding: 1rem 0; color: var(--gray); }
+    .footer p { font-size: 14px; }
+
+    /* raw dom pre block */
+    #raw-dom { display: none; margin: 1rem 0; }
+
+    /* theme */
+    .theme-section { margin-top: 1.5rem; padding: 1rem 0; border-top: 1px solid var(--border-color); text-align: center; }
+    .theme-btn { background: var(--btn-bg); border: 1px solid var(--border-color); color: var(--fg); padding: 4px 12px; font-family: 'Courier New', Courier, monospace; font-size: 14px; cursor: pointer; margin: 0 4px; }
+    .theme-btn:hover, .theme-btn.active { background: var(--btn-hover-bg); color: var(--btn-hover-fg); }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- SECTION 1: Header + Nav -->
+    <div class="header">
+      <h1>INDEX</h1>
+      <div class="nav-bar">
+        <a href="#">HOME</a><span class="sep"> | </span>
+        <a href="#">WORK</a><span class="sep"> | </span>
+        <a href="#">BLOG</a><span class="sep"> | </span>
+        <a href="#">CONTACT</a><span class="sep"> | </span>
+        <a href="#" id="raw-link">RAW</a>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 2: Hero -->
+    <div class="hero">
+      <h2>HELLO WORLD</h2>
+      <p>This is a brutalist web page. No stylesheets were harmed in its making — only system fonts, system colors, and pure HTML semantics. Every border is visible because structure <em>is</em> design.</p>
+      <p style="color:var(--gray);">View source. The grid is not hidden. The <code>table</code> element is not a crime.</p>
+      <a href="#" class="btn">VIEW SOURCE</a>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 3: Projects (HTML table) -->
+    <div>
+      <div class="section-title">PROJECTS</div>
+      <table>
+        <thead>
+          <tr><th>YEAR</th><th>TITLE</th><th>TECH</th><th>LINK</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2026</td><td>UNIX FILE MONITOR</td><td>C / ncurses</td><td><a href="#">github</a></td></tr>
+          <tr><td>2025</td><td>TCP CHAT SERVER</td><td>Go</td><td><a href="#">github</a></td></tr>
+          <tr><td>2025</td><td>BITMAP EDITOR</td><td>C / SDL</td><td><a href="#">github</a></td></tr>
+          <tr><td>2024</td><td>STATIC SITE GEN</td><td>POSIX shell</td><td><a href="#">git.sr.ht</a></td></tr>
+          <tr><td>2024</td><td>BOOTLOADER HELLO</td><td>asm x86</td><td><a href="#">git/0x10</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 4: Tools / Stack (list + code) -->
+    <div>
+      <div class="section-title">TOOLCHAIN</div>
+      <ul>
+        <li><strong>Editor:</strong> ed (the standard editor)</li>
+        <li><strong>Compiler:</strong> gcc -Wall -Wextra -pedantic -std=c2x</li>
+        <li><strong>Debugger:</strong> gdb / rr reverse debugging</li>
+        <li><strong>Profiler:</strong> perf / valgrind --tool=callgrind</li>
+      </ul>
+      <p>Example <code>Makefile</code> target:</p>
+      <pre>build:
+    gcc -Wall -Wextra -pedantic -std=c2x \
+        -o monitor main.c ui.c \
+        -lncurses -lpthread
+
+debug: build
+    gdb ./monitor</pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION 5: RAW DOM Easter Egg + Footer -->
+    <div>
+      <div class="section-title">META</div>
+      <p>This page is <code>6.3 KB</code> total. No JavaScript frameworks. No CSS preprocessors. The text you are reading is rendered at <code>14px</code> monospace across all viewports. The <code>&lt;table&gt;</code> above is a real HTML table element with visible borders, because hiding your layout grid is dishonest.</p>
+      <pre id="raw-dom">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;Raw Brutalist Web&lt;/title&gt;
+    &lt;!-- no meta description needed --&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class="container"&gt;
+      &lt;!-- header, hero, table, list, footer --&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+    </div>
+
+    <hr>
+
+    <div class="footer">
+      <p>&copy; 2026 — NO RIGHTS RESERVED</p>
+      <p style="font-size:12px;color:var(--gray);">built with &lt;3 and &lt;table&gt;</p>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-section">
+      <button class="theme-btn" data-theme="default">Default</button>
+      <button class="theme-btn" data-theme="inverted">Inverted</button>
+      <button class="theme-btn" data-theme="blood">Blood</button>
+      <button class="theme-btn" data-theme="blue">Blue</button>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      // RAW easter egg
+      document.getElementById('raw-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        var dom = document.getElementById('raw-dom');
+        dom.style.display = dom.style.display === 'block' ? 'none' : 'block';
+      });
+
+      // Theme switcher
+      var current = document.documentElement.className.replace('theme-', '');
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        if (btn.getAttribute('data-theme') === current) btn.classList.add('active');
+        btn.addEventListener('click', function() {
+          window.setTheme(this.getAttribute('data-theme'));
+        });
+      });
+    });
+
+    window.setTheme = function(n) {
+      document.documentElement.className = 'theme-' + n;
+      try { localStorage.setItem('ui-beta-preview-theme', n); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === n);
+      });
+    };
+  </script>
+</body>
+</html>

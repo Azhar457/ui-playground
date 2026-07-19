@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinematic Lenis Scroll Engine</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- GSAP & Lenis Smooth Scroll -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.5/dist/lenis.min.js"></script>
+
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('playground-lenis-theme') || 'dark';
+        document.documentElement.className = 'theme-' + t;
+      } catch(e) {
+        document.documentElement.className = 'theme-dark';
+      }
+    })();
+  </script>
+
+  <style>
+    /* COLORING-PATTERN SEMANTIC TOKENS */
+    :root, .theme-dark {
+      --bg: #090B10;
+      --surface: #11141D;
+      --surface-alt: #191E2B;
+      --text: #F1F5F9;
+      --text-muted: #64748B;
+      --primary: #FF5252;
+      --on-primary: #FFFFFF;
+      --secondary: #222938;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #FF5252;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #A855F7;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-light {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-alt: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --primary: #EF4444;
+      --on-primary: #FFFFFF;
+      --secondary: #F1F5F9;
+      --border: rgba(0, 0, 0, 0.06);
+      --accent: #EF4444;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #8B5CF6;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-orange {
+      --bg: #FAF6F0;
+      --surface: #FFFFFF;
+      --surface-alt: #F1E9DB;
+      --text: #2D251E;
+      --text-muted: #7C6F62;
+      --primary: #D97706;
+      --on-primary: #FFFFFF;
+      --secondary: #F7EFE2;
+      --border: rgba(139, 92, 26, 0.1);
+      --accent: #D97706;
+      --accent-cyan: #F59E0B;
+      --accent-purple: #EA580C;
+      --shadow-color: rgba(139, 92, 26, 0.05);
+    }
+
+    .theme-sea {
+      --bg: #030E12;
+      --surface: #071922;
+      --surface-alt: #0D2633;
+      --text: #E0F2FE;
+      --text-muted: #38BDF8;
+      --primary: #06B6D4;
+      --on-primary: #FFFFFF;
+      --secondary: #0B2535;
+      --border: rgba(14, 165, 233, 0.15);
+      --accent: #0EA5E9;
+      --accent-cyan: #22D3EE;
+      --accent-purple: #2DD4BF;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .theme-rose {
+      --bg: #0F0509;
+      --surface: #1C0A12;
+      --surface-alt: #2D111E;
+      --text: #FFE4E6;
+      --text-muted: #FB7185;
+      --primary: #F43F5E;
+      --on-primary: #FFFFFF;
+      --secondary: #2E101B;
+      --border: rgba(244, 63, 94, 0.15);
+      --accent: #F43F5E;
+      --accent-cyan: #FDA4AF;
+      --accent-purple: #EC4899;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* Reset & Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Header Nav */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 90;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-logo span {
+      color: var(--primary);
+    }
+
+    /* Conic Border Button */
+    .conic-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 1.5px !important;
+      overflow: hidden;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 5;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+    }
+
+    .conic-btn::before {
+      content: '';
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      top: -75%;
+      left: -75%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-cyan), var(--accent-purple), var(--accent));
+      animation: rotateBorder 4s linear infinite;
+      z-index: 1;
+    }
+
+    .conic-btn span {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.75rem 1.75rem;
+      width: 100%;
+      height: 100%;
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .conic-btn:hover span {
+      background: var(--surface-alt);
+    }
+
+    @keyframes rotateBorder {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* SECTION 1: HERO PARALLAX VIEWPORT */
+    .hero-viewport {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg);
+      z-index: 5;
+    }
+
+    .parallax-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 130%;
+      background-position: center;
+      background-size: cover;
+      will-change: transform;
+    }
+
+    .layer-bg {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px);
+      background-size: 32px 32px;
+      z-index: 1;
+    }
+
+    .layer-mid {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mid-ring {
+      width: 300px;
+      height: 300px;
+      border: 2px solid rgba(255, 82, 82, 0.3);
+      border-radius: 50%;
+      position: relative;
+      filter: blur(0px);
+      transform: scale(1);
+      transition: filter 0.1s ease, transform 0.1s ease;
+    }
+
+    .layer-fg-text {
+      z-index: 3;
+      text-align: center;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .layer-fg-text h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.0;
+      text-transform: uppercase;
+    }
+
+    .layer-pop {
+      z-index: 4;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding: 4rem;
+      pointer-events: none;
+    }
+
+    .pop-badge {
+      background: var(--primary);
+      color: var(--on-primary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 8px 16px;
+      border-radius: 30px;
+      letter-spacing: 1px;
+      box-shadow: 0 10px 25px rgba(255, 82, 82, 0.35);
+    }
+
+    /* Badge & Headings */
+    .badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+
+    /* SECTION 2: INTERACTIVE LENIS CONTROLS */
+    .controls-sec {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      text-align: center;
+      background-color: var(--bg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .control-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .control-row label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .control-row input[type="range"] {
+      width: 100%;
+    }
+
+    /* SECTION 3: BENTO FEATURE SHOWCASE WITH SPEEDS */
+    .bento-sec {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      background-color: var(--bg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .sec-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px var(--shadow-color);
+      will-change: transform;
+    }
+
+    .bento-card.wide {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+      .bento-card.wide {
+        grid-column: span 1;
+      }
+    }
+
+    .bento-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+    }
+
+    .bento-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .card-speed-tag {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      background: var(--surface-alt);
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      align-self: flex-start;
+      font-weight: bold;
+    }
+
+    /* SECTION 4: LIVE VELOCITY TELEMETRY */
+    .telemetry-sec {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      text-align: center;
+      background-color: var(--bg);
+      position: relative;
+      z-index: 10;
+    }
+
+    .telemetry-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 480px) {
+      .telemetry-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .telemetry-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      border-radius: 16px;
+    }
+
+    .telemetry-lbl {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .telemetry-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* SECTION 5: FOOTER & THEMES */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5rem 1.5rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .theme-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem 0;
+    }
+
+    .theme-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(255, 82, 82, 0.4);
+    }
+
+    .footer-credit {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Nav -->
+  <nav>
+    <div class="brand-logo">PARALLAX<span>.SYS</span></div>
+    <a href="#distort-ring" class="conic-btn">
+      <span>Get Started</span>
+    </a>
+  </nav>
+
+  <!-- SECTION 1: HERO PARALLAX VIEWPORT -->
+  <section class="hero-viewport">
+    <!-- Layer 1: Background grid -->
+    <div class="parallax-layer layer-bg" id="layer-bg"></div>
+
+    <!-- Layer 2: Ring Vector shapes -->
+    <div class="parallax-layer layer-mid" id="layer-mid">
+      <div class="mid-ring" id="distort-ring"></div>
+    </div>
+
+    <!-- Layer 3: Title -->
+    <div class="parallax-layer layer-fg-text" id="layer-fg">
+      <h1>CINEMATIC</h1>
+      <h1 style="-webkit-text-stroke: 1px var(--text); color: transparent;">PARALLAX</h1>
+      <a href="#control-console" class="conic-btn" style="margin-top: 2rem; pointer-events: auto;">
+        <span>Tune Damping Console <i class="fas fa-arrow-down" style="margin-left: 6px;"></i></span>
+      </a>
+    </div>
+
+    <!-- Layer 4: Pop Badge -->
+    <div class="parallax-layer layer-pop" id="layer-pop">
+      <div class="pop-badge">SCROLL SPEED SENSITIVE</div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: INTERACTIVE LENIS CONTROLS -->
+  <section class="controls-sec" id="control-console">
+    <div class="badge">Configuration Dashboard</div>
+    <h2>Lenis Scroll Tuning</h2>
+    <p style="color: var(--text-muted); margin-top: 0.5rem;">Modulasi parameter dinamika gulir untuk mengatur kecepatan inersia dan kenyamanan baca.</p>
+    
+    <div class="control-box">
+      <div class="control-row">
+        <label for="damping-range">Scroll Deceleration (Damping: <span id="damping-lbl" style="color:var(--primary);">1.2s</span>)</label>
+        <input type="range" id="damping-range" min="0.4" max="3" step="0.1" value="1.2" oninput="updateDamping(this.value)">
+      </div>
+      <div class="control-row" style="flex-direction:row; align-items:center; justify-content:space-between; width:100%;">
+        <label for="touch-switch" style="cursor:pointer;">Enable Smooth Touch Scroll</label>
+        <input type="checkbox" id="touch-switch" checked onchange="toggleTouch(this.checked)" style="width:20px; height:20px; cursor:pointer;">
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: BENTO SHOWCASE GRID -->
+  <section class="bento-sec">
+    <div class="sec-header">
+      <div class="badge">Dynamic Depth</div>
+      <h2>Parallax Bento Layout</h2>
+    </div>
+    
+    <div class="bento-grid">
+      <!-- Card 1: Slow Speed -->
+      <div class="bento-card parallax-card" data-speed="0.75">
+        <span class="card-speed-tag">Speed 0.75x</span>
+        <h3>Lagging Behind</h3>
+        <p>Kartu ini bergeser lebih lambat dari kecepatan gulir halaman dasar. Memberikan efek kedalaman bidang visual di latar belakang.</p>
+      </div>
+
+      <!-- Card 2: Wide Card -->
+      <div class="bento-card wide parallax-card" data-speed="1.2">
+        <span class="card-speed-tag">Speed 1.20x</span>
+        <h3>Hyper-Speed Forward</h3>
+        <p>Bergerak lebih cepat dari rata-rata kecepatan scroll, seolah-olah meloncat keluar. Sangat cocok digunakan untuk elemen badge promo atau CTA mendesak.</p>
+      </div>
+
+      <!-- Card 3: Standard Card -->
+      <div class="bento-card parallax-card" data-speed="1.0">
+        <span class="card-speed-tag">Speed 1.00x</span>
+        <h3>Static Ground</h3>
+        <p>Mengikuti kecepatan scroll dasar tanpa deviasi translasi. Berfungsi sebagai penunjuk grid struktural yang stabil bagi mata pembaca.</p>
+      </div>
+
+      <!-- Card 4: Ultra Fast Card -->
+      <div class="bento-card parallax-card" data-speed="1.35">
+        <span class="card-speed-tag">Speed 1.35x</span>
+        <h3>Escape Velocity</h3>
+        <p>Elemen parallax berkecepatan tinggi. Memberikan kejutan transisi kedalaman dinamis saat pembaca menggulir layar dengan cepat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: LIVE VELOCITY TELEMETRY -->
+  <section class="telemetry-sec">
+    <div class="badge">Telemetry Matrix</div>
+    <h2>Scroll Engine Diagnostics</h2>
+    
+    <div class="telemetry-row">
+      <div class="telemetry-item">
+        <div class="telemetry-lbl">Scroll Velocity</div>
+        <div class="telemetry-num" id="telemetry-vel">0.0px/s</div>
+      </div>
+      <div class="telemetry-item">
+        <div class="telemetry-lbl">Scroll Position Y</div>
+        <div class="telemetry-num" id="telemetry-y">0px</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: FOOTER & THEMES -->
+  <footer>
+    <h3 class="brand-logo" style="font-size: 1.5rem; margin-bottom: 1rem;">PARALLAX<span>.SYS</span></h3>
+    <p style="color: var(--text-muted);">Eksplorasi smooth scrolling Lenis dengan visual kedalaman 3D.</p>
+    
+    <div class="theme-row">
+      <button class="theme-btn" id="theme-btn-dark" onclick="setTheme('dark')">Cyber Dark</button>
+      <button class="theme-btn" id="theme-btn-light" onclick="setTheme('light')">Modern Light</button>
+      <button class="theme-btn" id="theme-btn-orange" onclick="setTheme('orange')">Warm Tech</button>
+      <button class="theme-btn" id="theme-btn-sea" onclick="setTheme('sea')">Neon Depths</button>
+      <button class="theme-btn" id="theme-btn-rose" onclick="setTheme('rose')">Cyber Rose</button>
+    </div>
+
+    <div style="margin: 2rem 0;">
+      <a href="#" class="conic-btn">
+        <span>Back to Top <i class="fas fa-chevron-up" style="margin-left: 6px;"></i></span>
+      </a>
+    </div>
+    <p class="footer-credit">&copy; 2026 Wide Note - Antigravity Parallax Engine. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Configurable parameters
+    let currentDamping = 1.2;
+    let smoothTouchEnabled = true;
+    let lenisInstance = null;
+
+    // Initialize Lenis Scroll Engine
+    function initLenis() {
+      if (lenisInstance) {
+        lenisInstance.destroy();
+      }
+
+      lenisInstance = new Lenis({
+        duration: currentDamping,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothTouch: smoothTouchEnabled
+      });
+
+      // Bind telemetry
+      lenisInstance.on('scroll', (e) => {
+        ScrollTrigger.update(); // Sync ScrollTrigger update with Lenis scroll
+        
+        // Update diagnostics
+        const velocity = Math.round(Math.abs(e.velocity));
+        document.getElementById('telemetry-vel').innerText = `${velocity} px/s`;
+        document.getElementById('telemetry-y').innerText = `${Math.round(e.scroll)}px`;
+
+        // Skew and blur ring dynamically based on Lenis scroll velocity
+        const distortRing = document.getElementById('distort-ring');
+        const clampedVel = Math.min(25, velocity);
+        const blurVal = (clampedVel * 0.45).toFixed(1);
+        const skewVal = (clampedVel * 0.6).toFixed(1);
+        
+        distortRing.style.filter = `blur(${blurVal}px)`;
+        distortRing.style.transform = `skewY(${skewVal}deg) scale(${1 + (clampedVel * 0.005)})`;
+      });
+    }
+
+    // Tick loops
+    function raf(time) {
+      if (lenisInstance) {
+        lenisInstance.raf(time);
+      }
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Sync with GSAP
+    gsap.registerPlugin(ScrollTrigger);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initLenis();
+
+      // Sync active theme class
+      const activeTheme = localStorage.getItem('playground-lenis-theme') || 'dark';
+      document.getElementById('theme-btn-' + activeTheme).classList.add('active');
+
+      // Initialize Parallax Animations
+      initParallaxAnimations();
+    });
+
+    function setTheme(themeName) {
+      document.documentElement.className = 'theme-' + themeName;
+      localStorage.setItem('playground-lenis-theme', themeName);
+      
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('theme-btn-' + themeName).classList.add('active');
+    }
+
+    function updateDamping(val) {
+      currentDamping = parseFloat(val);
+      document.getElementById('damping-lbl').innerText = val + 's';
+      initLenis();
+    }
+
+    function toggleTouch(checked) {
+      smoothTouchEnabled = checked;
+      initLenis();
+    }
+
+    function initParallaxAnimations() {
+      // Hero layers
+      gsap.to("#layer-bg", {
+        yPercent: -25,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero-viewport",
+          scrub: true,
+          start: "top top",
+          end: "bottom top"
+        }
+      });
+
+      gsap.to("#layer-mid", {
+        yPercent: -50,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero-viewport",
+          scrub: true,
+          start: "top top",
+          end: "bottom top"
+        }
+      });
+
+      gsap.to("#layer-pop", {
+        yPercent: -90,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero-viewport",
+          scrub: true,
+          start: "top top",
+          end: "bottom top"
+        }
+      });
+
+      // Bento cards parallax
+      gsap.utils.toArray('.parallax-card').forEach(card => {
+        const speed = parseFloat(card.getAttribute('data-speed')) || 1.0;
+        gsap.to(card, {
+          y: (i, el) => (1 - speed) * 350, // More intense translation offset
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
