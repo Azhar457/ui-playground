@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERON / Flight Deck — Glass Cockpit</title>
+
+  <!-- Anti-Flash IIFE: persists theme before paint -->
+  <script>!function(){try{var t=localStorage.getItem('aero-theme')||'day';document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','day')}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,500;0,700;1,400&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   RESET + BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.5;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .6s cubic-bezier(.22,1,.36,1),color .6s cubic-bezier(.22,1,.36,1)}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+ul{list-style:none}
+::selection{background:var(--accent);color:var(--bg-primary)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--scrollbar-track)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:3px}
+
+/* ============================================================
+   THEME: DAY (VFR) — default
+   ============================================================ */
+[data-theme="day"],:root{
+  --bg-primary:#e8f0f8;
+  --bg-secondary:#f0f4fa;
+  --bg-card:#ffffff;
+  --bg-card-alt:#f5f8fc;
+  --bg-instrument:#0d1117;
+  --text-primary:#0a1628;
+  --text-secondary:#3a4a6a;
+  --text-muted:#6a7a9a;
+  --text-instrument:#00e68a;
+  --text-instrument-dim:#009955;
+  --accent:#0066cc;
+  --accent-secondary:#004d99;
+  --accent-warn:#ff8800;
+  --accent-danger:#dd2200;
+  --accent-success:#00aa55;
+  --border:#c0d0e0;
+  --border-light:#d8e4f0;
+  --border-instrument:#2a3a4a;
+  --glow-accent:rgba(0,102,204,0.2);
+  --glow-warn:rgba(255,136,0,0.25);
+  --glow-danger:rgba(221,34,0,0.25);
+  --glow-success:rgba(0,170,85,0.2);
+  --shadow-card:0 2px 12px rgba(0,0,0,0.06);
+  --shadow-panel:0 4px 24px rgba(0,0,0,0.08);
+  --scrollbar-track:#d8e4f0;
+  --scrollbar-thumb:#90a0b8;
+  --nav-bg:rgba(232,240,248,0.90);
+  --nav-border:#c0d0e0;
+  --footer-bg:#d0dce8;
+  --overlay:rgba(0,0,0,0.04);
+  --invert-horizon:0;
+}
+
+/* ============================================================
+   THEME: NIGHT (IFR)
+   ============================================================ */
+[data-theme="night"]{
+  --bg-primary:#0a0e14;
+  --bg-secondary:#0f1520;
+  --bg-card:#131a28;
+  --bg-card-alt:#1a2335;
+  --bg-instrument:#050810;
+  --text-primary:#d0e0f0;
+  --text-secondary:#8090b0;
+  --text-muted:#4a5a7a;
+  --text-instrument:#00ff88;
+  --text-instrument-dim:#00aa55;
+  --accent:#00ccff;
+  --accent-secondary:#0099cc;
+  --accent-warn:#ff8800;
+  --accent-danger:#ff2244;
+  --accent-success:#00dd66;
+  --border:#1a2a40;
+  --border-light:#253555;
+  --border-instrument:#0a1a2a;
+  --glow-accent:rgba(0,204,255,0.15);
+  --glow-warn:rgba(255,136,0,0.2);
+  --glow-danger:rgba(255,34,68,0.2);
+  --glow-success:rgba(0,221,102,0.15);
+  --shadow-card:0 2px 12px rgba(0,0,0,0.3);
+  --shadow-panel:0 4px 24px rgba(0,0,0,0.4);
+  --scrollbar-track:#0f1520;
+  --scrollbar-thumb:#2a3a5a;
+  --nav-bg:rgba(10,14,20,0.92);
+  --nav-border:#1a2a40;
+  --footer-bg:#080c14;
+  --overlay:rgba(0,0,0,0.3);
+  --invert-horizon:0;
+}
+
+/* ============================================================
+   THEME: STORM (amber/warning)
+   ============================================================ */
+[data-theme="storm"]{
+  --bg-primary:#1a0e00;
+  --bg-secondary:#241200;
+  --bg-card:#2a1800;
+  --bg-card-alt:#342000;
+  --bg-instrument:#0d0600;
+  --text-primary:#ffcc88;
+  --text-secondary:#cc8844;
+  --text-muted:#885522;
+  --text-instrument:#ff6600;
+  --text-instrument-dim:#cc4400;
+  --accent:#ff6600;
+  --accent-secondary:#cc4400;
+  --accent-warn:#ffaa00;
+  --accent-danger:#ff2200;
+  --accent-success:#ff8800;
+  --border:#4a2a00;
+  --border-light:#5a3a10;
+  --border-instrument:#2a1400;
+  --glow-accent:rgba(255,102,0,0.25);
+  --glow-warn:rgba(255,170,0,0.3);
+  --glow-danger:rgba(255,34,0,0.3);
+  --glow-success:rgba(255,136,0,0.2);
+  --shadow-card:0 2px 12px rgba(0,0,0,0.4);
+  --shadow-panel:0 4px 24px rgba(0,0,0,0.5);
+  --scrollbar-track:#241200;
+  --scrollbar-thumb:#5a3a10;
+  --nav-bg:rgba(26,14,0,0.94);
+  --nav-border:#4a2a00;
+  --footer-bg:#120a00;
+  --overlay:rgba(0,0,0,0.35);
+  --invert-horizon:0;
+}
+
+/* ============================================================
+   THEME: TEST (engineering / calibration)
+   ============================================================ */
+[data-theme="test"]{
+  --bg-primary:#001a00;
+  --bg-secondary:#002200;
+  --bg-card:#003000;
+  --bg-card-alt:#003800;
+  --bg-instrument:#000d00;
+  --text-primary:#e0ffe0;
+  --text-secondary:#88cc88;
+  --text-muted:#447744;
+  --text-instrument:#88ff88;
+  --text-instrument-dim:#44cc44;
+  --accent:#00ff00;
+  --accent-secondary:#00cc00;
+  --accent-warn:#ffff00;
+  --accent-danger:#ff4444;
+  --accent-success:#00ff44;
+  --border:#004400;
+  --border-light:#005500;
+  --border-instrument:#003000;
+  --glow-accent:rgba(0,255,0,0.2);
+  --glow-warn:rgba(255,255,0,0.25);
+  --glow-danger:rgba(255,68,68,0.25);
+  --glow-success:rgba(0,255,68,0.2);
+  --shadow-card:0 2px 12px rgba(0,0,0,0.5);
+  --shadow-panel:0 4px 24px rgba(0,0,0,0.6);
+  --scrollbar-track:#002200;
+  --scrollbar-thumb:#005500;
+  --nav-bg:rgba(0,26,0,0.94);
+  --nav-border:#004400;
+  --footer-bg:#001000;
+  --overlay:rgba(0,255,0,0.05);
+  --invert-horizon:1;
+}
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+.container{max-width:1400px;margin:0 auto;padding:0 24px}
+.section{position:relative;padding:80px 0}
+.section-label{font-family:'Space Grotesk',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:600;color:var(--text-primary);margin-bottom:8px}
+.section-sub{color:var(--text-secondary);font-size:.95rem;margin-bottom:40px}
+.accent-line{width:48px;height:2px;background:var(--accent);margin-bottom:24px}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--nav-bg);border-bottom:1px solid var(--nav-border);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);transition:background .4s,box-shadow .4s;font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.top-nav.scrolled{background:var(--bg-primary);box-shadow:0 2px 20px var(--overlay)}
+.nav-left,.nav-right{display:flex;align-items:center;gap:24px}
+.nav-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;letter-spacing:2px;display:flex;align-items:center;gap:10px}
+.nav-brand svg{width:20px;height:20px;fill:var(--accent)}
+.nav-flt{color:var(--accent);font-weight:600}
+.nav-utc{font-size:.78rem;color:var(--text-instrument);background:var(--bg-instrument);padding:4px 10px;border-radius:4px;border:1px solid var(--border-instrument)}
+.nav-status{display:flex;align-items:center;gap:8px;font-size:.75rem}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--accent-success);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ============================================================
+   HERO / PFD
+   ============================================================ */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 24px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,var(--glow-accent) 0%,transparent 70%);pointer-events:none}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:1400px;margin:0 auto;width:100%}
+.hero-text h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:700;line-height:1.1;margin-bottom:16px}
+.hero-text h1 span{color:var(--accent)}
+.hero-text p{font-size:1.05rem;color:var(--text-secondary);max-width:480px;margin-bottom:32px;line-height:1.7}
+.hero-meta{display:flex;flex-wrap:wrap;gap:32px;margin-bottom:32px}
+.hero-meta-item{font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.hero-meta-item .label{display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:4px}
+.hero-meta-item .value{color:var(--text-primary);font-weight:600}
+.hero-meta-item .value.accent{color:var(--accent)}
+
+/* PFD Container */
+.pfd-container{position:relative;aspect-ratio:1;max-width:560px;width:100%;margin:0 auto;background:var(--bg-instrument);border-radius:16px;border:2px solid var(--border-instrument);padding:8px;box-shadow:0 8px 40px var(--shadow-panel),inset 0 1px 0 rgba(255,255,255,.04)}
+.pfd-inner{position:relative;width:100%;height:100%;border-radius:12px;overflow:hidden}
+.pfd-svg{width:100%;height:100%;display:block}
+
+/* PFD Overlays */
+.pfd-overlay{position:absolute;inset:0;pointer-events:none}
+.pfd-airspeed,.pfd-altitude{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-instrument);width:36px}
+.pfd-altitude{right:auto;left:12px;align-items:flex-start}
+.pfd-tape{display:flex;flex-direction:column;align-items:flex-end;gap:0;overflow:hidden;height:120px}
+.pfd-tape-item{font-size:.55rem;line-height:1.4;opacity:.5;white-space:nowrap;transition:transform .05s linear}
+.pfd-tape-item.active{opacity:1;font-size:.75rem;font-weight:700;color:var(--text-instrument)}
+.pfd-tape-item.marker{opacity:.3}
+.pfd-label{position:absolute;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.pfd-heading-bug{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--accent);display:flex;flex-direction:column;align-items:center;gap:2px}
+.pfd-heading-bug svg{width:20px;height:12px}
+.pfd-vsi{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:24px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pfd-vsi-bar{width:3px;height:80px;background:var(--border-instrument);position:relative;border-radius:2px;overflow:hidden}
+.pfd-vsi-fill{position:absolute;bottom:50%;left:0;width:100%;height:0;background:var(--accent-success);transition:height .1s;border-radius:2px}
+.pfd-vsi-fill.negative{background:var(--accent-danger);top:50%;bottom:auto;height:0}
+
+/* HUD Callout */
+.hud-cta{margin-top:32px;display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;border-radius:8px;font-weight:600;font-size:.9rem;transition:all .2s cubic-bezier(.22,1,.36,1);position:relative}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 16px var(--glow-accent)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--glow-accent)}
+.btn-primary:active{transform:translateY(0);box-shadow:0 2px 8px var(--glow-accent)}
+.btn-ghost{border:1.5px solid var(--border);color:var(--text-primary)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-3d{--z:4px;transform:perspective(600px) rotateX(0deg) translateZ(0);box-shadow:0 var(--z) 0 var(--accent-secondary),0 6px 20px var(--glow-accent)}
+.btn-3d:hover{transform:perspective(600px) rotateX(-4deg) translateZ(4px);box-shadow:0 calc(var(--z)+2px) 0 var(--accent-secondary),0 10px 30px var(--glow-accent)}
+.btn-3d:active{transform:perspective(600px) rotateX(0deg) translateZ(0);box-shadow:0 2px 0 var(--accent-secondary),0 4px 12px var(--glow-accent)}
+
+/* ============================================================
+   FLIGHT INSTRUMENTS GRID
+   ============================================================ */
+.instruments-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1400px;margin:0 auto;padding:0 24px}
+.instrument-card{background:var(--bg-instrument);border:1px solid var(--border-instrument);border-radius:12px;padding:16px;aspect-ratio:1;position:relative;overflow:hidden;display:flex;flex-direction:column;transition:border-color .3s,box-shadow .3s;min-height:280px}
+.instrument-card:hover{border-color:var(--accent);box-shadow:0 0 20px var(--glow-accent)}
+.instrument-title{font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.instrument-value{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:700;color:var(--text-instrument);line-height:1}
+.instrument-value .unit{font-size:.7rem;font-weight:300;color:var(--text-instrument-dim);margin-left:4px}
+.instrument-canvas{flex:1;width:100%;min-height:0}
+
+/* Altimeter Dial */
+.dial-container{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.dial-svg{width:100%;height:100%;max-width:220px}
+.dial-value{position:absolute;font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--text-instrument);text-align:center}
+.dial-value .sub{display:block;font-size:.6rem;font-weight:300;color:var(--text-instrument-dim)}
+
+/* Compass Rose */
+.compass-container{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.compass-svg{width:100%;height:100%}
+
+/* Turn Coordinator */
+.tc-container{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.tc-bg{position:absolute;width:80%;height:80%;border-radius:50%;border:1.5px solid var(--border-instrument)}
+.tc-ball{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent-warn);bottom:22%;transition:transform .1s}
+.tc-plane{position:absolute;fill:none;stroke:var(--text-instrument);stroke-width:1.5;width:40%;height:40%}
+
+/* ============================================================
+   NAV DISPLAY
+   ============================================================ */
+.nav-display{max-width:1400px;margin:0 auto;padding:0 24px}
+.nav-display-inner{background:var(--bg-instrument);border:1px solid var(--border-instrument);border-radius:12px;padding:20px;position:relative;overflow:hidden;min-height:360px}
+.nav-map{position:relative;width:100%;height:100%;min-height:320px;background:var(--bg-instrument);border-radius:8px;overflow:hidden}
+.nav-map-canvas{width:100%;height:100%;display:block}
+.nav-map-overlay{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-instrument-dim);pointer-events:none}
+.nav-map-overlay .data-group{display:flex;gap:20px;flex-wrap:wrap}
+.nav-map-overlay .data-item{display:flex;flex-direction:column}
+.nav-map-overlay .data-label{font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+.nav-waypoint{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--glow-accent)}
+.nav-waypoint::after{content:attr(data-label);position:absolute;left:10px;top:-4px;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--text-instrument);white-space:nowrap}
+.nav-route-line{position:absolute;height:1.5px;background:var(--accent-secondary);opacity:.4;transform-origin:left center}
+.nav-aircraft{position:absolute;width:16px;height:16px;fill:var(--accent);filter:drop-shadow(0 0 6px var(--glow-accent))}
+
+/* ============================================================
+   ENGINE PANEL
+   ============================================================ */
+.engine-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1400px;margin:0 auto;padding:0 24px}
+.engine-gauge{background:var(--bg-card);border-radius:8px;padding:16px;border:1px solid var(--border-light)}
+.engine-gauge-header{font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:flex;justify-content:space-between;margin-bottom:8px}
+.engine-gauge-value{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-primary)}
+.engine-bar{height:6px;background:var(--bg-secondary);border-radius:3px;margin-top:10px;overflow:hidden;position:relative}
+.engine-bar-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .2s}
+.engine-bar-fill.warn{background:var(--accent-warn)}
+.engine-bar-fill.danger{background:var(--accent-danger)}
+
+/* ============================================================
+   AUTOPILOT PANEL
+   ============================================================ */
+.ap-panel{max-width:1400px;margin:0 auto;padding:0 24px}
+.ap-inner{background:var(--bg-card);border:1px solid var(--border-light);border-radius:12px;padding:24px}
+.ap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.ap-btn{padding:16px 12px;border-radius:8px;background:var(--bg-secondary);border:1px solid var(--border-light);font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:500;color:var(--text-secondary);text-align:center;transition:all .2s;position:relative;overflow:hidden}
+.ap-btn:hover{border-color:var(--accent);color:var(--text-primary)}
+.ap-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 16px var(--glow-accent)}
+.ap-btn .ap-label{display:block;font-size:.6rem;text-transform:uppercase;letter-spacing:1px;margin-top:4px;opacity:.6}
+.ap-btn .ap-value{display:block;font-size:1.1rem;font-weight:700;margin-top:2px}
+.ap-status{display:flex;gap:24px;margin-bottom:20px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:.75rem}
+.ap-status-item{display:flex;align-items:center;gap:8px}
+.ap-status-dot{width:8px;height:8px;border-radius:50%}
+.ap-status-dot.on{background:var(--accent-success);box-shadow:0 0 8px var(--glow-success)}
+.ap-status-dot.off{background:var(--text-muted)}
+
+/* ============================================================
+   WEATHER RADAR
+   ============================================================ */
+.weather-section{max-width:1400px;margin:0 auto;padding:0 24px}
+.weather-inner{background:var(--bg-instrument);border:1px solid var(--border-instrument);border-radius:12px;padding:16px;position:relative;min-height:240px}
+.weather-canvas{width:100%;height:240px;display:block;border-radius:8px}
+
+/* ============================================================
+   CHECKLIST
+   ============================================================ */
+.checklist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-width:1400px;margin:0 auto;padding:0 24px}
+.checklist-phase{background:var(--bg-card);border:1px solid var(--border-light);border-radius:10px;padding:20px;transition:border-color .3s}
+.checklist-phase.complete{border-color:var(--accent-success)}
+.checklist-phase-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.checklist-phase-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.9rem;color:var(--text-primary)}
+.checklist-phase-progress{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted)}
+.checklist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light);cursor:pointer;transition:opacity .2s;font-size:.85rem;color:var(--text-primary)}
+.checklist-item:last-child{border-bottom:none}
+.checklist-item.done{opacity:.45;text-decoration:line-through}
+.checklist-check{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:.6rem}
+.checklist-item.done .checklist-check{background:var(--accent-success);border-color:var(--accent-success);color:#fff}
+.checklist-reset{margin-top:20px;text-align:center}
+.btn-checklist-reset{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted);padding:8px 16px;border:1px solid var(--border);border-radius:6px;transition:all .2s}
+.btn-checklist-reset:hover{color:var(--accent-danger);border-color:var(--accent-danger)}
+
+/* ============================================================
+   COMMS PANEL
+   ============================================================ */
+.comms-panel{max-width:1400px;margin:0 auto;padding:0 24px}
+.comms-inner{background:var(--bg-card);border:1px solid var(--border-light);border-radius:12px;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.comms-group{font-family:'JetBrains Mono',monospace}
+.comms-label{font-size:.55rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:6px}
+.comms-freq{font-size:1.2rem;font-weight:700;color:var(--text-primary)}
+.comms-freq.active{color:var(--accent-success)}
+.comms-freq.standby{color:var(--text-muted)}
+.comms-row{display:flex;gap:16px;align-items:baseline}
+.comms-action{font-size:.65rem;color:var(--accent);cursor:pointer;padding:4px 8px;border:1px solid var(--border);border-radius:4px;transition:all .2s}
+.comms-action:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.comms-squawk{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent-warn)}
+.comms-squawk.danger{color:var(--accent-danger);animation:blink-squawk 1s infinite}
+@keyframes blink-squawk{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ============================================================
+   FOOTER + THEME SWITCHER
+   ============================================================ */
+.site-footer{background:var(--footer-bg);border-top:1px solid var(--border);padding:32px 24px;margin-top:80px}
+.footer-inner{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted)}
+.theme-switcher{display:flex;gap:8px}
+.theme-btn{width:36px;height:36px;border-radius:8px;border:2px solid transparent;transition:all .2s;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-btn:hover{transform:translateY(-2px)}
+.theme-btn.active{border-color:var(--accent);box-shadow:0 0 12px var(--glow-accent)}
+.theme-btn[data-theme-btn="day"]{background:#e8f0f8}
+.theme-btn[data-theme-btn="day"]::after{content:'D';font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:#0a1628}
+.theme-btn[data-theme-btn="night"]{background:#0a0e14}
+.theme-btn[data-theme-btn="night"]::after{content:'N';font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:#00ff88}
+.theme-btn[data-theme-btn="storm"]{background:#1a0e00}
+.theme-btn[data-theme-btn="storm"]::after{content:'S';font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:#ff6600}
+.theme-btn[data-theme-btn="test"]{background:#001a00}
+.theme-btn[data-theme-btn="test"]::after{content:'T';font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:#88ff88}
+.theme-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-right:12px}
+
+/* ============================================================
+   SOUND TOGGLE
+   ============================================================ */
+.sound-toggle{position:fixed;bottom:24px;right:24px;z-index:999;width:44px;height:44px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s;cursor:pointer;box-shadow:0 2px 12px var(--shadow-card)}
+.sound-toggle:hover{border-color:var(--accent);transform:scale(1.05)}
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ============================================================
+   COUNTERS
+   ============================================================ */
+.counters{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1400px;margin:0 auto;padding:0 24px}
+.counter-item{text-align:center;padding:32px 16px;background:var(--bg-card);border-radius:12px;border:1px solid var(--border-light)}
+.counter-number{font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--accent);line-height:1}
+.counter-number .counter-unit{font-size:.9rem;color:var(--text-muted);font-weight:400}
+.counter-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-top:8px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;gap:32px}
+  .hero-text{text-align:center}
+  .hero-text p{margin-left:auto;margin-right:auto}
+  .hero-meta{justify-content:center}
+  .hud-cta{justify-content:center}
+  .instruments-grid{grid-template-columns:repeat(2,1fr)}
+  .engine-grid{grid-template-columns:repeat(2,1fr)}
+  .counters{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .instruments-grid{grid-template-columns:1fr}
+  .engine-grid{grid-template-columns:1fr}
+  .counters{grid-template-columns:repeat(2,1fr)}
+  .hero{padding:100px 16px 40px}
+  .top-nav{padding:0 16px;font-size:.72rem}
+  .nav-left,.nav-right{gap:12px}
+  .nav-status span:not(.nav-dot){display:none}
+  .comms-inner{grid-template-columns:1fr}
+  .checklist-grid{grid-template-columns:1fr}
+  .pfd-container{max-width:100%}
+  .ap-grid{grid-template-columns:repeat(3,1fr)}
+  .section{padding:48px 0}
+}
+@media(max-width:480px){
+  .counters{grid-template-columns:1fr}
+  .ap-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media(prefers-reduced-motion:reduce){
+  *,.reveal,.pfd-tape-item,.pfd-vsi-fill,.engine-bar-fill{transition:none!important;animation:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="top-nav" id="topNav">
+  <div class="nav-left">
+    <div class="nav-brand">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93s3.06-7.44 7-7.93v15.86zm2 0V4.07c3.94.49 7 3.85 7 7.93s-3.06 7.44-7 7.93z"/></svg>
+      AERON
+    </div>
+    <span class="nav-flt">GA-892</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-utc" id="navUtc">00:00:00 Z</div>
+    <div class="nav-status">
+      <span class="nav-dot"></span>
+      <span>ADS-B IN</span>
+      <span style="color:var(--text-muted)">|</span>
+      <span id="navWx">WX: VMC</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO / PFD ===== -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="section-label">Flight Deck</div>
+      <h1>Glass Cockpit<br><span>Next-Generation</span></h1>
+      <p>Integrated primary flight display with synthetic vision, real-time instrumentation, and advanced flight management systems. Certified for all phases of flight under VFR and IFR conditions.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="label">Flight</span>
+          <span class="value accent">GA-892</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="label">Route</span>
+          <span class="value">CGK &rarr; DPS &rarr; SYD</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="label">Altitude</span>
+          <span class="value">FL370</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="label">Speed</span>
+          <span class="value">Mach 0.84</span>
+        </div>
+      </div>
+      <div class="hud-cta">
+        <button class="btn btn-primary btn-3d" id="engageAp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          ENGAGE AUTOPILOT
+        </button>
+        <button class="btn btn-ghost" id="openChecklistBtn">QUICK CHECKLIST</button>
+      </div>
+    </div>
+
+    <!-- PFD -->
+    <div class="pfd-container" id="pfd">
+      <div class="pfd-inner">
+        <!-- SVG Artificial Horizon -->
+        <svg class="pfd-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="pfdClip"><circle cx="200" cy="200" r="180"/></clipPath>
+            <filter id="glowPfd"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Background -->
+          <rect x="0" y="0" width="400" height="400" fill="var(--bg-instrument)"/>
+          <!-- Horizon group -->
+          <g clip-path="url(#pfdClip)" id="horizonGroup" style="transform-origin:200px 200px">
+            <!-- Sky -->
+            <rect x="0" y="0" width="400" height="200" fill="#4488cc"/>
+            <!-- Ground -->
+            <rect x="0" y="200" width="400" height="200" fill="#664422"/>
+            <!-- Horizon line -->
+            <line x1="0" y1="200" x2="400" y2="200" stroke="#fff" stroke-width="1.5"/>
+            <!-- Pitch ladders -->
+            <g stroke="var(--text-instrument)" stroke-width="1" opacity=".6">
+              <!-- +10 -->
+              <line x1="160" y1="140" x2="240" y2="140" stroke-dasharray="4 4"/>
+              <line x1="120" y1="175" x2="280" y2="175"/>
+              <!-- -10 -->
+              <line x1="120" y1="225" x2="280" y2="225"/>
+              <line x1="160" y1="260" x2="240" y2="260" stroke-dasharray="4 4"/>
+            </g>
+          </g>
+          <!-- Roll indicator arc -->
+          <circle cx="200" cy="200" r="170" fill="none" stroke="var(--border-instrument)" stroke-width="1"/>
+          <!-- Heading ticks -->
+          <g fill="var(--text-instrument-dim)" font-family="'JetBrains Mono',monospace" font-size="6" text-anchor="middle">
+            <text x="200" y="25">360&deg;</text>
+            <text x="290" y="200">090&deg;</text>
+            <text x="200" y="380">180&deg;</text>
+            <text x="110" y="200">270&deg;</text>
+          </g>
+          <!-- Center aircraft symbol -->
+          <g fill="none" stroke="var(--text-instrument)" stroke-width="1.5">
+            <polygon points="200,155 195,175 205,175" fill="var(--accent-warn)" stroke="none"/>
+            <line x1="200" y1="175" x2="200" y2="185"/>
+            <line x1="185" y1="185" x2="215" y2="185"/>
+            <line x1="200" y1="185" x2="200" y2="200"/>
+          </g>
+          <!-- Airspeed tape overlay -->
+          <g font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--text-instrument-dim)">
+            <text x="350" y="180">240</text>
+            <text x="350" y="190">230</text>
+            <text x="350" y="200" fill="var(--text-instrument)" font-weight="700" font-size="9">220</text>
+            <text x="350" y="210">210</text>
+            <text x="350" y="220">200</text>
+          </g>
+          <!-- Altitude tape left -->
+          <g font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--text-instrument-dim)">
+            <text x="50" y="180">FL370</text>
+            <text x="55" y="190">360</text>
+            <text x="55" y="200" fill="var(--text-instrument)" font-weight="700" font-size="9">350</text>
+            <text x="55" y="210">340</text>
+            <text x="55" y="220">330</text>
+          </g>
+        </svg>
+        <!-- PFD Overlay infos -->
+        <div class="pfd-overlay">
+          <div class="pfd-label" style="top:8px;left:50%;transform:translateX(-50%)">FD</div>
+          <div class="pfd-label" style="bottom:8px;left:50%;transform:translateX(-50%)">GS 452 KT</div>
+          <div class="pfd-label" style="top:8px;right:8px">220 KT</div>
+          <div class="pfd-label" style="top:8px;left:8px">FL370</div>
+          <div class="pfd-heading-bug" id="headingBug">
+            <svg viewBox="0 0 20 12"><path d="M10 0L0 12h20z" fill="var(--accent)" opacity=".8"/></svg>
+            <span id="headingBugText">180&deg;</span>
+          </div>
+          <div class="pfd-vsi" id="pfdVsi">
+            <div class="pfd-vsi-bar">
+              <div class="pfd-vsi-fill" id="vsiFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COUNTERS ===== -->
+<section class="section" style="padding-top:0">
+  <div class="counters">
+    <div class="counter-item reveal">
+      <div class="counter-number"><span class="counter-num" data-target="37000">0</span> <span class="counter-unit">ft</span></div>
+      <div class="counter-label">Altitude</div>
+    </div>
+    <div class="counter-item reveal">
+      <div class="counter-number"><span class="counter-num" data-target="486">0</span> <span class="counter-unit">kt</span></div>
+      <div class="counter-label">Ground Speed</div>
+    </div>
+    <div class="counter-item reveal">
+      <div class="counter-number"><span class="counter-num" data-target="2870">0</span> <span class="counter-unit">nm</span></div>
+      <div class="counter-label">Range Remaining</div>
+    </div>
+    <div class="counter-item reveal">
+      <div class="counter-number"><span class="counter-num" data-target="12400">0</span> <span class="counter-unit">kg</span></div>
+      <div class="counter-label">Fuel Onboard</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FLIGHT INSTRUMENTS ===== -->
+<section class="section" id="instruments">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Instrumentation</div>
+    <div class="section-title reveal">Primary Flight Instruments</div>
+    <div class="section-sub reveal">Six-pack configuration with real-time analog and digital readouts</div>
+  </div>
+  <div class="instruments-grid" style="margin-top:32px">
+    <!-- 1. Altimeter -->
+    <div class="instrument-card reveal">
+      <div class="instrument-title"><span>ALTIMETER</span><span id="altUnit">QNH 1013</span></div>
+      <div class="dial-container">
+        <svg class="dial-svg" viewBox="0 0 200 200" id="altDial">
+          <!-- Dial markings -->
+          <g transform="translate(100,100)">
+            <circle r="88" fill="none" stroke="var(--border-instrument)" stroke-width="1"/>
+            <circle r="78" fill="none" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <!-- Tick marks every 20deg -->
+            <script type="text/plain">// rendered via JS</script>
+          </g>
+          <!-- Needle -->
+          <line id="altNeedle" x1="100" y1="100" x2="100" y2="22" stroke="var(--text-instrument)" stroke-width="1.5" style="transform-origin:100px 100px"/>
+          <!-- Center cap -->
+          <circle cx="100" cy="100" r="6" fill="var(--text-instrument)" opacity=".3"/>
+        </svg>
+        <div class="dial-value">
+          <span id="altDisplay">37000</span>
+          <span class="sub">FEET</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Airspeed Indicator -->
+    <div class="instrument-card reveal">
+      <div class="instrument-title"><span>AIRSPEED</span><span id="spdUnit">KT</span></div>
+      <div class="dial-container">
+        <svg class="dial-svg" viewBox="0 0 200 200" id="spdDial">
+          <g transform="translate(100,100)">
+            <circle r="88" fill="none" stroke="var(--border-instrument)" stroke-width="1"/>
+            <!-- Arc color bands -->
+            <path d="M 12,-88 A 88,88 0 0,1 80,37" fill="none" stroke="var(--accent-success)" stroke-width="3" opacity=".4"/>
+            <path d="M 80,37 A 88,88 0 0,1 10,88" fill="none" stroke="var(--accent-warn)" stroke-width="3" opacity=".4"/>
+            <path d="M 10,88 A 88,88 0 0,1 -88,0" fill="none" stroke="var(--accent-danger)" stroke-width="3" opacity=".3"/>
+            <!-- V-speeds marks -->
+            <line x1="85" y1="-15" x2="90" y2="-10" stroke="var(--accent-success)" stroke-width="1.5"/>
+            <line x1="50" y1="72" x2="56" y2="66" stroke="var(--accent-warn)" stroke-width="1.5"/>
+            <line x1="-70" y1="52" x2="-76" y2="48" stroke="var(--accent-danger)" stroke-width="1.5"/>
+          </g>
+          <line id="spdNeedle" x1="100" y1="100" x2="100" y2="22" stroke="var(--text-instrument)" stroke-width="2" style="transform-origin:100px 100px"/>
+          <circle cx="100" cy="100" r="6" fill="var(--text-instrument)" opacity=".3"/>
+        </svg>
+        <div class="dial-value">
+          <span id="spdDisplay">220</span>
+          <span class="sub">KNOTS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Heading Indicator -->
+    <div class="instrument-card reveal">
+      <div class="instrument-title"><span>HEADING</span><span id="hdgDisplay">180&deg;</span></div>
+      <div class="compass-container">
+        <svg class="compass-svg" viewBox="0 0 200 200" id="compassRose">
+          <g transform="translate(100,100)" id="compassGroup">
+            <circle r="88" fill="none" stroke="var(--border-instrument)" stroke-width="1"/>
+            <!-- Cardinal points -->
+            <g fill="var(--text-instrument-dim)" font-family="'JetBrains Mono',monospace" font-size="8" text-anchor="middle" dominant-baseline="central">
+              <text x="0" y="-78" fill="var(--accent-warn)" font-weight="700">N</text>
+              <text x="78" y="0">E</text>
+              <text x="0" y="78">S</text>
+              <text x="-78" y="0">W</text>
+            </g>
+            <!-- Minor ticks -->
+            <g stroke="var(--border-instrument)" stroke-width=".5">
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(30)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(60)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(120)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(150)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(210)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(240)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(300)"/>
+              <line x1="0" y1="-88" x2="0" y2="-80" transform="rotate(330)"/>
+            </g>
+          </g>
+          <!-- Aircraft index -->
+          <polygon points="100,12 96,20 104,20" fill="var(--accent-warn)" stroke="none"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 4. Vertical Speed Indicator -->
+    <div class="instrument-card reveal">
+      <div class="instrument-title"><span>VSI</span><span id="vsiDisplay">+0 FPM</span></div>
+      <div class="dial-container">
+        <svg class="dial-svg" viewBox="0 0 200 200" id="vsiDial">
+          <g transform="translate(100,100)">
+            <circle r="88" fill="none" stroke="var(--border-instrument)" stroke-width="1"/>
+            <!-- Scale markings -->
+            <g fill="var(--text-instrument-dim)" font-family="'JetBrains Mono',monospace" font-size="5" text-anchor="middle">
+              <text x="0" y="-82">6</text>
+              <text x="62" y="-58">4</text>
+              <text x="82" y="0">0</text>
+              <text x="62" y="58">4</text>
+              <text x="0" y="82">6</text>
+              <text x="-62" y="58">4</text>
+              <text x="-82" y="0">0</text>
+              <text x="-62" y="-58">4</text>
+            </g>
+            <g fill="var(--text-muted)" font-family="'JetBrains Mono',monospace" font-size="4" text-anchor="middle">
+              <text x="32" y="-76">2</text>
+              <text x="76" y="-32">2</text>
+              <text x="76" y="33">2</text>
+              <text x="32" y="77">2</text>
+              <text x="-32" y="77">2</text>
+              <text x="-76" y="33">2</text>
+              <text x="-76" y="-32">2</text>
+              <text x="-32" y="-76">2</text>
+            </g>
+          </g>
+          <line id="vsiNeedle" x1="100" y1="100" x2="100" y2="20" stroke="var(--text-instrument)" stroke-width="1.5" style="transform-origin:100px 100px"/>
+          <circle cx="100" cy="100" r="5" fill="var(--text-instrument)" opacity=".3"/>
+        </svg>
+        <div class="dial-value">
+          <span id="vsiNum">+800</span>
+          <span class="sub">FPM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Attitude Indicator -->
+    <div class="instrument-card reveal">
+      <div class="instrument-title"><span>ATTITUDE</span><span id="attDisplay">0.0&deg; PITCH</span></div>
+      <div class="dial-container">
+        <svg class="dial-svg" viewBox="0 0 200 200" id="attDial">
+          <g transform="translate(100,100)" id="attHorizon">
+            <rect x="-100" y="-100" width="200" height="100" fill="#4488cc" opacity=".7"/>
+            <rect x="-100" y="0" width="200" height="100" fill="#664422" opacity=".7"/>
+            <line x1="-90" y1="0" x2="90" y2="0" stroke="#fff" stroke-width="1.5"/>
+            <!-- Pitch indicators -->
+            <g stroke="var(--text-instrument)" stroke-width=".8" opacity=".5">
+              <line x1="-30" y1="-20" x2="30" y2="-20"/>
+              <line x1="-50" y1="-35" x2="-20" y2="-35"/><line x1="20" y1="-35" x2="50" y2="-35"/>
+              <line x1="-30" y1="20" x2="30" y2="20"/>
+              <line x1="-50" y1="35" x2="-20" y2="35"/><line x1="20" y1="35" x2="50" y2="35"/>
+            </g>
+          </g>
+          <!-- Aircraft reference -->
+          <polygon points="100,80 95,90 105,90" fill="var(--accent-warn)" stroke="none"/>
+          <line x1="92" y1="90" x2="108" y2="90" stroke="var(--accent-warn)" stroke-width="1"/>
+          <!-- Center lines -->
+          <line x1="70" y1="100" x2="90" y2="100" stroke="var(--text-instrument)" stroke-width=".5"/>
+          <line x1="110" y1="100" x2="130" y2="100" stroke="var(--text-instrument)" stroke-width=".5"/>
+          <!-- Roll index -->
+          <g transform="translate(100,100)">
+            <polygon points="0,-85 -4,-75 4,-75" fill="var(--accent-warn)" stroke="none"/>
+            <path d="M -50,-70 A 72,72 0 0,1 50,-70" fill="none" stroke="var(--text-instrument)" stroke-width=".8" opacity=".4"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 6. Turn Coordinator -->
+    <div class="instrument-card reveal">
+      <div class="instrument-title"><span>TURN COORD</span><span id="turnDisplay">LEVEL</span></div>
+      <div class="tc-container">
+        <div class="tc-bg"></div>
+        <svg class="tc-bg" viewBox="0 0 200 200" style="position:absolute;width:80%;height:80%">
+          <g transform="translate(100,100)">
+            <circle r="88" fill="none" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <line x1="-88" y1="0" x2="-40" y2="0" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <line x1="40" y1="0" x2="88" y2="0" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <line x1="-50" y1="-50" x2="-22" y2="-22" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <line x1="50" y1="50" x2="22" y2="22" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <line x1="-50" y1="50" x2="-22" y2="22" stroke="var(--border-instrument)" stroke-width=".5"/>
+            <line x1="50" y1="-50" x2="22" y2="-22" stroke="var(--border-instrument)" stroke-width=".5"/>
+          </g>
+        </svg>
+        <!-- TC aircraft symbol -->
+        <svg viewBox="0 0 60 60" class="tc-plane" id="tcPlane" style="position:absolute">
+          <g transform="translate(30,30)">
+            <!-- Mini aircraft symbol for TC -->
+            <path d="M 0,-20 L 6,-8 L 6,8 L 20,12 L 20,16 L 6,14 L 6,22 L 0,25 L -6,22 L -6,14 L -20,16 L -20,12 L -6,8 L -6,-8 Z" fill="none" stroke="var(--text-instrument)" stroke-width="1"/>
+            <circle r="2" fill="var(--text-instrument)"/>
+          </g>
+        </svg>
+        <div class="tc-ball" id="tcBall"></div>
+        <div class="instrument-value" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:.7rem;color:var(--text-instrument-dim)">RATE 1</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NAV DISPLAY ===== -->
+<section class="section" id="navdisplay">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Navigation</div>
+    <div class="section-title reveal">Nav Display / Route Map</div>
+    <div class="section-sub reveal">Flight plan CGK &rarr; DPS &rarr; SYD with wind data and waypoint sequencing</div>
+  </div>
+  <div class="nav-display" style="margin-top:32px">
+    <div class="nav-display-inner reveal">
+      <div class="nav-map" id="navMap">
+        <canvas class="nav-map-canvas" id="navCanvas"></canvas>
+        <div class="nav-map-overlay">
+          <div class="data-group">
+            <div class="data-item">
+              <span class="data-label">FROM</span>
+              <span>CGK / WIII</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">TO</span>
+              <span>SYD / YSSY</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">DIST</span>
+              <span id="navDist">2,870 NM</span>
+            </div>
+          </div>
+          <div class="data-group">
+            <div class="data-item">
+              <span class="data-label">WIND</span>
+              <span id="navWind">240&deg; / 35 KT</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">ETA</span>
+              <span id="navEta">06:42 Z</span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">FUEL REM</span>
+              <span id="navFuel">12.4 T</span>
+            </div>
+          </div>
+        </div>
+        <!-- Waypoints rendered as positioned divs -->
+        <div class="nav-waypoint" data-label="CGK" style="left:15%;top:55%"></div>
+        <div class="nav-waypoint" data-label="DPS" style="left:48%;top:45%"></div>
+        <div class="nav-waypoint" data-label="SYD" style="left:78%;top:65%"></div>
+        <!-- Route line segments -->
+        <div class="nav-route-line" style="left:15%;top:55%;width:33%;transform:rotate(-4deg)"></div>
+        <div class="nav-route-line" style="left:48%;top:45%;width:32%;transform:rotate(18deg)"></div>
+        <!-- Aircraft icon -->
+        <svg class="nav-aircraft" viewBox="0 0 24 24" style="left:32%;top:47%">
+          <path d="M12 2l-3 8h6l-3-8zM11 12v8l-5 2v2l6-2 6 2v-2l-5-2v-8z"/>
+        </svg>
+        <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--text-muted);letter-spacing:1px">
+          MAP MODE: ARC &bull; RANGE 320 NM
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ENGINE PANEL ===== -->
+<section class="section" id="engines">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Powerplant</div>
+    <div class="section-title reveal">Engine Parameters</div>
+    <div class="section-sub reveal">Rolls-Royce Trent 1000 turbofan — real-time operating data</div>
+  </div>
+  <div class="engine-grid" style="margin-top:32px">
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>N1</span><span class="engine-gauge-value" id="n1Val">84.2</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill" id="n1Bar" style="width:84.2%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>N2</span><span class="engine-gauge-value" id="n2Val">96.7</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill" id="n2Bar" style="width:96.7%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>EGT</span><span class="engine-gauge-value" id="egtVal">752</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill warn" id="egtBar" style="width:65%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>FUEL FLOW</span><span class="engine-gauge-value" id="ffVal">2,840</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill" id="ffBar" style="width:58%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>OIL PRESS</span><span class="engine-gauge-value" id="oilVal">68</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill" id="oilBar" style="width:68%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>OIL TEMP</span><span class="engine-gauge-value" id="oilTempVal">112</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill warn" id="oilTempBar" style="width:55%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>VIB</span><span class="engine-gauge-value" id="vibVal">1.2</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill" id="vibBar" style="width:30%"></div></div>
+    </div>
+    <div class="engine-gauge reveal">
+      <div class="engine-gauge-header"><span>FF TOTAL</span><span class="engine-gauge-value" id="ffTotalVal">5,680</span></div>
+      <div class="engine-bar"><div class="engine-bar-fill" id="ffTotalBar" style="width:55%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AUTOPILOT ===== -->
+<section class="section" id="autopilot">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Flight Director</div>
+    <div class="section-title reveal">Autopilot Control Panel</div>
+    <div class="section-sub reveal">Select and arm autopilot modes for automation of flight path</div>
+  </div>
+  <div class="ap-panel" style="margin-top:32px">
+    <div class="ap-inner reveal">
+      <div class="ap-status">
+        <div class="ap-status-item"><span class="ap-status-dot off" id="apActiveDot"></span> A/P <span id="apModeText">OFF</span></div>
+        <div class="ap-status-item"><span class="ap-status-dot off" id="fdActiveDot"></span> F/D <span id="fdModeText">ON</span></div>
+        <div class="ap-status-item" style="color:var(--text-muted)">CMD L</div>
+      </div>
+      <div class="ap-grid">
+        <button class="ap-btn" data-ap="hdg"><span class="ap-label">HDG</span><span class="ap-value" id="apHdgVal">180&deg;</span></button>
+        <button class="ap-btn" data-ap="alt"><span class="ap-label">ALT</span><span class="ap-value" id="apAltVal">FL370</span></button>
+        <button class="ap-btn" data-ap="vs"><span class="ap-label">V/S</span><span class="ap-value" id="apVsVal">+800</span></button>
+        <button class="ap-btn" data-ap="spd"><span class="ap-label">SPD</span><span class="ap-value" id="apSpdVal">M.84</span></button>
+        <button class="ap-btn" data-ap="nav"><span class="ap-label">NAV</span><span class="ap-value">GPS</span></button>
+        <button class="ap-btn" data-ap="apr"><span class="ap-label">APR</span><span class="ap-value">ILS</span></button>
+        <button class="ap-btn" data-ap="bc"><span class="ap-label">BC</span><span class="ap-value">B/CRS</span></button>
+        <button class="ap-btn" data-ap="autoland"><span class="ap-label">LAND</span><span class="ap-value">CAT III</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WEATHER RADAR ===== -->
+<section class="section" id="weather">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Environmental</div>
+    <div class="section-title reveal">Weather Radar</div>
+    <div class="section-sub reveal">X-band Doppler radar — 320 NM range, gain 12 dB</div>
+  </div>
+  <div class="weather-section" style="margin-top:32px">
+    <div class="weather-inner reveal">
+      <canvas id="wxCanvas" class="weather-canvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHECKLIST ===== -->
+<section class="section" id="checklist">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Procedures</div>
+    <div class="section-title reveal">Interactive Checklist</div>
+    <div class="section-sub reveal">Standard operating procedures — tap to complete each item</div>
+  </div>
+  <div class="checklist-grid" style="margin-top:32px">
+    <!-- Before Start -->
+    <div class="checklist-phase reveal" data-phase="0">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Before Start</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">4</span></span>
+      </div>
+      <div class="checklist-item" data-item="bs1">Parking brake &mdash; SET</div>
+      <div class="checklist-item" data-item="bs2">Beacon &mdash; ON</div>
+      <div class="checklist-item" data-item="bs3">Flight controls &mdash; FREE & CORRECT</div>
+      <div class="checklist-item" data-item="bs4">Fuel quantity &mdash; CHECKED</div>
+    </div>
+    <!-- Start -->
+    <div class="checklist-phase reveal" data-phase="1">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Start</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">4</span></span>
+      </div>
+      <div class="checklist-item" data-item="st1">Start lever &mdash; IDLE</div>
+      <div class="checklist-item" data-item="st2">Engine parameters &mdash; MONITOR</div>
+      <div class="checklist-item" data-item="st3">Oil pressure &mdash; CHECK</div>
+      <div class="checklist-item" data-item="st4">Generator &mdash; ON LINE</div>
+    </div>
+    <!-- Taxi -->
+    <div class="checklist-phase reveal" data-phase="2">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Taxi</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">3</span></span>
+      </div>
+      <div class="checklist-item" data-item="tx1">Taxi clearance &mdash; OBTAINED</div>
+      <div class="checklist-item" data-item="tx2">Flaps &mdash; SET T/O</div>
+      <div class="checklist-item" data-item="tx3">Trim &mdash; SET T/O</div>
+    </div>
+    <!-- Takeoff -->
+    <div class="checklist-phase reveal" data-phase="3">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Takeoff</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">5</span></span>
+      </div>
+      <div class="checklist-item" data-item="to1">Transponder &mdash; ALT</div>
+      <div class="checklist-item" data-item="to2">Landing lights &mdash; ON</div>
+      <div class="checklist-item" data-item="to3">V1 &mdash; CALL</div>
+      <div class="checklist-item" data-item="to4">VR &mdash; ROTATE</div>
+      <div class="checklist-item" data-item="to5">V2 &mdash; SET</div>
+    </div>
+    <!-- Climb -->
+    <div class="checklist-phase reveal" data-phase="4">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Climb</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">3</span></span>
+      </div>
+      <div class="checklist-item" data-item="cl1">Flaps &mdash; UP</div>
+      <div class="checklist-item" data-item="cl2">Climb power &mdash; SET</div>
+      <div class="checklist-item" data-item="cl3">Cabin press &mdash; NORM</div>
+    </div>
+    <!-- Cruise -->
+    <div class="checklist-phase reveal" data-phase="5">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Cruise</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">3</span></span>
+      </div>
+      <div class="checklist-item" data-item="cr1">Altimeters &mdash; STD 1013</div>
+      <div class="checklist-item" data-item="cr2">Fuel crossfeed &mdash; CHECK</div>
+      <div class="checklist-item" data-item="cr3">Position report &mdash; SENT</div>
+    </div>
+    <!-- Descent -->
+    <div class="checklist-phase reveal" data-phase="6">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Descent</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">3</span></span>
+      </div>
+      <div class="checklist-item" data-item="de1">ATC clearance &mdash; OBTAINED</div>
+      <div class="checklist-item" data-item="de2">QNH &mdash; SET</div>
+      <div class="checklist-item" data-item="de3">Seat belt sign &mdash; ON</div>
+    </div>
+    <!-- Approach -->
+    <div class="checklist-phase reveal" data-phase="7">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Approach</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">4</span></span>
+      </div>
+      <div class="checklist-item" data-item="ap1">Approach brief &mdash; COMPLETE</div>
+      <div class="checklist-item" data-item="ap2">Missed approach alt &mdash; SET</div>
+      <div class="checklist-item" data-item="ap3">Flaps &mdash; SET LDG</div>
+      <div class="checklist-item" data-item="ap4">Landing gear &mdash; DOWN</div>
+    </div>
+    <!-- Landing -->
+    <div class="checklist-phase reveal" data-phase="8">
+      <div class="checklist-phase-header">
+        <span class="checklist-phase-title">Landing</span>
+        <span class="checklist-phase-progress"><span class="phaseDone">0</span>/<span class="phaseTotal">4</span></span>
+      </div>
+      <div class="checklist-item" data-item="la1">VREF &mdash; SET</div>
+      <div class="checklist-item" data-item="la2">Auto brake &mdash; SET</div>
+      <div class="checklist-item" data-item="la3">Spoilers &mdash; ARM</div>
+      <div class="checklist-item" data-item="la4">Reverse thrust &mdash; STBY</div>
+    </div>
+  </div>
+  <div class="checklist-reset">
+    <button class="btn-checklist-reset" id="checklistReset">RESET ALL CHECKLISTS</button>
+  </div>
+</section>
+
+<!-- ===== COMMS ===== -->
+<section class="section" id="comms">
+  <div style="max-width:1400px;margin:0 auto;padding:0 24px">
+    <div class="section-label reveal">Communications</div>
+    <div class="section-title reveal">Radio &amp; Transponder</div>
+    <div class="section-sub reveal">VHF COM, SELCAL, and Mode-S transponder with ADS-B Out</div>
+  </div>
+  <div class="comms-panel" style="margin-top:32px">
+    <div class="comms-inner reveal">
+      <div class="comms-group">
+        <div class="comms-label">COM 1</div>
+        <div class="comms-row">
+          <span class="comms-freq active" id="com1Active">118.500</span>
+          <span class="comms-action" data-com="1">SWAP</span>
+        </div>
+        <div class="comms-row" style="margin-top:6px">
+          <span class="comms-freq standby" id="com1Standby">126.200</span>
+          <span class="comms-action" data-comsb="1">MON</span>
+        </div>
+      </div>
+      <div class="comms-group">
+        <div class="comms-label">COM 2</div>
+        <div class="comms-row">
+          <span class="comms-freq active" id="com2Active">121.500</span>
+          <span class="comms-action" data-com="2">SWAP</span>
+        </div>
+        <div class="comms-row" style="margin-top:6px">
+          <span class="comms-freq standby" id="com2Standby">135.950</span>
+          <span class="comms-action" data-comsb="2">MON</span>
+        </div>
+      </div>
+      <div class="comms-group">
+        <div class="comms-label">SQUAWK</div>
+        <div class="comms-squawk" id="squawkDisplay">7700</div>
+        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="comms-action" data-sq="1200">VFR 1200</span>
+          <span class="comms-action" data-sq="7700">EMERG 7700</span>
+          <span class="comms-action" data-sq="7500">HIJACK 7500</span>
+          <span class="comms-action" data-sq="7600">RADIO 7600</span>
+        </div>
+      </div>
+      <div class="comms-group">
+        <div class="comms-label">SELCAL</div>
+        <div style="font-size:1.1rem;font-weight:600;color:var(--text-primary)">AB-CD</div>
+        <div style="margin-top:8px;font-size:.65rem;color:var(--text-muted)">Last call: 06:38Z</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-copy">GA-892 &bull; AERON Flight Deck v2.4 &bull; All parameters simulated</div>
+    <div class="theme-switcher">
+      <span class="theme-label">THEME</span>
+      <button class="theme-btn active" data-theme-btn="day" aria-label="Day theme"></button>
+      <button class="theme-btn" data-theme-btn="night" aria-label="Night theme"></button>
+      <button class="theme-btn" data-theme-btn="storm" aria-label="Storm theme"></button>
+      <button class="theme-btn" data-theme-btn="test" aria-label="Test theme"></button>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== SOUND TOGGLE ===== -->
+<button class="sound-toggle" id="soundToggle" aria-label="Toggle sound">&#x1F50A;</button>
+
+<script>
+/* ================================================================
+   AERON FLIGHT DECK — MAIN SCRIPT
+   ================================================================ */
+
+(function() {
+  'use strict';
+
+  // ---- Constants ----
+  var THEMES = ['day','night','storm','test'];
+  var PFD_UPDATE_MS = 50;
+  var INSTRUMENT_UPDATE_MS = 100;
+
+  // ---- State ----
+  var state = {
+    alt: 37000,
+    spd: 220,
+    hdg: 180,
+    vsi: 800,
+    pitch: 0.8,
+    roll: 0,
+    turnRate: 0,
+    altDir: 1,
+    spdVar: 1,
+    engineCycle: 0,
+    apModes: {},
+    soundOn: true,
+    wxFrame: 0,
+  };
+
+  // ---- DOM refs ----
+  var $ = function(s) { return document.querySelector(s); };
+  var $$ = function(s) { return document.querySelectorAll(s); };
+
+  // ---- 1. UTC Clock ----
+  function updateClock() {
+    var now = new Date();
+    var h = String(now.getUTCHours()).padStart(2,'0');
+    var m = String(now.getUTCMinutes()).padStart(2,'0');
+    var s = String(now.getUTCSeconds()).padStart(2,'0');
+    var t = h + ':' + m + ':' + s;
+    var el = document.getElementById('navUtc');
+    if (el) el.textContent = t + ' Z';
+    // Update nav ETA
+    var etaEl = document.getElementById('navEta');
+    if (etaEl) {
+      var etaH = (parseInt(h) + 6) % 24;
+      etaEl.textContent = String(etaH).padStart(2,'0') + ':' + m + ' Z';
+    }
+  }
+
+  // ---- 2. PFD / Live Instruments ----
+  function updateInstruments() {
+    // Cycle altitude ±200 around target
+    state.alt += state.altDir * 12;
+    if (state.alt > 37200) state.altDir = -1;
+    if (state.alt < 36800) state.altDir = 1;
+
+    // Vary airspeed
+    state.spd += state.spdVar * 0.3;
+    if (state.spd > 226) state.spdVar = -1;
+    if (state.spd < 214) state.spdVar = 1;
+
+    // Rotate heading slowly
+    state.hdg = (state.hdg + 0.08) % 360;
+
+    // VSI bounce
+    state.vsi = Math.round(400 * Math.sin(Date.now() / 3000) + 400);
+
+    // Pitch oscillation
+    state.pitch = 1.2 * Math.sin(Date.now() / 4000);
+    state.roll = 0.6 * Math.sin(Date.now() / 5000);
+
+    // Update displays
+    // Altimeter
+    document.getElementById('altDisplay').textContent = Math.round(state.alt);
+    document.getElementById('altNeedle').style.transform = 'rotate(' + ((state.alt % 1000) / 1000 * 360) + 'deg)';
+
+    // Airspeed needle (0-400 KT mapped 0-270deg)
+    var spdAngle = (state.spd / 400) * 270;
+    document.getElementById('spdNeedle').style.transform = 'rotate(' + spdAngle + 'deg)';
+    document.getElementById('spdDisplay').textContent = Math.round(state.spd);
+
+    // Heading compass
+    document.getElementById('compassGroup').style.transform = 'translate(100px,100px) rotate(' + (-state.hdg) + 'deg)';
+    document.getElementById('hdgDisplay').textContent = Math.round(state.hdg) + '°';
+    document.getElementById('headingBugText').textContent = Math.round(state.hdg) + '°';
+
+    // VSI needle
+    var vsiAngle = (state.vsi / 6000) * 80;
+    vsiAngle = Math.max(-80, Math.min(80, vsiAngle));
+    document.getElementById('vsiNeedle').style.transform = 'rotate(' + vsiAngle + 'deg)';
+    document.getElementById('vsiDisplay').textContent = (state.vsi >= 0 ? '+' : '') + state.vsi + ' FPM';
+    document.getElementById('vsiNum').textContent = (state.vsi >= 0 ? '+' : '') + state.vsi;
+    var vsiFill = document.getElementById('vsiFill');
+    if (state.vsi >= 0) {
+      vsiFill.className = 'pfd-vsi-fill';
+      vsiFill.style.height = Math.min(100, (state.vsi / 6000) * 100) + '%';
+      vsiFill.style.bottom = '50%';
+      vsiFill.style.top = 'auto';
+    } else {
+      vsiFill.className = 'pfd-vsi-fill negative';
+      vsiFill.style.height = Math.min(100, (-state.vsi / 6000) * 100) + '%';
+      vsiFill.style.top = '50%';
+      vsiFill.style.bottom = 'auto';
+    }
+
+    // Attitude (pitch/roll)
+    var attHorizon = document.getElementById('attHorizon');
+    if (attHorizon) {
+      attHorizon.style.transform = 'translate(100px,100px) rotate(' + (-state.roll) + 'deg) translateY(' + (state.pitch * 3) + 'px)';
+    }
+    document.getElementById('attDisplay').textContent = state.pitch.toFixed(1) + '° PITCH';
+
+    // Turn coordinator
+    var turnRate = 0.4 * Math.sin(Date.now() / 6000);
+    document.getElementById('tcPlane').style.transform = 'translate(30px,30px) rotate(' + (turnRate * 30) + 'deg)';
+    var ballX = turnRate * 20;
+    document.getElementById('tcBall').style.transform = 'translateX(' + ballX + 'px)';
+    document.getElementById('turnDisplay').textContent = Math.abs(turnRate) < 0.1 ? 'LEVEL' : (turnRate > 0 ? 'R TURN' : 'L TURN');
+  }
+
+  // ---- 3. Engine panel ----
+  function updateEngines() {
+    state.engineCycle += 0.5;
+    var n1 = 84 + 2 * Math.sin(state.engineCycle * 0.1);
+    var n2 = 96.5 + 1 * Math.sin(state.engineCycle * 0.08 + 1);
+    var egt = 750 + 30 * Math.sin(state.engineCycle * 0.05);
+    var ff = 2840 + 200 * Math.sin(state.engineCycle * 0.07);
+    var oil = 68 + 5 * Math.sin(state.engineCycle * 0.04 + 2);
+    var oilTemp = 112 + 6 * Math.sin(state.engineCycle * 0.03);
+    var vib = 1.2 + 0.4 * Math.sin(state.engineCycle * 0.12);
+
+    setEngine('n1', n1.toFixed(1), n1);
+    setEngine('n2', n2.toFixed(1), n2);
+    setEngine('egt', Math.round(egt), mapVal(egt, 600, 900, 0, 100));
+    setEngine('ff', Math.round(ff).toLocaleString(), mapVal(ff, 500, 4000, 0, 100));
+    setEngine('oil', Math.round(oil), oil);
+    setEngine('oilTemp', Math.round(oilTemp), mapVal(oilTemp, 40, 160, 0, 100));
+    setEngine('vib', vib.toFixed(1), mapVal(vib, 0, 4, 0, 100));
+    setEngine('ffTotal', (Math.round(ff * 2)).toLocaleString(), mapVal(ff * 2, 1000, 8000, 0, 100));
+  }
+
+  function setEngine(id, text, barPct) {
+    var valEl = document.getElementById(id + 'Val');
+    var barEl = document.getElementById(id + 'Bar');
+    if (valEl) valEl.textContent = text;
+    if (barEl) barEl.style.width = Math.min(100, Math.max(0, barPct)) + '%';
+  }
+
+  function mapVal(v, inMin, inMax, outMin, outMax) {
+    return (v - inMin) / (inMax - inMin) * (outMax - outMin) + outMin;
+  }
+
+  // ---- 4. Weather Radar Canvas ----
+  function initRadar() {
+    var canvas = document.getElementById('wxCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width = canvas.parentElement.clientWidth;
+    var H = canvas.height = 240;
+
+    var sweepAngle = 0;
+    var particles = [];
+    for (var i = 0; i < 120; i++) {
+      particles.push({
+        angle: Math.random() * 2 * Math.PI,
+        dist: Math.random(),
+        intensity: Math.random(),
+        size: 1 + Math.random() * 3,
+        pulse: Math.random() * Math.PI * 2
+      });
+    }
+
+    function drawRadar() {
+      sweepAngle = (sweepAngle + 0.025) % (2 * Math.PI);
+      W = canvas.width = canvas.parentElement.clientWidth;
+      ctx.clearRect(0, 0, W, H);
+
+      var cx = W / 2;
+      var cy = H / 2;
+      var maxR = Math.min(cx, cy) * 0.85;
+
+      // Range rings
+      for (var r = 1; r <= 3; r++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, maxR * r / 3, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'var(--border-instrument)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      // Precipitation particles
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        p.pulse += 0.02;
+        var px = cx + p.dist * maxR * Math.sin(p.angle);
+        var py = cy - p.dist * maxR * Math.cos(p.angle);
+        var brightness = p.intensity;
+        // Only illuminate particles near sweep or visible
+        var angleDiff = Math.abs(normalizeAngle(p.angle - sweepAngle));
+        var visible = angleDiff < 0.5 || p.intensity > 0.7;
+        if (!visible && p.intensity < 0.5) continue;
+
+        var r2 = Math.round(255 - p.intensity * 200);
+        var g = Math.round(255 - p.intensity * 100);
+        var b = Math.round(255 - p.intensity * 250);
+        ctx.beginPath();
+        ctx.arc(px, py, p.size, 0, 2 * Math.PI);
+        var alpha = visible ? (0.3 + 0.5 * Math.max(0, 1 - angleDiff * 3)) : 0.15;
+        ctx.fillStyle = 'rgba(' + r2 + ',' + g + ',' + b + ',' + alpha + ')';
+        ctx.fill();
+      }
+
+      // Sweep line
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      var sx = cx + maxR * Math.sin(sweepAngle);
+      var sy = cy - maxR * Math.cos(sweepAngle);
+      ctx.lineTo(sx, sy);
+      ctx.strokeStyle = 'var(--text-instrument)';
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.3;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Center dot
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3, 0, 2 * Math.PI);
+      ctx.fillStyle = 'var(--text-instrument)';
+      ctx.fill();
+
+      requestAnimationFrame(drawRadar);
+    }
+
+    function normalizeAngle(a) {
+      while (a > Math.PI) a -= 2 * Math.PI;
+      while (a < -Math.PI) a += 2 * Math.PI;
+      return a;
+    }
+
+    drawRadar();
+  }
+
+  // ---- 5. Autopilot ----
+  function initAutopilot() {
+    var btns = document.querySelectorAll('.ap-btn');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var mode = btn.dataset.ap;
+        if (state.apModes[mode]) {
+          delete state.apModes[mode];
+          btn.classList.remove('active');
+        } else {
+          state.apModes[mode] = true;
+          btn.classList.add('active');
+        }
+        updateApStatus();
+      });
+    });
+
+    // Engage button
+    var engageBtn = document.getElementById('engageAp');
+    if (engageBtn) {
+      engageBtn.addEventListener('click', function() {
+        // Toggle HDG + ALT as a default engagement
+        ['hdg', 'alt'].forEach(function(m) {
+          var btn = document.querySelector('.ap-btn[data-ap="' + m + '"]');
+          if (btn && !btn.classList.contains('active')) {
+            btn.classList.add('active');
+            state.apModes[m] = true;
+          }
+        });
+        updateApStatus();
+      });
+    }
+  }
+
+  function updateApStatus() {
+    var modes = Object.keys(state.apModes);
+    var apDot = document.getElementById('apActiveDot');
+    var apText = document.getElementById('apModeText');
+    if (modes.length > 0) {
+      apDot.className = 'ap-status-dot on';
+      apText.textContent = modes.join(' ').toUpperCase();
+    } else {
+      apDot.className = 'ap-status-dot off';
+      apText.textContent = 'OFF';
+    }
+  }
+
+  // ---- 6. Checklist ----
+  function initChecklist() {
+    var items = document.querySelectorAll('.checklist-item');
+    items.forEach(function(item) {
+      item.addEventListener('click', function() {
+        item.classList.toggle('done');
+        updatePhaseProgress(item.closest('.checklist-phase'));
+      });
+    });
+
+    var resetBtn = document.getElementById('checklistReset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        items.forEach(function(i) { i.classList.remove('done'); });
+        document.querySelectorAll('.checklist-phase').forEach(function(p) {
+          p.classList.remove('complete');
+          updatePhaseProgress(p);
+        });
+      });
+    }
+  }
+
+  function updatePhaseProgress(phase) {
+    if (!phase) return;
+    var done = phase.querySelectorAll('.checklist-item.done').length;
+    var total = phase.querySelectorAll('.checklist-item').length;
+    phase.querySelector('.phaseDone').textContent = done;
+    if (done === total && total > 0) {
+      phase.classList.add('complete');
+    } else {
+      phase.classList.remove('complete');
+    }
+  }
+
+  // ---- 7. Theme Switcher ----
+  function initThemeSwitcher() {
+    var btns = document.querySelectorAll('.theme-btn');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var theme = btn.dataset.themeBtn;
+        setTheme(theme);
+      });
+    });
+  }
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('aero-theme', theme); } catch(e) {}
+    document.querySelectorAll('.theme-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.themeBtn === theme);
+    });
+  }
+
+  // ---- 8. Scroll Reveal ----
+  function initReveal() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      observer.observe(el);
+    });
+  }
+
+  // ---- 9. Nav scroll state ----
+  function initNavScroll() {
+    var nav = document.getElementById('topNav');
+    window.addEventListener('scroll', function() {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+  }
+
+  // ---- 10. Sound toggle ----
+  function initSoundToggle() {
+    var btn = document.getElementById('soundToggle');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      state.soundOn = !state.soundOn;
+      btn.innerHTML = state.soundOn ? '\u{1F50A}' : '\u{1F507}';
+    });
+  }
+
+  // ---- 11. Counter animation ----
+  function initCounters() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var nums = entry.target.querySelectorAll('.counter-num');
+          nums.forEach(function(el) {
+            var target = parseInt(el.dataset.target, 10);
+            if (isNaN(target)) return;
+            var start = 0;
+            var duration = 2000;
+            var startTime = null;
+            function step(timestamp) {
+              if (!startTime) startTime = timestamp;
+              var progress = Math.min((timestamp - startTime) / duration, 1);
+              var eased = 1 - Math.pow(1 - progress, 3);
+              el.textContent = Math.round(start + (target - start) * eased);
+              if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.counter-item').forEach(function(item) {
+      observer.observe(item);
+    });
+  }
+
+  // ---- 12. Comms ----
+  function initComms() {
+    document.querySelectorAll('[data-com]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var num = btn.dataset.com;
+        var active = document.getElementById('com' + num + 'Active');
+        var standby = document.getElementById('com' + num + 'Standby');
+        if (active && standby) {
+          var tmp = active.textContent;
+          active.textContent = standby.textContent;
+          standby.textContent = tmp;
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-sq]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var sq = btn.dataset.sq;
+        var el = document.getElementById('squawkDisplay');
+        if (el) {
+          el.textContent = sq;
+          el.classList.toggle('danger', sq === '7700' || sq === '7500' || sq === '7600');
+        }
+      });
+    });
+  }
+
+  // ---- 13. Quick Checklist scroll ----
+  function initQuickChecklist() {
+    var btn = document.getElementById('openChecklistBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var section = document.getElementById('checklist');
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // ---- 14. Nav Canvas (route map) ----
+  function initNavCanvas() {
+    var canvas = document.getElementById('navCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    function resize() {
+      var parent = canvas.parentElement;
+      canvas.width = parent.clientWidth;
+      canvas.height = parent.clientHeight;
+      drawNav();
+    }
+
+    function drawNav() {
+      if (!ctx) return;
+      var W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+      if (W === 0 || H === 0) return;
+
+      // Background grid
+      ctx.strokeStyle = 'var(--border-instrument)';
+      ctx.lineWidth = 0.3;
+      for (var x = 0; x < W; x += 30) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (var y = 0; y < H; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+
+      // Compass rose
+      ctx.save();
+      ctx.translate(60, 40);
+      ctx.font = '8px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'var(--text-instrument-dim)';
+      ctx.textAlign = 'center';
+      ctx.fillText('N', 0, -10);
+      ctx.fillText('E', 12, 2);
+      ctx.fillText('S', 0, 14);
+      ctx.fillText('W', -12, 2);
+      ctx.restore();
+
+      // Route
+      var p1 = { x: W * 0.15, y: H * 0.55 };
+      var p2 = { x: W * 0.48, y: H * 0.42 };
+      var p3 = { x: W * 0.78, y: H * 0.62 };
+
+      ctx.strokeStyle = 'var(--accent-secondary)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Waypoints
+      [p1, p2, p3].forEach(function(p, i) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = 'var(--accent)';
+        ctx.fill();
+        ctx.shadowColor = 'var(--glow-accent)';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      var labels = ['CGK', 'DPS', 'SYD'];
+      ctx.font = '9px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'var(--text-instrument)';
+      ctx.textAlign = 'left';
+      ctx.fillText(labels[0], p1.x + 8, p1.y + 3);
+      ctx.fillText(labels[1], p2.x + 8, p2.y + 3);
+      ctx.fillText(labels[2], p3.x + 8, p3.y + 3);
+
+      // Range rings
+      ctx.strokeStyle = 'var(--border-instrument)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(W * 0.32, H * 0.47, 40, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(W * 0.32, H * 0.47, 70, 0, 2 * Math.PI);
+      ctx.stroke();
+
+      // Wind arrow
+      ctx.save();
+      ctx.translate(W - 60, 30);
+      ctx.font = '7px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'var(--text-instrument-dim)';
+      ctx.textAlign = 'center';
+      ctx.fillText('WND', 0, -2);
+      ctx.beginPath();
+      ctx.moveTo(0, 4);
+      ctx.lineTo(0, 16);
+      ctx.strokeStyle = 'var(--accent-warn)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+
+      // Fuel / ETA info
+      ctx.font = '7px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'var(--text-instrument-dim)';
+      ctx.textAlign = 'right';
+      ctx.fillText('FUEL 12.4 T', W - 10, H - 10);
+    }
+
+    window.addEventListener('resize', resize);
+    setTimeout(resize, 100);
+  }
+
+  // ---- Init ----
+  function init() {
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    setInterval(updateInstruments, INSTRUMENT_UPDATE_MS);
+    setInterval(updateEngines, 500);
+
+    initAutopilot();
+    initChecklist();
+    initThemeSwitcher();
+    initReveal();
+    initNavScroll();
+    initSoundToggle();
+    initCounters();
+    initComms();
+    initQuickChecklist();
+    initNavCanvas();
+    initRadar();
+
+    // Restore theme button state
+    var currentTheme = document.documentElement.getAttribute('data-theme') || 'day';
+    document.querySelectorAll('.theme-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.themeBtn === currentTheme);
+    });
+
+    // Initial progress calc
+    document.querySelectorAll('.checklist-phase').forEach(function(p) {
+      updatePhaseProgress(p);
+    });
+
+    console.log('AERON Flight Deck initialized. GA-892 ready for departure.');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>

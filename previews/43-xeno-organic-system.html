@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XENOGENESIS — Biomechanical Interface v4.2</title>
+<script>
+!function(){try{var t=localStorage.getItem('xeno-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','dark')}}();
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   XENOGENESIS — Biomechanical Organic Theme System
+   Premium CSS Framework | 600+ lines of organic metal
+   ================================================================ */
+
+/* ----- THEME VARIANTS (4 modes) ----- */
+:root {
+  /* Dark — default nocturnal */
+  --bone: #c8b896;
+  --flesh: #8b6f4e;
+  --ichor: #e8c97a;
+  --ichor-rgb: 232, 201, 122;
+  --chitin: #1a1a14;
+  --void: #0a0a05;
+  --void-rgb: 10, 10, 5;
+  --meat: #4a3020;
+  --membrane: rgba(232, 201, 122, 0.15);
+  --pulse: rgba(232, 201, 122, 0.08);
+  --glass: rgba(20, 20, 16, 0.55);
+  --glass-heavy: rgba(20, 20, 16, 0.78);
+  --border-glow: rgba(139, 111, 78, 0.3);
+  --border-glow-strong: rgba(232, 201, 122, 0.25);
+  --scroll-track: #0a0a05;
+  --scroll-thumb: #8b6f4e;
+  --glow-spread: 0 0 60px rgba(232, 201, 122, 0.15);
+  --nav-bg: linear-gradient(180deg, rgba(10, 10, 5, 0.92) 0%, rgba(10, 10, 5, 0.6) 60%, transparent 100%);
+  --card-bg: linear-gradient(145deg, rgba(20, 20, 16, 0.7), rgba(10, 10, 5, 0.5));
+  --hero-gradient: radial-gradient(ellipse at 50% 40%, rgba(232, 201, 122, 0.06) 0%, transparent 65%);
+  --accent-glow: rgba(232, 201, 122, 0.2);
+  --bio-border-color: #8b6f4e;
+  --bio-border-glow: rgba(232, 201, 122, 0.15);
+  --cursor-color: rgba(232, 201, 122, 0.5);
+  --terminal-header: #e8c97a;
+  --overlay-color: rgba(0, 0, 0, 0.7);
+  --pricing-bg: rgba(20, 20, 16, 0.45);
+  --input-bg: rgba(20, 20, 16, 0.6);
+  --input-border: rgba(139, 111, 78, 0.3);
+  --input-focus: rgba(232, 201, 122, 0.35);
+  --tag-bg: rgba(232, 201, 122, 0.08);
+  --tag-color: #e8c97a;
+  --divider-glow: rgba(232, 201, 122, 0.12);
+  --orb-bg: radial-gradient(circle at 40% 40%, #e8c97a, #4a3020);
+  --section-title-color: #c8b896;
+}
+
+[data-theme="light"] {
+  --bone: #5a4a32;
+  --flesh: #8a6a4a;
+  --ichor: #b89040;
+  --ichor-rgb: 184, 144, 64;
+  --chitin: #d8d0c0;
+  --void: #f5f0e8;
+  --void-rgb: 245, 240, 232;
+  --meat: #a08060;
+  --membrane: rgba(184, 144, 64, 0.12);
+  --pulse: rgba(184, 144, 64, 0.06);
+  --glass: rgba(245, 240, 232, 0.6);
+  --glass-heavy: rgba(245, 240, 232, 0.8);
+  --border-glow: rgba(122, 92, 62, 0.2);
+  --border-glow-strong: rgba(184, 144, 64, 0.2);
+  --scroll-track: #e8e0d0;
+  --scroll-thumb: #a08060;
+  --glow-spread: 0 0 40px rgba(184, 144, 64, 0.1);
+  --nav-bg: linear-gradient(180deg, rgba(245, 240, 232, 0.92) 0%, rgba(245, 240, 232, 0.6) 60%, transparent 100%);
+  --card-bg: linear-gradient(145deg, rgba(245, 240, 232, 0.7), rgba(232, 224, 208, 0.5));
+  --hero-gradient: radial-gradient(ellipse at 50% 40%, rgba(184, 144, 64, 0.05) 0%, transparent 65%);
+  --accent-glow: rgba(184, 144, 64, 0.15);
+  --bio-border-color: #a08060;
+  --bio-border-glow: rgba(184, 144, 64, 0.12);
+  --cursor-color: rgba(184, 144, 64, 0.4);
+  --terminal-header: #b89040;
+  --overlay-color: rgba(245, 240, 232, 0.7);
+  --pricing-bg: rgba(245, 240, 232, 0.5);
+  --input-bg: rgba(245, 240, 232, 0.7);
+  --input-border: rgba(122, 92, 62, 0.25);
+  --input-focus: rgba(184, 144, 64, 0.3);
+  --tag-bg: rgba(184, 144, 64, 0.06);
+  --tag-color: #b89040;
+  --divider-glow: rgba(184, 144, 64, 0.1);
+  --orb-bg: radial-gradient(circle at 40% 40%, #b89040, #a08060);
+  --section-title-color: #5a4a32;
+}
+
+[data-theme="blood"] {
+  --bone: #e8d0c0;
+  --flesh: #c04040;
+  --ichor: #ff3030;
+  --ichor-rgb: 255, 48, 48;
+  --chitin: #1e0e0a;
+  --void: #0d0402;
+  --void-rgb: 13, 4, 2;
+  --meat: #5c1a1a;
+  --membrane: rgba(255, 48, 48, 0.18);
+  --pulse: rgba(255, 48, 48, 0.1);
+  --glass: rgba(20, 8, 6, 0.6);
+  --glass-heavy: rgba(20, 8, 6, 0.82);
+  --border-glow: rgba(192, 64, 64, 0.35);
+  --border-glow-strong: rgba(255, 48, 48, 0.3);
+  --scroll-track: #0d0402;
+  --scroll-thumb: #5c1a1a;
+  --glow-spread: 0 0 60px rgba(255, 48, 48, 0.2);
+  --nav-bg: linear-gradient(180deg, rgba(13, 4, 2, 0.95) 0%, rgba(13, 4, 2, 0.6) 60%, transparent 100%);
+  --card-bg: linear-gradient(145deg, rgba(20, 8, 6, 0.7), rgba(13, 4, 2, 0.5));
+  --hero-gradient: radial-gradient(ellipse at 50% 40%, rgba(255, 48, 48, 0.08) 0%, transparent 65%);
+  --accent-glow: rgba(255, 48, 48, 0.25);
+  --bio-border-color: #c04040;
+  --bio-border-glow: rgba(255, 48, 48, 0.2);
+  --cursor-color: rgba(255, 48, 48, 0.5);
+  --terminal-header: #ff3030;
+  --overlay-color: rgba(0, 0, 0, 0.75);
+  --pricing-bg: rgba(20, 8, 6, 0.5);
+  --input-bg: rgba(20, 8, 6, 0.65);
+  --input-border: rgba(192, 64, 64, 0.35);
+  --input-focus: rgba(255, 48, 48, 0.4);
+  --tag-bg: rgba(255, 48, 48, 0.1);
+  --tag-color: #ff6060;
+  --divider-glow: rgba(255, 48, 48, 0.15);
+  --orb-bg: radial-gradient(circle at 40% 40%, #ff3030, #5c1a1a);
+  --section-title-color: #e8d0c0;
+}
+
+[data-theme="void"] {
+  --bone: #a0a0a8;
+  --flesh: #606068;
+  --ichor: #8844ff;
+  --ichor-rgb: 136, 68, 255;
+  --chitin: #141218;
+  --void: #060408;
+  --void-rgb: 6, 4, 8;
+  --meat: #2a1a44;
+  --membrane: rgba(136, 68, 255, 0.15);
+  --pulse: rgba(136, 68, 255, 0.08);
+  --glass: rgba(16, 12, 20, 0.6);
+  --glass-heavy: rgba(16, 12, 20, 0.8);
+  --border-glow: rgba(96, 60, 180, 0.3);
+  --border-glow-strong: rgba(136, 68, 255, 0.25);
+  --scroll-track: #060408;
+  --scroll-thumb: #2a1a44;
+  --glow-spread: 0 0 60px rgba(136, 68, 255, 0.15);
+  --nav-bg: linear-gradient(180deg, rgba(6, 4, 8, 0.95) 0%, rgba(6, 4, 8, 0.6) 60%, transparent 100%);
+  --card-bg: linear-gradient(145deg, rgba(16, 12, 20, 0.7), rgba(6, 4, 8, 0.5));
+  --hero-gradient: radial-gradient(ellipse at 50% 40%, rgba(136, 68, 255, 0.06) 0%, transparent 65%);
+  --accent-glow: rgba(136, 68, 255, 0.2);
+  --bio-border-color: #606068;
+  --bio-border-glow: rgba(136, 68, 255, 0.15);
+  --cursor-color: rgba(136, 68, 255, 0.5);
+  --terminal-header: #8844ff;
+  --overlay-color: rgba(0, 0, 0, 0.75);
+  --pricing-bg: rgba(16, 12, 20, 0.5);
+  --input-bg: rgba(16, 12, 20, 0.65);
+  --input-border: rgba(96, 60, 180, 0.3);
+  --input-focus: rgba(136, 68, 255, 0.35);
+  --tag-bg: rgba(136, 68, 255, 0.08);
+  --tag-color: #aa66ff;
+  --divider-glow: rgba(136, 68, 255, 0.12);
+  --orb-bg: radial-gradient(circle at 40% 40%, #8844ff, #2a1a44);
+  --section-title-color: #a0a0a8;
+}
+
+/* ----- CUSTOM PROPERTY UTILITIES ----- */
+:root {
+  --bio-radius-sm: 4px 12px 4px 12px;
+  --bio-radius-md: 8px 20px 8px 20px;
+  --bio-radius-lg: 12px 28px 12px 28px;
+  --bio-radius-xl: 16px 36px 16px 36px;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --transition-organic: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-morph: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --z-base: 1;
+  --z-glass: 10;
+  --z-nav: 100;
+  --z-cursor: 9999;
+  --z-overlay: 500;
+}
+
+/* ----- RESET & BASE ----- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--void);
+  color: var(--bone);
+  font-family: var(--font-body);
+  font-weight: 400;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.6s var(--transition-organic), color 0.6s var(--transition-organic);
+}
+::selection { background: rgba(var(--ichor-rgb), 0.25); color: var(--bone); }
+a { color: var(--ichor); text-decoration: none; transition: color 0.3s; }
+img { max-width: 100%; display: block; }
+ul { list-style: none; }
+
+/* ----- SCROLLBAR ----- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--scroll-track); }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ichor); }
+
+/* ================================================================
+   AMBIENT BACKGROUND LAYER SYSTEM
+   ================================================================ */
+.ambient-layer {
+  position: fixed; inset: 0; z-index: -5; pointer-events: none;
+  overflow: hidden;
+}
+.ambient-bg {
+  position: absolute; inset: 0;
+  background:
+    url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover no-repeat;
+  opacity: 0.06; filter: saturate(0.3) contrast(1.3) blur(3px);
+  transform: scale(1.12); transition: opacity 0.8s, transform 0.1s linear;
+}
+[data-theme="light"] .ambient-bg { opacity: 0.04; }
+[data-theme="blood"] .ambient-bg { opacity: 0.08; filter: saturate(0.8) contrast(1.5) blur(3px) hue-rotate(340deg); }
+[data-theme="void"] .ambient-bg { opacity: 0.05; filter: saturate(0.15) contrast(1.2) blur(3px) hue-rotate(250deg); }
+
+.vein-overlay {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, var(--pulse) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, var(--membrane) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%, rgba(var(--void-rgb), 0.03) 0%, transparent 60%);
+  transition: background 0.6s;
+}
+
+.noise-texture {
+  position: absolute; inset: 0; opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ================================================================
+   BIO-BORDER SYSTEM — organic clip-path / border generators
+   ================================================================ */
+.bio-border {
+  position: relative;
+}
+.bio-border::after {
+  content: ''; position: absolute; inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--bio-border-glow);
+  pointer-events: none;
+  z-index: 2;
+  transition: border-color 0.5s, box-shadow 0.5s;
+}
+.bio-border:hover::after {
+  border-color: rgba(var(--ichor-rgb), 0.5);
+  box-shadow: inset 0 0 20px rgba(var(--ichor-rgb), 0.06);
+}
+
+.clip-rhombus {
+  clip-path: polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%);
+}
+.clip-organic {
+  clip-path: polygon(4% 0%, 96% 2%, 100% 8%, 100% 92%, 96% 98%, 4% 100%, 0% 94%, 0% 6%);
+}
+
+/* ================================================================
+   CUSTOM CURSOR
+   ================================================================ */
+.cursor-glow {
+  position: fixed; width: 32px; height: 32px; border-radius: 50%;
+  background: radial-gradient(circle, var(--cursor-color) 0%, transparent 70%);
+  pointer-events: none; z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, opacity 0.3s;
+  mix-blend-mode: screen;
+}
+.cursor-glow.is-hovering { width: 60px; height: 60px; opacity: 0.3; }
+
+.cursor-ring {
+  position: fixed; width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--cursor-color);
+  pointer-events: none; z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s, opacity 0.3s;
+  mix-blend-mode: screen;
+}
+.cursor-ring.is-hovering { width: 70px; height: 70px; border-color: var(--ichor); opacity: 0.5; }
+
+/* ================================================================
+   NAVBAR — glassmorphism sticky
+   ================================================================ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-nav);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.2rem 2.5rem;
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-bottom: 1px solid var(--border-glow);
+  transition: background 0.6s var(--transition-organic), border-color 0.6s;
+}
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 1.25rem; font-weight: 900;
+  letter-spacing: 5px;
+  color: var(--ichor);
+  text-shadow: 0 0 20px rgba(var(--ichor-rgb), 0.3);
+  display: flex; align-items: center; gap: 10px;
+  transition: color 0.4s, text-shadow 0.4s;
+}
+.nav-brand i { font-size: 1.1rem; }
+.nav-links {
+  display: flex; gap: 2.8rem; list-style: none;
+  font-family: var(--font-mono); font-size: 0.72rem;
+  letter-spacing: 2.5px; text-transform: uppercase;
+}
+.nav-links a {
+  color: var(--flesh); text-decoration: none;
+  position: relative; padding: 0.35rem 0;
+  transition: color 0.4s var(--transition-organic);
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 1.5px;
+  background: var(--ichor);
+  transition: width 0.4s var(--transition-organic);
+  box-shadow: 0 0 8px var(--ichor);
+  border-radius: 2px;
+}
+.nav-links a:hover { color: var(--ichor); }
+.nav-links a:hover::after { width: 100%; }
+.nav-links a i { margin-right: 5px; font-size: 0.65rem; }
+
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.nav-hamburger span {
+  width: 24px; height: 1.5px; background: var(--ichor);
+  transition: all 0.3s var(--transition-organic);
+  border-radius: 2px;
+}
+
+/* ================================================================
+   LAYOUT CONTAINER
+   ================================================================ */
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative; z-index: var(--z-base);
+}
+
+/* Section spacer */
+.section-pad { padding: 6rem 0; }
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem; letter-spacing: 5px;
+  color: var(--flesh); text-transform: uppercase;
+  margin-bottom: 1rem; opacity: 0.7;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border-glow), transparent);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900; letter-spacing: 1px;
+  color: var(--section-title-color);
+  margin-bottom: 1.5rem;
+}
+.section-title span { color: var(--ichor); }
+.section-sub {
+  max-width: 600px; color: var(--flesh);
+  font-size: 1.05rem; font-weight: 300; line-height: 1.8;
+}
+
+/* ================================================================
+   HERO — massive pulse orb + parallax nodes
+   ================================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center; position: relative;
+  padding: 8rem 0 4rem;
+  overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: var(--hero-gradient);
+  top: 10%; left: 50%;
+  transform: translateX(-50%);
+  animation: hero-breathe 8s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute;
+  width: 450px; height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--membrane) 0%, transparent 70%);
+  bottom: 5%; right: 8%;
+  animation: hero-breathe 10s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+@keyframes hero-breathe {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+  50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+
+/* Parallax organic nodes (CSS-only) */
+.parallax-nodes {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  z-index: 0;
+  transform: translateZ(0);
+}
+.p-node {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, rgba(var(--ichor-rgb), 0.12), transparent 70%);
+  animation: node-float 12s ease-in-out infinite;
+}
+.p-node:nth-child(1) { width: 180px; height: 180px; top: 15%; left: 8%; animation-delay: 0s; }
+.p-node:nth-child(2) { width: 120px; height: 120px; top: 55%; right: 12%; animation-delay: -3s; }
+.p-node:nth-child(3) { width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: -6s; }
+.p-node:nth-child(4) { width: 70px; height: 70px; top: 35%; left: 55%; animation-delay: -2s; }
+.p-node:nth-child(5) { width: 50px; height: 50px; top: 70%; left: 45%; animation-delay: -8s; }
+.p-node:nth-child(6) { width: 200px; height: 200px; top: -5%; right: 5%; animation-delay: -4s; opacity: 0.5; }
+.p-node:nth-child(7) { width: 30px; height: 30px; bottom: 10%; right: 35%; animation-delay: -1s; }
+.p-node:nth-child(8) { width: 90px; height: 90px; top: 60%; left: 5%; animation-delay: -7s; }
+@keyframes node-float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50% { transform: translateY(-30px) scale(1.15); opacity: 0.8; }
+}
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem; letter-spacing: 7px;
+  color: var(--flesh); text-transform: uppercase;
+  margin-bottom: 1.8rem; opacity: 0.7;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-tag i { color: var(--ichor); opacity: 0.8; }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 9vw, 7rem);
+  font-weight: 900; line-height: 0.92;
+  letter-spacing: 1px;
+  color: var(--bone);
+  text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+  position: relative; z-index: 1;
+}
+.hero h1 .glow {
+  color: var(--ichor);
+  text-shadow:
+    0 0 60px rgba(var(--ichor-rgb), 0.4),
+    0 0 120px rgba(var(--ichor-rgb), 0.15);
+}
+.hero h1 .stagger { display: block; }
+.hero-desc {
+  max-width: 580px; margin-top: 2rem;
+  font-size: 1.05rem; color: var(--flesh);
+  font-weight: 300; line-height: 1.9;
+  position: relative; z-index: 1;
+}
+.hero-cta {
+  margin-top: 3rem;
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 1rem 2.8rem;
+  border: 1.5px solid rgba(var(--ichor-rgb), 0.6);
+  border-radius: var(--bio-radius-md);
+  background: rgba(var(--ichor-rgb), 0.04);
+  color: var(--ichor);
+  font-family: var(--font-display);
+  font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;
+  text-decoration: none; cursor: pointer;
+  position: relative; overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.5s var(--transition-organic);
+  z-index: 1;
+}
+.hero-cta::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(var(--ichor-rgb), 0.12) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.5s;
+}
+.hero-cta i { font-size: 0.9rem; }
+.hero-cta:hover {
+  background: rgba(var(--ichor-rgb), 0.1);
+  box-shadow: 0 0 50px rgba(var(--ichor-rgb), 0.15), 0 8px 32px rgba(0,0,0,0.3);
+  border-radius: var(--bio-radius-lg);
+  transform: translateY(-3px);
+  letter-spacing: 5px;
+}
+.hero-cta:hover::before { opacity: 1; }
+
+/* Pulse Orb */
+.pulse-orb {
+  width: 140px; height: 140px; border-radius: 50%;
+  margin-top: 4.5rem;
+  background: var(--orb-bg);
+  opacity: 0.35;
+  animation: orb-heartbeat 3s ease-in-out infinite;
+  box-shadow:
+    0 0 80px rgba(var(--ichor-rgb), 0.18),
+    inset 0 0 30px rgba(0,0,0,0.3);
+  position: relative;
+  transition: background 0.6s;
+}
+.pulse-orb::before {
+  content: ''; position: absolute; inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--ichor-rgb), 0.12);
+  animation: orb-ripple 3s ease-out infinite;
+}
+.pulse-orb::after {
+  content: ''; position: absolute; inset: -25px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--ichor-rgb), 0.06);
+  animation: orb-ripple 3s ease-out 1s infinite;
+}
+@keyframes orb-heartbeat {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(1.1); opacity: 0.65; }
+}
+@keyframes orb-ripple {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Stats bar below hero */
+.hero-stats {
+  display: flex; gap: 3rem; margin-top: 4rem;
+  font-family: var(--font-mono); font-size: 0.7rem;
+  color: var(--flesh); opacity: 0.7;
+  position: relative; z-index: 1;
+}
+.hero-stats .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.hero-stats .stat-num {
+  font-family: var(--font-display);
+  font-size: 1.6rem; font-weight: 900;
+  color: var(--ichor);
+  opacity: 0.8;
+}
+
+/* ================================================================
+   FEATURE GRID — biomechanical cards
+   ================================================================ */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.8rem;
+  margin: 4rem 0;
+  perspective: 1200px;
+}
+.feature-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  padding: 2.8rem 2.2rem;
+  border: 1px solid var(--border-glow);
+  border-radius: var(--bio-radius-md);
+  transition: all 0.6s var(--transition-organic);
+  position: relative; overflow: hidden;
+  cursor: default;
+}
+.feature-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--ichor), transparent);
+  opacity: 0; transition: opacity 0.6s;
+}
+.feature-card::after {
+  content: ''; position: absolute;
+  inset: 0; border-radius: inherit;
+  border: 1px solid transparent;
+  transition: border-color 0.6s;
+  pointer-events: none;
+}
+.feature-card:hover {
+  border-color: rgba(var(--ichor-rgb), 0.35);
+  transform: translateY(-12px) rotateX(4deg);
+  box-shadow:
+    0 30px 70px rgba(0,0,0,0.4),
+    0 0 40px rgba(var(--ichor-rgb), 0.05);
+}
+.feature-card:hover::before { opacity: 0.6; }
+.feature-card:hover::after {
+  border-color: rgba(var(--ichor-rgb), 0.08);
+  box-shadow: inset 0 0 30px rgba(var(--ichor-rgb), 0.04);
+}
+
+.feature-card .card-icon {
+  font-size: 2.2rem;
+  margin-bottom: 1.4rem;
+  color: var(--ichor);
+  filter: drop-shadow(0 0 12px rgba(var(--ichor-rgb), 0.12));
+  transition: transform 0.4s var(--transition-organic);
+}
+.feature-card:hover .card-icon { transform: scale(1.1); }
+.feature-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem; letter-spacing: 2px;
+  margin-bottom: 0.8rem;
+  color: var(--bone);
+}
+.feature-card p {
+  font-size: 0.92rem; color: var(--flesh);
+  line-height: 1.75; font-weight: 300;
+}
+.feature-card .card-tag {
+  display: inline-block;
+  margin-top: 1rem; padding: 4px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem; letter-spacing: 1.5px;
+  background: var(--tag-bg);
+  color: var(--tag-color);
+  border-radius: 20px;
+  transition: background 0.3s;
+}
+
+/* ================================================================
+   SHOWCASE — alternating image + text
+   ================================================================ */
+.showcase-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  margin: 5rem 0;
+}
+.showcase-row.reversed { direction: rtl; }
+.showcase-row.reversed > * { direction: ltr; }
+
+.showcase-media {
+  position: relative;
+  border-radius: var(--bio-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.showcase-media::before {
+  content: ''; position: absolute; inset: 0;
+  border: 1px solid var(--border-glow);
+  border-radius: inherit; z-index: 2; pointer-events: none;
+}
+.showcase-media img {
+  width: 100%; height: 400px; object-fit: cover;
+  transition: transform 1.4s var(--transition-organic);
+  filter: saturate(0.5) contrast(1.15);
+}
+.showcase-media:hover img { transform: scale(1.12); }
+.showcase-media::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 35%, var(--overlay-color) 100%);
+  pointer-events: none; z-index: 1;
+}
+
+.showcase-body h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem; color: var(--bone);
+  margin-bottom: 1rem; letter-spacing: 1px;
+}
+.showcase-body h2 span { color: var(--ichor); }
+.showcase-body p {
+  color: var(--flesh); line-height: 1.9;
+  font-size: 1rem; font-weight: 300;
+}
+.showcase-meta {
+  display: flex; gap: 1.5rem; margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.showcase-meta .chip {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem; color: var(--flesh); opacity: 0.7;
+}
+.showcase-meta .chip i { color: var(--ichor); opacity: 0.9; }
+
+/* ================================================================
+   NEURAL TERMINAL — interactive node panel
+   ================================================================ */
+.terminal-panel {
+  background: var(--glass-heavy);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--bio-radius-lg);
+  padding: 2.8rem;
+  font-family: var(--font-mono);
+  position: relative; overflow: hidden;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.35);
+  margin: 4rem 0;
+}
+.terminal-panel::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--ichor), transparent);
+  opacity: 0.4;
+}
+.terminal-panel::after {
+  content: ''; position: absolute;
+  inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(var(--ichor-rgb), 0.015) 2px, rgba(var(--ichor-rgb), 0.015) 4px);
+}
+
+.terminal-label {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 1.8rem;
+  font-size: 0.7rem; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--terminal-header);
+}
+.terminal-label::before, .terminal-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-glow));
+}
+.terminal-label::after { background: linear-gradient(90deg, var(--border-glow), transparent); }
+.terminal-label i { font-size: 0.8rem; }
+
+.t-node {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 0.8rem; color: var(--flesh);
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(var(--ichor-rgb), 0.04);
+  transition: all 0.4s var(--transition-organic);
+  cursor: pointer;
+  position: relative;
+}
+.t-node:last-of-type { border-bottom: none; }
+.t-node:hover {
+  color: var(--bone);
+  padding-left: 10px;
+}
+.t-node.active {
+  color: var(--bone);
+  background: rgba(var(--ichor-rgb), 0.03);
+  border-radius: 4px;
+}
+
+.t-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ichor);
+  animation: t-blink 3s ease-in-out infinite;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(var(--ichor-rgb), 0.3);
+}
+.t-node .t-dot:nth-child(1) { animation-delay: 0s; }
+.t-node:nth-child(2) .t-dot { animation-delay: 0.4s; }
+.t-node:nth-child(3) .t-dot { animation-delay: 0.8s; }
+.t-node:nth-child(4) .t-dot { animation-delay: 1.2s; }
+.t-node:nth-child(5) .t-dot { animation-delay: 1.6s; }
+.t-node:nth-child(6) .t-dot { animation-delay: 2s; }
+
+@keyframes t-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.t-node .t-label { font-weight: 500; letter-spacing: 1px; }
+.t-node .t-value { margin-left: auto; font-size: 0.72rem; opacity: 0.7; letter-spacing: 0.5px; }
+.t-node .t-arrow { font-size: 0.6rem; color: var(--ichor); opacity: 0; transition: opacity 0.3s, transform 0.3s; }
+.t-node:hover .t-arrow { opacity: 0.6; }
+
+/* Terminal — expanded info (interactive dropdown) */
+.t-expand {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s var(--transition-organic), opacity 0.4s, padding 0.4s;
+  opacity: 0; padding: 0 0 0 2rem;
+  font-size: 0.75rem; color: var(--flesh);
+  line-height: 1.8; border-bottom: 1px solid transparent;
+}
+.t-expand.open {
+  max-height: 120px; opacity: 0.8;
+  padding: 0.5rem 0 0.8rem 2rem;
+  border-bottom-color: rgba(var(--ichor-rgb), 0.06);
+}
+.t-expand i { color: var(--ichor); margin-right: 8px; }
+
+.t-status {
+  color: var(--terminal-header); font-weight: 700;
+  margin-top: 0.8rem; border: none;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(var(--ichor-rgb), 0.08);
+}
+
+/* ================================================================
+   PRICING / HYBRID SECTION
+   ================================================================ */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin: 4rem 0;
+}
+.pricing-card {
+  background: var(--pricing-bg);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--bio-radius-lg);
+  padding: 2.8rem 2rem;
+  text-align: center;
+  position: relative; overflow: hidden;
+  transition: all 0.5s var(--transition-organic);
+}
+.pricing-card.featured {
+  border-color: rgba(var(--ichor-rgb), 0.35);
+  box-shadow: 0 0 40px rgba(var(--ichor-rgb), 0.08), 0 20px 60px rgba(0,0,0,0.3);
+  transform: scale(1.03);
+}
+.pricing-card.featured::before {
+  content: 'RECOMMENDED'; position: absolute; top: 12px; right: -30px;
+  background: var(--ichor); color: var(--void);
+  font-family: var(--font-mono); font-size: 0.5rem;
+  letter-spacing: 2px; padding: 4px 35px;
+  transform: rotate(45deg);
+  font-weight: 700;
+}
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 0 30px rgba(var(--ichor-rgb), 0.06);
+  border-color: rgba(var(--ichor-rgb), 0.3);
+}
+.pricing-card.featured:hover { transform: scale(1.05) translateY(-5px); }
+
+.pricing-icon { font-size: 2.5rem; color: var(--ichor); margin-bottom: 1.2rem; }
+.pricing-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem; letter-spacing: 2px;
+  color: var(--bone); margin-bottom: 1rem;
+}
+.pricing-price {
+  font-family: var(--font-display);
+  font-size: 2.8rem; font-weight: 900;
+  color: var(--ichor); letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+.pricing-price sub {
+  font-size: 1rem; font-weight: 400;
+  color: var(--flesh); opacity: 0.6;
+}
+.pricing-desc {
+  font-size: 0.85rem; color: var(--flesh);
+  margin-bottom: 1.5rem; font-weight: 300;
+}
+.pricing-features {
+  text-align: left; margin-bottom: 1.8rem;
+  display: inline-block;
+}
+.pricing-features li {
+  padding: 0.4rem 0; font-size: 0.85rem;
+  color: var(--bone); display: flex; align-items: center; gap: 10px;
+}
+.pricing-features li i { color: var(--ichor); width: 16px; font-size: 0.7rem; }
+.pricing-features li .na { opacity: 0.35; }
+
+.pricing-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 0.8rem 2rem;
+  border: 1.5px solid var(--border-glow-strong);
+  border-radius: var(--bio-radius-sm);
+  background: rgba(var(--ichor-rgb), 0.04);
+  color: var(--ichor);
+  font-family: var(--font-display);
+  font-size: 0.72rem; letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer; transition: all 0.4s var(--transition-organic);
+}
+.pricing-btn:hover {
+  background: rgba(var(--ichor-rgb), 0.12);
+  box-shadow: 0 0 30px rgba(var(--ichor-rgb), 0.1);
+  border-radius: var(--bio-radius-md);
+  letter-spacing: 4px;
+}
+.pricing-btn.featured-btn {
+  background: rgba(var(--ichor-rgb), 0.15);
+  border-color: var(--ichor);
+}
+
+/* ================================================================
+   MORPH INPUT (footer)
+   ================================================================ */
+.morph-input-group {
+  display: flex; gap: 0; width: 100%; max-width: 420px;
+  margin: 1rem auto;
+}
+.morph-input {
+  flex: 1; padding: 0.9rem 1.2rem;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-right: none;
+  border-radius: var(--bio-radius-sm) 0 0 var(--bio-radius-sm);
+  color: var(--bone);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  outline: none;
+  transition: all 0.4s var(--transition-organic);
+  backdrop-filter: blur(8px);
+}
+.morph-input::placeholder { color: var(--flesh); opacity: 0.5; }
+.morph-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: inset 0 0 10px rgba(var(--ichor-rgb), 0.06);
+  background: var(--glass-heavy);
+}
+.morph-submit {
+  padding: 0 1.5rem;
+  background: rgba(var(--ichor-rgb), 0.12);
+  border: 1.5px solid var(--input-focus);
+  border-radius: 0 var(--bio-radius-sm) var(--bio-radius-sm) 0;
+  color: var(--ichor);
+  font-family: var(--font-display);
+  font-size: 0.75rem; letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer; transition: all 0.4s var(--transition-organic);
+}
+.morph-submit:hover {
+  background: rgba(var(--ichor-rgb), 0.25);
+  letter-spacing: 4px;
+}
+
+/* ================================================================
+   FOOTER — with interactive theme switcher
+   ================================================================ */
+.footer {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2rem;
+  padding: 5rem 0 3rem;
+  border-top: 1px solid var(--divider-glow);
+  margin-top: 5rem;
+  text-align: center;
+}
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 0.7rem; letter-spacing: 5px;
+  color: var(--flesh); opacity: 0.5;
+}
+.footer-brand i { color: var(--ichor); margin: 0 8px; }
+
+.theme-switcher {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  justify-content: center;
+}
+.t-btn {
+  padding: 10px 22px;
+  border: 1.5px solid var(--border-glow);
+  border-radius: var(--bio-radius-sm);
+  background: var(--glass);
+  color: var(--flesh);
+  font-family: var(--font-display);
+  font-size: 0.65rem; letter-spacing: 2.5px;
+  cursor: pointer;
+  transition: all 0.5s var(--transition-organic);
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 8px;
+}
+.t-btn i { font-size: 0.7rem; }
+.t-btn:hover {
+  border-color: rgba(var(--ichor-rgb), 0.4);
+  color: var(--ichor);
+  box-shadow: 0 0 25px rgba(var(--ichor-rgb), 0.08);
+  transform: translateY(-2px);
+}
+.t-btn.active {
+  background: rgba(var(--ichor-rgb), 0.1);
+  border-color: rgba(var(--ichor-rgb), 0.5);
+  color: var(--ichor);
+  box-shadow: 0 0 25px rgba(var(--ichor-rgb), 0.12);
+}
+
+.footer-links {
+  display: flex; gap: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem; letter-spacing: 2px;
+}
+.footer-links a {
+  color: var(--flesh); opacity: 0.6;
+  transition: all 0.3s;
+}
+.footer-links a:hover { opacity: 1; color: var(--ichor); }
+
+.footer-copy {
+  font-size: 0.7rem; color: var(--flesh);
+  opacity: 0.35; font-family: var(--font-mono);
+  letter-spacing: 1px;
+}
+
+/* ================================================================
+   SCROLL REVEAL
+   ================================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 1s var(--transition-organic);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 1s var(--transition-organic);
+}
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 1s var(--transition-organic);
+}
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 1s var(--transition-organic);
+}
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ================================================================
+   THEME TRANSITION OVERLAY
+   ================================================================ */
+.theme-transition {
+  position: fixed; inset: 0; z-index: var(--z-overlay);
+  pointer-events: none;
+  background: var(--void);
+  opacity: 0;
+  transition: opacity 0.4s var(--transition-organic);
+}
+.theme-transition.active {
+  opacity: 0.3;
+  pointer-events: auto;
+}
+
+/* ================================================================
+   SCROLL INDICATOR
+   ================================================================ */
+.scroll-indicator {
+  position: fixed; bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  color: var(--flesh); opacity: 0.35;
+  font-family: var(--font-mono); font-size: 0.55rem;
+  letter-spacing: 3px; text-transform: uppercase;
+  z-index: 50;
+  animation: scroll-fade 4s ease-in-out infinite;
+  pointer-events: none;
+}
+.scroll-indicator .scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, var(--flesh), transparent);
+}
+@keyframes scroll-fade {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
+}
+
+/* ================================================================
+   RESPONSIVE — 768px breakpoint
+   ================================================================ */
+@media (max-width: 768px) {
+  .nav { padding: 1rem 1.2rem; }
+  .nav-links {
+    position: fixed; top: 0; right: -100%; width: 70%; height: 100vh;
+    flex-direction: column; justify-content: center; align-items: center;
+    gap: 2rem; background: var(--glass-heavy);
+    backdrop-filter: blur(30px);
+    transition: right 0.5s var(--transition-organic);
+    border-left: 1px solid var(--border-glow);
+  }
+  .nav-links.open { right: 0; }
+  .nav-hamburger { display: flex; }
+
+  .showcase-row { grid-template-columns: 1fr; gap: 2rem; }
+  .showcase-row.reversed { direction: ltr; }
+
+  .hero h1 { font-size: 2.8rem; }
+  .hero-stats { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+
+  .feature-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+
+  .pricing-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .pricing-card.featured { transform: none; }
+  .pricing-card.featured:hover { transform: translateY(-5px); }
+
+  .terminal-panel { padding: 1.8rem; }
+  .t-node { flex-wrap: wrap; gap: 8px; }
+  .t-node .t-value { margin-left: 0; width: 100%; }
+  .t-expand.open { padding-left: 1rem; }
+
+  .app { padding: 0 1.2rem; }
+  .section-pad { padding: 4rem 0; }
+
+  .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+
+  .cursor-glow, .cursor-ring { display: none; }
+  .scroll-indicator { display: none; }
+
+  .showcase-media img { height: 260px; }
+  .pulse-orb { width: 100px; height: 100px; margin-top: 3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== AMBIENT BACKGROUNDS ===== -->
+<div class="ambient-layer">
+  <div class="ambient-bg" id="parallaxBg"></div>
+  <div class="vein-overlay"></div>
+  <div class="noise-texture"></div>
+</div>
+
+<!-- ===== CUSTOM CURSOR ===== -->
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ===== THEME TRANSITION ===== -->
+<div class="theme-transition" id="themeTransition"></div>
+
+<!-- ===== SCROLL INDICATOR ===== -->
+<div class="scroll-indicator" id="scrollIndicator">
+  <span>Scroll</span>
+  <div class="scroll-line"></div>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="nav" id="navbar">
+  <div class="nav-brand">
+    <i class="fas fa-dna"></i> XENOGENESIS
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features"><i class="fas fa-biohazard"></i> Features</a></li>
+    <li><a href="#showcase-1"><i class="fas fa-eye"></i> Cortex</a></li>
+    <li><a href="#terminal"><i class="fas fa-microchip"></i> Terminal</a></li>
+    <li><a href="#pricing"><i class="fas fa-cubes"></i> Hybrid</a></li>
+    <li><a href="#footer"><i class="fas fa-plug"></i> Connect</a></li>
+  </ul>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<div class="app">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="parallax-nodes" id="parallaxNodes">
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+      <div class="p-node"></div>
+    </div>
+
+    <span class="hero-tag">
+      <i class="fas fa-biohazard"></i>
+      Organic Metal Protocol v4.2
+      <i class="fas fa-biohazard"></i>
+    </span>
+
+    <h1>
+      <span class="glow">BIO</span><span class="stagger">LOGICAL</span>
+      <span class="stagger glow">SYSTEMS</span>
+    </h1>
+
+    <p class="hero-desc">
+      An organic-mechanical hybrid interface where flesh and machine converge.
+      Every component breathes — neural pathways pulse through chitin-like frames,
+      data flows like synaptic fire across bio-luminescent membranes.
+    </p>
+
+    <a href="#features" class="hero-cta">
+      <i class="fas fa-bolt"></i> Initiate Sequence
+    </a>
+
+    <div class="pulse-orb"></div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num" data-count="98">0</span>
+        <span>Neural Density</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" data-count="100">0</span>
+        <span>Biomass %</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" data-count="0.4">0.0</span>
+        <span>Sync (ms)</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" data-count="12">0</span>
+        <span>Nodes/hr</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURE GRID ===== -->
+  <section class="section-pad" id="features">
+    <div class="section-label reveal"><i class="fas fa-biohazard"></i> Core Systems</div>
+    <h2 class="section-title reveal reveal-delay-1">Biomechanical <span>Framework</span></h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Four interconnected subsystems that form the foundation of organic-machine integration.
+      Each component adapts, grows, and responds like living tissue.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card reveal reveal-delay-1" data-tilt>
+        <div class="card-icon"><i class="fas fa-dna"></i></div>
+        <h3>Adaptive Morphology</h3>
+        <p>Self-modifying interface geometry — shapes respond to touch like living tissue, stretching and reforming without rigid breakpoints.</p>
+        <span class="card-tag">DYNAMIC</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-2" data-tilt>
+        <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
+        <h3>Exoskeleton Frame</h3>
+        <p>Chitin-inspired protective shell wraps every component in lightweight yet impenetrable armor — organic strength meets metal precision.</p>
+        <span class="card-tag">4.2 GPa</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-3" data-tilt>
+        <div class="card-icon"><i class="fas fa-bolt"></i></div>
+        <h3>Nodal Pulse Network</h3>
+        <p>Bio-electrical signal routing through synaptic nodes. Data travels across semi-transparent membranes at neural transmission speeds.</p>
+        <span class="card-tag">0.4 ms</span>
+      </div>
+      <div class="feature-card reveal reveal-delay-4" data-tilt>
+        <div class="card-icon"><i class="fas fa-heart-pulse"></i></div>
+        <h3>Bio-Core Processor</h3>
+        <p>A beating computational heart — organic rhythm replaces fans. Energy distributes through vascular heat-exchange channels.</p>
+        <span class="card-tag">62 bpm</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SHOWCASE 1 (left: image, right: text) ===== -->
+  <section class="section-pad showcase-row" id="showcase-1">
+    <div class="showcase-media reveal-left">
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop" alt="Organic Synthesis Interface" loading="lazy">
+    </div>
+    <div class="showcase-body reveal-right">
+      <div class="section-label"><i class="fas fa-eye"></i> Cortex Layer</div>
+      <h2>Organic <span>Synthesis</span></h2>
+      <p>
+        Technology that mimics living tissue — every interface component grows and adapts.
+        Metallic surfaces wrapped in semi-transparent membrane, pulse waves cascading
+        through data channels like blood through capillaries. The boundary between
+        organic and synthetic dissolves into a seamless bio-digital tapestry.
+      </p>
+      <div class="showcase-meta">
+        <span class="chip"><i class="fas fa-circle"></i> Neural Density 98%</span>
+        <span class="chip"><i class="fas fa-droplet"></i> Membrane Integrity 99.7%</span>
+        <span class="chip"><i class="fas fa-gauge-high"></i> Latency 0.4 ms</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SHOWCASE 2 (reversed: image right, text left) ===== -->
+  <section class="section-pad showcase-row reversed" id="showcase-2">
+    <div class="showcase-media reveal-right">
+      <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop" alt="Chitin Architecture Detail" loading="lazy">
+    </div>
+    <div class="showcase-body reveal-left">
+      <div class="section-label"><i class="fas fa-bone"></i> Skeletal Core</div>
+      <h2>Chitin <span>Architecture</span></h2>
+      <p>
+        The strongest organic polymer in nature reimagined as a digital framework.
+        Each panel interlocks like a biological puzzle, forming a structure that is
+        simultaneously lightweight and impenetrable. Self-healing seams reconnect
+        when breached — an immune system for your interface.
+      </p>
+      <div class="showcase-meta">
+        <span class="chip"><i class="fas fa-weight-hanging"></i> Tensile 4.2 GPa</span>
+        <span class="chip"><i class="fas fa-wind"></i> Flex 89%</span>
+        <span class="chip"><i class="fas fa-rotate"></i> Self-Repair Active</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEURAL TERMINAL ===== -->
+  <section class="section-pad" id="terminal">
+    <div class="section-label reveal"><i class="fas fa-microchip"></i> Neural Mesh</div>
+    <h2 class="section-title reveal reveal-delay-1">Synaptic <span>Terminal</span></h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Live neural network diagnostics — click any node to expand subsystem details.
+      Real-time bio-metric data from the organic-computational core.
+    </p>
+
+    <div class="terminal-panel reveal reveal-delay-3" id="terminalPanel">
+      <div class="terminal-label">
+        <i class="fas fa-terminal"></i> NEURAL_NETWORK_STATUS
+      </div>
+
+      <div class="t-node" data-expand="cortex">
+        <span class="t-dot"></span>
+        <span class="t-label">CORTEX_ALPHA</span>
+        <span class="t-value">ONLINE — 62 bpm</span>
+        <span class="t-arrow"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <div class="t-expand" id="expand-cortex">
+        <i class="fas fa-circle-info"></i> Primary cognitive layer operating at 98% efficiency.
+        Synaptic throughput: 2.4 TB/s. Membrane depolarization within nominal range.
+      </div>
+
+      <div class="t-node" data-expand="synapse">
+        <span class="t-dot"></span>
+        <span class="t-label">SYNAPSE_BETA</span>
+        <span class="t-value">ACTIVE — 1.4 ms</span>
+        <span class="t-arrow"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <div class="t-expand" id="expand-synapse">
+        <i class="fas fa-circle-info"></i> Inter-neural gap junction latency at optimal threshold.
+        Neurotransmitter analog delivery rate: 340 packets/ms. No signal degradation.
+      </div>
+
+      <div class="t-node" data-expand="chitin">
+        <span class="t-dot"></span>
+        <span class="t-label">CHITIN_FWALL</span>
+        <span class="t-value">ENGAGED — 0 intrusions</span>
+        <span class="t-arrow"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <div class="t-expand" id="expand-chitin">
+        <i class="fas fa-circle-info"></i> Exoskeletal firewall at full integrity. 127,000 rules active.
+        Bio-signature authentication enabled. Zero intrusion attempts in current epoch.
+      </div>
+
+      <div class="t-node" data-expand="mesh">
+        <span class="t-dot"></span>
+        <span class="t-label">ORGANIC_MESH</span>
+        <span class="t-value">GROWING — +12 nodes/hr</span>
+        <span class="t-arrow"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <div class="t-expand" id="expand-mesh">
+        <i class="fas fa-circle-info"></i> Mesh neural expansion active. New synaptic pathways forming
+        at 12 nodes per hour. Current network diameter: 8,400 interconnected cells.
+      </div>
+
+      <div class="t-node" data-expand="membrane">
+        <span class="t-dot"></span>
+        <span class="t-label">MEMBRANE_OSMOSIS</span>
+        <span class="t-value">99.7% — STABLE</span>
+        <span class="t-arrow"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <div class="t-expand" id="expand-membrane">
+        <i class="fas fa-circle-info"></i> Semi-permeable membrane integrity maintained. Osmotic pressure
+        2.3 atm. Molecular sieve channels clear. No leakage detected across any sector.
+      </div>
+
+      <div class="t-node t-status">
+        <span class="t-dot"></span>
+        <span class="t-label"><i class="fas fa-arrow-right"></i> READY FOR BIO-INTEGRATION</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING / HYBRID ===== -->
+  <section class="section-pad" id="pricing">
+    <div class="section-label reveal"><i class="fas fa-cubes"></i> Hybrid Plans</div>
+    <h2 class="section-title reveal reveal-delay-1">Integration <span>Tiers</span></h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Choose your level of biomechanical fusion — from basic augmentation to full
+      organic-systemic integration. Each tier unlocks deeper neural access.
+    </p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card reveal reveal-delay-1">
+        <div class="pricing-icon"><i class="fas fa-leaf"></i></div>
+        <h3>Symbiont</h3>
+        <div class="pricing-price">49 <sub>GC/mo</sub></div>
+        <p class="pricing-desc">Basic organic interface augmentation</p>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i> Neural Core Access</li>
+          <li><i class="fas fa-check"></i> 1 Bio-Node</li>
+          <li><i class="fas fa-check"></i> Membrane Sync</li>
+          <li><i class="fas fa-xmark na"></i> Chitin Firewall</li>
+          <li><i class="fas fa-xmark na"></i> Mesh Expansion</li>
+        </ul>
+        <button class="pricing-btn">Integrate <i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <div class="pricing-card featured reveal reveal-delay-2">
+        <div class="pricing-icon"><i class="fas fa-dna"></i></div>
+        <h3>Hybrid</h3>
+        <div class="pricing-price">99 <sub>GC/mo</sub></div>
+        <p class="pricing-desc">Full bio-mechanical duality</p>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i> Full Neural Access</li>
+          <li><i class="fas fa-check"></i> 8 Bio-Nodes</li>
+          <li><i class="fas fa-check"></i> Membrane OSMOSIS</li>
+          <li><i class="fas fa-check"></i> Chitin Firewall</li>
+          <li><i class="fas fa-xmark na"></i> Mesh Expansion</li>
+        </ul>
+        <button class="pricing-btn featured-btn">Fuse <i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <div class="pricing-card reveal reveal-delay-3">
+        <div class="pricing-icon"><i class="fas fa-brain"></i></div>
+        <h3>Singularity</h3>
+        <div class="pricing-price">249 <sub>GC/mo</sub></div>
+        <p class="pricing-desc">Total organic-systemic convergence</p>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i> Quantum Neural Access</li>
+          <li><i class="fas fa-check"></i> Unlimited Bio-Nodes</li>
+          <li><i class="fas fa-check"></i> Full Membrane Control</li>
+          <li><i class="fas fa-check"></i> Quantum Chitin Shield</li>
+          <li><i class="fas fa-check"></i> Auto Mesh Expansion</li>
+        </ul>
+        <button class="pricing-btn">Transcend <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="footer">
+    <div class="footer-brand">
+      <i class="fas fa-dna"></i> XENOGENESIS <i class="fas fa-biohazard"></i>
+    </div>
+
+    <div class="theme-switcher">
+      <button class="t-btn active" data-theme-name="dark" onclick="cycleTheme('dark', this)">
+        <i class="fas fa-moon"></i> Dark
+      </button>
+      <button class="t-btn" data-theme-name="light" onclick="cycleTheme('light', this)">
+        <i class="fas fa-sun"></i> Light
+      </button>
+      <button class="t-btn" data-theme-name="blood" onclick="cycleTheme('blood', this)">
+        <i class="fas fa-droplet"></i> Blood
+      </button>
+      <button class="t-btn" data-theme-name="void" onclick="cycleTheme('void', this)">
+        <i class="fas fa-circle"></i> Void
+      </button>
+    </div>
+
+    <div class="morph-input-group reveal">
+      <input type="text" class="morph-input" placeholder="Enter bio-signature..." aria-label="Bio-signature input">
+      <button class="morph-submit"><i class="fas fa-plug"></i></button>
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Nexus</a>
+      <a href="#">Protocols</a>
+      <a href="#">Membrane Docs</a>
+      <a href="#">Bio-API</a>
+      <a href="#">Chitin Lab</a>
+    </div>
+
+    <div class="footer-copy">
+      &copy; 2324 XENOGENESIS CORP — ALL RIGHTS RESERVED
+    </div>
+  </footer>
+
+</div>
+
+<!-- ================================================================
+     JAVASCRIPT — interactive effects
+     ================================================================ -->
+<script>
+(function() {
+  'use strict';
+
+  /* ----- THEME SYSTEM ----- */
+  window.cycleTheme = function(theme, btn) {
+    var overlay = document.getElementById('themeTransition');
+    overlay.classList.add('active');
+    setTimeout(function() {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('xeno-theme', theme);
+      document.querySelectorAll('.t-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-theme-name') === theme);
+      });
+      setTimeout(function() {
+        overlay.classList.remove('active');
+      }, 300);
+    }, 200);
+  };
+
+  /* ----- SCROLL REVEAL (IntersectionObserver) ----- */
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  /* ----- NEURAL TERMINAL EXPAND ----- */
+  document.querySelectorAll('.t-node[data-expand]').forEach(function(node) {
+    node.addEventListener('click', function() {
+      var target = document.getElementById('expand-' + this.getAttribute('data-expand'));
+      if (!target) return;
+      var isOpen = target.classList.contains('open');
+      // close all
+      document.querySelectorAll('.t-expand.open').forEach(function(e) {
+        e.classList.remove('open');
+      });
+      document.querySelectorAll('.t-node.active').forEach(function(n) {
+        n.classList.remove('active');
+      });
+      if (!isOpen) {
+        target.classList.add('open');
+        this.classList.add('active');
+      }
+    });
+  });
+
+  /* ----- CUSTOM CURSOR ----- */
+  var glow = document.getElementById('cursorGlow');
+  var ring = document.getElementById('cursorRing');
+  if (glow && ring) {
+    var cursorX = 0, cursorY = 0;
+    var ringX = 0, ringY = 0;
+    document.addEventListener('mousemove', function(e) {
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      glow.style.left = cursorX + 'px';
+      glow.style.top = cursorY + 'px';
+    });
+    function followRing() {
+      ringX += (cursorX - ringX) * 0.12;
+      ringY += (cursorY - ringY) * 0.12;
+      ring.style.left = ringX + 'px';
+      ring.style.top = ringY + 'px';
+      requestAnimationFrame(followRing);
+    }
+    followRing();
+    // hover effect on interactive elements
+    document.querySelectorAll('a, button, .feature-card, .t-node, .pricing-btn, .morph-submit').forEach(function(el) {
+      el.addEventListener('mouseenter', function() {
+        glow.classList.add('is-hovering');
+        ring.classList.add('is-hovering');
+      });
+      el.addEventListener('mouseleave', function() {
+        glow.classList.remove('is-hovering');
+        ring.classList.remove('is-hovering');
+      });
+    });
+  }
+
+  /* ----- PARALLAX ON SCROLL (CSS transform on ambient + nodes) ----- */
+  var ambientBg = document.getElementById('parallaxBg');
+  var nodeContainer = document.getElementById('parallaxNodes');
+  var lastScrollY = 0;
+  window.addEventListener('scroll', function() {
+    var sy = window.pageYOffset;
+    // throttle via requestAnimationFrame
+    if (Math.abs(sy - lastScrollY) > 2) {
+      lastScrollY = sy;
+      window.requestAnimationFrame(function() {
+        if (ambientBg) {
+          ambientBg.style.transform = 'translateY(' + (sy * 0.12) + 'px) scale(1.12)';
+        }
+        if (nodeContainer) {
+          nodeContainer.style.transform = 'translateY(' + (sy * 0.06) + 'px)';
+        }
+      });
+    }
+  }, { passive: true });
+
+  /* ----- MAGNETIC HOVER ON CARDS ----- */
+  document.querySelectorAll('.feature-card[data-tilt]').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var rect = this.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      var centerX = rect.width / 2;
+      var centerY = rect.height / 2;
+      var rotateX = (y - centerY) / centerY * -6;
+      var rotateY = (x - centerX) / centerX * 6;
+      this.style.transform =
+        'translateY(-12px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+
+  /* ----- COUNTER ANIMATION ----- */
+  function animateCounter(el) {
+    var target = parseFloat(el.getAttribute('data-count'));
+    if (isNaN(target)) return;
+    var isFloat = target % 1 !== 0;
+    var duration = 2000;
+    var start = performance.now();
+    function update(now) {
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var current = eased * target;
+      el.textContent = isFloat ? current.toFixed(1) : Math.round(current);
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  var counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-num[data-count]').forEach(function(el) {
+    counterObserver.observe(el);
+  });
+
+  /* ----- MOBILE NAV ----- */
+  window.toggleMobileNav = function() {
+    var links = document.getElementById('navLinks');
+    var hamburger = document.getElementById('hamburger');
+    links.classList.toggle('open');
+    hamburger.classList.toggle('open');
+  };
+  document.querySelectorAll('.nav-links a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      var links = document.getElementById('navLinks');
+      var hamburger = document.getElementById('hamburger');
+      if (window.innerWidth <= 768) {
+        links.classList.remove('open');
+        hamburger.classList.remove('open');
+      }
+    });
+  });
+
+  /* ----- ACTIVE THEME BUTTON ON LOAD ----- */
+  var currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  document.querySelectorAll('.t-btn[data-theme-name]').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-theme-name') === currentTheme);
+  });
+
+})();
+</script>
+</body>
+</html>

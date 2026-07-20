@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GEO·METRIC — Abstract Geometric System</title>
+<script>
+!function(){try{var e=localStorage.getItem('gm-theme')||'monolith';document.documentElement.setAttribute('data-theme',e)}catch(e){document.documentElement.setAttribute('data-theme','monolith')}}();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ===== GEO·METRIC — THEME SYSTEM (4 VARIANTS) ===== */
+/* Bauhaus-inspired: Red #D02020, Blue #1040C0, Yellow #F0C020 */
+/* OFF-WHITE canvas #F0F0F0, FG #121212 */
+/* Hard offset shadows, instant 0ms transitions, dot grid */
+
+/* --- MONOLITH (default) — Slate / Indigo / Cyan --- */
+[data-theme="monolith"],:root{
+--bg-primary:#0f172a;--bg-secondary:#1e293b;--bg-tertiary:#334155;
+--surface:#1e293b;--surface-hover:#334155;--surface-active:#475569;
+--canvas:#0f172a;
+--text-primary:#f8fafc;--text-secondary:#94a3b8;--text-muted:#64748b;
+--text-accent:#06b6d4;--text-inverse:#f8fafc;
+--accent-primary:#06b6d4;--accent-secondary:#312e81;--accent-tertiary:#1e40af;
+--accent-soft:rgba(6,182,212,0.1);--accent-glow:rgba(6,182,212,0.2);
+--border-default:#475569;--border-hover:#06b6d4;--border-accent:#06b6d4;
+--border-light:#1e293b;
+--grad-hero:radial-gradient(ellipse at center,rgba(6,182,212,0.07) 0%,transparent 70%);
+--grad-card:linear-gradient(135deg,rgba(6,182,212,0.03) 0%,transparent 50%,rgba(49,46,129,0.03) 100%);
+--grad-nav:linear-gradient(180deg,rgba(15,23,42,1) 0%,transparent 100%);
+--grad-btn:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,transparent 50%);
+--shadow-sm:4px 4px 0px 0px #121212;--shadow-md:6px 6px 0px 0px #121212;
+--shadow-lg:8px 8px 0px 0px #121212;
+--shadow-text:4px 4px 0px #121212;
+--dot-color:rgba(6,182,212,0.12);--dot-color-secondary:rgba(49,46,129,0.08);
+--vignette-main:rgba(0,0,0,0.35);
+--scrollbar-bg:#0f172a;--scrollbar-thumb:#06b6d4;
+--accent-r:6;--accent-g:182;--accent-b:212;
+--card-clip:polygon(0% 0%,calc(100% - 12px) 0%,100% 12px,100% 100%,12px 100%,0% calc(100% - 12px));
+--btn-clip:polygon(0% 0%,100% 0%,100% 100%,0% 100%);
+}
+
+/* --- CRYSTAL — White / Sky / Light Blue --- */
+[data-theme="crystal"]{
+--bg-primary:#f8fafc;--bg-secondary:#f1f5f9;--bg-tertiary:#e2e8f0;
+--surface:#f1f5f9;--surface-hover:#e2e8f0;--surface-active:#cbd5e1;
+--canvas:#f8fafc;
+--text-primary:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;
+--text-accent:#38bdf8;--text-inverse:#0f172a;
+--accent-primary:#38bdf8;--accent-secondary:#dbeafe;--accent-tertiary:#bae6fd;
+--accent-soft:rgba(56,189,248,0.12);--accent-glow:rgba(56,189,248,0.2);
+--border-default:#cbd5e1;--border-hover:#38bdf8;--border-accent:#38bdf8;
+--border-light:#e2e8f0;
+--grad-hero:radial-gradient(ellipse at center,rgba(56,189,248,0.08) 0%,transparent 70%);
+--grad-card:linear-gradient(135deg,rgba(56,189,248,0.03) 0%,transparent 50%,rgba(219,234,254,0.05) 100%);
+--grad-nav:linear-gradient(180deg,rgba(248,250,252,1) 0%,transparent 100%);
+--grad-btn:linear-gradient(135deg,rgba(15,23,42,0.04) 0%,transparent 50%);
+--shadow-sm:4px 4px 0px 0px #0f172a;--shadow-md:6px 6px 0px 0px #0f172a;
+--shadow-lg:8px 8px 0px 0px #0f172a;
+--shadow-text:4px 4px 0px #0f172a;
+--dot-color:rgba(56,189,248,0.15);--dot-color-secondary:rgba(219,234,254,0.12);
+--vignette-main:rgba(248,250,252,0.3);
+--scrollbar-bg:#f8fafc;--scrollbar-thumb:#38bdf8;
+--accent-r:56;--accent-g:189;--accent-b:248;
+--card-clip:polygon(0% 0%,calc(100% - 12px) 0%,100% 12px,100% 100%,12px 100%,0% calc(100% - 12px));
+--btn-clip:polygon(0% 0%,100% 0%,100% 100%,0% 100%);
+}
+
+/* --- JADE — Emerald / Teal --- */
+[data-theme="jade"]{
+--bg-primary:#022c22;--bg-secondary:#064e3b;--bg-tertiary:#065f46;
+--surface:#064e3b;--surface-hover:#065f46;--surface-active:#047857;
+--canvas:#022c22;
+--text-primary:#ecfdf5;--text-secondary:#6ee7b7;--text-muted:#34d399;
+--text-accent:#34d399;--text-inverse:#022c22;
+--accent-primary:#34d399;--accent-secondary:#059669;--accent-tertiary:#047857;
+--accent-soft:rgba(52,211,153,0.12);--accent-glow:rgba(52,211,153,0.2);
+--border-default:#065f46;--border-hover:#34d399;--border-accent:#34d399;
+--border-light:#064e3b;
+--grad-hero:radial-gradient(ellipse at center,rgba(52,211,153,0.07) 0%,transparent 70%);
+--grad-card:linear-gradient(135deg,rgba(52,211,153,0.03) 0%,transparent 50%,rgba(5,150,105,0.03) 100%);
+--grad-nav:linear-gradient(180deg,rgba(2,44,34,1) 0%,transparent 100%);
+--grad-btn:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,transparent 50%);
+--shadow-sm:4px 4px 0px 0px #121212;--shadow-md:6px 6px 0px 0px #121212;
+--shadow-lg:8px 8px 0px 0px #121212;
+--shadow-text:4px 4px 0px #121212;
+--dot-color:rgba(52,211,153,0.12);--dot-color-secondary:rgba(5,150,105,0.08);
+--vignette-main:rgba(0,0,0,0.35);
+--scrollbar-bg:#022c22;--scrollbar-thumb:#34d399;
+--accent-r:52;--accent-g:211;--accent-b:153;
+--card-clip:polygon(0% 0%,calc(100% - 12px) 0%,100% 12px,100% 100%,12px 100%,0% calc(100% - 12px));
+--btn-clip:polygon(0% 0%,100% 0%,100% 100%,0% 100%);
+}
+
+/* --- TERRA — Terracotta / Sand --- */
+[data-theme="terra"]{
+--bg-primary:#1c120d;--bg-secondary:#2d1a12;--bg-tertiary:#3d2418;
+--surface:#2d1a12;--surface-hover:#3d2418;--surface-active:#4a2e20;
+--canvas:#1c120d;
+--text-primary:#fef3c7;--text-secondary:#f59e0b;--text-muted:#d97706;
+--text-accent:#f59e0b;--text-inverse:#1c120d;
+--accent-primary:#f59e0b;--accent-secondary:#c2410c;--accent-tertiary:#9a3412;
+--accent-soft:rgba(245,158,11,0.12);--accent-glow:rgba(245,158,11,0.2);
+--border-default:#3d2418;--border-hover:#f59e0b;--border-accent:#f59e0b;
+--border-light:#2d1a12;
+--grad-hero:radial-gradient(ellipse at center,rgba(245,158,11,0.07) 0%,transparent 70%);
+--grad-card:linear-gradient(135deg,rgba(245,158,11,0.03) 0%,transparent 50%,rgba(194,65,12,0.03) 100%);
+--grad-nav:linear-gradient(180deg,rgba(28,18,13,1) 0%,transparent 100%);
+--grad-btn:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,transparent 50%);
+--shadow-sm:4px 4px 0px 0px #121212;--shadow-md:6px 6px 0px 0px #121212;
+--shadow-lg:8px 8px 0px 0px #121212;
+--shadow-text:4px 4px 0px #121212;
+--dot-color:rgba(245,158,11,0.12);--dot-color-secondary:rgba(194,65,12,0.08);
+--vignette-main:rgba(0,0,0,0.35);
+--scrollbar-bg:#1c120d;--scrollbar-thumb:#f59e0b;
+--accent-r:245;--accent-g:158;--accent-b:11;
+--card-clip:polygon(0% 0%,calc(100% - 12px) 0%,100% 12px,100% 100%,12px 100%,0% calc(100% - 12px));
+--btn-clip:polygon(0% 0%,100% 0%,100% 100%,0% 100%);
+}
+
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{
+  background:var(--bg-primary);color:var(--text-primary);
+  font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;
+  line-height:1.6;
+}
+::selection{background:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.25);color:var(--text-primary)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ===== DOT GRID PATTERN ===== */
+.dot-grid{
+  position:fixed;inset:0;z-index:-4;pointer-events:none;
+  background-image:radial-gradient(var(--dot-color) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.dot-grid-2{
+  position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background-image:radial-gradient(var(--dot-color-secondary) 1px,transparent 1px);
+  background-size:48px 48px;
+  opacity:0.5;
+}
+.vignette{
+  position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 40%,var(--vignette-main) 100%);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--scrollbar-bg)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb)}
+
+/* ===== APP CONTAINER ===== */
+.app{max-width:1120px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
+
+/* ===== NAVBAR ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.2rem 2.5rem;background:var(--grad-nav);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:2px solid var(--border-default);
+}
+.nav-brand{
+  display:flex;align-items:center;gap:12px;
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:1.3rem;text-transform:uppercase;letter-spacing:-0.5px;
+  color:var(--accent-primary);
+}
+.nav-brand .brand-cube{
+  width:28px;height:28px;background:var(--accent-primary);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  opacity:0.85;
+}
+.nav-links{display:flex;gap:2.8rem;list-style:none;font-family:'Space Grotesk',sans-serif;font-size:0.85rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;}
+.nav-links a{
+  position:relative;padding:0.3rem 0;cursor:pointer;color:var(--text-secondary);
+}
+.nav-links a:hover{color:var(--accent-primary)}
+.nav-icon{display:none;color:var(--text-secondary);font-size:1.3rem;cursor:pointer;}
+.nav-icon:hover{color:var(--accent-primary)}
+
+@media(max-width:768px){
+  .nav-links{
+    display:flex;position:fixed;top:0;right:-100%;width:75%;max-width:320px;height:100vh;
+    flex-direction:column;justify-content:center;align-items:center;gap:2rem;
+    background:var(--surface);border-left:2px solid var(--border-default);
+    transition:right 0.35s;z-index:101;font-size:1rem;
+  }
+  .nav-links.open{right:0}
+  .nav-icon{display:block;z-index:102;position:relative}
+  .nav-overlay{
+    position:fixed;inset:0;z-index:99;background:rgba(0,0,0,0.5);
+    opacity:0;pointer-events:none;transition:opacity 0.35s;
+  }
+  .nav-overlay.open{opacity:1;pointer-events:auto}
+}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;text-align:center;position:relative;
+  padding:9rem 0 5rem;overflow:hidden;
+}
+.hero-glow{
+  position:absolute;width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--grad-hero);pointer-events:none;border-radius:50%;
+}
+
+/* Geometric shapes background */
+.geo-bg{
+  position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;
+}
+.geo-bg-shape{
+  position:absolute;border:2px solid var(--border-default);opacity:0.1;
+}
+.geo-bg-shape:nth-child(1){
+  width:300px;height:300px;top:8%;left:-5%;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  animation:floatShape 30s ease-in-out infinite;
+}
+.geo-bg-shape:nth-child(2){
+  width:200px;height:200px;top:55%;right:-3%;
+  clip-path:polygon(50% 0%, 79% 11%, 100% 35%, 100% 65%, 79% 89%, 50% 100%, 21% 89%, 0% 65%, 0% 35%, 21% 11%);
+  animation:floatShape 25s ease-in-out infinite reverse;
+}
+.geo-bg-shape:nth-child(3){
+  width:160px;height:160px;top:25%;right:25%;
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  animation:floatShape 35s ease-in-out infinite;
+}
+.geo-bg-shape:nth-child(4){
+  width:240px;height:240px;bottom:15%;left:15%;
+  clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%);
+  transform:rotate(45deg);
+  animation:floatShape 28s ease-in-out infinite reverse;
+}
+.geo-bg-shape:nth-child(5){
+  width:100px;height:100px;top:60%;left:35%;
+  clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);
+  animation:floatShape 22s ease-in-out infinite;
+}
+.geo-bg-shape:nth-child(6){
+  width:180px;height:180px;top:12%;left:60%;
+  clip-path:polygon(50% 0%,65% 25%,100% 25%,75% 50%,100% 75%,65% 75%,50% 100%,35% 75%,0% 75%,25% 50%,0% 25%,35% 25%);
+  animation:floatShape 32s ease-in-out infinite;
+}
+
+.hero-tag{
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;
+  letter-spacing:3px;color:var(--accent-primary);text-transform:uppercase;
+  margin-bottom:1.8rem;opacity:0.85;position:relative;z-index:2;
+}
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:clamp(3rem,8vw,7rem);line-height:0.95;
+  color:var(--text-primary);text-transform:uppercase;letter-spacing:-3px;
+  text-shadow:var(--shadow-text);position:relative;z-index:2;
+}
+.hero h1 .accent{
+  color:var(--accent-primary);
+  display:block;
+}
+.hero-desc{
+  max-width:560px;margin-top:2rem;font-size:1.05rem;
+  color:var(--text-secondary);line-height:1.8;
+  position:relative;z-index:2;font-family:'Inter',sans-serif;font-weight:400;
+}
+.hero-cta{
+  margin-top:3rem;display:inline-flex;align-items:center;gap:12px;
+  padding:1rem 2.6rem;background:var(--accent-primary);color:var(--text-inverse);
+  border:2px solid #121212;font-family:'Space Grotesk',sans-serif;
+  font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  text-decoration:none;cursor:pointer;position:relative;z-index:2;
+  box-shadow:var(--shadow-sm);border-radius:9999px;
+  transition:box-shadow 0s,transform 0s;
+}
+.hero-cta:active{
+  transform:translate(2px,2px);
+  box-shadow:none;
+}
+.hero-cta i{font-size:0.85em;}
+
+/* ===== SECTION HEADERS ===== */
+.section-head{
+  text-align:center;margin:5rem 0 2.5rem;position:relative;
+}
+.section-head h2{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:2.4rem;text-transform:uppercase;letter-spacing:-1px;
+  color:var(--text-primary);position:relative;z-index:1;
+}
+.section-head p{
+  color:var(--text-muted);font-size:0.75rem;margin-top:0.6rem;
+  letter-spacing:3px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;
+}
+
+/* ===== SHOWCASE ===== */
+.showcase{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin:5rem 0}
+.showcase-img{
+  position:relative;border:2px solid #121212;box-shadow:var(--shadow-md);overflow:hidden;
+}
+.showcase-img img{
+  width:100%;height:420px;object-fit:cover;
+  transition:transform 0.6s;filter:contrast(1.1);
+}
+.showcase-img:hover img{transform:scale(1.05)}
+.showcase-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,var(--bg-primary) 100%);
+  pointer-events:none;opacity:0.4;
+}
+.showcase-text h2{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:2.2rem;text-transform:uppercase;letter-spacing:-1px;
+  color:var(--accent-primary);margin-bottom:1rem;line-height:1.1;
+}
+.showcase-text p{color:var(--text-secondary);line-height:1.9;font-size:1rem}
+.showcase-divider{
+  display:flex;align-items:center;gap:1rem;margin-top:2rem;opacity:0.5;
+}
+.showcase-divider-line{
+  flex:1;max-width:60px;height:2px;background:var(--accent-primary);
+}
+
+/* ===== FEATURE CARDS (Vertex, Node, Mesh, Vector) ===== */
+.feature-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.8rem;margin:4rem 0;
+}
+.feature-card{
+  background:var(--surface);padding:2.8rem 2rem;
+  border:2px solid #121212;box-shadow:var(--shadow-sm);
+  transition:transform 0s,box-shadow 0s;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:0.8rem;position:relative;overflow:hidden;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;border-radius:0;
+}
+.feature-card:active{
+  transform:translate(2px,2px);box-shadow:none;
+}
+.feature-card .card-icon{
+  width:56px;height:56px;display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;color:var(--accent-primary);margin-bottom:0.2rem;
+  background:var(--bg-primary);border:2px solid #121212;
+}
+.feature-card h3{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:1.2rem;text-transform:uppercase;letter-spacing:1px;
+  color:var(--text-primary);margin-bottom:0.3rem;
+}
+.feature-card p{font-size:0.92rem;color:var(--text-secondary);line-height:1.7}
+
+/* ===== VERTEX MORPH INTERACTIVE PANEL ===== */
+.morph-panel{
+  background:var(--surface);border:2px solid #121212;box-shadow:var(--shadow-md);
+  padding:3.5rem 2.5rem;text-align:center;margin:4rem 0;position:relative;overflow:hidden;
+}
+.morph-panel::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+.morph-panel h3{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  color:var(--text-primary);font-size:1.8rem;text-transform:uppercase;
+  margin-bottom:0.4rem;position:relative;z-index:1;letter-spacing:-0.5px;
+}
+.morph-panel>p{
+  color:var(--text-secondary);margin-bottom:2rem;
+  position:relative;z-index:1;font-size:0.95rem;font-family:'Inter',sans-serif;
+}
+.morph-hint{
+  position:relative;z-index:1;font-family:'JetBrains Mono',monospace;
+  font-size:0.65rem;letter-spacing:3px;color:var(--text-muted);
+  text-transform:uppercase;margin-bottom:2rem;
+}
+.morph-nodes{
+  display:flex;justify-content:center;gap:16px;margin:2rem 0;
+  flex-wrap:wrap;position:relative;z-index:1;
+}
+.morph-node{
+  width:72px;height:72px;border:2px solid #121212;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-primary);font-size:1.3rem;
+  cursor:pointer;background:var(--bg-primary);position:relative;
+  overflow:hidden;box-shadow:var(--shadow-sm);
+  -webkit-tap-highlight-color:transparent;border-radius:0;
+  transition:none;
+}
+.morph-node:hover{
+  background:var(--accent-primary);color:var(--text-inverse);
+}
+.morph-node.active{
+  background:var(--accent-primary);color:var(--text-inverse);
+  box-shadow:var(--shadow-sm);
+}
+.morph-node .shape-label{
+  position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
+  font-size:0.5rem;font-family:'JetBrains Mono',monospace;
+  color:var(--text-muted);white-space:nowrap;opacity:0;
+  pointer-events:none;
+}
+.morph-node:hover .shape-label{opacity:1}
+
+/* ===== SHOWCASE SECTION ===== */
+.showcase-section{
+  margin:5rem 0;padding:3rem;
+  background:var(--surface);border:2px solid #121212;box-shadow:var(--shadow-md);
+}
+.showcase-section h2{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:2rem;text-transform:uppercase;letter-spacing:-1px;
+  color:var(--accent-primary);margin-bottom:1rem;
+}
+.showcase-section p{
+  color:var(--text-secondary);line-height:1.8;font-size:1rem;
+}
+
+/* ===== TESSELLATION PRICING ===== */
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;margin:4rem 0;
+}
+.pricing-card{
+  background:var(--surface);padding:2.5rem 2rem;text-align:center;
+  border:2px solid #121212;box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;gap:1rem;border-radius:0;
+}
+.pricing-card.featured{
+  box-shadow:var(--shadow-md);background:var(--surface-hover);
+  border-color:var(--accent-primary);transform:scale(1.03);
+}
+.pricing-card h3{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:1.1rem;text-transform:uppercase;letter-spacing:1px;
+  color:var(--accent-primary);
+}
+.pricing-card .price{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:2.8rem;color:var(--text-primary);letter-spacing:-2px;
+}
+.pricing-card .price span{font-size:1rem;color:var(--text-muted);letter-spacing:0;}
+.pricing-card ul{list-style:none;display:flex;flex-direction:column;gap:0.6rem;}
+.pricing-card ul li{
+  font-size:0.85rem;color:var(--text-secondary);font-family:'Inter',sans-serif;
+  display:flex;align-items:center;gap:8px;justify-content:center;
+}
+.pricing-card ul li i{color:var(--accent-primary);font-size:0.7rem;}
+.pricing-btn{
+  padding:0.8rem 2rem;background:var(--accent-primary);color:var(--text-inverse);
+  border:2px solid #121212;font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;
+  cursor:pointer;border-radius:9999px;box-shadow:var(--shadow-sm);
+  transition:box-shadow 0s,transform 0s;
+}
+.pricing-btn:active{
+  transform:translate(2px,2px);box-shadow:none;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  display:flex;flex-direction:column;align-items:center;gap:2rem;
+  padding:5rem 0 4rem;border-top:2px solid var(--border-default);
+  margin-top:5rem;position:relative;
+}
+.footer-label{
+  font-family:'Space Grotesk',sans-serif;font-size:0.7rem;
+  letter-spacing:5px;text-transform:uppercase;color:var(--text-muted);
+}
+.theme-switcher{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+}
+.t-btn{
+  padding:10px 22px;border:2px solid #121212;
+  background:var(--surface);color:var(--text-secondary);
+  font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:1px;cursor:pointer;
+  border-radius:9999px;box-shadow:var(--shadow-sm);
+  transition:box-shadow 0s,transform 0s;
+  position:relative;
+}
+.t-btn:active{transform:translate(2px,2px);box-shadow:none;}
+.t-btn.active{
+  background:var(--accent-primary);color:var(--text-inverse);
+}
+.footer-meta{
+  margin-top:1rem;font-size:0.7rem;color:var(--text-muted);
+  font-family:'JetBrains Mono',monospace;letter-spacing:2px;
+  text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;
+}
+
+/* ===== SCROLL REVEAL ===== */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+/* ===== MODAL ===== */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.65);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+  padding:2rem;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal-box{
+  background:var(--bg-secondary);border:2px solid #121212;
+  box-shadow:var(--shadow-lg);
+  max-width:520px;width:100%;padding:3rem 2.5rem;
+  position:relative;transform:scale(0.95);transition:transform 0.3s;
+}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-close{
+  position:absolute;top:16px;right:20px;
+  background:none;border:none;color:var(--text-muted);
+  font-size:1.5rem;cursor:pointer;padding:4px;line-height:1;
+}
+.modal-close:hover{color:var(--accent-primary)}
+.modal-icon{
+  width:56px;height:56px;display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;color:var(--accent-primary);margin-bottom:1rem;
+  background:var(--bg-primary);border:2px solid #121212;
+}
+.modal-box h3{
+  font-family:'Space Grotesk',sans-serif;font-weight:900;
+  font-size:1.6rem;text-transform:uppercase;color:var(--text-primary);
+  margin-bottom:0.8rem;letter-spacing:-0.5px;
+}
+.modal-box p{color:var(--text-secondary);line-height:1.9;font-size:0.95rem}
+.modal-detail{
+  margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--border-default);
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;
+  color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;
+}
+
+/* ===== RIPPLE ===== */
+.ripple-effect{
+  position:absolute;border-radius:50%;
+  background:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.3);
+  transform:scale(0);animation:rippleAnim 0.5s ease-out;
+  pointer-events:none;z-index:5;
+}
+@keyframes rippleAnim{
+  to{transform:scale(2.5);opacity:0}
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes floatShape{
+  0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}
+  33%{transform:translate(20px,-20px) rotate(10deg) scale(1.05)}
+  67%{transform:translate(-15px,15px) rotate(-5deg) scale(0.95)}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .showcase{grid-template-columns:1fr;gap:2rem}
+  .pricing-grid{grid-template-columns:1fr;max-width:400px;margin-left:auto;margin-right:auto}
+  .pricing-card.featured{transform:none}
+}
+@media(max-width:768px){
+  .app{padding:0 1.2rem}
+  .nav{padding:1rem 1.2rem}
+  .hero h1{font-size:2.8rem}
+  .hero-desc{font-size:1rem}
+  .feature-grid{grid-template-columns:1fr;gap:1.4rem}
+  .pricing-grid{max-width:360px}
+  .morph-node{width:56px;height:56px;font-size:1.1rem}
+  .morph-panel{padding:2.5rem 1.2rem}
+  .showcase-img img{height:280px}
+  .t-btn{padding:8px 16px;font-size:0.75rem}
+}
+@media(max-width:480px){
+  .hero h1{font-size:2.2rem}
+  .nav-brand{font-size:1rem}
+  .section-head h2{font-size:1.6rem}
+  .morph-nodes{gap:12px}
+  .morph-node{width:48px;height:48px;font-size:0.95rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== BACKGROUND LAYERS ===== -->
+<div class="dot-grid"></div>
+<div class="dot-grid-2"></div>
+<div class="vignette"></div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="nav" id="navbar">
+  <div class="nav-brand">
+    <div class="brand-cube"></div>
+    GEO·METRIC
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features" class="nav-link">Features</a></li>
+    <li><a href="#morph" class="nav-link">Morph</a></li>
+    <li><a href="#showcase" class="nav-link">Showcase</a></li>
+    <li><a href="#pricing" class="nav-link">Pricing</a></li>
+  </ul>
+  <div class="nav-icon" id="navToggle"><i class="fas fa-bars"></i></div>
+  <div class="nav-overlay" id="navOverlay"></div>
+</nav>
+
+<!-- ===== APP CONTAINER ===== -->
+<div class="app">
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+
+  <div class="geo-bg" aria-hidden="true">
+    <div class="geo-bg-shape"></div>
+    <div class="geo-bg-shape"></div>
+    <div class="geo-bg-shape"></div>
+    <div class="geo-bg-shape"></div>
+    <div class="geo-bg-shape"></div>
+    <div class="geo-bg-shape"></div>
+  </div>
+
+  <span class="hero-tag"><i class="fas fa-shapes" style="margin-right:8px"></i> Bauhaus Geometric System</span>
+  <h1>ABSTRACT<br><span class="accent">GEOMETRY</span></h1>
+  <p class="hero-desc">
+    Vertex, node, mesh, tessellation — a modular design system built on isometric cubes, overlapping circles, and grid patterns. Pure planar form meets parametric structure.
+  </p>
+  <a href="#features" class="hero-cta">
+    Explore System <i class="fas fa-arrow-right"></i>
+  </a>
+</section>
+
+<!-- ===== SHOWCASE 1 — Isometric ===== -->
+<section class="showcase reveal" id="features">
+  <div class="showcase-img">
+    <img src="https://images.unsplash.com/photo-1542401886-65d6c61db217?q=80&w=1200&auto=format&fit=crop" alt="Isometric Geometry" loading="lazy">
+  </div>
+  <div class="showcase-text">
+    <h2>⊞ Isometric System</h2>
+    <p>Modular vertices arranged on an orthogonal grid. Each node connects to form a continuous mesh — no gaps, no overlaps. Pure parametric structure driven by mathematical modulus and vector logic.</p>
+    <div class="showcase-divider">
+      <div class="showcase-divider-line"></div>
+      <span style="color:var(--accent-primary);font-size:1.2rem">⊡</span>
+      <div class="showcase-divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURE CARDS GRID (Vertex, Node, Mesh, Vector) ===== -->
+<section class="section-head reveal">
+  <h2><i class="fas fa-border-all" style="font-size:0.6em;vertical-align:middle;margin-right:10px;opacity:0.4"></i> Core Elements <i class="fas fa-border-all" style="font-size:0.6em;vertical-align:middle;margin-left:10px;opacity:0.4"></i></h2>
+  <p>Four fundamental constructs of the geometric system</p>
+</section>
+
+<div class="feature-grid reveal">
+  <div class="feature-card reveal reveal-delay-1"
+       data-modal-title="Vertex — Point of Origin"
+       data-modal-icon="vector-square"
+       data-modal-detail="Every shape starts at a vertex. The fundamental point in planar space from which all vectors extend. Zero-dimensional, infinitely precise.">
+    <div class="card-icon"><i class="fas fa-vector-square"></i></div>
+    <h3>⊞ Vertex</h3>
+    <p>The atomic unit of geometric space. A singular point that anchors every line, every curve, every polygon in the system.</p>
+  </div>
+  <div class="feature-card reveal reveal-delay-2"
+       data-modal-title="Node — Connection Point"
+       data-modal-icon="draw-polygon"
+       data-modal-detail="Where vertices converge, nodes emerge. The intersection of multiple vectors creates a structural joint that distributes force across the mesh.">
+    <div class="card-icon"><i class="fas fa-draw-polygon"></i></div>
+    <h3>◇ Node</h3>
+    <p>Connective tissue of the grid. Where vertices meet and branch — the intersection that holds the entire tessellation together.</p>
+  </div>
+  <div class="feature-card reveal reveal-delay-3"
+       data-modal-title="Mesh — Continuous Surface"
+       data-modal-icon="border-all"
+       data-modal-detail="A mesh is a collection of vertices and edges that define a polyhedral surface. Each face is planar; the aggregate forms complex volumetric space.">
+    <div class="card-icon"><i class="fas fa-border-all"></i></div>
+    <h3>◆ Mesh</h3>
+    <p>Planar faces stitched edge-to-edge. A continuous surface where every polygon shares its boundaries with neighbors.</p>
+  </div>
+  <div class="feature-card reveal reveal-delay-4"
+       data-modal-title="Vector — Direction &amp; Magnitude"
+       data-modal-icon="layer-group"
+       data-modal-detail="A quantity defined by direction and magnitude. In geometric design, vectors govern the extrusion of 2D shapes into 3D isometric forms.">
+    <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+    <h3>△ Vector</h3>
+    <p>Directed force across the plane. Magnitude and orientation — the engine that extrudes flat polygons into dimensional space.</p>
+  </div>
+</div>
+
+<!-- ===== VERTEX MORPH INTERACTIVE PANEL ===== -->
+<section class="morph-panel reveal" id="morph">
+  <h3><i class="fas fa-draw-polygon" style="font-size:0.7em;vertical-align:middle;margin-right:8px"></i> Vertex Morph</h3>
+  <p>Click each node to cycle through clip-path polygon shapes</p>
+  <div class="morph-hint">
+    <i class="fas fa-hand-pointer"></i> Click a node — others snap back to origin
+  </div>
+  <div class="morph-nodes">
+    <div class="morph-node" data-original="0"><span>⊡</span><span class="shape-label">Diamond</span></div>
+    <div class="morph-node" data-original="1"><span>◈</span><span class="shape-label">Octagon</span></div>
+    <div class="morph-node" data-original="2"><span>⬡</span><span class="shape-label">Hexagon</span></div>
+    <div class="morph-node" data-original="3"><span>⊞</span><span class="shape-label">Isometric</span></div>
+    <div class="morph-node" data-original="4"><span>◎</span><span class="shape-label">Circle</span></div>
+    <div class="morph-node" data-original="5"><span>△</span><span class="shape-label">Triangle</span></div>
+    <div class="morph-node" data-original="6"><span>□</span><span class="shape-label">Square</span></div>
+    <div class="morph-node" data-original="7"><span>◇</span><span class="shape-label">Rhombus</span></div>
+  </div>
+</section>
+
+<!-- ===== SHOWCASE 2 — Tessellation ===== -->
+<section class="showcase-section reveal" id="showcase">
+  <h2>◈ Tessellation Engine</h2>
+  <p>Modular tiling of the plane using congruent polygons. Each tile is a vertex-defined shape that repeats without gaps or overlaps — a periodic tiling derived from isometric projection grids. The system supports regular, semi-regular, and non-periodic tessellations controlled by parametric modulus values.</p>
+  <div class="showcase-divider" style="margin-top:1.5rem;">
+    <div class="showcase-divider-line"></div>
+    <span style="color:var(--accent-primary);font-size:1.2rem">⊡</span>
+    <div class="showcase-divider-line"></div>
+  </div>
+</section>
+
+<!-- ===== TESSELLATION PRICING ===== -->
+<section class="section-head reveal">
+  <h2><i class="fas fa-cubes" style="font-size:0.6em;vertical-align:middle;margin-right:10px;opacity:0.4"></i> Tessellation Plans <i class="fas fa-cubes" style="font-size:0.6em;vertical-align:middle;margin-left:10px;opacity:0.4"></i></h2>
+  <p>Scale your geometric system</p>
+</section>
+
+<div class="pricing-grid reveal" id="pricing">
+  <div class="pricing-card reveal reveal-delay-1">
+    <h3><i class="fas fa-shapes"></i> Vertex</h3>
+    <div class="price">$0 <span>/ mo</span></div>
+    <ul>
+      <li><i class="fas fa-check"></i> 16 vertices</li>
+      <li><i class="fas fa-check"></i> Basic polygons</li>
+      <li><i class="fas fa-check"></i> Single mesh</li>
+    </ul>
+    <button class="pricing-btn">Select</button>
+  </div>
+  <div class="pricing-card featured reveal reveal-delay-2">
+    <h3><i class="fas fa-cube"></i> Node</h3>
+    <div class="price">$24 <span>/ mo</span></div>
+    <ul>
+      <li><i class="fas fa-check"></i> 256 vertices</li>
+      <li><i class="fas fa-check"></i> All polygon types</li>
+      <li><i class="fas fa-check"></i> Multi-mesh system</li>
+      <li><i class="fas fa-check"></i> Isometric projection</li>
+    </ul>
+    <button class="pricing-btn">Select</button>
+  </div>
+  <div class="pricing-card reveal reveal-delay-3">
+    <h3><i class="fas fa-dice-d6"></i> Mesh</h3>
+    <div class="price">$64 <span>/ mo</span></div>
+    <ul>
+      <li><i class="fas fa-check"></i> Unlimited vertices</li>
+      <li><i class="fas fa-check"></i> Parametric morphing</li>
+      <li><i class="fas fa-check"></i> Full API access</li>
+      <li><i class="fas fa-check"></i> Priority support</li>
+      <li><i class="fas fa-check"></i> Custom tessellation</li>
+    </ul>
+    <button class="pricing-btn">Select</button>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer" id="contact">
+  <span class="footer-label"><i class="fas fa-adjust"></i> SELECT THEME</span>
+  <div class="theme-switcher">
+    <button class="t-btn active" data-theme-btn="monolith">
+      <i class="fas fa-moon"></i> Monolith
+    </button>
+    <button class="t-btn" data-theme-btn="crystal">
+      <i class="fas fa-sun"></i> Crystal
+    </button>
+    <button class="t-btn" data-theme-btn="jade">
+      <i class="fas fa-gem"></i> Jade
+    </button>
+    <button class="t-btn" data-theme-btn="terra">
+      <i class="fas fa-fire"></i> Terra
+    </button>
+  </div>
+  <div class="footer-meta">
+    <span>&copy; 2026 GEO·METRIC</span>
+    <span style="opacity:0.3">⊡</span>
+    <span>Abstract Geometric System</span>
+    <span style="opacity:0.3">⊡</span>
+    <span>Bauhaus Design Language</span>
+  </div>
+</footer>
+
+</div><!-- /.app -->
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="patternModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-icon" id="modalIcon"><i class="fas fa-shapes"></i></div>
+    <h3 id="modalTitle">Detail</h3>
+    <p id="modalDesc">Description text.</p>
+    <p class="modal-detail" id="modalDetail">Detail</p>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+(function() {
+  'use strict';
+
+  /* ===================================================
+     1. THEME SWITCHER — 4 themes, localStorage
+  =================================================== */
+  function setTheme(theme) {
+    var prev = document.documentElement.getAttribute('data-theme') || 'monolith';
+    if (prev === theme) return;
+    document.documentElement.setAttribute('data-theme', theme);
+    window._gmTheme = theme;
+    try { localStorage.setItem('gm-theme', theme); } catch(e) {}
+    updateThemeButtons(theme);
+  }
+
+  function updateThemeButtons(theme) {
+    document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === theme);
+    });
+  }
+
+  (function initTheme() {
+    var theme = document.documentElement.getAttribute('data-theme') || 'monolith';
+    window._gmTheme = theme;
+    updateThemeButtons(theme);
+  })();
+
+  document.querySelector('.theme-switcher').addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-theme-btn]');
+    if (btn) setTheme(btn.getAttribute('data-theme-btn'));
+  });
+
+  /* ===================================================
+     2. MOBILE NAV TOGGLE
+  =================================================== */
+  var navToggle = document.getElementById('navToggle');
+  var navLinks = document.getElementById('navLinks');
+  var navOverlay = document.getElementById('navOverlay');
+
+  function toggleNav(open) {
+    navLinks.classList.toggle('open', open);
+    navOverlay.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  navToggle.addEventListener('click', function() {
+    toggleNav(!navLinks.classList.contains('open'));
+  });
+
+  navOverlay.addEventListener('click', function() {
+    toggleNav(false);
+  });
+
+  navLinks.querySelectorAll('.nav-link').forEach(function(link) {
+    link.addEventListener('click', function() { toggleNav(false); });
+  });
+
+  /* ===================================================
+     3. VERTEX MORPH — cycle clip-path shape
+  =================================================== */
+  var morphShapes = [
+    'polygon(50% 0%,100% 50%,50% 100%,0% 50%)',
+    'polygon(30% 0%,70% 0%,100% 30%,100% 70%,70% 100%,30% 100%,0% 70%,0% 30%)',
+    'polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)',
+    'polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)',
+    'polygon(50% 0%, 79% 11%, 100% 35%, 100% 65%, 79% 89%, 50% 100%, 21% 89%, 0% 65%, 0% 35%, 21% 11%)',
+    'polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)',
+    'polygon(0% 0%,100% 0%,100% 100%,0% 100%)',
+    'polygon(45% 0%,55% 0%,75% 50%,55% 100%,45% 100%,25% 50%)'
+  ];
+
+  var morphNames = [
+    'Diamond','Octagon','Hexagon','Isometric','Circle','Triangle','Square','Rhombus'
+  ];
+
+  document.querySelectorAll('.morph-node').forEach(function(node) {
+    var origIdx = parseInt(node.getAttribute('data-original')) || 0;
+    node._morphIdx = origIdx;
+    node._morphOrig = origIdx;
+    node.style.clipPath = morphShapes[origIdx];
+  });
+
+  function resetMorphNodes(except) {
+    document.querySelectorAll('.morph-node').forEach(function(n) {
+      if (n === except) return;
+      n.classList.remove('active');
+      n._morphIdx = n._morphOrig;
+      n.style.clipPath = morphShapes[n._morphOrig];
+      var label = n.querySelector('.shape-label');
+      if (label) label.textContent = morphNames[n._morphOrig];
+    });
+  }
+
+  document.querySelectorAll('.morph-node').forEach(function(node) {
+    node.addEventListener('click', function(e) {
+      resetMorphNodes(node);
+      node.classList.add('active');
+      node._morphIdx = (node._morphIdx + 1) % morphShapes.length;
+      node.style.clipPath = morphShapes[node._morphIdx];
+      var label = node.querySelector('.shape-label');
+      if (label) label.textContent = morphNames[node._morphIdx];
+      e.stopPropagation();
+    });
+  });
+
+  /* ===================================================
+     4. SCROLL REVEAL — IntersectionObserver
+  =================================================== */
+  var revealObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    revealObs.observe(el);
+  });
+
+  /* ===================================================
+     5. GEOMETRIC PARALLAX — requestAnimationFrame
+  =================================================== */
+  var shapes = document.querySelectorAll('.geo-bg-shape');
+  var parallaxTicking = false;
+
+  window.addEventListener('scroll', function() {
+    if (!parallaxTicking) {
+      requestAnimationFrame(function() {
+        var scrollY = window.pageYOffset;
+        shapes.forEach(function(el, i) {
+          var speed = 0.03 + (i % 5) * 0.025;
+          el.style.transform = 'translateY(' + (scrollY * speed) + 'px)';
+        });
+        parallaxTicking = false;
+      });
+      parallaxTicking = true;
+    }
+  });
+
+  /* ===================================================
+     6. MODAL — on feature-card click
+  =================================================== */
+  var modal = document.getElementById('patternModal');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalDesc = document.getElementById('modalDesc');
+  var modalDetail = document.getElementById('modalDetail');
+  var modalIcon = document.getElementById('modalIcon');
+  var modalClose = document.getElementById('modalClose');
+
+  var iconMap = {
+    'vector-square': 'fa-vector-square',
+    'draw-polygon': 'fa-draw-polygon',
+    'border-all': 'fa-border-all',
+    'layer-group': 'fa-layer-group'
+  };
+
+  function openModal(card) {
+    var title = card.getAttribute('data-modal-title') || 'Detail';
+    var detail = card.getAttribute('data-modal-detail') || '';
+    var iconName = card.getAttribute('data-modal-icon') || 'shapes';
+    modalTitle.textContent = title;
+    var descP = card.querySelector('p');
+    modalDesc.textContent = descP ? descP.textContent : '';
+    modalDetail.textContent = detail;
+    var iconClass = iconMap[iconName] || 'fa-shapes';
+    modalIcon.innerHTML = '<i class="fas ' + iconClass + '"></i>';
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.feature-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('a')) return;
+      openModal(card);
+    });
+  });
+
+  modalClose.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  /* ===================================================
+     7. CLICK RIPPLE
+  =================================================== */
+  function createRipple(e, el) {
+    var rect = el.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height) * 1.2;
+    var x = e.clientX - rect.left - size / 2;
+    var y = e.clientY - rect.top - size / 2;
+    var ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    ripple.style.width = size + 'px';
+    ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    el.appendChild(ripple);
+    ripple.addEventListener('animationend', function() { ripple.remove(); });
+  }
+
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest(
+      '.t-btn, .hero-cta, .feature-card, .morph-node, .nav-icon, .modal-close, .pricing-btn'
+    );
+    if (target && !e.target.closest('a')) {
+      createRipple(e, target);
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

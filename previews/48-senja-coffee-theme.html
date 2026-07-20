@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="sore">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senja Coffee — Kopi, Cerita, Dan Hangatnya Senja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ============================================================
+   CSS VARIABLES — THEME SYSTEM (4 modes: pagi, sore, malam, subuh)
+   ============================================================ */
+:root {
+  --clr-bg: #FAF0E0;
+  --clr-bg-secondary: #F5E8D0;
+  --clr-surface: #FFFFFF;
+  --clr-surface-hover: #FFF8F0;
+  --clr-text: #2C2218;
+  --clr-text-secondary: #6B4A32;
+  --clr-text-muted: #9A7A5A;
+  --clr-accent: #C4732D;
+  --clr-accent-hover: #A85E1F;
+  --clr-accent-secondary: #D4964A;
+  --clr-gold: #C9983A;
+  --clr-mocha: #6B4A32;
+  --clr-cream: #FAF3E6;
+  --clr-ink: #2C2218;
+  --clr-hero-overlay: rgba(44, 34, 24, 0.55);
+  --clr-glass: rgba(250, 243, 230, 0.7);
+  --clr-glass-border: rgba(201, 152, 58, 0.2);
+  --clr-card-shadow: rgba(107, 74, 50, 0.12);
+  --clr-badge-open: #2D8A4E;
+  --clr-badge-closed: #B33A3A;
+  --clr-divider: rgba(196, 115, 45, 0.15);
+  --clr-noise: rgba(44, 34, 24, 0.03);
+  --clr-input-border: rgba(107, 74, 50, 0.2);
+  --clr-modal-overlay: rgba(0, 0, 0, 0.6);
+  --clr-lightbox-bg: rgba(0, 0, 0, 0.92);
+  --clr-glow-primary: rgba(196, 115, 45, 0.15);
+  --clr-glow-secondary: rgba(201, 152, 58, 0.1);
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 2px 8px var(--clr-card-shadow);
+  --shadow-md: 0 6px 24px var(--clr-card-shadow);
+  --shadow-lg: 0 12px 48px var(--clr-card-shadow);
+  --shadow-xl: 0 24px 64px var(--clr-card-shadow);
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  --nav-height: 72px;
+}
+[data-theme="pagi"] {
+  --clr-bg: #FFF8F0;
+  --clr-bg-secondary: #FFEED5;
+  --clr-surface: #FFFFFF;
+  --clr-surface-hover: #FFFAF5;
+  --clr-text: #2C2218;
+  --clr-text-secondary: #6B4A32;
+  --clr-text-muted: #B08A6A;
+  --clr-accent: #D4813A;
+  --clr-accent-hover: #B86A28;
+  --clr-accent-secondary: #E8A84A;
+  --clr-gold: #D4A84A;
+  --clr-hero-overlay: rgba(44, 34, 24, 0.45);
+  --clr-glass: rgba(255, 248, 240, 0.75);
+  --clr-glass-border: rgba(212, 168, 74, 0.2);
+  --clr-glow-primary: rgba(212, 129, 58, 0.12);
+  --clr-glow-secondary: rgba(232, 168, 74, 0.08);
+  --clr-card-shadow: rgba(107, 74, 50, 0.08);
+  --clr-divider: rgba(212, 129, 58, 0.12);
+  --clr-noise: rgba(44, 34, 24, 0.02);
+}
+[data-theme="malam"] {
+  --clr-bg: #1A1410;
+  --clr-bg-secondary: #241E18;
+  --clr-surface: #2C2218;
+  --clr-surface-hover: #3A2E22;
+  --clr-text: #F5EDE4;
+  --clr-text-secondary: #D4C4B4;
+  --clr-text-muted: #9A8A7A;
+  --clr-accent: #D4964A;
+  --clr-accent-hover: #E8A85A;
+  --clr-accent-secondary: #C4732D;
+  --clr-gold: #C9983A;
+  --clr-hero-overlay: rgba(26, 20, 16, 0.7);
+  --clr-glass: rgba(44, 34, 24, 0.7);
+  --clr-glass-border: rgba(201, 152, 58, 0.15);
+  --clr-card-shadow: rgba(0, 0, 0, 0.3);
+  --clr-badge-open: #3AB86A;
+  --clr-badge-closed: #D44A4A;
+  --clr-divider: rgba(212, 150, 74, 0.1);
+  --clr-noise: rgba(245, 237, 228, 0.03);
+  --clr-input-border: rgba(212, 150, 74, 0.2);
+  --clr-modal-overlay: rgba(0, 0, 0, 0.8);
+  --clr-glow-primary: rgba(212, 150, 74, 0.1);
+  --clr-glow-secondary: rgba(201, 152, 58, 0.08);
+}
+[data-theme="subuh"] {
+  --clr-bg: #E8E0D8;
+  --clr-bg-secondary: #DDD4CA;
+  --clr-surface: #F0E8E0;
+  --clr-surface-hover: #F5EDE6;
+  --clr-text: #2C2218;
+  --clr-text-secondary: #6B5A4A;
+  --clr-text-muted: #A09080;
+  --clr-accent: #B86A30;
+  --clr-accent-hover: #9E5824;
+  --clr-accent-secondary: #C8883A;
+  --clr-gold: #B8903A;
+  --clr-hero-overlay: rgba(44, 34, 24, 0.5);
+  --clr-glass: rgba(240, 232, 224, 0.75);
+  --clr-glass-border: rgba(184, 144, 58, 0.18);
+  --clr-card-shadow: rgba(107, 74, 50, 0.1);
+  --clr-divider: rgba(184, 106, 48, 0.12);
+  --clr-noise: rgba(44, 34, 24, 0.02);
+  --clr-glow-primary: rgba(184, 106, 48, 0.1);
+  --clr-glow-secondary: rgba(184, 144, 58, 0.08);
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height); }
+body {
+  font-family: var(--font-sans);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background var(--transition-slow), color var(--transition-slow);
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  transition: opacity var(--transition-slow);
+}
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); font-weight: 700; line-height: 1.25; color: var(--clr-text); }
+h2 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-style: italic; }
+h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+p { color: var(--clr-text-secondary); }
+a { color: var(--clr-accent); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--clr-accent-hover); }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; font-family: inherit; transition: all var(--transition); }
+ul { list-style: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+.paper-texture { position: relative; }
+.paper-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  pointer-events: none;
+  z-index: 1;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: background var(--transition), box-shadow var(--transition), backdrop-filter var(--transition);
+}
+.nav.scrolled {
+  background: var(--clr-glass);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: 0 1px 0 var(--clr-glass-border);
+}
+.nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  transition: color var(--transition);
+}
+.nav-brand i { color: var(--clr-accent); font-size: 1.2rem; }
+.nav-links { display: flex; align-items: center; gap: 8px; }
+.nav-links a {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--clr-text-secondary);
+  transition: all var(--transition);
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 16px; right: 16px;
+  height: 2px;
+  background: var(--clr-accent);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+.nav-links a:hover { color: var(--clr-text); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  padding: 8px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--clr-text);
+  border-radius: 2px;
+  transition: all var(--transition);
+}
+.nav-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.nav-hamburger.active span:nth-child(2) { opacity: 0; }
+.nav-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+@media (max-width: 768px) {
+  .nav-hamburger { display: flex; }
+  .nav-links {
+    position: fixed;
+    top: var(--nav-height);
+    left: 0; right: 0;
+    flex-direction: column;
+    background: var(--clr-glass);
+    backdrop-filter: blur(20px) saturate(1.3);
+    padding: 16px;
+    gap: 4px;
+    transform: translateY(-110%);
+    opacity: 0;
+    transition: all var(--transition);
+    box-shadow: var(--shadow-md);
+  }
+  .nav-links.open { transform: translateY(0); opacity: 1; }
+  .nav-links a { width: 100%; text-align: center; padding: 12px 16px; }
+  .nav-links a::after { display: none; }
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--nav-height);
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, var(--clr-glow-primary) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 30% 70%, var(--clr-glow-secondary) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
+  transition: background var(--transition-slow);
+}
+.hero-bg-pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.04;
+  background-image:
+    radial-gradient(circle at 20% 50%, var(--clr-mocha) 1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, var(--clr-accent) 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, var(--clr-gold) 1px, transparent 1px);
+  background-size: 48px 48px;
+  transition: opacity var(--transition-slow);
+}
+.hero-bg-parallax {
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 50%, var(--clr-glow-primary) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 30% 60%, var(--clr-glow-secondary) 0%, transparent 50%);
+  opacity: 0.6;
+  will-change: transform;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 720px;
+  padding: 0 24px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 24px;
+  background: var(--clr-surface);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+.hero-badge .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.hero-badge.open { color: var(--clr-badge-open); }
+.hero-badge.open .dot { background: var(--clr-badge-open); box-shadow: 0 0 8px var(--clr-badge-open); }
+.hero-badge.closed { color: var(--clr-badge-closed); }
+.hero-badge.closed .dot { background: var(--clr-badge-closed); box-shadow: 0 0 8px var(--clr-badge-closed); }
+.hero h1 {
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  font-style: italic;
+  margin-bottom: 16px;
+  line-height: 1.1;
+  color: var(--clr-text);
+}
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--clr-text-secondary);
+  margin-bottom: 40px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+.hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+.btn-primary {
+  background: var(--clr-accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(196, 115, 45, 0.3);
+}
+.btn-primary:hover {
+  background: var(--clr-accent-hover);
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(196, 115, 45, 0.4);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--clr-text);
+  border: 1.5px solid var(--clr-text-secondary);
+}
+.btn-outline:hover {
+  border-color: var(--clr-accent);
+  color: var(--clr-accent);
+  transform: translateY(-2px);
+}
+.floating-emoji {
+  position: absolute;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 1;
+  animation: floatEmoji 6s ease-in-out infinite;
+  opacity: 0.6;
+}
+.floating-emoji:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+.floating-emoji:nth-child(2) { top: 25%; right: 12%; animation-delay: 1.5s; font-size: 2.4rem; }
+.floating-emoji:nth-child(3) { bottom: 28%; left: 8%; animation-delay: 3s; }
+.floating-emoji:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 4.5s; font-size: 1.8rem; }
+.floating-emoji:nth-child(5) { top: 50%; left: 5%; animation-delay: 0.7s; font-size: 1.5rem; opacity: 0.4; }
+.floating-emoji:nth-child(6) { top: 40%; right: 6%; animation-delay: 2.3s; font-size: 1.5rem; opacity: 0.4; }
+@keyframes floatEmoji {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(4deg); }
+}
+
+/* ============================================================
+   SECTION BASE
+   ============================================================ */
+.section { padding: 100px 0; position: relative; }
+.section-header { text-align: center; margin-bottom: 56px; }
+.section-header h2 { margin-bottom: 12px; }
+.section-header p {
+  max-width: 520px;
+  margin: 0 auto;
+  color: var(--clr-text-muted);
+  font-size: 1rem;
+}
+.section-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--clr-accent), var(--clr-gold));
+  border-radius: 4px;
+  margin: 16px auto 20px;
+}
+
+/* ============================================================
+   MENU CARD GRID
+   ============================================================ */
+.menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.menu-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1px solid var(--clr-divider);
+  box-shadow: var(--shadow-sm);
+}
+.menu-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--clr-glass-border);
+  border-color: var(--clr-gold);
+}
+.menu-card-emoji { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+.menu-card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.menu-card-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.menu-card-badge.bestseller { background: rgba(196, 115, 45, 0.12); color: var(--clr-accent); }
+.menu-card-badge.new { background: rgba(201, 152, 58, 0.12); color: var(--clr-gold); }
+.menu-card h3 { font-family: var(--font-serif); font-size: 1.1rem; margin-bottom: 4px; }
+.menu-card .price { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 500; color: var(--clr-accent); margin-bottom: 8px; }
+.menu-card .desc { font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.6; }
+.menu-card .section-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--clr-text-muted);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+@media (max-width: 768px) { .menu-grid { grid-template-columns: 1fr; gap: 16px; } }
+
+/* ============================================================
+   MENU MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--clr-modal-overlay);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 24px;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--clr-bg);
+  border-radius: var(--radius-xl);
+  max-width: 480px;
+  width: 100%;
+  padding: 40px;
+  position: relative;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--clr-glass-border);
+}
+.modal-overlay.active .modal { transform: scale(1) translateY(0); }
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-surface);
+  color: var(--clr-text-muted);
+  font-size: 1.1rem;
+  transition: all var(--transition);
+}
+.modal-close:hover { background: var(--clr-accent); color: #fff; }
+.modal .menu-card-emoji { font-size: 3.2rem; margin-bottom: 16px; }
+.modal h3 { font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 4px; }
+.modal .price { font-family: var(--font-mono); font-size: 1.2rem; color: var(--clr-accent); font-weight: 500; margin-bottom: 20px; }
+.modal .full-desc {
+  font-size: 0.95rem;
+  color: var(--clr-text-secondary);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.modal-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--clr-divider);
+}
+.modal-detail-item {
+  background: var(--clr-surface);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+.modal-detail-item span:first-child {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--clr-text-muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.modal-detail-item span:last-child { font-size: 0.9rem; color: var(--clr-text); font-weight: 500; }
+
+/* ============================================================
+   STATS COUNTERS
+   ============================================================ */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.stat-card {
+  text-align: center;
+  padding: 32px 16px;
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--clr-divider);
+  transition: all var(--transition);
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.stat-number {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 500;
+  color: var(--clr-accent);
+  display: block;
+  line-height: 1.2;
+}
+.stat-number .suffix { font-size: 0.7em; color: var(--clr-gold); }
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+  margin-top: 8px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+@media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+
+/* ============================================================
+   ROAST PROFILE
+   ============================================================ */
+.roast-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.roast-card {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--clr-divider);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.roast-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  transition: height var(--transition);
+}
+.roast-card.light::before { background: linear-gradient(90deg, #D4A84A, #E8C86A); }
+.roast-card.medium::before { background: linear-gradient(90deg, #C4732D, #D4964A); }
+.roast-card.dark::before { background: linear-gradient(90deg, #5A3A22, #6B4A32); }
+.roast-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--clr-glass-border); }
+.roast-card:hover::before { height: 6px; }
+.roast-card.active { border-color: var(--clr-accent); box-shadow: 0 0 0 1px var(--clr-accent), var(--shadow-md); }
+.roast-card-icon { font-size: 2.8rem; margin-bottom: 16px; display: block; }
+.roast-card h3 { font-family: var(--font-serif); font-size: 1.2rem; margin-bottom: 8px; }
+.roast-card .roast-level { font-size: 0.8rem; color: var(--clr-text-muted); margin-bottom: 12px; display: block; }
+.roast-card .roast-desc { font-size: 0.88rem; color: var(--clr-text-secondary); line-height: 1.7; margin-bottom: 16px; }
+.roast-card .roast-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+.roast-card.active .roast-detail { max-height: 200px; opacity: 1; margin-top: 12px; }
+.roast-detail p {
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+  line-height: 1.7;
+  padding: 12px;
+  background: var(--clr-bg-secondary);
+  border-radius: var(--radius-sm);
+}
+.roast-card .roast-tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.roast-card.light .roast-tag { background: rgba(212, 168, 74, 0.12); color: #C8983A; }
+.roast-card.medium .roast-tag { background: rgba(196, 115, 45, 0.12); color: var(--clr-accent); }
+.roast-card.dark .roast-tag { background: rgba(107, 74, 50, 0.15); color: var(--clr-mocha); }
+@media (max-width: 768px) { .roast-grid { grid-template-columns: 1fr; gap: 16px; } }
+
+/* ============================================================
+   GALLERY
+   ============================================================ */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 240px;
+  gap: 16px;
+}
+.gallery-item {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition);
+}
+.gallery-item:hover { transform: scale(1.02); box-shadow: var(--shadow-lg); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.gallery-item:hover img { transform: scale(1.08); }
+.gallery-item-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.4) 0%, transparent 60%);
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.gallery-item:hover .gallery-item-overlay { opacity: 1; }
+.gallery-item-overlay span { color: #fff; font-size: 0.85rem; font-weight: 500; }
+.gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+@media (max-width: 768px) {
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
+  .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+  .gallery-item:nth-child(2) { grid-column: span 2; grid-row: span 1; }
+}
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: var(--clr-lightbox-bg);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 40px;
+}
+.lightbox.active { opacity: 1; pointer-events: all; }
+.lightbox img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: var(--radius-md);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lightbox.active img { transform: scale(1); }
+.lightbox-close {
+  position: absolute;
+  top: 24px; right: 24px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 1.4rem;
+  transition: all var(--transition);
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 1.2rem;
+  transition: all var(--transition);
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+.lightbox-nav.prev { left: 24px; }
+.lightbox-nav.next { right: 24px; }
+.lightbox-counter {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.6);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+   BREWING GUIDE
+   ============================================================ */
+.brewing-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.brewing-step {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  cursor: pointer;
+  border: 1px solid var(--clr-divider);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.brewing-step:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.brewing-step.active { border-color: var(--clr-accent); box-shadow: 0 0 0 1px var(--clr-accent), var(--shadow-md); }
+.brewing-step-number {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  background: var(--clr-accent);
+  color: #fff;
+  transition: all var(--transition);
+}
+.brewing-step.active .brewing-step-number { box-shadow: 0 0 0 4px var(--clr-glow-primary); }
+.brewing-step-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+.brewing-step h3 { font-family: var(--font-serif); font-size: 1.1rem; margin-bottom: 8px; }
+.brewing-step p { font-size: 0.88rem; color: var(--clr-text-muted); line-height: 1.7; }
+.brewing-step-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+.brewing-step.active .brewing-step-detail {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--clr-divider);
+}
+.brewing-step-detail p { font-size: 0.85rem; color: var(--clr-text-secondary); margin-bottom: 8px; }
+.brewing-step-detail ul { padding-left: 20px; }
+.brewing-step-detail li {
+  font-size: 0.82rem;
+  color: var(--clr-text-muted);
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.brewing-step-detail li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: var(--clr-accent);
+  font-family: var(--font-mono);
+}
+@media (max-width: 768px) { .brewing-steps { grid-template-columns: 1fr; gap: 16px; } }
+
+/* ============================================================
+   TESTIMONIAL CAROUSEL
+   ============================================================ */
+.testimonial-section { background: var(--clr-bg-secondary); transition: background var(--transition-slow); }
+.testimonial-carousel { position: relative; max-width: 640px; margin: 0 auto; min-height: 280px; }
+.testimonial-track { position: relative; overflow: hidden; }
+.testimonial-slide {
+  padding: 32px;
+  text-align: center;
+  opacity: 0;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  transform: translateX(40px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+.testimonial-slide.active { opacity: 1; position: relative; transform: translateX(0); pointer-events: all; }
+.testimonial-stars { color: var(--clr-gold); font-size: 1rem; margin-bottom: 20px; letter-spacing: 4px; }
+.testimonial-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--clr-text);
+  margin-bottom: 24px;
+}
+.testimonial-author { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.testimonial-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--clr-accent), var(--clr-gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.testimonial-name { font-weight: 600; font-size: 0.95rem; color: var(--clr-text); }
+.testimonial-role { font-size: 0.8rem; color: var(--clr-text-muted); }
+.testimonial-controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; }
+.testimonial-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  border: 1px solid var(--clr-divider);
+  transition: all var(--transition);
+  font-size: 0.85rem;
+}
+.testimonial-btn:hover { background: var(--clr-accent); color: #fff; border-color: var(--clr-accent); }
+.testimonial-dots { display: flex; gap: 8px; }
+.testimonial-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--clr-divider);
+  transition: all var(--transition);
+  cursor: pointer;
+  border: none;
+}
+.testimonial-dot.active { background: var(--clr-accent); transform: scale(1.3); box-shadow: 0 0 8px var(--clr-glow-primary); }
+
+/* ============================================================
+   LOCATION PANEL
+   ============================================================ */
+.location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+.location-info { display: flex; flex-direction: column; gap: 20px; }
+.location-info-card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px;
+  background: var(--clr-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-divider);
+  transition: all var(--transition);
+}
+.location-info-card:hover { box-shadow: var(--shadow-sm); border-color: var(--clr-glass-border); }
+.location-info-card i { font-size: 1.2rem; color: var(--clr-accent); margin-top: 2px; width: 24px; text-align: center; }
+.location-info-card h4 { font-family: var(--font-serif); font-size: 1rem; margin-bottom: 4px; }
+.location-info-card p { font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.6; }
+.location-info-card .hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  padding: 3px 0;
+}
+.location-info-card .hours-row span:first-child { color: var(--clr-text-secondary); }
+.location-info-card .hours-row span:last-child { font-family: var(--font-mono); color: var(--clr-text); }
+.location-map {
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--clr-divider);
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.location-map-placeholder { text-align: center; padding: 40px; }
+.location-map-placeholder i { font-size: 3rem; color: var(--clr-accent); margin-bottom: 16px; opacity: 0.6; }
+.location-map-placeholder p { font-size: 0.9rem; color: var(--clr-text-muted); }
+@media (max-width: 768px) { .location-grid { grid-template-columns: 1fr; gap: 24px; } }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--clr-bg-secondary);
+  border-top: 1px solid var(--clr-divider);
+  padding: 60px 0 32px;
+  transition: background var(--transition-slow);
+}
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-brand h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-brand h3 i { color: var(--clr-accent); }
+.footer-brand p { font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.7; margin-bottom: 16px; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-surface);
+  color: var(--clr-text-secondary);
+  border: 1px solid var(--clr-divider);
+  transition: all var(--transition);
+  font-size: 0.85rem;
+}
+.footer-social a:hover { background: var(--clr-accent); color: #fff; border-color: var(--clr-accent); transform: translateY(-2px); }
+.footer-col h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+  color: var(--clr-text);
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+.footer-col a {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+  padding: 4px 0;
+  transition: all var(--transition);
+}
+.footer-col a:hover { color: var(--clr-accent); padding-left: 4px; }
+.theme-switcher { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+.theme-btn {
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border: 1px solid var(--clr-divider);
+  background: var(--clr-surface);
+  color: var(--clr-text-secondary);
+  transition: all var(--transition);
+}
+.theme-btn:hover { border-color: var(--clr-accent); color: var(--clr-accent); }
+.theme-btn.active { background: var(--clr-accent); color: #fff; border-color: var(--clr-accent); }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--clr-divider);
+  font-size: 0.8rem;
+  color: var(--clr-text-muted);
+}
+.footer-bottom span { font-family: var(--font-mono); }
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-col:first-child { grid-column: span 2; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+
+/* ============================================================
+   WARM GLOW ANIMATION (8s)
+   ============================================================ */
+@keyframes warmGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+.warm-glow { animation: warmGlow 8s ease-in-out infinite; }
+
+/* ============================================================
+   SECTION BACKGROUND ALTERNATION
+   ============================================================ */
+.section-alt { background: var(--clr-bg-secondary); transition: background var(--transition-slow); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .section { padding: 60px 0; }
+  .section-header { margin-bottom: 36px; }
+  .section-header h2 { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+NAVIGATION
+============================================================ -->
+<nav class="nav" id="navbar" role="navigation" aria-label="Navigasi utama">
+  <div class="container">
+    <a href="#hero" class="nav-brand" aria-label="Senja Coffee beranda">
+      <i class="fas fa-mug-hot" aria-hidden="true"></i>
+      Senja <span style="font-style:normal;font-weight:400;color:var(--clr-accent)">&#9749;</span>
+    </a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Buka menu navigasi" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks" role="menubar">
+      <a href="#menu" role="menuitem">Menu</a>
+      <a href="#gallery" role="menuitem">Galeri</a>
+      <a href="#location" role="menuitem">Lokasi</a>
+      <a href="#story" role="menuitem">Cerita</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+HERO SECTION
+============================================================ -->
+<section class="hero" id="hero" aria-label="Selamat datang di Senja Coffee">
+  <div class="hero-bg"></div>
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-bg-parallax" id="heroParallax"></div>
+  <div class="floating-emoji" aria-hidden="true">&#9749;</div>
+  <div class="floating-emoji" aria-hidden="true">&#127749;</div>
+  <div class="floating-emoji" aria-hidden="true">&#127802;</div>
+  <div class="floating-emoji" aria-hidden="true">&#10024;</div>
+  <div class="floating-emoji" aria-hidden="true">&#127807;</div>
+  <div class="floating-emoji" aria-hidden="true">&#128293;</div>
+  <div class="hero-content">
+    <div class="hero-badge" id="heroBadge">
+      <span class="dot" id="badgeDot" aria-hidden="true"></span>
+      <span id="badgeText">Memuat...</span>
+    </div>
+    <h1>SELAMAT DATANG<br>DI SENJA</h1>
+    <p class="hero-tagline">Kopi, Cerita, Dan Hangatnya Senja</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn btn-primary"><i class="fas fa-mug-hot" aria-hidden="true"></i> Lihat Menu</a>
+      <a href="#location" class="btn btn-outline"><i class="fas fa-location-dot" aria-hidden="true"></i> Petunjuk Arah</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+MENU SECTION
+============================================================ -->
+<section class="section" id="menu" aria-label="Menu Senja Coffee">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Menu &bull; Senja</h2>
+      <div class="section-divider"></div>
+      <p>Setiap sajian dibuat dengan penuh cerita. Dari biji pilihan hingga cangkir hangat di tanganmu.</p>
+    </div>
+    <h3 style="font-family:var(--font-sans);font-size:0.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--clr-text-muted);margin-bottom:16px;font-weight:600;">
+      <i class="fas fa-mug-hot" style="color:var(--clr-accent);margin-right:8px;"></i> Minuman Spesial
+    </h3>
+    <div class="menu-grid reveal">
+      <div class="menu-card" data-name="Kopi Tubruk" data-price="Rp22.000" data-emoji="&#9749;"
+           data-desc="Kopi hitam khas Jawa yang diseduh dengan gula aren asli. Menghadirkan rasa pahit manis yang membangkitkan semangat di setiap tegukan. Disajikan dalam cangkir tanah liat tradisional."
+           data-ingredients="Biji kopi Arabika lokal, Gula aren asli, Air panas"
+           data-time="5-7 menit" data-label="Minuman">
+        <span class="menu-card-emoji" aria-hidden="true">&#9749;</span>
+        <div class="menu-card-badges"><span class="menu-card-badge bestseller">BESTSELLER</span></div>
+        <h3>Kopi Tubruk</h3>
+        <div class="price">Rp22.000</div>
+        <p class="desc">Kopi hitam khas Jawa dengan gula aren asli — pahit manis klasik.</p>
+      </div>
+      <div class="menu-card" data-name="Wedang Uwuh" data-price="Rp25.000" data-emoji="&#129468;"
+           data-desc="Wedang uwuh adalah minuman rempah tradisional dari Yogyakarta. Berisi campuran jahe merah, kayu secang, serai, daun pandan, cengkeh, dan kayu manis. Menghangatkan tubuh dan jiwa."
+           data-ingredients="Jahe merah, Kayu secang, Serai, Pandan, Cengkeh, Kayu manis, Madu"
+           data-time="10-12 menit" data-label="Minuman">
+        <span class="menu-card-emoji" aria-hidden="true">&#129468;</span>
+        <div class="menu-card-badges"><span class="menu-card-badge new">NEW</span></div>
+        <h3>Wedang Uwuh</h3>
+        <div class="price">Rp25.000</div>
+        <p class="desc">Wedang rempah khas Jogja — jahe, secang, serai, hangatkan harimu.</p>
+      </div>
+      <div class="menu-card" data-name="Vietnam Drip" data-price="Rp28.000" data-emoji="&#127481;&#127475;"
+           data-desc="Kopi Vietnam klasik yang diseduh perlahan menggunakan phin filter. Dikombinasikan dengan susu kental manis, menghasilkan rasa yang kuat, kaya, dan legit. Wajib dicoba!"
+           data-ingredients="Biji kopi Robusta Vietnam, Susu kental manis, Air panas"
+           data-time="8-10 menit" data-label="Minuman">
+        <span class="menu-card-emoji" aria-hidden="true">&#127481;&#127475;</span>
+        <div class="menu-card-badges">
+          <span class="menu-card-badge bestseller">BESTSELLER</span>
+          <span class="menu-card-badge new">NEW</span>
+        </div>
+        <h3>Vietnam Drip</h3>
+        <div class="price">Rp28.000</div>
+        <p class="desc">Kopi Vietnam seduh phin filter — kuat, kaya, legit dengan susu kental manis.</p>
+      </div>
+    </div>
+    <h3 style="font-family:var(--font-sans);font-size:0.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--clr-text-muted);margin-top:40px;margin-bottom:16px;font-weight:600;">
+      <i class="fas fa-utensils" style="color:var(--clr-accent);margin-right:8px;"></i> Makanan Pendamping
+    </h3>
+    <div class="menu-grid reveal">
+      <div class="menu-card" data-name="Roti Bakar Pandan" data-price="Rp30.000" data-emoji="&#127838;"
+           data-desc="Roti bakar premium dengan selai pandan homemade. Dipanggang hingga kecokelatan dengan taburan keju dan meses. Tekstur renyah di luar, lembut di dalam."
+           data-ingredients="Roti tawar premium, Selai pandan asli, Keju cheddar, Meses ceres, Mentega"
+           data-time="8-10 menit" data-label="Makanan">
+        <span class="menu-card-emoji" aria-hidden="true">&#127838;</span>
+        <div class="menu-card-badges"><span class="menu-card-badge bestseller">BESTSELLER</span></div>
+        <h3>Roti Bakar Pandan</h3>
+        <div class="price">Rp30.000</div>
+        <p class="desc">Roti bakar dengan selai pandan homemade, keju, dan meses — renyah legit.</p>
+      </div>
+      <div class="menu-card" data-name="Martabak Mini" data-price="Rp35.000" data-emoji="&#129374;"
+           data-desc="Martabak manis mini pilihan dengan topping double cokelat, keju, dan kacang. Teksturnya lembut bersarang dengan rasa yang pas di lidah. Porsi mini cocok untuk ngemil."
+           data-ingredients="Tepung terigu, Cokelat batang, Keju mozzarella, Kacang mete, Susu, Mentega"
+           data-time="12-15 menit" data-label="Makanan">
+        <span class="menu-card-emoji" aria-hidden="true">&#129374;</span>
+        <div class="menu-card-badges"></div>
+        <h3>Martabak Mini</h3>
+        <div class="price">Rp35.000</div>
+        <p class="desc">Martabak manis mini double cokelat keju — lembut bersarang, pas untuk ngemil.</p>
+      </div>
+      <div class="menu-card" data-name="Pisang Goreng Cokelat" data-price="Rp20.000" data-emoji="&#127820;"
+           data-desc="Pisang goreng crispy yang disajikan dengan saus cokelat leleh dan taburan wijen. Camilan klasik dengan sentuhan modern. Cocok sebagai teman kopi di kala senja."
+           data-ingredients="Pisang raja, Tepung beras, Cokelat batang, Wijen, Minyak kelapa"
+           data-time="6-8 menit" data-label="Makanan">
+        <span class="menu-card-emoji" aria-hidden="true">&#127820;</span>
+        <div class="menu-card-badges"><span class="menu-card-badge new">NEW</span></div>
+        <h3>Pisang Goreng Cokelat</h3>
+        <div class="price">Rp20.000</div>
+        <p class="desc">Pisang goreng crispy dengan saus cokelat leleh dan taburan wijen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+MENU MODAL
+============================================================ -->
+<div class="modal-overlay" id="menuModal" role="dialog" aria-modal="true" aria-label="Detail menu">
+  <div class="modal">
+    <button class="modal-close" id="modalClose" aria-label="Tutup modal"><i class="fas fa-times"></i></button>
+    <div id="modalContent">
+      <span class="menu-card-emoji" id="modalEmoji" aria-hidden="true"></span>
+      <h3 id="modalName"></h3>
+      <div class="price" id="modalPrice"></div>
+      <p class="full-desc" id="modalDesc"></p>
+      <div class="modal-details">
+        <div class="modal-detail-item"><span>Bahan</span><span id="modalIngredients"></span></div>
+        <div class="modal-detail-item"><span>Estimasi</span><span id="modalTime"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+STATS SECTION
+============================================================ -->
+<section class="section section-alt" id="story" aria-label="Statistik Senja Coffee">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Cerita Dalam Angka</h2>
+      <div class="section-divider"></div>
+      <p>Perjalanan kami dalam menuangkan cerita melalui setiap cangkir kopi.</p>
+    </div>
+    <div class="stats-grid reveal">
+      <div class="stat-card">
+        <span class="stat-number"><span class="counter" data-target="12">0</span><span class="suffix">+</span></span>
+        <span class="stat-label">Tahun Melayani</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number"><span class="counter" data-target="28">0</span><span class="suffix">K+</span></span>
+        <span class="stat-label">Cangkir Per Hari</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number"><span class="counter" data-target="24">0</span><span class="suffix"></span></span>
+        <span class="stat-label">Menu Tersedia</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number"><span class="counter" data-target="15">0</span><span class="suffix">K+</span></span>
+        <span class="stat-label">Pelanggan Setia</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+ROAST PROFILE SECTION
+============================================================ -->
+<section class="section" id="roast" aria-label="Profil Roast Kopi">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Profil Roast</h2>
+      <div class="section-divider"></div>
+      <p>Dari light hingga dark, temukan karakter kopi yang paling cocok dengan seleramu.</p>
+    </div>
+    <div class="roast-grid reveal">
+      <div class="roast-card light" data-roast="light">
+        <span class="roast-card-icon" aria-hidden="true">&#127794;</span>
+        <span class="roast-tag">Light Roast</span>
+        <h3>Light & Bright</h3>
+        <span class="roast-level">Level Sangrai: 1-3</span>
+        <p class="roast-desc">Sangrai ringan yang mempertahankan rasa asli biji kopi. Memiliki keasaman tinggi, body ringan, dan aroma bunga-buah yang kompleks.</p>
+        <div class="roast-detail">
+          <p>Suhu sangrai 190-205&#176;C — menonjolkan karakter origin biji kopi dari daerah asalnya. Cocok untuk manual brewing seperti V60 atau AeroPress. Di Senja, Light Roast kami menggunakan biji Arabika Gayo dan Flores. <br><br><strong>Rekomendasi:</strong> Vietnam Drip dengan metode seduh lambat.</p>
+        </div>
+      </div>
+      <div class="roast-card medium active" data-roast="medium">
+        <span class="roast-card-icon" aria-hidden="true">&#128293;</span>
+        <span class="roast-tag">Medium Roast</span>
+        <h3>Balanced & Smooth</h3>
+        <span class="roast-level">Level Sangrai: 4-6</span>
+        <p class="roast-desc">Keseimbangan sempurna antara keasaman, body, dan rasa. Karamelisasi gula alami menghasilkan rasa manis dengan aftertaste yang bersih.</p>
+        <div class="roast-detail">
+          <p>Suhu sangrai 210-220&#176;C — profil yang paling populer dan serbaguna. Rasa cokelat dan kacang mulai muncul tanpa menghilangkan karakter asli kopi. Favorit untuk espresso dan seduh tubruk. <br><br><strong>Rekomendasi:</strong> Kopi Tubruk dan Roti Bakar Pandan — kombinasi klasik yang sempurna.</p>
+        </div>
+      </div>
+      <div class="roast-card dark" data-roast="dark">
+        <span class="roast-card-icon" aria-hidden="true">&#9899;</span>
+        <span class="roast-tag">Dark Roast</span>
+        <h3>Bold & Intense</h3>
+        <span class="roast-level">Level Sangrai: 7-10</span>
+        <p class="roast-desc">Sangrai gelap dengan body penuh, keasaman rendah, dan rasa smoky yang intens. Minyak alami mulai muncul ke permukaan biji kopi.</p>
+        <div class="roast-detail">
+          <p>Suhu sangrai 225-240&#176;C — menghasilkan rasa yang berani dengan sentuhan dark chocolate, karamel bakar, dan rempah. Cocok untuk espresso dan susu. Di Senja, kami menyajikan Dark Roast dari biji Robusta Java dan Toraja. <br><br><strong>Rekomendasi:</strong> Wedang Uwuh atau Martabak Mini sebagai pendamping.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+GALLERY SECTION
+============================================================ -->
+<section class="section section-alt" id="gallery" aria-label="Galeri Senja Coffee">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Galeri Senja</h2>
+      <div class="section-divider"></div>
+      <p>Momen-momen hangat yang tertangkap di sudut-sudut favorit Senja Coffee.</p>
+    </div>
+    <div class="gallery-grid reveal">
+      <div class="gallery-item" data-index="0">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80" alt="Suasana coffee shop dengan meja kayu dan pencahayaan hangat" loading="lazy">
+        <div class="gallery-item-overlay"><span>Suasana Hangat Senja</span></div>
+      </div>
+      <div class="gallery-item" data-index="1">
+        <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&q=80" alt="Penyajian kopi dengan latte art" loading="lazy">
+        <div class="gallery-item-overlay"><span>Latte Art Istimewa</span></div>
+      </div>
+      <div class="gallery-item" data-index="2">
+        <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80" alt="Barista sedang meracik kopi" loading="lazy">
+        <div class="gallery-item-overlay"><span>Barista Telaten</span></div>
+      </div>
+      <div class="gallery-item" data-index="3">
+        <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400&q=80" alt="Kopi dan buku di meja kayu" loading="lazy">
+        <div class="gallery-item-overlay"><span>Kopi & Cerita</span></div>
+      </div>
+      <div class="gallery-item" data-index="4">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80" alt="Kopi segar dengan latar pagi hari" loading="lazy">
+        <div class="gallery-item-overlay"><span>Fresh Morning Brew</span></div>
+      </div>
+      <div class="gallery-item" data-index="5">
+        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80" alt="Coffee bean dan alat seduh manual" loading="lazy">
+        <div class="gallery-item-overlay"><span>Biji Kopi Pilihan</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+LIGHTBOX
+============================================================ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Galeri gambar">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Tutup galeri"><i class="fas fa-times"></i></button>
+  <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Gambar sebelumnya"><i class="fas fa-chevron-left"></i></button>
+  <img id="lightboxImg" src="" alt="">
+  <button class="lightbox-nav next" id="lightboxNext" aria-label="Gambar berikutnya"><i class="fas fa-chevron-right"></i></button>
+  <span class="lightbox-counter" id="lightboxCounter"></span>
+</div>
+
+<!-- ============================================================
+BREWING GUIDE SECTION
+============================================================ -->
+<section class="section" id="brew" aria-label="Panduan Menyeduh Kopi">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Panduan Menyeduh</h2>
+      <div class="section-divider"></div>
+      <p>Tiga langkah sederhana menikmati kopi Senja yang sempurna di rumah.</p>
+    </div>
+    <div class="brewing-steps reveal">
+      <div class="brewing-step active" data-step="1">
+        <span class="brewing-step-number">01</span>
+        <span class="brewing-step-icon" aria-hidden="true">&#129400;</span>
+        <h3>Pilih Biji</h3>
+        <p>Pilih biji kopi pilihan dari berbagai daerah di Indonesia. Giling sesuai dengan metode seduh favoritmu.</p>
+        <div class="brewing-step-detail">
+          <p>Kualitas secangkir kopi dimulai dari bijinya. Di Senja, kami menyediakan tiga pilihan:</p>
+          <ul>
+            <li>Arabika Gayo — acidity ringan, aroma floral</li>
+            <li>Robusta Java — body penuh, rasa cokelat</li>
+            <li>Blend Senja Signature — kombinasi eksklusif</li>
+          </ul>
+          <p style="margin-top:8px;">Tingkat kehalusan gilingan disesuaikan dengan metode seduh: kasar untuk French Press, sedang untuk V60, halus untuk espresso.</p>
+        </div>
+      </div>
+      <div class="brewing-step" data-step="2">
+        <span class="brewing-step-number">02</span>
+        <span class="brewing-step-icon" aria-hidden="true">&#128167;</span>
+        <h3>Seduh</h3>
+        <p>Tuangkan air panas dengan suhu yang tepat. Biarkan kopi mengembang dan ekstraksi sempurna terjadi.</p>
+        <div class="brewing-step-detail">
+          <p>Proses menyeduh adalah seni yang membutuhkan ketelitian:</p>
+          <ul>
+            <li>Suhu air ideal: 90-96&#176;C (diamkan 30 detik setelah mendidih)</li>
+            <li>Rasio kopi-air: 1:15 (18 gram kopi untuk 270ml air)</li>
+            <li>Waktu seduh: 2.5-4 menit tergantung metode</li>
+            <li>Tuang air secara perlahan dengan gerakan spiral</li>
+          </ul>
+          <p style="margin-top:8px;">Teknik yang konsisten menghasilkan rasa yang konsisten. Latihan membuat sempurna!</p>
+        </div>
+      </div>
+      <div class="brewing-step" data-step="3">
+        <span class="brewing-step-number">03</span>
+        <span class="brewing-step-icon" aria-hidden="true">&#128524;</span>
+        <h3>Nikmati</h3>
+        <p>Tuang ke cangkir favoritmu, hirup aromanya, dan nikmati setiap tegukan bersama cerita dan hangatnya senja.</p>
+        <div class="brewing-step-detail">
+          <p>Saatnya menikmati hasil karya kecilmu:</p>
+          <ul>
+            <li>Gunakan cangkir keramik untuk menjaga suhu lebih lama</li>
+            <li>Hirup aroma kopi sebelum menyeruput — ini bagian dari pengalaman</li>
+            <li>Seruput dengan suara lembut untuk merasakan rasa di seluruh lidah</li>
+            <li>Kombinasikan dengan camilan favorit dari menu Senja</li>
+          </ul>
+          <p style="margin-top:8px;">Kopi terbaik adalah yang dinikmati bersama orang tersayang. Selamat menikmati!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+TESTIMONIAL CAROUSEL SECTION
+============================================================ -->
+<section class="section testimonial-section" aria-label="Testimoni pelanggan">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Kata Mereka</h2>
+      <div class="section-divider"></div>
+      <p>Cerita dari para pencinta kopi yang telah mampir ke Senja.</p>
+    </div>
+    <div class="testimonial-carousel reveal" id="testimonialCarousel">
+      <div class="testimonial-track">
+        <div class="testimonial-slide active" data-index="0">
+          <div class="testimonial-stars" aria-label="5 dari 5 bintang">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">"Suasananya benar-benar cozy banget. Kopi Tubruk-nya otentik, apalagi diminum pas sore sambil lihat matahari tenggelam. Recommended banget buat yang butuh me-time!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" aria-hidden="true">RA</div>
+            <div>
+              <div class="testimonial-name">Rina Amalia</div>
+              <div class="testimonial-role">Pengunjung Setia</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide" data-index="1">
+          <div class="testimonial-stars" aria-label="5 dari 5 bintang">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">"Vietnam Drip-nya juara! Susu kental manisnya pas banget. Tempatnya juga instagramable, lighting-nya warm aesthetic. Jadi sering betah berlama-lama di sini."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" aria-hidden="true">DP</div>
+            <div>
+              <div class="testimonial-name">Dimas Pratama</div>
+              <div class="testimonial-role">Content Creator</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide" data-index="2">
+          <div class="testimonial-stars" aria-label="5 dari 5 bintang">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">"Wedang Uwuhnya bikin badan langsung anget. Cocok banget pas hujan-hujan gini. Roti Bakar Pandannya juga enak — wangi pandannya alami."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" aria-hidden="true">SN</div>
+            <div>
+              <div class="testimonial-name">Sari Nurhayati</div>
+              <div class="testimonial-role">Ibu Rumah Tangga</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide" data-index="3">
+          <div class="testimonial-stars" aria-label="5 dari 5 bintang">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">"Pisang Goreng Cokelatnya juara — crispy di luar, lembut di dalam. Martabak Mininya juga porsi pas buat temen ngopi. Jadi tempat favorit baru gw!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" aria-hidden="true">AF</div>
+            <div>
+              <div class="testimonial-name">Ahmad Fauzi</div>
+              <div class="testimonial-role">Mahasiswa</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-controls">
+        <button class="testimonial-btn" id="testPrev" aria-label="Testimonial sebelumnya"><i class="fas fa-chevron-left"></i></button>
+        <div class="testimonial-dots" id="testDots">
+          <button class="testimonial-dot active" data-index="0" aria-label="Testimonial 1"></button>
+          <button class="testimonial-dot" data-index="1" aria-label="Testimonial 2"></button>
+          <button class="testimonial-dot" data-index="2" aria-label="Testimonial 3"></button>
+          <button class="testimonial-dot" data-index="3" aria-label="Testimonial 4"></button>
+        </div>
+        <button class="testimonial-btn" id="testNext" aria-label="Testimonial berikutnya"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+LOCATION SECTION
+============================================================ -->
+<section class="section" id="location" aria-label="Lokasi dan jam operasional">
+  <div class="container">
+    <div class="section-header reveal">
+      <h2>Temukan Senja</h2>
+      <div class="section-divider"></div>
+      <p>Datang dan rasakan sendiri hangatnya Senja. Kami menunggumu.</p>
+    </div>
+    <div class="location-grid reveal">
+      <div class="location-info">
+        <div class="location-info-card">
+          <i class="fas fa-location-dot" aria-hidden="true"></i>
+          <div>
+            <h4>Alamat</h4>
+            <p>Jl. Kopi Nikmat No. 42<br>Kelurahan Senja, Kecamatan Hangat<br>Yogyakarta, 55123</p>
+          </div>
+        </div>
+        <div class="location-info-card">
+          <i class="fas fa-clock" aria-hidden="true"></i>
+          <div>
+            <h4>Jam Operasional</h4>
+            <div class="hours-row"><span>Senin — Jumat</span><span>06:00 — 22:00</span></div>
+            <div class="hours-row"><span>Sabtu</span><span>07:00 — 23:00</span></div>
+            <div class="hours-row"><span>Minggu</span><span>08:00 — 21:00</span></div>
+          </div>
+        </div>
+        <div class="location-info-card">
+          <i class="fas fa-phone" aria-hidden="true"></i>
+          <div>
+            <h4>Kontak</h4>
+            <p>+62 812 3456 7890<br>hello@senjacoffee.id</p>
+          </div>
+        </div>
+      </div>
+      <div class="location-map">
+        <div class="location-map-placeholder">
+          <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+          <p><strong>Peta Lokasi</strong></p>
+          <p style="font-size:0.8rem;">Tampilan peta akan muncul disini<br>dengan integrasi Google Maps atau Leaflet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+FOOTER
+============================================================ -->
+<footer class="footer" aria-label="Footer Senja Coffee">
+  <div class="container">
+    <div class="theme-switcher" role="group" aria-label="Pilih tema tampilan">
+      <button class="theme-btn" data-theme="pagi" aria-label="Tema pagi"><i class="fas fa-sun" aria-hidden="true"></i> Pagi</button>
+      <button class="theme-btn active" data-theme="sore" aria-label="Tema sore"><i class="fas fa-cloud-sun" aria-hidden="true"></i> Sore</button>
+      <button class="theme-btn" data-theme="malam" aria-label="Tema malam"><i class="fas fa-moon" aria-hidden="true"></i> Malam</button>
+      <button class="theme-btn" data-theme="subuh" aria-label="Tema subuh"><i class="fas fa-star" aria-hidden="true"></i> Subuh</button>
+    </div>
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <h3><i class="fas fa-mug-hot" aria-hidden="true"></i> Senja Coffee</h3>
+        <p>Kopi, Cerita, Dan Hangatnya Senja — sejak 2014 kami hadir untuk menuangkan kehangatan dalam setiap cangkir. Dari biji pilihan hingga senyuman pelanggan, itulah cerita kami.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram Senja Coffee"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook Senja Coffee"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Twitter Senja Coffee"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="TikTok Senja Coffee"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigasi</h4>
+        <a href="#menu">Menu</a>
+        <a href="#gallery">Galeri</a>
+        <a href="#location">Lokasi</a>
+        <a href="#story">Cerita</a>
+      </div>
+      <div class="footer-col">
+        <h4>Menu Populer</h4>
+        <a href="#menu">Kopi Tubruk</a>
+        <a href="#menu">Vietnam Drip</a>
+        <a href="#menu">Roti Bakar Pandan</a>
+        <a href="#menu">Wedang Uwuh</a>
+      </div>
+      <div class="footer-col">
+        <h4>Jam Buka</h4>
+        <a href="#location">Sen-Jum: 06-22</a>
+        <a href="#location">Sabtu: 07-23</a>
+        <a href="#location">Minggu: 08-21</a>
+        <a href="#location">Libur Nasional</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2024 Senja Coffee. All rights reserved.</span>
+      <span>Made with <i class="fas fa-heart" style="color:var(--clr-accent);"></i> in Yogyakarta</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+JAVASCRIPT
+============================================================ -->
+<script>
+(function() {
+  'use strict';
+
+  /* 1. THEME SWITCHER + localStorage */
+  var html = document.documentElement;
+  var themeBtns = document.querySelectorAll('.theme-btn');
+  var savedTheme = localStorage.getItem('senja-theme');
+  if (savedTheme && ['pagi','sore','malam','subuh'].indexOf(savedTheme) !== -1) {
+    html.setAttribute('data-theme', savedTheme);
+    for (var i = 0; i < themeBtns.length; i++) {
+      themeBtns[i].classList.toggle('active', themeBtns[i].getAttribute('data-theme') === savedTheme);
+    }
+  }
+  for (var i = 0; i < themeBtns.length; i++) {
+    themeBtns[i].addEventListener('click', function() {
+      var theme = this.getAttribute('data-theme');
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('senja-theme', theme);
+      for (var j = 0; j < themeBtns.length; j++) { themeBtns[j].classList.remove('active'); }
+      this.classList.add('active');
+    });
+  }
+
+  /* 2. OPEN/CLOSED BADGE */
+  function updateBadge() {
+    var badge = document.getElementById('heroBadge');
+    var dot = document.getElementById('badgeDot');
+    var text = document.getElementById('badgeText');
+    var hour = new Date().getHours();
+    var isOpen = hour >= 6 && hour < 22;
+    badge.classList.toggle('open', isOpen);
+    badge.classList.toggle('closed', !isOpen);
+    text.textContent = isOpen ? 'Sedang Buka' : 'Sudah Tutup';
+  }
+  updateBadge();
+  setInterval(updateBadge, 60000);
+
+  /* 3. NAV SCROLL */
+  var navbar = document.getElementById('navbar');
+  function updateNav() { navbar.classList.toggle('scrolled', window.scrollY > 60); }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  /* 4. NAV HAMBURGER */
+  var hamburger = document.getElementById('hamburger');
+  var navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', function() {
+    var isOpen = navLinks.classList.toggle('open');
+    this.classList.toggle('active');
+    this.setAttribute('aria-expanded', isOpen);
+  });
+  var navLinkItems = navLinks.querySelectorAll('a');
+  for (var i = 0; i < navLinkItems.length; i++) {
+    navLinkItems[i].addEventListener('click', function() {
+      navLinks.classList.remove('open');
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  /* 5. SCROLL REVEAL */
+  var revealElements = document.querySelectorAll('.reveal');
+  var revealObserver = new IntersectionObserver(function(entries) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].isIntersecting) {
+        entries[i].target.classList.add('visible');
+        revealObserver.unobserve(entries[i].target);
+      }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  for (var i = 0; i < revealElements.length; i++) { revealObserver.observe(revealElements[i]); }
+
+  /* 6. ANIMATED COUNTERS */
+  var counters = document.querySelectorAll('.counter');
+  var counterObserver = new IntersectionObserver(function(entries) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].isIntersecting) {
+        var el = entries[i].target;
+        var target = parseInt(el.getAttribute('data-target'), 10);
+        if (isNaN(target)) return;
+        var duration = 1800;
+        var start = performance.now();
+        function animate(now) {
+          var elapsed = now - start;
+          var progress = Math.min(elapsed / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = Math.round(eased * target);
+          el.textContent = current;
+          if (progress < 1) { requestAnimationFrame(animate); }
+          else { el.textContent = target; }
+        }
+        requestAnimationFrame(animate);
+        counterObserver.unobserve(el);
+      }
+    }
+  }, { threshold: 0.5 });
+  for (var i = 0; i < counters.length; i++) { counterObserver.observe(counters[i]); }
+
+  /* 7. MENU MODAL */
+  var modalOverlay = document.getElementById('menuModal');
+  var modalClose = document.getElementById('modalClose');
+  var modalEmoji = document.getElementById('modalEmoji');
+  var modalName = document.getElementById('modalName');
+  var modalPrice = document.getElementById('modalPrice');
+  var modalDesc = document.getElementById('modalDesc');
+  var modalIngredients = document.getElementById('modalIngredients');
+  var modalTime = document.getElementById('modalTime');
+  var menuCards = document.querySelectorAll('.menu-card');
+
+  function openModal(card) {
+    modalEmoji.textContent = card.getAttribute('data-emoji') || '&#9749;';
+    modalName.textContent = card.getAttribute('data-name') || '';
+    modalPrice.textContent = card.getAttribute('data-price') || '';
+    modalDesc.textContent = card.getAttribute('data-desc') || '';
+    modalIngredients.textContent = card.getAttribute('data-ingredients') || '';
+    modalTime.textContent = card.getAttribute('data-time') || '';
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  for (var i = 0; i < menuCards.length; i++) {
+    menuCards[i].addEventListener('click', function() { openModal(this); });
+  }
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
+  });
+
+  /* 8. GALLERY LIGHTBOX */
+  var galleryItems = document.querySelectorAll('.gallery-item');
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+  var lightboxClose = document.getElementById('lightboxClose');
+  var lightboxPrev = document.getElementById('lightboxPrev');
+  var lightboxNext = document.getElementById('lightboxNext');
+  var lightboxCounter = document.getElementById('lightboxCounter');
+  var currentGalleryIndex = 0;
+  var galleryImages = [];
+
+  function openLightbox() {
+    var data = galleryImages[currentGalleryIndex];
+    if (!data) return;
+    lightboxImg.setAttribute('src', data.src);
+    lightboxImg.setAttribute('alt', data.alt);
+    lightboxCounter.textContent = (currentGalleryIndex + 1) + ' / ' + galleryImages.length;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function prevLightbox() {
+    currentGalleryIndex = (currentGalleryIndex - 1 + galleryImages.length) % galleryImages.length;
+    var data = galleryImages[currentGalleryIndex];
+    if (data) {
+      lightboxImg.setAttribute('src', data.src);
+      lightboxImg.setAttribute('alt', data.alt);
+      lightboxCounter.textContent = (currentGalleryIndex + 1) + ' / ' + galleryImages.length;
+    }
+  }
+  function nextLightbox() {
+    currentGalleryIndex = (currentGalleryIndex + 1) % galleryImages.length;
+    var data = galleryImages[currentGalleryIndex];
+    if (data) {
+      lightboxImg.setAttribute('src', data.src);
+      lightboxImg.setAttribute('alt', data.alt);
+      lightboxCounter.textContent = (currentGalleryIndex + 1) + ' / ' + galleryImages.length;
+    }
+  }
+
+  for (var i = 0; i < galleryItems.length; i++) {
+    (function(idx) {
+      var item = galleryItems[idx];
+      var img = item.querySelector('img');
+      if (img) {
+        var src = img.getAttribute('src').replace('w=600&q=80', 'w=1200&q=80').replace('w=400&q=80', 'w=800&q=80');
+        galleryImages[idx] = { src: src, alt: img.getAttribute('alt') || '' };
+      }
+      item.addEventListener('click', function() {
+        currentGalleryIndex = parseInt(this.getAttribute('data-index'), 10);
+        if (isNaN(currentGalleryIndex)) currentGalleryIndex = idx;
+        openLightbox();
+      });
+    })(i);
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', prevLightbox);
+  lightboxNext.addEventListener('click', nextLightbox);
+  lightbox.addEventListener('click', function(e) { if (e.target === this) closeLightbox(); });
+  document.addEventListener('keydown', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prevLightbox();
+    if (e.key === 'ArrowRight') nextLightbox();
+  });
+
+  /* 9. BREWING GUIDE */
+  var brewingSteps = document.querySelectorAll('.brewing-step');
+  for (var i = 0; i < brewingSteps.length; i++) {
+    brewingSteps[i].addEventListener('click', function() {
+      for (var j = 0; j < brewingSteps.length; j++) { brewingSteps[j].classList.remove('active'); }
+      this.classList.add('active');
+    });
+  }
+
+  /* 10. ROAST PROFILE */
+  var roastCards = document.querySelectorAll('.roast-card');
+  for (var i = 0; i < roastCards.length; i++) {
+    roastCards[i].addEventListener('click', function() {
+      var wasActive = this.classList.contains('active');
+      for (var j = 0; j < roastCards.length; j++) { roastCards[j].classList.remove('active'); }
+      if (!wasActive) this.classList.add('active');
+    });
+  }
+
+  /* 11. TESTIMONIAL CAROUSEL */
+  var slides = document.querySelectorAll('.testimonial-slide');
+  var dots = document.querySelectorAll('.testimonial-dot');
+  var testPrev = document.getElementById('testPrev');
+  var testNext = document.getElementById('testNext');
+  var currentSlide = 0;
+  var carouselInterval = null;
+  var slideCount = slides.length;
+
+  function goToSlide(index) {
+    for (var i = 0; i < slides.length; i++) { slides[i].classList.toggle('active', i === index); }
+    for (var i = 0; i < dots.length; i++) { dots[i].classList.toggle('active', i === index); }
+    currentSlide = index;
+  }
+  function nextSlide() { goToSlide((currentSlide + 1) % slideCount); }
+  function prevSlide() { goToSlide((currentSlide - 1 + slideCount) % slideCount); }
+  function resetAutoSlide() {
+    if (carouselInterval) clearInterval(carouselInterval);
+    carouselInterval = setInterval(nextSlide, 5000);
+  }
+  testPrev.addEventListener('click', function() { prevSlide(); resetAutoSlide(); });
+  testNext.addEventListener('click', function() { nextSlide(); resetAutoSlide(); });
+  for (var i = 0; i < dots.length; i++) {
+    dots[i].addEventListener('click', function() {
+      var idx = parseInt(this.getAttribute('data-index'), 10);
+      if (!isNaN(idx)) { goToSlide(idx); resetAutoSlide(); }
+    });
+  }
+  carouselInterval = setInterval(nextSlide, 5000);
+
+  /* 12. PARALLAX BACKGROUND */
+  var parallaxEl = document.getElementById('heroParallax');
+  if (parallaxEl) {
+    window.addEventListener('scroll', function() {
+      var translateY = window.scrollY * 0.15;
+      parallaxEl.style.transform = 'translate3d(0, ' + translateY + 'px, 0)';
+    }, { passive: true });
+  }
+
+  /* 13. SMOOTH SCROLL */
+  var anchors = document.querySelectorAll('a[href^="#"]');
+  for (var i = 0; i < anchors.length; i++) {
+    anchors[i].addEventListener('click', function(e) {
+      var targetId = this.getAttribute('href');
+      if (!targetId || targetId === '#') return;
+      var target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        var top = target.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    });
+  }
+
+  console.log('Senja Coffee Theme — Premium Coffee Shop');
+  console.log('Mode: ' + html.getAttribute('data-theme'));
+  console.log('Status: ' + (new Date().getHours() >= 6 && new Date().getHours() < 22 ? 'OPEN' : 'CLOSED'));
+
+})();
+</script>
+</body>
+</html>

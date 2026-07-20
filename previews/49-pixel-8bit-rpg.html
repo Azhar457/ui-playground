@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8-Bit Pixel RPG Interface — Premium</title>
+
+  <!-- Anti-Flash IIFE -->
+  <script>!function(){try{var t=localStorage.getItem('ui-beta-preview-theme')||'night';document.documentElement.className='theme-'+t}catch(e){document.documentElement.className='theme-night'}var s=localStorage.getItem('ui-pixel-scanline');if(s==='off')document.documentElement.setAttribute('data-scanline','off')}();</script>
+
+  <!-- Pixel fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<style>
+/* ===== THEME VARIANTS ===== */
+
+/* ── NIGHT (default) ── */
+.theme-night {
+  --bg: #0f0e1a;
+  --bg-alt: #1a1c2c;
+  --surface: #1f2240;
+  --surface-alt: #2a2e52;
+  --surface-hi: #363a66;
+  --text: #e8e8f0;
+  --text-dim: #7a7a9a;
+  --text-muted: #9a9abb;
+  --primary: #f0a050;
+  --primary-dim: #b07030;
+  --accent: #d44a3a;
+  --accent-dim: #903020;
+  --gold: #e8b840;
+  --gold-dim: #a88020;
+  --cyan: #5ab8d8;
+  --cyan-dim: #3880a0;
+  --green: #30b870;
+  --green-dim: #208050;
+  --red: #d04040;
+  --red-dim: #902828;
+  --purple: #a050d8;
+  --purple-dim: #6830a0;
+  --pink: #d870a0;
+  --pink-dim: #a04070;
+  --border: #3a3e62;
+  --border-hi: #5a5e82;
+  --border-glow: #f0a050;
+  --shadow: rgba(0,0,0,0.55);
+  --shadow-sm: rgba(0,0,0,0.35);
+  --glow-text: 0 0 6px rgba(232,184,64,0.3);
+  --glow-accent: 0 0 8px rgba(212,74,58,0.3);
+  --scrollbar-track: #1a1c2c;
+  --scrollbar-thumb: #3a3e62;
+  --scanline-color: rgba(255,255,255,0.03);
+  --crt-ghost: rgba(0,0,0,0.06);
+}
+
+/* ── DAY (cream/brown) ── */
+.theme-day {
+  --bg: #e8d5b0;
+  --bg-alt: #dcc8a0;
+  --surface: #d4c090;
+  --surface-alt: #c8b480;
+  --surface-hi: #bca470;
+  --text: #1a1420;
+  --text-dim: #5a4a3a;
+  --text-muted: #7a6a5a;
+  --primary: #b07030;
+  --primary-dim: #805020;
+  --accent: #b04030;
+  --accent-dim: #802820;
+  --gold: #b09028;
+  --gold-dim: #806820;
+  --cyan: #3878a0;
+  --cyan-dim: #285870;
+  --green: #1e8a4a;
+  --green-dim: #166838;
+  --red: #a83838;
+  --red-dim: #782828;
+  --purple: #7848b0;
+  --purple-dim: #583088;
+  --pink: #b05880;
+  --pink-dim: #884060;
+  --border: #8a7a6a;
+  --border-hi: #aa9a8a;
+  --border-glow: #b07030;
+  --shadow: rgba(0,0,0,0.25);
+  --shadow-sm: rgba(0,0,0,0.12);
+  --glow-text: none;
+  --glow-accent: none;
+  --scrollbar-track: #dcc8a0;
+  --scrollbar-thumb: #8a7a6a;
+  --scanline-color: rgba(0,0,0,0.03);
+  --crt-ghost: rgba(0,0,0,0.04);
+}
+
+/* ── GAMEBOY (olive/green) ── */
+.theme-gameboy {
+  --bg: #0f1f0f;
+  --bg-alt: #1a2f1a;
+  --surface: #1f3820;
+  --surface-alt: #2a4728;
+  --surface-hi: #355830;
+  --text: #b0c8a0;
+  --text-dim: #587050;
+  --text-muted: #7a9a68;
+  --primary: #80b050;
+  --primary-dim: #588038;
+  --accent: #60a060;
+  --accent-dim: #407840;
+  --gold: #b0b848;
+  --gold-dim: #788838;
+  --cyan: #58a888;
+  --cyan-dim: #388068;
+  --green: #50b050;
+  --green-dim: #388838;
+  --red: #b05050;
+  --red-dim: #803838;
+  --purple: #8860b8;
+  --purple-dim: #604888;
+  --pink: #a86880;
+  --pink-dim: #804860;
+  --border: #3a5838;
+  --border-hi: #5a7858;
+  --border-glow: #80b050;
+  --shadow: rgba(0,0,0,0.50);
+  --shadow-sm: rgba(0,0,0,0.30);
+  --glow-text: 0 0 6px rgba(128,176,80,0.25);
+  --glow-accent: 0 0 8px rgba(96,160,96,0.25);
+  --scrollbar-track: #1a2f1a;
+  --scrollbar-thumb: #3a5838;
+  --scanline-color: rgba(144,200,128,0.04);
+  --crt-ghost: rgba(0,0,0,0.08);
+}
+
+/* ── GBC (pastel/color) ── */
+.theme-gbc {
+  --bg: #1a0a2a;
+  --bg-alt: #281838;
+  --surface: #302048;
+  --surface-alt: #402860;
+  --surface-hi: #503878;
+  --text: #e8d8f8;
+  --text-dim: #8870a8;
+  --text-muted: #b098d0;
+  --primary: #f0a0c0;
+  --primary-dim: #b87090;
+  --accent: #d080e0;
+  --accent-dim: #9858a8;
+  --gold: #e8d050;
+  --gold-dim: #b09830;
+  --cyan: #60c8e0;
+  --cyan-dim: #3890a8;
+  --green: #78d878;
+  --green-dim: #48a048;
+  --red: #e06060;
+  --red-dim: #a03838;
+  --purple: #c080f0;
+  --purple-dim: #8858b8;
+  --pink: #f0a0d8;
+  --pink-dim: #b870a0;
+  --border: #503870;
+  --border-hi: #705890;
+  --border-glow: #f0a0c0;
+  --shadow: rgba(0,0,0,0.50);
+  --shadow-sm: rgba(0,0,0,0.30);
+  --glow-text: 0 0 6px rgba(232,208,80,0.25);
+  --glow-accent: 0 0 8px rgba(208,128,224,0.25);
+  --scrollbar-track: #281838;
+  --scrollbar-thumb: #503870;
+  --scanline-color: rgba(200,160,240,0.04);
+  --crt-ghost: rgba(0,0,0,0.07);
+}
+
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  overflow-x: hidden;
+  /* 8px grid background */
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: center;
+}
+
+/* Scrollbar styling */
+body::-webkit-scrollbar { width: 10px; }
+body::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border: 2px solid var(--scrollbar-track);
+}
+
+
+/* ===== CRT SCANLINE OVERLAY ===== */
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--scanline-color) 0px,
+    var(--scanline-color) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  transition: opacity 0.3s;
+}
+
+html[data-scanline="off"] .crt-overlay {
+  opacity: 0;
+}
+
+
+/* ===== APP SHELL ===== */
+.app-shell {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ===== PIXEL BORDER UTILITY ===== */
+.pixel-border {
+  border: var(--pixel-size, 3px) solid var(--border);
+  box-shadow:
+    calc(var(--pixel-size, 3px)*1) 0 0 var(--border),
+    calc(var(--pixel-size, 3px)*-1) 0 0 var(--border),
+    0 calc(var(--pixel-size, 3px)*1) 0 var(--border),
+    0 calc(var(--pixel-size, 3px)*-1) 0 var(--border),
+    calc(var(--pixel-size, 3px)*1) calc(var(--pixel-size, 3px)*1) 0 var(--border),
+    calc(var(--pixel-size, 3px)*-1) calc(var(--pixel-size, 3px)*-1) 0 var(--border),
+    calc(var(--pixel-size, 3px)*1) calc(var(--pixel-size, 3px)*-1) 0 var(--border),
+    calc(var(--pixel-size, 3px)*-1) calc(var(--pixel-size, 3px)*1) 0 var(--border);
+}
+
+/* Multi-layer fat shadow */
+.fat-shadow {
+  box-shadow:
+    inset -4px -4px 0 0 rgba(0,0,0,0.25),
+    inset 4px 4px 0 0 rgba(255,255,255,0.04),
+    4px 4px 0 0 var(--shadow),
+    6px 6px 0 0 var(--shadow-sm);
+}
+
+.pixel-panel {
+  background: var(--surface);
+  padding: 1.5rem;
+  border: 3px solid var(--border);
+  box-shadow:
+    inset -4px -4px 0 0 rgba(0,0,0,0.3),
+    inset 4px 4px 0 0 rgba(255,255,255,0.04),
+    4px 4px 0 0 var(--shadow);
+  position: relative;
+}
+
+/* Pixel art corner accents */
+.pixel-panel::before {
+  content: '◆';
+  position: absolute;
+  top: -6px;
+  left: 8px;
+  font-size: 8px;
+  color: var(--border);
+}
+
+.pixel-panel::after {
+  content: '◆';
+  position: absolute;
+  bottom: -6px;
+  right: 8px;
+  font-size: 8px;
+  color: var(--border);
+}
+
+/* Inner highlight line */
+.pixel-panel .panel-inner-line {
+  position: absolute;
+  top: 4px; left: 4px; right: 4px;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+}
+
+
+/* ===== NAVBAR ===== */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.brand {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.55rem;
+  color: var(--gold);
+  text-shadow: var(--glow-text);
+  text-transform: uppercase;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.nav-stats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.nav-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-stat-item .num {
+  color: var(--gold);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+}
+
+.nav-restart {
+  background: var(--surface-alt);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.35rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.1s;
+  position: relative;
+  top: 0;
+  box-shadow: 2px 2px 0 var(--shadow);
+}
+
+.nav-restart:hover { top: -1px; box-shadow: 3px 3px 0 var(--shadow); }
+.nav-restart:active { top: 2px; box-shadow: 0 0 0 var(--shadow); }
+
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(240,160,80,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-marquee {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.5rem;
+  color: var(--gold);
+  background: rgba(240,160,80,0.08);
+  padding: 8px 18px;
+  animation: marqueePulse 0.8s steps(2) infinite;
+  text-shadow: var(--glow-text);
+  border: 2px solid var(--gold-dim);
+}
+
+@keyframes marqueePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  line-height: 2;
+  text-transform: uppercase;
+  color: var(--text);
+  text-shadow: 2px 2px 0 var(--shadow);
+}
+
+.block-hl {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--bg);
+  padding: 3px 10px;
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+
+.hero-desc {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  max-width: 560px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+
+/* ===== PIXEL BUTTON (3D press physics) ===== */
+.px-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: 3px solid var(--accent-dim);
+  box-shadow:
+    inset -3px -3px 0 0 rgba(0,0,0,0.3),
+    inset 3px 3px 0 0 rgba(255,255,255,0.15),
+    0 5px 0 0 var(--accent-dim);
+  transition: all 0.08s linear;
+  position: relative;
+  top: 0;
+  user-select: none;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+}
+
+.px-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.06) 3px,
+    rgba(0,0,0,0.06) 6px
+  );
+  pointer-events: none;
+}
+
+.px-btn:hover {
+  top: -2px;
+  box-shadow:
+    inset -3px -3px 0 0 rgba(0,0,0,0.3),
+    inset 3px 3px 0 0 rgba(255,255,255,0.15),
+    0 7px 0 0 var(--accent-dim);
+}
+
+.px-btn:active {
+  top: 5px;
+  box-shadow:
+    inset -3px -3px 0 0 rgba(0,0,0,0.3),
+    inset 3px 3px 0 0 rgba(255,255,255,0.15),
+    0 0px 0 0 var(--accent-dim);
+}
+
+.px-btn--secondary {
+  background: var(--surface-alt);
+  color: var(--text);
+  border-color: var(--border-hi);
+  box-shadow:
+    inset -3px -3px 0 0 rgba(0,0,0,0.2),
+    inset 3px 3px 0 0 rgba(255,255,255,0.06),
+    0 5px 0 0 var(--border);
+}
+
+.px-btn--secondary:hover {
+  box-shadow:
+    inset -3px -3px 0 0 rgba(0,0,0,0.2),
+    inset 3px 3px 0 0 rgba(255,255,255,0.06),
+    0 7px 0 0 var(--border);
+}
+
+.px-btn--secondary:active {
+  top: 5px;
+  box-shadow:
+    inset -3px -3px 0 0 rgba(0,0,0,0.2),
+    inset 3px 3px 0 0 rgba(255,255,255,0.06),
+    0 0px 0 0 var(--border);
+}
+
+
+/* ===== RPG STAT BARS ===== */
+.stat-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.rpg-stat {
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.rpg-stat-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.4rem;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+}
+
+.rpg-stat-label .num {
+  color: var(--text);
+}
+
+.rpg-stat-bar {
+  width: 100%;
+  height: 18px;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid var(--border);
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.rpg-stat-fill {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 4px,
+    rgba(0,0,0,0.15) 4px,
+    rgba(0,0,0,0.15) 6px
+  );
+  transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: width;
+}
+
+.stat-hp  { background-color: var(--red); }
+.stat-mp  { background-color: var(--cyan); }
+.stat-xp  { background-color: var(--gold); }
+.stat-str { background-color: var(--purple); }
+
+.stat-fill-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: rgba(255,255,255,0.12);
+}
+
+/* Shimmer on stat bar */
+.rpg-stat-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+/* ===== INVENTORY GRID ===== */
+.inventory-header {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-shadow: var(--glow-text);
+}
+
+.inv-slot-count {
+  color: var(--text-muted);
+  font-size: 0.4rem;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.inv-slot {
+  aspect-ratio: 1;
+  background: var(--surface-alt);
+  border: 3px solid var(--border);
+  box-shadow:
+    inset 0 0 0 2px rgba(0,0,0,0.3),
+    3px 3px 0 var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  user-select: none;
+}
+
+.inv-slot .slot-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.3rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+
+.inv-slot:hover {
+  transform: scale(1.04);
+  border-color: var(--border-glow);
+  box-shadow:
+    inset 0 0 0 2px rgba(0,0,0,0.3),
+    0 0 12px rgba(240,160,80,0.2),
+    3px 3px 0 var(--shadow-sm);
+  z-index: 2;
+}
+
+.inv-slot.equipped {
+  border-color: var(--gold);
+  background: rgba(240,160,80,0.08);
+  box-shadow:
+    inset 0 0 0 2px rgba(0,0,0,0.3),
+    0 0 16px rgba(240,160,80,0.25),
+    inset 0 0 16px rgba(240,160,80,0.08);
+}
+
+.inv-slot.equipped::after {
+  content: 'EQUIP';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.25rem;
+  color: var(--gold);
+  background: var(--bg);
+  padding: 1px 4px;
+  line-height: 1;
+}
+
+.inv-slot.equipped .slot-label {
+  color: var(--gold);
+}
+
+
+/* ===== NPC DIALOG ===== */
+.dialog-box {
+  position: relative;
+  padding: 1.5rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.dialog-portrait-area {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.dialog-portrait {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background: var(--bg-alt);
+  border: 3px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.dialog-portrait pre {
+  font-size: 0.4rem;
+  line-height: 1.1;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: pre;
+}
+
+.dialog-speaker {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.4rem;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+  text-shadow: var(--glow-text);
+}
+
+.dialog-text-area {
+  flex: 1;
+}
+
+.dialog-text {
+  font-family: 'VT323', monospace;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--text);
+  min-height: 3.2em;
+}
+
+.dialog-text .cursor-blink {
+  display: inline-block;
+  width: 10px;
+  height: 1.1em;
+  background: var(--gold);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: cursorBlink 0.5s steps(2) infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.dialog-arrow {
+  font-size: 1.2rem;
+  color: var(--gold);
+  animation: bounceArrow 0.8s steps(3) infinite;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 8px;
+}
+
+.dialog-arrow:hover {
+  color: var(--primary);
+}
+
+@keyframes bounceArrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+.dialog-skip {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.35rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  transition: all 0.1s;
+}
+
+.dialog-skip:hover {
+  color: var(--text);
+  border-color: var(--border-hi);
+}
+
+
+/* ===== QUEST LOG ===== */
+.quest-section-header {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  text-shadow: var(--glow-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quest-count {
+  color: var(--text-muted);
+  font-size: 0.4rem;
+}
+
+.quest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quest-item {
+  background: var(--surface-alt);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.quest-item:hover {
+  border-color: var(--border-hi);
+}
+
+.quest-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  gap: 1rem;
+}
+
+.quest-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.35rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quest-title .icon {
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.quest-status {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.3rem;
+  padding: 2px 8px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.quest-status--active {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.quest-status--done {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.quest-status--locked {
+  color: var(--text-dim);
+  border-color: var(--border);
+}
+
+.quest-expand-icon {
+  color: var(--text-dim);
+  font-size: 0.6rem;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.quest-item.expanded .quest-expand-icon {
+  transform: rotate(90deg);
+}
+
+.quest-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.3s ease;
+  padding: 0 1rem;
+}
+
+.quest-item.expanded .quest-detail {
+  max-height: 300px;
+  padding: 0 1rem 1rem;
+}
+
+.quest-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.quest-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.quest-progress-bar {
+  flex: 1;
+  height: 12px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.quest-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 4px,
+    rgba(0,0,0,0.15) 4px,
+    rgba(0,0,0,0.15) 6px
+  );
+  transition: width 0.8s ease;
+}
+
+.quest-progress-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.35rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.quest-item .quest-reward {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--gold-dim);
+}
+
+
+/* ===== FOOTER / THEME SWITCHER ===== */
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 0 1rem;
+  border-top: 3px solid var(--border);
+}
+
+.switcher-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.4rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.switcher-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.theme-btn {
+  padding: 8px 16px;
+  border: 3px solid var(--border);
+  box-shadow: 3px 3px 0 var(--shadow);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.38rem;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-transform: uppercase;
+  position: relative;
+  top: 0;
+  user-select: none;
+}
+
+.theme-btn:hover { top: -2px; box-shadow: 5px 5px 0 var(--shadow); }
+.theme-btn:active { top: 3px; box-shadow: 0 0 0 var(--shadow); }
+.theme-btn.active {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+/* Theme preview dot */
+.theme-btn .dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--border);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.footer-coin {
+  font-size: 1.8rem;
+  animation: coinSpin 2s linear infinite;
+  display: inline-block;
+  filter: drop-shadow(0 0 4px rgba(232,184,64,0.3));
+}
+
+@keyframes coinSpin {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+.footer-meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+
+/* ===== SCANLINE TOGGLE BUTTON ===== */
+.scanline-toggle {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 10000;
+  background: var(--surface-alt);
+  border: 2px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.3rem;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+
+.scanline-toggle:hover {
+  opacity: 1;
+  border-color: var(--border-hi);
+  color: var(--text);
+}
+
+.scanline-toggle.on {
+  opacity: 1;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  body {
+    padding: 0.8rem 0.5rem;
+  }
+
+  .app-shell {
+    gap: 1rem;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    text-align: center;
+  }
+
+  .brand {
+    font-size: 0.45rem;
+  }
+
+  .nav-stats {
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .nav-restart {
+    align-self: center;
+  }
+
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .hero-marquee {
+    font-size: 0.4rem;
+    padding: 6px 12px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .px-btn {
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 0.4rem;
+  }
+
+  .stat-bars {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  .inv-slot {
+    font-size: 1.5rem;
+  }
+
+  .dialog-portrait-area {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dialog-portrait {
+    width: 100%;
+    height: auto;
+    padding: 0.5rem;
+  }
+
+  .dialog-portrait pre {
+    font-size: 0.35rem;
+  }
+
+  .quest-item-header {
+    flex-wrap: wrap;
+  }
+
+  .quest-title {
+    font-size: 0.3rem;
+  }
+
+  .switcher-buttons {
+    gap: 6px;
+  }
+
+  .theme-btn {
+    font-size: 0.32rem;
+    padding: 6px 10px;
+  }
+
+  .scanline-toggle {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.25rem;
+    padding: 4px 6px;
+  }
+}
+</style>
+</head>
+<body class="theme-night">
+
+<div class="crt-overlay"></div>
+<button class="scanline-toggle on" id="scanlineToggle" title="Toggle CRT scanline effect">☰ CRT</button>
+
+<div class="app-shell">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="pixel-panel">
+    <div class="brand">⬡ PIXEL·RPG</div>
+    <div class="nav-stats">
+      <span class="nav-stat-item">⭐ <span class="num" id="starCount">127</span></span>
+      <span class="nav-stat-item">🪙 <span class="num" id="coinCount">3,840</span></span>
+      <span class="nav-stat-item">⏱ <span class="num">14:32</span></span>
+    </div>
+    <button class="nav-restart" id="restartBtn" title="Reset everything">⟳ RESET</button>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero pixel-panel">
+    <div class="hero-marquee">★ NEW QUEST AVAILABLE ★</div>
+    <h1>
+      <span class="block-hl">PRESS START</span><br>
+      TO BEGIN YOUR QUEST
+    </h1>
+    <p class="hero-desc">
+      An 8-bit pixel RPG interface inspired by the NES/SNES golden era.
+      Every pixel is a decision — every color, carefully chosen data.
+      Featuring CRT scanlines, pixel-perfect borders, and authentic
+      button-press physics.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="px-btn" id="newGameBtn">▶ New Game</a>
+      <a href="#" class="px-btn px-btn--secondary" id="loadGameBtn">📂 Load Save</a>
+      <a href="#" class="px-btn px-btn--secondary" id="optionsBtn">⚙ Options</a>
+    </div>
+  </header>
+
+  <!-- ===== RPG STAT BARS ===== -->
+  <section class="stat-bars" id="statBars">
+    <div class="rpg-stat pixel-panel">
+      <div class="rpg-stat-label">
+        <span>♥ HP</span>
+        <span class="num" id="hpLabel">87 / 100</span>
+      </div>
+      <div class="rpg-stat-bar">
+        <div class="rpg-stat-fill stat-hp" id="hpFill" style="width:0%">
+          <div class="stat-fill-glow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="rpg-stat pixel-panel">
+      <div class="rpg-stat-label">
+        <span>✦ MP</span>
+        <span class="num" id="mpLabel">64 / 80</span>
+      </div>
+      <div class="rpg-stat-bar">
+        <div class="rpg-stat-fill stat-mp" id="mpFill" style="width:0%">
+          <div class="stat-fill-glow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="rpg-stat pixel-panel">
+      <div class="rpg-stat-label">
+        <span>◆ XP</span>
+        <span class="num" id="xpLabel">14,200 / 25,000</span>
+      </div>
+      <div class="rpg-stat-bar">
+        <div class="rpg-stat-fill stat-xp" id="xpFill" style="width:0%">
+          <div class="stat-fill-glow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="rpg-stat pixel-panel">
+      <div class="rpg-stat-label">
+        <span>⚔ STR</span>
+        <span class="num" id="strLabel">42 / 50</span>
+      </div>
+      <div class="rpg-stat-bar">
+        <div class="rpg-stat-fill stat-str" id="strFill" style="width:0%">
+          <div class="stat-fill-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INVENTORY ===== -->
+  <section>
+    <div class="inventory-header pixel-panel" style="padding:0.8rem 1rem;">
+      <span>▸ INVENTORY</span>
+      <span class="inv-slot-count"><span id="equippedCount">1</span> / 8 equipped</span>
+    </div>
+    <div class="inventory-grid" style="margin-top:0.75rem;">
+      <div class="inv-slot equipped" data-item="sword" title="Iron Sword (Equipped)">
+        ⚔️<span class="slot-label">Sword</span>
+      </div>
+      <div class="inv-slot" data-item="shield" title="Wooden Shield">
+        🛡️<span class="slot-label">Shield</span>
+      </div>
+      <div class="inv-slot" data-item="potion" title="Health Potion">
+        🧪<span class="slot-label">Potion</span>
+      </div>
+      <div class="inv-slot" data-item="scroll" title="Ancient Scroll">
+        📜<span class="slot-label">Scroll</span>
+      </div>
+      <div class="inv-slot" data-item="key" title="Rusty Key">
+        🔑<span class="slot-label">Key</span>
+      </div>
+      <div class="inv-slot" data-item="gem" title="Crystal Gem">
+        💎<span class="slot-label">Gem</span>
+      </div>
+      <div class="inv-slot" data-item="bread" title="Hearty Bread">
+        🍞<span class="slot-label">Bread</span>
+      </div>
+      <div class="inv-slot" data-item="coin" title="Gold Coin">
+        🪙<span class="slot-label">Coin</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NPC DIALOG ===== -->
+  <section class="dialog-box pixel-panel">
+    <div class="dialog-portrait-area">
+      <div class="dialog-portrait">
+        <pre> .-""-.
+/ O..O \
+|    _  |
+\  '__' /
+ '-..-'</pre>
+      </div>
+      <div class="dialog-text-area">
+        <div class="dialog-speaker">👤 Old Wizard</div>
+        <div class="dialog-text" id="dialogText">
+          <span id="typewriterTarget"></span><span class="cursor-blink"></span>
+        </div>
+        <div class="dialog-actions">
+          <span class="dialog-arrow" id="dialogAdvance">▼ ADVANCE</span>
+          <span class="dialog-skip" id="dialogSkip">[ SKIP ]</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== QUEST LOG ===== -->
+  <section>
+    <div class="quest-section-header pixel-panel" style="padding:0.8rem 1rem;">
+      <span>▸ QUEST LOG</span>
+      <span class="quest-count">3 entries</span>
+    </div>
+    <div class="quest-list" style="margin-top:0.75rem;">
+
+      <!-- Quest 1 -->
+      <div class="quest-item expanded pixel-panel" style="padding:0;">
+        <div class="quest-item-header" data-quest="0">
+          <span class="quest-title">
+            <span class="icon">⚔️</span>
+            The Iron Crown
+          </span>
+          <span class="quest-status quest-status--active">ACTIVE</span>
+          <span class="quest-expand-icon">▸</span>
+        </div>
+        <div class="quest-detail">
+          <p class="quest-desc">
+            Retrieve the Iron Crown from the Forgotten Mines.
+            Defeat the guardian golem and claim your reward.
+            Beware of falling rocks and poisoned traps.
+          </p>
+          <div class="quest-progress-container">
+            <div class="quest-progress-bar">
+              <div class="quest-progress-fill" style="width:60%;"></div>
+            </div>
+            <span class="quest-progress-label">3 / 5</span>
+          </div>
+          <div class="quest-reward">🏆 Reward: 2,000 XP + Iron Crown</div>
+        </div>
+      </div>
+
+      <!-- Quest 2 -->
+      <div class="quest-item pixel-panel" style="padding:0;">
+        <div class="quest-item-header" data-quest="1">
+          <span class="quest-title">
+            <span class="icon">📜</span>
+            Lost Tome of Arcana
+          </span>
+          <span class="quest-status quest-status--active">ACTIVE</span>
+          <span class="quest-expand-icon">▸</span>
+        </div>
+        <div class="quest-detail">
+          <p class="quest-desc">
+            Find the lost tome in the Sunken Library.
+            Four elemental seals guard each chapter.
+            Bring all chapters to the Grand Sage.
+          </p>
+          <div class="quest-progress-container">
+            <div class="quest-progress-bar">
+              <div class="quest-progress-fill" style="width:25%;"></div>
+            </div>
+            <span class="quest-progress-label">1 / 4</span>
+          </div>
+          <div class="quest-reward">🏆 Reward: 3,500 XP + Arcane Staff</div>
+        </div>
+      </div>
+
+      <!-- Quest 3 -->
+      <div class="quest-item pixel-panel" style="padding:0;">
+        <div class="quest-item-header" data-quest="2">
+          <span class="quest-title">
+            <span class="icon">🛡️</span>
+            The Goblin Menace
+          </span>
+          <span class="quest-status quest-status--locked">LOCKED</span>
+          <span class="quest-expand-icon">▸</span>
+        </div>
+        <div class="quest-detail">
+          <p class="quest-desc">
+            Goblin raids have intensified along the eastern trade route.
+            Clear out three encampments and report to Captain Aldric.
+            Requires level 5 to unlock this quest.
+          </p>
+          <div class="quest-progress-container">
+            <div class="quest-progress-bar">
+              <div class="quest-progress-fill" style="width:0%;"></div>
+            </div>
+            <span class="quest-progress-label">0 / 3</span>
+          </div>
+          <div class="quest-reward">🏆 Reward: 1,200 XP + Goblin Slayer title</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <span class="switcher-label">▸ PALETTE SELECT</span>
+    <div class="switcher-buttons">
+      <button class="theme-btn active" data-theme="night">
+        <span class="dot" style="background:#0f0e1a;"></span> Night
+      </button>
+      <button class="theme-btn" data-theme="day">
+        <span class="dot" style="background:#e8d5b0;"></span> Day
+      </button>
+      <button class="theme-btn" data-theme="gameboy">
+        <span class="dot" style="background:#1a2f1a;"></span> GameBoy
+      </button>
+      <button class="theme-btn" data-theme="gbc">
+        <span class="dot" style="background:#281838;"></span> GBC
+      </button>
+    </div>
+    <div class="footer-coin">🪙</div>
+    <p class="footer-meta">
+      PIXEL·RPG v2.0 — Premium Edition<br>
+      8-bit aesthetic · CRT scanlines · 4 palettes
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ============================================================
+     TYPEWRITER ENGINE
+     ============================================================ */
+  const typewriterLines = [
+    'Welcome, traveller from the digital realm...',
+    'Every pixel here is a decision — every color is carefully chosen data.',
+    'You carry the weight of 8-bit legends on your shoulders.',
+    'Press ADVANCE or click anywhere to continue your journey.'
+  ];
+  let typewriterIdx = 0;
+  let charIdx = 0;
+  let typewriterRunning = false;
+  let typewriterTimer = null;
+
+  const twTarget = document.getElementById('typewriterTarget');
+  const twCursor = document.querySelector('.cursor-blink');
+  const advBtn = document.getElementById('dialogAdvance');
+  const skipBtn = document.getElementById('dialogSkip');
+
+  function typewriterStart() {
+    if (!twTarget) return;
+    typewriterRunning = true;
+    charIdx = 0;
+    twTarget.textContent = '';
+    if (twCursor) twCursor.style.display = 'inline-block';
+    typewriterTick();
+  }
+
+  function typewriterTick() {
+    const line = typewriterLines[typewriterIdx];
+    if (!line) { typewriterDone(); return; }
+    if (charIdx < line.length) {
+      twTarget.textContent += line[charIdx];
+      charIdx++;
+      const delay = 18 + Math.random() * 16;
+      typewriterTimer = setTimeout(typewriterTick, delay);
+    } else {
+      typewriterDone();
+    }
+  }
+
+  function typewriterDone() {
+    typewriterRunning = false;
+    if (twCursor) twCursor.style.display = 'none';
+  }
+
+  function typewriterAdvance() {
+    if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+    if (typewriterRunning) {
+      // Complete current line instantly
+      const line = typewriterLines[typewriterIdx];
+      if (line && twTarget) twTarget.textContent = line;
+      charIdx = line ? line.length : 0;
+      typewriterDone();
+    } else {
+      // Next line
+      typewriterIdx = (typewriterIdx + 1) % typewriterLines.length;
+      typewriterStart();
+    }
+  }
+
+  function typewriterSkip() {
+    if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+    typewriterIdx = typewriterLines.length - 1;
+    if (twTarget) twTarget.textContent = typewriterLines[typewriterIdx];
+    typewriterDone();
+  }
+
+  // Init and wire
+  if (twTarget) {
+    typewriterStart();
+  }
+  if (advBtn) advBtn.addEventListener('click', typewriterAdvance);
+  if (skipBtn) skipBtn.addEventListener('click', typewriterSkip);
+
+
+  /* ============================================================
+     STAT BAR INTERSECTION OBSERVER (animate on scroll)
+     ============================================================ */
+  const statFills = [
+    { el: document.getElementById('hpFill'),  pct: 87,  label: document.getElementById('hpLabel') },
+    { el: document.getElementById('mpFill'),  pct: 80,  label: document.getElementById('mpLabel') },
+    { el: document.getElementById('xpFill'),  pct: 57,  label: document.getElementById('xpLabel') },
+    { el: document.getElementById('strFill'), pct: 84,  label: document.getElementById('strLabel') }
+  ];
+  let statsAnimated = false;
+
+  const statObserver = new IntersectionObserver(function(entries) {
+    if (statsAnimated) return;
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        statsAnimated = true;
+        statFills.forEach(function(sf) {
+          if (sf.el) {
+            sf.el.style.transition = 'none';
+            sf.el.style.width = '0%';
+            // Force reflow
+            void sf.el.offsetWidth;
+            sf.el.style.transition = 'width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            sf.el.style.width = sf.pct + '%';
+          }
+        });
+        statObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const statBarsSection = document.getElementById('statBars');
+  if (statBarsSection) statObserver.observe(statBarsSection);
+
+  // Also try on load after a small delay if not yet triggered
+  setTimeout(function() {
+    if (!statsAnimated) {
+      statFills.forEach(function(sf) {
+        if (sf.el) {
+          sf.el.style.transition = 'none';
+          sf.el.style.width = '0%';
+          void sf.el.offsetWidth;
+          sf.el.style.transition = 'width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+          sf.el.style.width = sf.pct + '%';
+        }
+      });
+      statsAnimated = true;
+      statObserver.disconnect();
+    }
+  }, 600);
+
+
+  /* ============================================================
+     INVENTORY CLICK TO EQUIP
+     ============================================================ */
+  const slots = document.querySelectorAll('.inv-slot');
+  const equippedCountSpan = document.getElementById('equippedCount');
+
+  slots.forEach(function(slot) {
+    slot.addEventListener('click', function() {
+      this.classList.toggle('equipped');
+      updateEquippedCount();
+    });
+  });
+
+  function updateEquippedCount() {
+    if (!equippedCountSpan) return;
+    const count = document.querySelectorAll('.inv-slot.equipped').length;
+    equippedCountSpan.textContent = count;
+  }
+
+
+  /* ============================================================
+     QUEST EXPAND / COLLAPSE
+     ============================================================ */
+  const questHeaders = document.querySelectorAll('.quest-item-header');
+
+  questHeaders.forEach(function(header) {
+    header.addEventListener('click', function() {
+      const item = this.closest('.quest-item');
+      if (item) {
+        item.classList.toggle('expanded');
+      }
+    });
+  });
+
+
+  /* ============================================================
+     THEME SWITCHER
+     ============================================================ */
+  const themeBtns = document.querySelectorAll('.theme-btn');
+
+  function setTheme(theme) {
+    document.documentElement.className = 'theme-' + theme;
+    try { localStorage.setItem('ui-beta-preview-theme', theme); } catch(e) {}
+
+    themeBtns.forEach(function(btn) {
+      const t = btn.getAttribute('data-theme');
+      btn.classList.toggle('active', t === theme);
+    });
+  }
+
+  themeBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const theme = this.getAttribute('data-theme');
+      if (theme) setTheme(theme);
+    });
+  });
+
+  // Restore active button from localStorage
+  (function() {
+    try {
+      var saved = localStorage.getItem('ui-beta-preview-theme') || 'night';
+      themeBtns.forEach(function(btn) {
+        if (btn.getAttribute('data-theme') === saved) btn.classList.add('active');
+      });
+    } catch(e) {}
+  })();
+
+
+  /* ============================================================
+     SCANLINE TOGGLE
+     ============================================================ */
+  const scanBtn = document.getElementById('scanlineToggle');
+  if (scanBtn) {
+    scanBtn.addEventListener('click', function() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-scanline');
+      if (current === 'off') {
+        html.removeAttribute('data-scanline');
+        try { localStorage.setItem('ui-pixel-scanline', 'on'); } catch(e) {}
+        this.classList.add('on');
+      } else {
+        html.setAttribute('data-scanline', 'off');
+        try { localStorage.setItem('ui-pixel-scanline', 'off'); } catch(e) {}
+        this.classList.remove('on');
+      }
+    });
+  }
+
+
+  /* ============================================================
+     RESTART BUTTON
+     ============================================================ */
+  const restartBtn = document.getElementById('restartBtn');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', function() {
+      // Reset typewriter
+      if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+      typewriterIdx = 0;
+      typewriterStart();
+
+      // Reset stat bars
+      statsAnimated = false;
+      statFills.forEach(function(sf) {
+        if (sf.el) {
+          sf.el.style.transition = 'none';
+          sf.el.style.width = '0%';
+        }
+      });
+      // Re-observe
+      if (statBarsSection) {
+        statObserver.observe(statBarsSection);
+      }
+      setTimeout(function() {
+        if (!statsAnimated) {
+          statFills.forEach(function(sf) {
+            if (sf.el) {
+              sf.el.style.transition = 'none';
+              sf.el.style.width = '0%';
+              void sf.el.offsetWidth;
+              sf.el.style.transition = 'width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+              sf.el.style.width = sf.pct + '%';
+            }
+          });
+          statsAnimated = true;
+          statObserver.disconnect();
+        }
+      }, 800);
+
+      // Reset inventory
+      slots.forEach(function(s) { s.classList.remove('equipped'); });
+      document.querySelector('.inv-slot[data-item="sword"]')?.classList.add('equipped');
+      updateEquippedCount();
+
+      // Reset quests
+      document.querySelectorAll('.quest-item').forEach(function(q, i) {
+        q.classList.toggle('expanded', i === 0);
+      });
+
+      // Reset star/coin display
+      document.getElementById('starCount').textContent = '127';
+      document.getElementById('coinCount').textContent = '3,840';
+    });
+  }
+
+
+  /* ============================================================
+     BUTTON PRESS PHYSICS (global)
+     ============================================================ */
+  // Already handled via CSS :active top displacement.
+  // px-btn uses position:relative; top: 5px on :active.
+
+
+  /* ============================================================
+     NEW GAME / LOAD / OPTIONS (demo toast)
+     ============================================================ */
+  function showNotReady(e) {
+    e.preventDefault();
+    const msgs = [
+      '🔧 Save system: UNDER CONSTRUCTION',
+      '⏳ Loading... (this button does nothing yet)',
+      '📦 Feature not implemented — pixel-pending!',
+      '⚠️ The cartridge is dusty. Try blowing on it.'
+    ];
+    const msg = msgs[Math.floor(Math.random() * msgs.length)];
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    Object.assign(toast.style, {
+      position:'fixed', bottom:'60px', left:'50%', transform:'translateX(-50%)',
+      background:'var(--surface-alt)', color:'var(--gold)', padding:'10px 20px',
+      border:'2px solid var(--gold)', fontFamily:'"Press Start 2P",cursive',
+      fontSize:'0.35rem', zIndex:'10001',
+      boxShadow:'4px 4px 0 rgba(0,0,0,0.5)',
+      animation:'fadeInToast 0.3s ease'
+    });
+    document.body.appendChild(toast);
+    setTimeout(function() { toast.style.opacity='0'; toast.style.transition='opacity 0.4s'; }, 2000);
+    setTimeout(function() { toast.remove(); }, 2500);
+  }
+
+  // Inject toast keyframes
+  var styleSheet = document.createElement('style');
+  styleSheet.textContent = '@keyframes fadeInToast { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }';
+  document.head.appendChild(styleSheet);
+
+  document.getElementById('newGameBtn')?.addEventListener('click', showNotReady);
+  document.getElementById('loadGameBtn')?.addEventListener('click', showNotReady);
+  document.getElementById('optionsBtn')?.addEventListener('click', showNotReady);
+
+  /* ============================================================
+     RANDOM NPC QUIPS ON ADVANCE (extra polish)
+     ============================================================ */
+  const quips = [
+    'The pixelated path lies ahead...',
+    'Have you checked your inventory today?',
+    'A wise traveller saves often.',
+    'The CRT hums with ancient power.',
+    'Behind every sprite is a story.'
+  ];
+
+  var origAdvance = typewriterAdvance;
+  var advCounter = 0;
+  // After all main lines are exhausted, cycle quips
+  window.typewriterAdvance = typewriterAdvance; // keep original callable
+
+  // Override advance to rotate quips after initial sequence
+  const advReal = advBtn?.click;
+  if (advBtn) {
+    advBtn.addEventListener('click', function() {
+      if (!typewriterRunning && typewriterIdx >= typewriterLines.length - 1) {
+        if (twTarget) {
+          var q = quips[advCounter % quips.length];
+          twTarget.textContent = q;
+          advCounter++;
+        }
+      }
+    });
+  }
+
+  console.log('PIXEL·RPG Premium — All systems operational.');
+})();
+</script>
+</body>
+</html>

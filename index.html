@@ -304,9 +304,12 @@
       <div class="sidebar-brand">
         <i class="fas fa-cubes"></i> UI PLAYGROUND <span class="beta-badge">BETA</span>
       </div>
-      <div class="sidebar-subtitle">42 ARCHITECTURAL AESTHETICS</div>
+      <div class="sidebar-subtitle">50 CURATED AESTHETICS</div>
       <a href="showcase.html" target="_blank" class="premium-link-btn">
         <i class="fa-solid fa-wand-magic-sparkles"></i> View Premium Showcase
+      </a>
+      <a href="case-studies/index.html" class="premium-link-btn" style="margin-top:6px;border-color:rgba(168,85,247,0.3);color:var(--accent, #a855f7);">
+        <i class="fa-solid fa-flask"></i> Kimi Case Studies
       </a>
     </div>
     <div class="style-list" id="style-list"><!-- generated dynamically --></div>
@@ -359,6 +362,15 @@
 
   <script>
     const styleData = [
+      // ========== V0: Fusion System ==========
+      {
+        id: 0, title: "Atelier Fusion System",
+        desc: "Fusion 2 UI style jadi hybrid, 12 preset fusion, eksperimental",
+        path: "atelier-fusion-system.html",
+        avoid: "single-style purity, strict design systems, one-direction thinking, predictable layouts.",
+        guide: { key: "Fusion engine menggabungkan 2 style jadi hybrid unik, 12 preset fusion, random fusion generator.", typo: "Tergantung style yang di-fusion — kombinasi 2 typography system.", motion: "Tergantung fusion — kombinasi 2 motion system." },
+        prompt: "Fusion of two UI styles. Buka atelier-fusion-system.html, pilih 2 style, dapatkan hybrid unique UI. 12 preset fusion tersedia. Juga bisa random fusion untuk eksperimen."
+      },
       // ========== V1: Original 10 ==========
       {
         id: 1, title: "Neobrutalism Landing Page",
@@ -699,6 +711,70 @@
         avoid: "sans-serif fonts, bright colors, rounded corners, modern minimalism, fast bouncy animations, white backgrounds, clean geometric shapes.",
         guide: { key: "Dark #0A0A0F, cobweb texture, thorn border, candle flicker, blood drip.", typo: "UnifrakturMaguntia blackletter 3-5rem gold, Cormorant Garamond body 16px.", motion: "Candle flicker random opacity, typewriter 30ms/char, hover blood glow." },
         prompt: "Build a dark fantasy site in Gothic Victorian style. Dark #0A0A0F with cobweb texture. Thorn/vine ornate borders. Blood drip animation. Candle flicker. Palette: blood red #4A0000, gold #8B7355. UnifrakturMaguntia blackletter headings. Typewriter text reveal. Gold baroque frames."
+      },
+      {
+        id: 43, title: "Xenobiotic Organic System",
+        desc: "Giger-organic metal fusion, ribbed bio-borders, neural networks",
+        path: "previews/43-xeno-organic-system.html",
+        avoid: "perfect symmetry, sterile grid layout, pure flat design, bright saturated colors, standard border-radius, clean minimalism.",
+        guide: { key: "Dark #0A0A05, bone #E8D5B0, gold #E8C97A, ribbed bio-organic border, pulsing organs.", typo: "Orbitron display 900 headings, Rajdhani body 500, Space Mono data.", motion: "Pulse organ 3s ease-in-out, magnetic tilt mousemove, crossfade theme overlay, terminal node accordion." },
+        prompt: "Build a biomechanical interface fusing organic textures with industrial metal. Dark void #0A0A05. Ribbed bone-like borders, pulsing organic heart node, neural network data lines. 4 themes: Nocturnal, Diurnal, Blood, Void. Orbitron display headings. Asymmetric bio-morphic shapes. Neural terminal with click-expand nodes. Magnetic hover tilt on cards. Custom cursor with glow ring. Stat counters animate on scroll."
+      },
+      {
+        id: 44, title: "GEO·METRIC — Abstract Bauhaus System",
+        desc: "Bauhaus geometric abstraction, isometric cubes, vertex morph",
+        path: "previews/44-geo-metric-bauhaus.html",
+        avoid: "organic shapes, arabesque ornament, religious motifs, warm gold palettes, serif scripts, cluttered textures, curved borders.",
+        guide: { key: "Monolith slate #0F172A, cyan #06B6D4, hard offset 4px shadow, dot grid patterns, isometric clip paths.", typo: "Space Grotesk 700 uppercase tracking-tighter headings, Inter 400 body.", motion: "Vertex morph cycle 8 clip-path shapes, geometric parallax 0.03-0.12x speed, click ripple, modal scale 0.9→1." },
+        prompt: "Build a pure abstract geometric interface inspired by Bauhaus and constructivist design. 4 themes: Monolith (slate/indigo), Crystal (white/sky/blue), Jade (emerald/teal), Terra (terracotta/sand). Hard offset shadows 4px 4px 0px, 2px solid borders, isometric cube clip-paths, hexagonal tiling. Space Grotesk uppercase headings. Interactive vertex morph panel cycling 8 geometric shapes. Dot grid backgrounds, 0ms transitions with mechanical press active states."
+      },
+      {
+        id: 45, title: "Sen-Suiga — Zen Ink Wash UI",
+        desc: "Japanese sumi-e brush stroke, enso circle, kakejiku scroll",
+        path: "previews/45-sen-suga-ink-wash.html",
+        avoid: "bright colors, symmetrical layouts, heavy shadows, rounded cards, gradient backgrounds, decorative icons, UI skeletons.",
+        guide: { key: "Warm sumi ink, 5-level ink grading, red seal #C84030, enso circle, brush stroke gradient border, paper noise texture.", typo: "Noto Serif JP 900 headings, Zen Kaku Gothic New 300 body, Yuji Boku hand-painted accent.", motion: "Ensō drift rotation 15s, ink drop splatter animation, kakejiku scroll open/close, stamp seal random animation, tea ceremony steps." },
+        prompt: "Build a Japanese sumi-e ink wash Zen UI. 4 themes: Sumi (dark ink), Washi (light paper), Gindama (silver mist), Kurenai (crimson). 5-level sumi ink grading (#100-#500). Enso circle SVG with offset incomplete ring. Red seal stamp that animates on click. Kakejiku scroll quote with open/close toggle. Ink drop effect on button click. Tea ceremony 3-step interactive guide. Noto Serif JP serif headings. Paper texture SVG noise overlay."
+      },
+      {
+        id: 46, title: "AERO·FLIGHT — Glass Cockpit System",
+        desc: "Next-gen flight deck, real-time PFD instruments, autopilot",
+        path: "previews/46-aero-flight-system.html",
+        avoid: "galaxy/cosmic themes, sci-fi aesthetics, fantasy elements, round gauges without tapes, unrealistic aviation data.",
+        guide: { key: "Glass cockpit #0A0E1A, cyan HUD #00FF88, amber warning #FF6600, SVG artificial horizon, canvas weather radar.", typo: "JetBrains Mono 700 all instruments, Inter 500 UI labels, Space Grotesk 800 display.", motion: "60fps instrument needles at 50ms interval, autopilot mode toggle active state, weather radar sweep, checklist progress bar, altitude counter animation." },
+        prompt: "Build a next-generation glass cockpit flight system. GA-892 CGK→DPS→SYD, FL370, Mach 0.84. Real-time PFD with SVG artificial horizon showing pitch/roll. Airspeed tape color-coded arc, altitude tape with altitude bug. 6 flight instruments all live-animated: altimeter needle, airspeed arc, compass heading, VSI bounce, attitude indicator, turn coordinator. Autopilot panel: HDG/ALT/VS/SPD/NAV/APR/BC/LAND. Canvas weather radar with sweep and precipitation. 9-phase interactive checklist 33 items. COM1/COM2 with frequency swap. 4 themes: Day, Night, Storm, Test."
+      },
+      {
+        id: 47, title: "CloudForge — Industrial Data Center",
+        desc: "Cold metal, frosted glass, server metrics, system event log",
+        path: "previews/47-cloudforge-industrial.html",
+        avoid: "warm colors, organic shapes, rounded everything, playful fonts, animated backgrounds, decorative illustrations.",
+        guide: { key: "Dark #070A0F, cyan #06B6D4, blue #3B82F6, frosted metal panels, grid overlay 40px, scan-line 8s.", typo: "JetBrains Mono 500 labels 0.7rem, Inter 800 headings 2-3.2rem.", motion: "Scan line 8s linear infinite, status pulse 2s, health bar animate on scroll, live UTC clock per 1s, log entries per 4s." },
+        prompt: "Build an industrial data center interface with cold frosted metal aesthetic. Void #070A0F base with cyan #06B6D4 and blue #3B82F6. Server rack unit grid with metric cards. Health bar nodes with IntersectionObserver fill animation. Live system event log with real-time timestamps every 4s. Scan line animation top-to-bottom. Rack hover tooltip with hardware specs. 2 themes: Dark Metal, White Frost. JetBrains Mono for all data/metric text."
+      },
+      {
+        id: 48, title: "Senja Coffee — Premium Shop Theme",
+        desc: "Warm Indonesian coffee shop, roast profiles, brewing guide",
+        path: "previews/48-senja-coffee-theme.html",
+        avoid: "cold color palette, modern flat design, neon accents, sharp corners, corporate aesthetic, fast bouncy animations, dark dull mood.",
+        guide: { key: "Warm cream #FFF8F0, clay #C4732D, gold #C9983A, mocha #6B4A32, coffee texture, paper noise 0.025.", typo: "Playfair Display 800 italic headings 2.5-4rem, Inter 400 body 16px, JetBrains Mono 700 pricing.", motion: "Float emoji bob 6s ease-in-out infinite, warm glow breathe 8s, card lift 0.35s, testimonial auto-slide 5s, modal scale 0.3→1 spring." },
+        prompt: "Build a premium Indonesian coffee shop UI with complete interactive experience. 4 time-based themes: Pagi (morning soft), Sore (sunset warm), Malam (night intimate), Subuh (dawn crisp). Real-time open/closed badge based on hours (6-22 UTC+7). 6-card menu grid with modal detail (bahan, estimasi, harga). 3-stage roast profile selector (Light/Medium/Dark). 3-step brewing guide expandable. Gallery lightbox with Unsplash coffee imagery. Testimonial carousel auto-slide 5s. 4 animated stat counters. Floating ambient emojis."
+      },
+      {
+        id: 49, title: "8-Bit Pixel RPG Interface",
+        desc: "Retro NES/SNES aesthetic, pixel buttons, stat bars, inventory",
+        path: "previews/49-pixel-8bit-rpg.html",
+        avoid: "anti-aliased fonts, smooth curves, gradients, modern cards, system fonts, rounded corners, subtle shadows, vector icons.",
+        guide: { key: "Dark blue #0F0E1A, gold #E8B840, orange #F0A050, 3px multi-layer pixel border, CRT scanline overlay.", typo: "Press Start 2P 0.45-0.7rem headings, VT323 monospace 1.1rem body.", motion: "Button press squish 0.1s, stat bar fill 0.5s, inventory hover glow 0.2s, typewriter 30-80ms/char randomized, blinking cursor 0.6s." },
+        prompt: "Build an 8-bit pixel art RPG interface inspired by NES/SNES games. 4 palettes: Night, Day, GameBoy, GBC. 16px grid background, CRT scanline overlay toggleable. 3D press button physics (top displacement on active). 4 RPG stat bars (HP/MP/XP/STR) with shimmer fill. 4x2 inventory grid with equip/unequip toggle. NPC dialog box with typewriter effect and blinking cursor. 3 quest log entries expandable. Press Start 2P pixel font primary, VT323 for body."
+      },
+      {
+        id: 50, title: "Folia — Biophilic Living Wall",
+        desc: "Plant care interface, moisture bars, seasonal ecosystem",
+        path: "previews/50-folia-biophilic.html",
+        avoid: "synthetic neon colors, sharp geometric patterns, pure black backgrounds, high-gloss surfaces, smart-home cliché icons.",
+        guide: { key: "Soft green #F0F5EC, leaf #4A8C3F, soil #5C3A24, water #4A90C4, asymmetric organic radius, leaf SVG ornaments.", typo: "Cormorant Garamond 700 serif headings, Lora 500 italic labels, Inter 400 body.", motion: "Card hover grow 0.35s with border shift, moisture bar fill 0.5s, moisture hover expand, leaf particle float on scroll, plant seed progress bar 4s, seasonal node select." },
+        prompt: "Build a biophilic interface inspired by indoor plant care and natural ecosystems. 4 biome themes: Taman (light garden), Hutan (dark forest), Pantai (coastal blue), Gurun (desert warm). 4 plant care cards with moisture bars, latin names, health status badges. Growth journal with progress pointers. Seasonal circle selector (spring/summer/autumn/winter) with accent color shift. Light/water dual requirement meters. Plant a Seed button with 4-second eased growth animation. Leaf particles float on scroll."
       }
     ];
 

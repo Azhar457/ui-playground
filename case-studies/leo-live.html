@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEO·LIVE — Satellite Trajectory Visualization</title>
+<style>
+:root{--bg:#03040a;--surface:#0f172a;--text:#f0f4ff;--text-muted:#94a3b8;--primary:#6366f1;--accent:#06b6d4;--border:rgba(255,255,255,0.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:2rem;text-align:center}
+h1{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:700;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+p{color:var(--text-muted);max-width:500px;line-height:1.6;font-size:.9rem}
+.info{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:500px;text-align:left;line-height:1.8;font-size:.85rem}
+.info strong{color:var(--accent)}
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.5rem;border-radius:100px;background:var(--primary);color:#fff;font-weight:600;font-size:.85rem;transition:all .3s}
+.btn:hover{box-shadow:0 4px 20px rgba(99,102,241,0.3);transform:translateY(-2px);color:#fff}
+.back{position:fixed;top:1rem;left:1rem;padding:.5rem 1rem;border-radius:8px;border:1px solid var(--border);color:var(--text-muted);text-decoration:none;font-size:.8rem;transition:all .3s}
+.back:hover{border-color:var(--primary);color:var(--text)}
+</style>
+</head>
+<body>
+<a href="index.html" class="back">← Case Studies</a>
+<h1>LEO·LIVE Satellite Tracker</h1>
+<p>React + shadcn/ui + satellite.js — visualisasi orbit satelit real-time dengan TLE data, globe 3D, dan kontrol simulasi waktu.</p>
+<div class="info">
+<strong>TECH:</strong> React 19 · TypeScript · Vite · Tailwind v4 · shadcn/ui · satellite.js · Three.js-based GlobeEngine<br><br>
+<strong>FEATURES:</strong><br>
+• Real-time TLE propagation via satellite.js<br>
+• 3D globe with WebGL2 (auto-detect fallback)<br>
+• 30+ satellite group layers<br>
+• Orbital path + ground track rendering<br>
+• Time simulation (fast-forward/rewind)<br>
+• Search, filter, detail panel telemetry<br>
+• Deep link via URL param (?sat=XXXXX)
+</div>
+<p style="font-size:.8rem;opacity:.6;">
+React app — butuh <code>npm run build</code> untuk live demo.<br>
+Source di folder project Kimi asli.
+</p>
+<a href="#" onclick="alert('Build project dulu: cd app && npm install && npm run build')" class="btn"><i class="fa-solid fa-satellite"></i> Load Visualizer</a>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>

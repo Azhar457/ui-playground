@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泉翠 — Sen-Suiga | Zen Ink Wash UI</title>
+<script>
+!function(){try{
+  var t=localStorage.getItem('sen-theme')||'sumi',
+      m=window.matchMedia('(prefers-color-scheme:dark)');
+  if(!localStorage.getItem('sen-theme')) t=m.matches?'sumi':'washi';
+  document.documentElement.setAttribute('data-theme',t)
+}catch(e){}}();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700;900&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Yuji+Boku:wght@400&family=Yuji+Syuku:wght@400&display=swap" rel="stylesheet">
+<style>
+/* ===================================================================
+   SEN-SUIGA — Sumi-e / Japanese Ink Wash Zen UI Theme System
+   4 variants · 40+ CSS variables each · 5 sumi grades · ink textures
+   =================================================================== */
+
+/* ---------- THEME: SUMI (dark ink / default) ---------- */
+[data-theme="sumi"] {
+  --bg-base: #0f0d0a;
+  --bg-surface: #1a1612;
+  --bg-elevated: #231e18;
+  --bg-glass: rgba(26,22,18,0.72);
+  --bg-glass-heavy: rgba(15,13,10,0.85);
+
+  --ink-100: #e8e0d0;
+  --ink-200: #c8bea8;
+  --ink-300: #a89a80;
+  --ink-400: #807260;
+  --ink-500: #5a5240;
+  --ink-600: #3a3228;
+  --ink-700: #231e18;
+  --ink-800: #1a1612;
+
+  --ink: var(--ink-100);
+  --ink-mid: var(--ink-300);
+  --ink-light: var(--ink-500);
+  --ink-faint: var(--ink-600);
+
+  --seal: #c84030;
+  --seal-glow: rgba(200,64,48,0.18);
+  --gold: #c89840;
+  --gold-dim: rgba(200,152,64,0.12);
+  --jade: #5a8870;
+  --jade-dim: rgba(90,136,112,0.10);
+
+  --mist: rgba(200,190,168,0.05);
+  --border: rgba(200,190,168,0.08);
+  --border-strong: rgba(200,190,168,0.18);
+
+  --shade-top: radial-gradient(ellipse at 50% 0%, rgba(200,190,168,0.04) 0%, transparent 70%);
+  --vignette: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%);
+  --ambient-img: 'https://images.unsplash.com/photo-1516961642265-531e546e84af2?q=80&w=2574&auto=format&fit=crop';
+  --ambient-opacity: 0.035;
+  --ambient-filter: saturate(0.1) contrast(1.4) grayscale(0.7);
+
+  --enso-color: var(--ink-300);
+  --enso-hover-color: var(--seal);
+  --enso-opacity: 0.30;
+
+  --scrollbar-bg: var(--bg-base);
+  --scrollbar-thumb: var(--ink-500);
+
+  --nav-bg: linear-gradient(180deg, var(--bg-base) 0%, transparent 100%);
+  --card-bg: var(--bg-surface);
+  --card-border: var(--border);
+  --card-hover-border: var(--ink-200);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.2);
+
+  --kake-border-top: var(--border-strong);
+  --kake-border-bottom: var(--border-strong);
+  --kake-bg: var(--bg-surface);
+  --kake-shield: rgba(200,64,48,0.10);
+
+  --btn-text: var(--ink-100);
+  --btn-border: var(--ink-400);
+  --btn-hover-text: var(--bg-base);
+  --btn-hover-bg: var(--ink-100);
+  --btn-hover-border: var(--ink-100);
+
+  --footer-sep: var(--border);
+  --tag-bg: rgba(200,64,48,0.12);
+  --tag-text: var(--seal);
+
+  --ink-drop-color: var(--ink-200);
+  --ink-drop-shadow: rgba(200,190,168,0.15);
+
+  --haiku-border: var(--ink-600);
+  --haiku-hover-border: var(--ink-200);
+
+  --step-bg: var(--bg-surface);
+  --step-active-bg: rgba(200,190,168,0.06);
+  --step-num: var(--ink-400);
+  --step-num-active: var(--seal);
+
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+}
+
+/* ---------- THEME: WASHI (light paper) ---------- */
+[data-theme="washi"] {
+  --bg-base: #f5f0e8;
+  --bg-surface: #faf7f2;
+  --bg-elevated: #fffcf7;
+  --bg-glass: rgba(245,240,232,0.72);
+  --bg-glass-heavy: rgba(245,240,232,0.88);
+
+  --ink-800: #e8e0d0;
+  --ink-700: #c8bea8;
+  --ink-600: #a89a80;
+  --ink-500: #807260;
+  --ink-400: #5a5240;
+  --ink-300: #3a3228;
+  --ink-200: #1f1a14;
+  --ink-100: #0f0d0a;
+
+  --ink: var(--ink-100);
+  --ink-mid: var(--ink-300);
+  --ink-light: var(--ink-500);
+  --ink-faint: var(--ink-600);
+
+  --seal: #c84030;
+  --seal-glow: rgba(200,64,48,0.10);
+  --gold: #b88838;
+  --gold-dim: rgba(184,136,56,0.08);
+  --jade: #4a7a60;
+  --jade-dim: rgba(74,122,96,0.08);
+
+  --mist: rgba(58,50,40,0.04);
+  --border: rgba(58,50,40,0.08);
+  --border-strong: rgba(58,50,40,0.16);
+
+  --shade-top: radial-gradient(ellipse at 50% 0%, rgba(200,190,168,0.15) 0%, transparent 70%);
+  --vignette: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.035) 100%);
+  --ambient-img: 'https://images.unsplash.com/photo-1516961642265-531e546e84af2?q=80&w=2574&auto=format&fit=crop';
+  --ambient-opacity: 0.04;
+  --ambient-filter: saturate(0.2) contrast(1.1) grayscale(0.3);
+
+  --enso-color: var(--ink-400);
+  --enso-hover-color: var(--seal);
+  --enso-opacity: 0.35;
+
+  --scrollbar-bg: var(--bg-base);
+  --scrollbar-thumb: var(--ink-500);
+
+  --nav-bg: linear-gradient(180deg, var(--bg-base) 0%, transparent 100%);
+  --card-bg: var(--bg-elevated);
+  --card-border: var(--border);
+  --card-hover-border: var(--ink-300);
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.05);
+
+  --kake-border-top: var(--border-strong);
+  --kake-border-bottom: var(--border-strong);
+  --kake-bg: var(--bg-elevated);
+  --kake-shield: rgba(200,64,48,0.06);
+
+  --btn-text: var(--ink-200);
+  --btn-border: var(--ink-400);
+  --btn-hover-text: var(--bg-elevated);
+  --btn-hover-bg: var(--ink-200);
+  --btn-hover-border: var(--ink-200);
+
+  --footer-sep: var(--border);
+  --tag-bg: rgba(200,64,48,0.08);
+  --tag-text: var(--seal);
+
+  --ink-drop-color: var(--ink-300);
+  --ink-drop-shadow: rgba(58,50,40,0.12);
+
+  --haiku-border: var(--ink-600);
+  --haiku-hover-border: var(--ink-300);
+
+  --step-bg: var(--bg-elevated);
+  --step-active-bg: rgba(58,50,40,0.04);
+  --step-num: var(--ink-500);
+  --step-num-active: var(--seal);
+
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+}
+
+/* ---------- THEME: GINDAMA (silver mist) ---------- */
+[data-theme="gindama"] {
+  --bg-base: #e8e6e2;
+  --bg-surface: #f0eeea;
+  --bg-elevated: #f8f6f2;
+  --bg-glass: rgba(232,230,226,0.72);
+  --bg-glass-heavy: rgba(232,230,226,0.88);
+
+  --ink-100: #1f1e1c;
+  --ink-200: #3a3834;
+  --ink-300: #585652;
+  --ink-400: #7a7872;
+  --ink-500: #a09e98;
+  --ink-600: #c0beb8;
+  --ink-700: #d8d6d0;
+  --ink-800: #e8e6e2;
+
+  --ink: var(--ink-100);
+  --ink-mid: var(--ink-300);
+  --ink-light: var(--ink-500);
+  --ink-faint: var(--ink-600);
+
+  --seal: #b04038;
+  --seal-glow: rgba(176,64,56,0.10);
+  --gold: #a89848;
+  --gold-dim: rgba(168,152,72,0.08);
+  --jade: #6a8878;
+  --jade-dim: rgba(106,136,120,0.08);
+
+  --mist: rgba(88,86,82,0.05);
+  --border: rgba(88,86,82,0.06);
+  --border-strong: rgba(88,86,82,0.12);
+
+  --shade-top: radial-gradient(ellipse at 50% 0%, rgba(200,198,194,0.3) 0%, transparent 70%);
+  --vignette: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.025) 100%);
+  --ambient-img: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=2574&auto=format&fit=crop';
+  --ambient-opacity: 0.035;
+  --ambient-filter: saturate(0.0) contrast(1.05) grayscale(0.8) brightness(1.1);
+
+  --enso-color: var(--ink-400);
+  --enso-hover-color: var(--seal);
+  --enso-opacity: 0.25;
+
+  --scrollbar-bg: var(--bg-base);
+  --scrollbar-thumb: var(--ink-500);
+
+  --nav-bg: linear-gradient(180deg, var(--bg-base) 0%, transparent 100%);
+  --card-bg: var(--bg-surface);
+  --card-border: var(--border);
+  --card-hover-border: var(--ink-300);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.03);
+
+  --kake-border-top: var(--border-strong);
+  --kake-border-bottom: var(--border-strong);
+  --kake-bg: var(--bg-surface);
+  --kake-shield: rgba(176,64,56,0.06);
+
+  --btn-text: var(--ink-200);
+  --btn-border: var(--ink-400);
+  --btn-hover-text: var(--bg-elevated);
+  --btn-hover-bg: var(--ink-200);
+  --btn-hover-border: var(--ink-200);
+
+  --footer-sep: var(--border);
+  --tag-bg: rgba(176,64,56,0.08);
+  --tag-text: var(--seal);
+
+  --ink-drop-color: var(--ink-300);
+  --ink-drop-shadow: rgba(88,86,82,0.10);
+
+  --haiku-border: var(--ink-600);
+  --haiku-hover-border: var(--ink-300);
+
+  --step-bg: var(--bg-surface);
+  --step-active-bg: rgba(88,86,82,0.04);
+  --step-num: var(--ink-500);
+  --step-num-active: var(--seal);
+
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+}
+
+/* ---------- THEME: KURENAI (crimson accent) ---------- */
+[data-theme="kurenai"] {
+  --bg-base: #1a1210;
+  --bg-surface: #241a16;
+  --bg-elevated: #2e221e;
+  --bg-glass: rgba(26,18,16,0.72);
+  --bg-glass-heavy: rgba(26,18,16,0.88);
+
+  --ink-100: #e8d8d0;
+  --ink-200: #d0bab0;
+  --ink-300: #b09a90;
+  --ink-400: #8a7a70;
+  --ink-500: #605650;
+  --ink-600: #403a36;
+  --ink-700: #2e221e;
+  --ink-800: #241a16;
+
+  --ink: var(--ink-100);
+  --ink-mid: var(--ink-300);
+  --ink-light: var(--ink-500);
+  --ink-faint: var(--ink-600);
+
+  --seal: #e04030;
+  --seal-glow: rgba(224,64,48,0.22);
+  --gold: #d89838;
+  --gold-dim: rgba(216,152,56,0.10);
+  --jade: #5a7a60;
+  --jade-dim: rgba(90,122,96,0.10);
+
+  --mist: rgba(200,186,176,0.05);
+  --border: rgba(200,186,176,0.08);
+  --border-strong: rgba(200,186,176,0.16);
+
+  --shade-top: radial-gradient(ellipse at 50% 0%, rgba(224,64,48,0.06) 0%, transparent 70%);
+  --vignette: radial-gradient(ellipse at center, transparent 35%, rgba(18,10,8,0.40) 100%);
+  --ambient-img: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?q=80&w=2574&auto=format&fit=crop';
+  --ambient-opacity: 0.035;
+  --ambient-filter: saturate(0.15) contrast(1.3) grayscale(0.5) hue-rotate(-20deg);
+
+  --enso-color: var(--seal);
+  --enso-hover-color: var(--gold);
+  --enso-opacity: 0.40;
+
+  --scrollbar-bg: var(--bg-base);
+  --scrollbar-thumb: var(--ink-500);
+
+  --nav-bg: linear-gradient(180deg, var(--bg-base) 0%, transparent 100%);
+  --card-bg: var(--bg-surface);
+  --card-border: var(--border);
+  --card-hover-border: var(--seal);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.25);
+
+  --kake-border-top: var(--border-strong);
+  --kake-border-bottom: var(--border-strong);
+  --kake-bg: var(--bg-surface);
+  --kake-shield: rgba(224,64,48,0.12);
+
+  --btn-text: var(--ink-100);
+  --btn-border: var(--ink-400);
+  --btn-hover-text: var(--bg-base);
+  --btn-hover-bg: var(--seal);
+  --btn-hover-border: var(--seal);
+
+  --footer-sep: var(--border);
+  --tag-bg: rgba(224,64,48,0.15);
+  --tag-text: var(--seal);
+
+  --ink-drop-color: var(--seal);
+  --ink-drop-shadow: rgba(224,64,48,0.20);
+
+  --haiku-border: var(--ink-600);
+  --haiku-hover-border: var(--seal);
+
+  --step-bg: var(--bg-surface);
+  --step-active-bg: rgba(224,64,48,0.06);
+  --step-num: var(--ink-500);
+  --step-num-active: var(--seal);
+
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+}
+
+/* ===================================================================
+   BASE
+   =================================================================== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+body {
+  background: var(--bg-base);
+  color: var(--ink);
+  font-family: 'Zen Kaku Gothic New', 'Noto Serif JP', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  transition: background 0.7s ease, color 0.7s ease;
+}
+
+/* ===================================================================
+   AMBIENT LAYERS
+   =================================================================== */
+.ambient-layer {
+  position: fixed; inset: 0; z-index: -10;
+  pointer-events: none;
+}
+.ambient-bg {
+  position: fixed; inset: 0; z-index: -10;
+  background: var(--ambient-img) center/cover no-repeat;
+  opacity: var(--ambient-opacity);
+  filter: var(--ambient-filter);
+  transform: scale(1.08);
+  transition: opacity 0.8s, filter 0.8s;
+}
+.ambient-bg-pan {
+  position: fixed; inset: -20%; z-index: -10;
+  background: var(--ambient-img) center/cover no-repeat;
+  opacity: calc(var(--ambient-opacity) * 0.5);
+  filter: var(--ambient-filter) blur(4px);
+  animation: slowPan 120s ease-in-out infinite alternate;
+}
+@keyframes slowPan {
+  0%   { transform: translate(0, 0) scale(1.08); }
+  100% { transform: translate(-3%, -2%) scale(1.12); }
+}
+
+.paper-grain {
+  position: fixed; inset: 0; z-index: -9; pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  transition: opacity 0.8s;
+}
+
+.shade-top {
+  position: fixed; top: 0; left: 0; right: 0; height: 40vh; z-index: -8; pointer-events: none;
+  background: var(--shade-top);
+  transition: background 0.7s;
+}
+
+.vignette {
+  position: fixed; inset: 0; z-index: -7; pointer-events: none;
+  background: var(--vignette);
+  transition: background 0.7s;
+}
+
+/* ===================================================================
+   SCROLLBAR
+   =================================================================== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-400); }
+
+/* ===================================================================
+   SCRIM — prevents selection of nav links off-canvas
+   =================================================================== */
+.scrim {
+  position: fixed; inset: 0; z-index: 99;
+  background: rgba(0,0,0,0.3);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.scrim.open { opacity: 1; pointer-events: auto; }
+
+/* ===================================================================
+   APP WRAPPER
+   =================================================================== */
+.app {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===================================================================
+   NAVBAR
+   =================================================================== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.2rem 2.5rem;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.7s;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--ink);
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-brand:hover { transform: scale(1.04); }
+.nav-brand-char {
+  font-family: 'Yuji Boku', serif;
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.nav-brand-text {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  color: var(--ink-light);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  line-height: 1.4;
+}
+.nav-links {
+  display: flex; gap: 2.8rem; list-style: none;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+.nav-links a {
+  color: var(--ink-light);
+  text-decoration: none;
+  position: relative;
+  padding: 0.3rem 0;
+  transition: color 0.5s cubic-bezier(0.4,0,0.2,1), letter-spacing 0.5s;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--ink);
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-links a:hover,
+.nav-links a:focus-visible { color: var(--ink); letter-spacing: 6px; }
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after { width: 100%; }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column; gap: 4px; cursor: pointer;
+  background: none; border: none; padding: 4px;
+  position: relative; z-index: 101;
+}
+.nav-toggle span {
+  display: block; width: 22px; height: 1.5px;
+  background: var(--ink);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+  border-radius: 1px;
+}
+.nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+/* ===================================================================
+   SUMI GRADING LEGEND (inline badge)
+   =================================================================== */
+.sumi-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  color: var(--ink-light);
+}
+.sumi-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  transition: background 0.5s;
+}
+.sumi-dot.n1 { background: var(--ink-100); }
+.sumi-dot.n2 { background: var(--ink-300); }
+.sumi-dot.n3 { background: var(--ink-500); }
+.sumi-dot.n4 { background: var(--ink-600); }
+.sumi-dot.n5 { background: var(--ink-700); }
+
+/* ===================================================================
+   HERO
+   =================================================================== */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 5rem;
+  align-items: center;
+  padding: 8rem 0 4rem;
+  position: relative;
+}
+.hero-sep {
+  position: absolute;
+  right: calc(50% - 0.5px);
+  top: 12%;
+  width: 1px; height: 76%;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--border-strong) 20%,
+    var(--ink-mid) 50%,
+    var(--border-strong) 80%,
+    transparent 100%
+  );
+  opacity: 0.25;
+  transition: opacity 0.7s;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+.hero-kigo {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 8px;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.hero-kigo em {
+  font-style: normal;
+  color: var(--seal);
+  opacity: 1;
+}
+.hero h1 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(2.8rem, 5.8vw, 5rem);
+  font-weight: 900;
+  line-height: 1.12;
+  color: var(--ink);
+  letter-spacing: -1.5px;
+}
+.hero h1 .seal-char {
+  color: var(--seal);
+  font-family: 'Yuji Boku', serif;
+  font-size: 1.05em;
+  text-shadow: 0 0 30px var(--seal-glow);
+  transition: text-shadow 0.5s;
+  cursor: default;
+}
+.hero h1 .seal-char:hover {
+  text-shadow: 0 0 50px var(--seal-glow);
+}
+.hero-haiku {
+  font-size: 1.05rem;
+  color: var(--ink-mid);
+  line-height: 2.6;
+  font-style: italic;
+  max-width: 360px;
+  letter-spacing: 0.5px;
+}
+
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 1rem 2.2rem;
+  background: transparent;
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  max-width: fit-content;
+}
+.hero-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--btn-hover-bg);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  z-index: -1;
+}
+.hero-cta:hover,
+.hero-cta:focus-visible {
+  color: var(--btn-hover-text);
+  border-color: var(--btn-hover-border);
+  letter-spacing: 6px;
+}
+.hero-cta:hover::before,
+.hero-cta:focus-visible::before { transform: scaleX(1); }
+
+/* ===== HERO RIGHT: ENSO + SEAL ===== */
+.hero-void {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  position: relative;
+}
+.enso-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.enso {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 3px solid var(--enso-color);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotate(-18deg);
+  opacity: var(--enso-opacity);
+  position: relative;
+  transition: all 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.enso:hover {
+  opacity: 0.7;
+  transform: rotate(0deg) scale(1.06);
+  border-color: var(--enso-hover-color);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+.enso-inner {
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
+  border: 1px solid var(--enso-color);
+  border-left-color: transparent;
+  border-top-color: transparent;
+  opacity: 0.4;
+  transform: rotate(25deg);
+  transition: all 1s;
+}
+.enso-inner:hover {
+  opacity: 0.6;
+  transform: rotate(45deg);
+  border-color: var(--enso-hover-color);
+  border-left-color: transparent;
+  border-top-color: transparent;
+}
+.enso-char {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Yuji Boku', serif;
+  font-size: 3rem;
+  color: var(--enso-color);
+  opacity: 0.15;
+  pointer-events: none;
+  transition: opacity 0.8s, color 0.8s;
+}
+.enso-wrap:hover .enso-char { opacity: 0.25; color: var(--enso-hover-color); }
+
+.seal-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px; height: 48px;
+  background: var(--seal);
+  color: var(--bg-base);
+  font-family: 'Yuji Syuku', 'Yuji Boku', serif;
+  font-size: 1.2rem;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.4s, box-shadow 0.4s;
+  box-shadow: 0 2px 12px var(--seal-glow);
+  user-select: none;
+}
+.seal-stamp:hover { transform: scale(1.08); box-shadow: 0 4px 24px var(--seal-glow); }
+.seal-stamp:active { transform: scale(0.92); }
+.seal-stamp.animate {
+  animation: sealPress 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes sealPress {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.15) rotate(-5deg); }
+  60%  { transform: scale(0.9) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.hero-void .label {
+  font-family: 'Yuji Boku', serif;
+  color: var(--ink-light);
+  font-size: 0.7rem;
+  letter-spacing: 8px;
+  opacity: 0.5;
+}
+
+/* ===================================================================
+   BRUSH STROKE DIVIDER
+   =================================================================== */
+.brush-divider {
+  position: relative;
+  height: 60px;
+  margin: 2rem 0;
+  overflow: hidden;
+}
+.brush-stroke {
+  position: absolute;
+  left: 5%; right: 5%;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--ink-faint) 8%,
+    var(--ink-light) 20%,
+    var(--ink-mid) 35%,
+    var(--ink) 50%,
+    var(--ink-mid) 65%,
+    var(--ink-light) 80%,
+    var(--ink-faint) 92%,
+    transparent 100%
+  );
+  transform: translateY(-50%);
+  opacity: 0.25;
+  transition: opacity 0.7s, background 0.7s;
+}
+.brush-stroke::before,
+.brush-stroke::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+}
+.brush-stroke::before {
+  left: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--ink-faint) 100%);
+  transform: translateY(-2px);
+}
+.brush-stroke::after {
+  right: 0;
+  background: linear-gradient(90deg, var(--ink-faint) 0%, transparent 100%);
+  transform: translateY(2px);
+}
+.brush-stroke-thick {
+  position: absolute;
+  left: 20%; right: 20%;
+  top: 50%;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold-dim) 15%,
+    var(--gold) 50%,
+    var(--gold-dim) 85%,
+    transparent 100%
+  );
+  opacity: 0.08;
+  transform: translateY(-50%);
+  border-radius: 3px;
+  transition: opacity 0.7s;
+}
+.brush-stroke.kake {
+  left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border-strong) 10%,
+    var(--ink-light) 30%,
+    var(--ink-mid) 50%,
+    var(--ink-light) 70%,
+    var(--border-strong) 90%,
+    transparent 100%
+  );
+}
+
+/* ===================================================================
+   SHOWCASE / MA SECTION
+   =================================================================== */
+.showcase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin: 6rem 0;
+}
+.showcase-img {
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--card-shadow);
+  transition: all 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.showcase-img:hover {
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+}
+.showcase-img img {
+  width: 100%; height: 360px;
+  object-fit: cover;
+  transition: transform 1.3s cubic-bezier(0.4,0,0.2,1);
+  filter: saturate(0.5) contrast(1.05) grayscale(0.25);
+}
+.showcase-img:hover img { transform: scale(1.1); }
+.showcase-img::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 65%, var(--bg-base) 100%);
+  pointer-events: none;
+  transition: background 0.7s;
+}
+
+.showcase-text { position: relative; }
+.showcase-text .sec-num {
+  font-family: 'Yuji Boku', serif;
+  font-size: 0.6rem;
+  color: var(--seal);
+  letter-spacing: 4px;
+  opacity: 0.7;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.showcase-text h2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+.showcase-text .jp-reading {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  letter-spacing: 6px;
+  display: block;
+  margin-bottom: 1.2rem;
+  opacity: 0.6;
+}
+.showcase-text p {
+  color: var(--ink-mid);
+  line-height: 2.3;
+  font-size: 0.9rem;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+}
+.showcase-text .divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  opacity: 0.3;
+}
+.showcase-text .divider-line {
+  flex: 1;
+  max-width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ink-mid), transparent);
+}
+
+/* ===================================================================
+   HAIKU CARD GRID
+   =================================================================== */
+.haiku-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  margin: 5rem 0;
+}
+.haiku-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px) saturate(1.08);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
+  padding: 2.5rem 2rem;
+  border-left: 2px solid var(--haiku-border);
+  transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  box-shadow: var(--card-shadow);
+}
+.haiku-card:hover {
+  border-left-width: 4px;
+  border-left-color: var(--haiku-hover-border);
+  padding-left: 2.5rem;
+  background: var(--bg-elevated);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  transform: translateY(-3px);
+}
+.haiku-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--ink-mid) 0%, transparent 80%);
+  opacity: 0.1;
+}
+.haiku-card .card-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  letter-spacing: 1px;
+}
+.haiku-card .card-ro {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.75rem;
+  opacity: 0.6;
+}
+.haiku-card .card-body {
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+  line-height: 2.3;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+}
+
+/* ===================================================================
+   KAKEJIKU SCROLL
+   =================================================================== */
+.kakejiku {
+  background: var(--kake-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 4rem 3rem;
+  text-align: center;
+  position: relative;
+  border-top: 1px solid var(--kake-border-top);
+  border-bottom: 1px solid var(--kake-border-bottom);
+  margin: 5rem 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.04);
+  transition: background 0.7s, border-color 0.7s;
+  overflow: hidden;
+}
+.kakejiku-rod {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 8px;
+  background: var(--ink-400);
+  border-radius: 4px;
+  opacity: 0.3;
+  transition: background 0.5s;
+}
+.kakejiku-rod.top { top: -4px; }
+.kakejiku-rod.bottom { bottom: -4px; }
+.kakejiku-shield {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--kake-shield) 20%,
+    var(--kake-shield) 80%,
+    transparent 100%
+  );
+  opacity: 0.5;
+  transition: background 0.5s;
+}
+
+.kakejiku-quote {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  color: var(--ink-mid);
+  line-height: 2.4;
+  max-width: 600px;
+  margin: 0 auto;
+  letter-spacing: 1px;
+  transition: color 0.5s;
+}
+.kakejiku-quote .quote-attrib {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  margin-top: 1rem;
+  letter-spacing: 2px;
+}
+.kakejiku-quote .quote-en {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  letter-spacing: 1px;
+}
+
+.kakejiku .btn-wrap {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.kakejiku .fude-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.9rem 2rem;
+  background: transparent;
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.kakejiku .fude-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--btn-hover-bg);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  z-index: -1;
+}
+.kakejiku .fude-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: var(--seal-glow);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.8s, height 0.8s, opacity 0.8s;
+  opacity: 0;
+  z-index: -2;
+}
+.kakejiku .fude-btn:active::after {
+  width: 200px; height: 200px;
+  opacity: 1;
+}
+.kakejiku .fude-btn:hover,
+.kakejiku .fude-btn:focus-visible {
+  color: var(--btn-hover-text);
+  border-color: var(--btn-hover-border);
+  letter-spacing: 6px;
+}
+.kakejiku .fude-btn:hover::before,
+.kakejiku .fude-btn:focus-visible::before { transform: scaleX(1); }
+
+/* ===== KAKEJIKU CONTENT (toggle) ===== */
+.kakejiku-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.8s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.6s ease, margin 0.6s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+.kakejiku-content.open {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 2rem;
+}
+.kakejiku-content-inner {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.85rem;
+  color: var(--ink-mid);
+  line-height: 2.2;
+  font-weight: 300;
+}
+
+/* ===================================================================
+   TEA CEREMONY STEPS
+   =================================================================== */
+.tea-section {
+  margin: 5rem 0;
+}
+.tea-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.tea-header .sec-num {
+  font-family: 'Yuji Boku', serif;
+  font-size: 0.65rem;
+  color: var(--seal);
+  letter-spacing: 6px;
+  opacity: 0.7;
+}
+.tea-header h2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.tea-header .jp-sub {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  letter-spacing: 6px;
+  opacity: 0.6;
+}
+.tea-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.tea-step {
+  background: var(--step-bg);
+  padding: 2.5rem 2rem;
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+  cursor: default;
+  box-shadow: var(--card-shadow);
+}
+.tea-step:hover {
+  background: var(--step-active-bg);
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.05);
+}
+.tea-step.active {
+  border-color: var(--seal);
+  background: var(--step-active-bg);
+}
+.tea-step-num {
+  font-family: 'Yuji Boku', serif;
+  font-size: 2.2rem;
+  color: var(--step-num);
+  line-height: 1;
+  margin-bottom: 0.75rem;
+  transition: color 0.4s;
+}
+.tea-step.active .tea-step-num,
+.tea-step:hover .tea-step-num { color: var(--step-num-active); }
+.tea-step h3 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.tea-step .step-jp {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  letter-spacing: 3px;
+  display: block;
+  margin-bottom: 0.75rem;
+  opacity: 0.6;
+}
+.tea-step p {
+  font-size: 0.85rem;
+  color: var(--ink-mid);
+  line-height: 2.2;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+}
+.tea-step .step-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  opacity: 0.6;
+}
+
+/* ===================================================================
+   INK DROP CANVAS
+   =================================================================== */
+.ink-canvas-wrap {
+  position: relative;
+  margin: 3rem 0;
+  height: 160px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  transition: border-color 0.5s, background 0.5s;
+}
+.ink-canvas {
+  position: absolute;
+  inset: 0;
+}
+.ink-drop-btn-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: -1rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Individual ink drops rendered as elements */
+.ink-drop {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--ink-drop-color);
+  pointer-events: none;
+  animation: inkSplash 2.5s cubic-bezier(0.4,0,0.2,1) forwards;
+  box-shadow: 0 4px 20px var(--ink-drop-shadow);
+}
+.ink-drop.small { width: 6px; height: 6px; }
+.ink-drop.medium { width: 14px; height: 14px; }
+.ink-drop.large { width: 24px; height: 24px; }
+.ink-drop.xlarge { width: 36px; height: 36px; }
+.ink-drop.seal-color { background: var(--seal); }
+
+@keyframes inkSplash {
+  0% {
+    opacity: 0.9;
+    transform: scale(0);
+    filter: blur(0px);
+  }
+  20% {
+    opacity: 0.8;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0.15;
+    transform: scale(1.8);
+    filter: blur(3px);
+  }
+}
+
+/* ===================================================================
+   FOOTER
+   =================================================================== */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 4rem 0 3rem;
+  margin-top: 5rem;
+  border-top: 1px solid var(--footer-sep);
+  transition: border-color 0.5s;
+}
+.footer-label {
+  font-family: 'Yuji Boku', serif;
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  letter-spacing: 8px;
+  opacity: 0.5;
+}
+.footer-char {
+  font-size: 3rem;
+  color: var(--ink-faint);
+  opacity: 0.15;
+  letter-spacing: 4px;
+  font-family: 'Yuji Boku', serif;
+}
+.theme-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.t-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--ink-faint);
+  background: transparent;
+  color: var(--ink-light);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.t-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  z-index: -1;
+}
+.t-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+  letter-spacing: 5px;
+}
+.t-btn:hover::before { transform: scaleX(1); }
+.t-btn.active {
+  background: var(--ink);
+  color: var(--bg-base);
+  border-color: var(--ink);
+}
+.t-btn.active::before { transform: scaleX(1); }
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  opacity: 0.4;
+}
+.footer-links a {
+  color: var(--ink-light);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+.footer-links a:hover { opacity: 1; }
+
+/* ===================================================================
+   REVEAL (IntersectionObserver)
+   =================================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.12s; }
+.reveal-delay-2 { transition-delay: 0.24s; }
+.reveal-delay-3 { transition-delay: 0.36s; }
+.reveal-delay-4 { transition-delay: 0.48s; }
+
+/* ===================================================================
+   RESPONSIVE
+   =================================================================== */
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    min-height: auto;
+    padding: 6rem 0 3rem;
+  }
+  .hero-sep { display: none; }
+  .hero h1 { font-size: clamp(2rem, 8vw, 3.5rem); }
+  .enso { width: 160px; height: 160px; }
+  .enso-inner { inset: 12px; }
+
+  .showcase {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .tea-steps {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .haiku-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0; right: -280px;
+    width: 240px;
+    height: 100vh;
+    flex-direction: column;
+    gap: 0;
+    padding: 6rem 2rem 2rem;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border);
+    transition: right 0.5s cubic-bezier(0.4,0,0.2,1),
+                background 0.5s;
+  }
+  .nav-links.open { right: 0; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 5px;
+  }
+  .nav-links a::after { display: none; }
+  .nav-links a:hover { letter-spacing: 7px; }
+  .nav-toggle { display: flex; }
+
+  .app { padding: 0 1.2rem; }
+
+  .kakejiku { padding: 3rem 1.5rem; }
+  .kakejiku-quote { font-size: 1.2rem; }
+
+  .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero { gap: 3rem; }
+  .showcase { gap: 3rem; }
+  .tea-steps { gap: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== AMBIENT LAYERS ===== -->
+<div class="ambient-layer">
+  <div class="ambient-bg" id="ambientBg1"></div>
+  <div class="ambient-bg-pan" id="ambientBg2"></div>
+</div>
+<div class="paper-grain"></div>
+<div class="shade-top"></div>
+<div class="vignette"></div>
+<div class="scrim" id="scrim"></div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <a href="#" class="nav-brand" aria-label="Sen-Suiga home">
+    <span class="nav-brand-char">泉翠</span>
+    <span class="nav-brand-text">SEN<br>SUI<br>GA</span>
+  </a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#stillness">静寂</a></li>
+    <li><a href="#space">余白</a></li>
+    <li><a href="#haiku">俳句</a></li>
+    <li><a href="#scroll">掛軸</a></li>
+    <li><a href="#tea">茶道</a></li>
+    <li><a href="#ink">墨</a></li>
+  </ul>
+</nav>
+
+<!-- ===== APP ===== -->
+<div class="app">
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="stillness">
+  <div class="hero-sep"></div>
+  <div class="hero-text reveal">
+    <span class="hero-kigo">— <em>冬</em>の朝 —</span>
+    <h1>
+      EMPTINESS<br>
+      IS <span class="seal-char" id="sealTitle" title="空 — Emptiness">空</span>
+    </h1>
+    <p class="hero-haiku">
+      白紙の上に<br>
+      一滴の墨が<br>
+      世界を生む
+    </p>
+    <div class="sumi-badge">
+      <span class="sumi-dot n1"></span>
+      <span class="sumi-dot n2"></span>
+      <span class="sumi-dot n3"></span>
+      <span class="sumi-dot n4"></span>
+      <span class="sumi-dot n5"></span>
+      <span style="margin-left:6px;">五墨</span>
+    </div>
+    <a href="#space" class="hero-cta">
+      静寂に入る &#8594;
+    </a>
+  </div>
+  <div class="hero-void reveal reveal-delay-1">
+    <div class="enso-wrap">
+      <div class="enso">
+        <div class="enso-inner"></div>
+      </div>
+      <span class="enso-char">無</span>
+    </div>
+    <div class="seal-stamp" id="sealStamp" role="button" tabindex="0" aria-label="Press seal stamp">
+      印
+    </div>
+    <span class="label">— 空即是色 —</span>
+  </div>
+</section>
+
+<!-- ===== BRUSH DIVIDER ===== -->
+<div class="brush-divider reveal">
+  <div class="brush-stroke"></div>
+  <div class="brush-stroke-thick"></div>
+</div>
+
+<!-- ===== SHOWCASE 1: MA ===== -->
+<section class="showcase reveal" id="space">
+  <div class="showcase-img">
+    <img src="https://images.unsplash.com/photo-1516961642265-531546e84af2?q=80&w=1200&auto=format&fit=crop" alt="Zen rock garden at Ryoan-ji temple" loading="lazy">
+  </div>
+  <div class="showcase-text">
+    <span class="sec-num">01</span>
+    <h2>間 &#8212; Ma</h2>
+    <span class="jp-reading">INTERVAL · SPACE · VOID</span>
+    <p>Interval, jeda, ruang antara. Timing adalah materi desain keempat &#8212; bukan hanya visual, tapi jeda ritmis antara elemen. Dalam kekosongan, kita menemukan kebermaknaan. Batu-batu yang ditempatkan dengan sengaja di atas pasir yang disisir dengan teliti menciptakan dialog antara ada dan tiada.</p>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span style="color:var(--seal);font-size:1rem">&#9675;</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRUSH DIVIDER ===== -->
+<div class="brush-divider reveal">
+  <div class="brush-stroke"></div>
+</div>
+
+<!-- ===== HAIKU CARD GRID ===== -->
+<section class="haiku-grid reveal" id="haiku">
+  <div class="haiku-card reveal reveal-delay-1">
+    <div class="card-jp">余白</div>
+    <span class="card-ro">Yohaku</span>
+    <p class="card-body">Kekosongan bukan ketiadaan. Ruang putih yang disengaja memberi kekuatan pada elemen yang hadir. Kurangi, bukan tambahkan &#8212; setiap ruang kosong bernafas.</p>
+  </div>
+  <div class="haiku-card reveal reveal-delay-2">
+    <div class="card-jp">筆跡</div>
+    <span class="card-ro">Hiseki</span>
+    <p class="card-body">Setiap garis adalah jejak kuas &#8212; tidak sempurna, tidak seragam, menyimpan energi gerakan tangan dalam satu sapuan yang tak terulang.</p>
+  </div>
+  <div class="haiku-card reveal reveal-delay-3">
+    <div class="card-jp">墨色</div>
+    <span class="card-ro">Bokushoku</span>
+    <p class="card-body">Lima level tinta: dari hitam pekat ke abu-abu kabut. Gradasi monokromatik yang lebih kaya dari palet warna mana pun &#8212; setiap nuansa punya nama.</p>
+  </div>
+  <div class="haiku-card reveal reveal-delay-4">
+    <div class="card-jp">静寂</div>
+    <span class="card-ro">Seijaku</span>
+    <p class="card-body">Ketenangan di pusat aktivitas. Seperti permukaan kolam yang tenang setelah batu dilempar &#8212; riak perlahan lenyap, kembali keheningan semula.</p>
+  </div>
+</section>
+
+<!-- ===== BRUSH DIVIDER ===== -->
+<div class="brush-divider reveal">
+  <div class="brush-stroke"></div>
+  <div class="brush-stroke-thick"></div>
+</div>
+
+<!-- ===== SHOWCASE 2: TAKE ===== -->
+<section class="showcase reveal">
+  <div class="showcase-text">
+    <span class="sec-num">02</span>
+    <h2>竹 &#8212; Take</h2>
+    <span class="jp-reading">BAMBOO · RESILIENCE</span>
+    <p>Lentur namun kuat. Bambu mengajarkan kita tentang ketahanan &#8212; menekuk saat angin kencang, tapi tidak patah. Dalam kesederhanaan batang yang beruas-ruas, kita menemukan keindahan yang abadi. Prinsip yang sama berlaku pada desain yang tangguh dan adaptif.</p>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span style="color:var(--seal);font-size:1rem">&#9675;</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+  <div class="showcase-img">
+    <img src="https://images.unsplash.com/photo-1533038590840-1cde6e668a91?q=80&w=1200&auto=format&fit=crop" alt="Bamboo forest path in Sagano" loading="lazy">
+  </div>
+</section>
+
+<!-- ===== BRUSH DIVIDER ===== -->
+<div class="brush-divider reveal">
+  <div class="brush-stroke"></div>
+</div>
+
+<!-- ===== KAKEJIKU SCROLL ===== -->
+<section class="kakejiku reveal" id="scroll">
+  <div class="kakejiku-rod top"></div>
+  <div class="kakejiku-rod bottom"></div>
+  <div class="kakejiku-shield"></div>
+
+  <p class="kakejiku-quote">
+    「一筆の中に<br>
+    &nbsp;&nbsp;宇宙が宿る」<br>
+    <span class="quote-en">&#8212; within a single brush stroke, the universe resides</span>
+    <span class="quote-attrib">&#8212; Sengai Gibon, 18th c.</span>
+  </p>
+
+  <div class="btn-wrap">
+    <button class="fude-btn" id="scrollBtn" type="button">掛軸を開く &#9660;</button>
+    <button class="fude-btn ink-trigger" id="inkTriggerBtn" type="button">墨滴 &#9675;</button>
+  </div>
+
+  <div class="kakejiku-content" id="scrollContent">
+    <div class="kakejiku-content-inner">
+      <p>Kakejiku (掛軸) adalah gulungan gantung Jepang yang menampilkan kaligrafi atau lukisan sumi-e. Digunakan dalam upacara minum teh (chanoyu), kakejiku dipilih sesuai musim dan kesempatan. Setiap gulungan adalah kontemplasi &#8212; satu fokus, satu momen perhatian penuh.</p>
+      <p style="margin-top:1rem;color:var(--ink-light);font-size:0.78rem;">&#8212; scroll ini adalah pengingat: dalam setiap goresan kuas kecil, terkandung seluruh alam semesta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRUSH DIVIDER ===== -->
+<div class="brush-divider reveal">
+  <div class="brush-stroke"></div>
+  <div class="brush-stroke-thick"></div>
+</div>
+
+<!-- ===== TEA CEREMONY STEPS ===== -->
+<section class="tea-section reveal" id="tea">
+  <div class="tea-header">
+    <span class="sec-num">03</span>
+    <h2>茶道 &#8212; Sadō</h2>
+    <span class="jp-sub">THE WAY OF TEA</span>
+  </div>
+  <div class="tea-steps">
+    <div class="tea-step reveal reveal-delay-1" data-step="1">
+      <span class="step-icon">&#127861;</span>
+      <div class="tea-step-num">一</div>
+      <h3>Kaiseki</h3>
+      <span class="step-jp">懐石</span>
+      <p>Makanan ringan disajikan sebelum teh. Setiap hidangan adalah karya seni musiman &#8212; lima rasa, lima warna, lima cara persiapan. Menghargai alam melalui rasa.</p>
+    </div>
+    <div class="tea-step reveal reveal-delay-2" data-step="2">
+      <span class="step-icon">&#127862;</span>
+      <div class="tea-step-num">二</div>
+      <h3>Koicha</h3>
+      <span class="step-jp">濃茶</span>
+      <p>Teh kental dibagi dalam satu mangkuk di antara para tamu. Tindakan berbagi ini melambangkan persatuan dan kepercayaan. Setiap tegukan adalah meditasi.</p>
+    </div>
+    <div class="tea-step reveal reveal-delay-3" data-step="3">
+      <span class="step-icon">&#127861;</span>
+      <div class="tea-step-num">三</div>
+      <h3>Usucha</h3>
+      <span class="step-jp">薄茶</span>
+      <p>Teh ringan disajikan secara individual. Tuan rumah menyiapkan setiap mangkuk dengan penuh perhatian &#8212; gerakan presisi, hening, penuh makna. Kesempurnaan dalam kesederhanaan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRUSH DIVIDER ===== -->
+<div class="brush-divider reveal">
+  <div class="brush-stroke"></div>
+</div>
+
+<!-- ===== INK DROP CANVAS ===== -->
+<section class="reveal" id="ink">
+  <div class="ink-canvas-wrap">
+    <div class="ink-canvas" id="inkCanvas"></div>
+  </div>
+  <div class="ink-drop-btn-wrap">
+    <button class="fude-btn ink-trigger" id="inkBtnSmall" type="button">小 &#183; Small Drop</button>
+    <button class="fude-btn ink-trigger" id="inkBtnLarge" type="button">大 &#183; Large Drop</button>
+    <button class="fude-btn ink-trigger" id="inkBtnSeal" type="button">朱 &#183; Seal Ink</button>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <span class="footer-label">泉翠</span>
+  <div class="footer-char">山水</div>
+  <div class="theme-btns">
+    <button class="t-btn" data-theme-name="sumi" onclick="switchTheme('sumi')">墨 &middot; Sumi</button>
+    <button class="t-btn" data-theme-name="washi" onclick="switchTheme('washi')">和紙 &middot; Washi</button>
+    <button class="t-btn" data-theme-name="gindama" onclick="switchTheme('gindama')">銀魂 &middot; Gindama</button>
+    <button class="t-btn" data-theme-name="kurenai" onclick="switchTheme('kurenai')">紅 &middot; Kurenai</button>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#stillness">静寂</a></li>
+    <li><a href="#space">余白</a></li>
+    <li><a href="#scroll">掛軸</a></li>
+    <li><a href="#tea">茶道</a></li>
+  </ul>
+  <span style="font-size:0.55rem;letter-spacing:3px;color:var(--ink-faint);font-family:'Zen Kaku Gothic New',sans-serif;">
+    &copy; 2026 &middot; Sen-Suiga &middot; 山水
+  </span>
+</footer>
+
+</div><!-- /app -->
+
+<script>
+/* ===================================================================
+   SEN-SUIGA — Interactive
+   =================================================================== */
+
+/* ---------- Theme switcher ---------- */
+function switchTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('sen-theme', theme); } catch(e) {}
+  var btns = document.querySelectorAll('.t-btn[data-theme-name]');
+  btns.forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-theme-name') === theme);
+  });
+}
+// Init active button
+(function initThemeBtn() {
+  var t = document.documentElement.getAttribute('data-theme') || 'sumi';
+  var btn = document.querySelector('.t-btn[data-theme-name="' + t + '"]');
+  if (btn) btn.classList.add('active');
+})();
+
+/* ---------- Scroll Reveal ---------- */
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.reveal').forEach(function(el) {
+  obs.observe(el);
+});
+
+/* ---------- Stamp Seal Animation ---------- */
+var sealStamp = document.getElementById('sealStamp');
+if (sealStamp) {
+  function animateStamp() {
+    sealStamp.classList.remove('animate');
+    // Force reflow
+    void sealStamp.offsetWidth;
+    sealStamp.classList.add('animate');
+
+    // also animate the title seal character
+    var sealChar = document.getElementById('sealTitle');
+    if (sealChar) {
+      sealChar.style.textShadow = '0 0 60px var(--seal-glow)';
+      setTimeout(function() {
+        sealChar.style.textShadow = '';
+      }, 500);
+    }
+  }
+  sealStamp.addEventListener('click', animateStamp);
+  sealStamp.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); animateStamp(); }
+  });
+
+  // Auto-animate on first visible (once)
+  var stampObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        setTimeout(animateStamp, 800);
+        stampObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  stampObs.observe(sealStamp);
+}
+
+/* ---------- Kakejiku Scroll Open/Close ---------- */
+(function() {
+  var btn = document.getElementById('scrollBtn');
+  var content = document.getElementById('scrollContent');
+  if (btn && content) {
+    var closedText = '掛軸を開く ▼';
+    var openText = '掛軸を閉じる ▲';
+    btn.addEventListener('click', function() {
+      var isOpen = content.classList.toggle('open');
+      btn.textContent = isOpen ? openText : closedText;
+    });
+  }
+})();
+
+/* ---------- Ink Drop System ---------- */
+(function() {
+  var canvas = document.getElementById('inkCanvas');
+  if (!canvas) return;
+
+  function createDrop(size, useSeal) {
+    var rect = canvas.getBoundingClientRect();
+    var drop = document.createElement('div');
+    drop.classList.add('ink-drop');
+    if (useSeal) drop.classList.add('seal-color');
+
+    var sizeClass = 'medium';
+    if (size <= 6) sizeClass = 'small';
+    else if (size <= 14) sizeClass = 'medium';
+    else if (size <= 24) sizeClass = 'large';
+    else sizeClass = 'xlarge';
+    drop.classList.add(sizeClass);
+
+    // Random position
+    var x = 5 + Math.random() * (rect.width - 40);
+    var y = 10 + Math.random() * (rect.height - 50);
+
+    drop.style.left = x + 'px';
+    drop.style.top = y + 'px';
+    drop.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
+    drop.style.animationDelay = (Math.random() * 0.3) + 's';
+
+    canvas.appendChild(drop);
+
+    // Remove after animation
+    setTimeout(function() {
+      if (drop.parentNode) drop.parentNode.removeChild(drop);
+    }, 3500);
+  }
+
+  function triggerDrop(size, useSeal) {
+    var count = size <= 6 ? 3 : 2;
+    for (var i = 0; i < count; i++) {
+      setTimeout(function() { createDrop(size, useSeal); }, i * 100);
+    }
+  }
+
+  document.getElementById('inkBtnSmall').addEventListener('click', function() { triggerDrop(6, false); });
+  document.getElementById('inkBtnLarge').addEventListener('click', function() { triggerDrop(24, false); });
+  document.getElementById('inkBtnSeal').addEventListener('click', function() { triggerDrop(14, true); });
+
+  // Also wire the ink trigger in the kakejiku section
+  var kakeInk = document.getElementById('inkTriggerBtn');
+  if (kakeInk) {
+    kakeInk.addEventListener('click', function() { triggerDrop(14, false); });
+  }
+
+  // Random ambient drops — one every 12s
+  setInterval(function() {
+    if (Math.random() > 0.5) {
+      createDrop(8 + Math.floor(Math.random() * 16), Math.random() > 0.8);
+    }
+  }, 12000);
+})();
+
+/* ---------- Tea Step Interaction ---------- */
+(function() {
+  var steps = document.querySelectorAll('.tea-step');
+  steps.forEach(function(s) {
+    s.addEventListener('click', function() {
+      steps.forEach(function(st) { st.classList.remove('active'); });
+      s.classList.add('active');
+    });
+    // Also activate on hover — keep existing tooltip feel
+    s.addEventListener('mouseenter', function() {
+      // no permanent toggle, just visual hover from CSS
+    });
+  });
+})();
+
+/* ---------- Nav Toggle (Mobile) ---------- */
+(function() {
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  var scrim = document.getElementById('scrim');
+
+  if (toggle && links) {
+    function closeNav() {
+      toggle.classList.remove('open');
+      links.classList.remove('open');
+      if (scrim) scrim.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function openNav() {
+      toggle.classList.add('open');
+      links.classList.add('open');
+      if (scrim) scrim.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    toggle.addEventListener('click', function() {
+      var isOpen = links.classList.contains('open');
+      if (isOpen) closeNav(); else openNav();
+    });
+
+    // Close on link click
+    links.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', closeNav);
+    });
+
+    // Close on scrim click
+    if (scrim) scrim.addEventListener('click', closeNav);
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && links.classList.contains('open')) closeNav();
+    });
+  }
+})();
+
+/* ---------- Parallax Ambient ---------- */
+window.addEventListener('scroll', function() {
+  var y = window.pageYOffset || window.scrollY;
+  var bg1 = document.getElementById('ambientBg1');
+  var bg2 = document.getElementById('ambientBg2');
+  if (bg1) bg1.style.transform = 'translateY(' + (y * 0.08) + 'px) scale(1.08)';
+  if (bg2) bg2.style.transform = 'translate(' + (y * -0.04) + 'px, ' + (y * 0.03) + 'px) translate(-20%, -20%)';
+});
+
+/* ---------- Smooth anchor scroll (prevent URL jank on the seal) ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+console.log('%c泉翠 — Sen-Suiga',
+  'font-family: serif; font-size: 1.2rem; color: #c84030;');
+console.log('%cSumi-e / Japanese Ink Wash Zen UI',
+  'font-family: sans-serif; font-size: 0.75rem; letter-spacing: 2px;');
+</script>
+</body>
+</html>

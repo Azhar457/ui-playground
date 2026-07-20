@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLOUDFORGE — Industrial Data Center Interface</title>
+<script>
+!function(){try{var e=localStorage.getItem('forge-theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',e)}catch(e){document.documentElement.setAttribute('data-theme','dark')}}();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ============================================================
+   CLOUDFORGE — INDUSTRIAL DATA CENTER INTERFACE
+   Cyberpunk Industrial Frosted Metal Aesthetic
+   ============================================================ */
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--void);color:var(--steel);font-family:'Inter',sans-serif;
+  min-height:100vh;overflow-x:hidden;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+
+/* ===== THEME VARIABLES ===== */
+:root{
+  --void:#070a0f;--abyss:#0d1117;--chassis:#111827;--panel:#1a2332;
+  --steel:#e5e7eb;--slag:#6b7280;--rust:#4b5563;--oxide:#374151;
+  --cyan:#06b6d4;--cyan-rgb:6,182,212;--blue:#3b82f6;--blue-rgb:59,130,246;
+  --amber:#f59e0b;--amber-rgb:245,158,11;--emerald:#10b981;--emerald-rgb:16,185,129;
+  --crimson:#ef4444;--crimson-rgb:239,68,68;
+  --chassis-rgb:17,24,39;
+  --glass:rgba(17,24,39,0.55);--glass-border:rgba(59,130,246,0.1);
+  --glow-cyan:rgba(6,182,212,0.2);--glow-blue:rgba(59,130,246,0.15);
+  --grid:rgba(59,130,246,0.03);
+}
+[data-theme="light"]{
+  --void:#f3f4f6;--abyss:#ffffff;--chassis:#e5e7eb;--panel:#f9fafb;
+  --steel:#111827;--slag:#4b5563;--rust:#6b7280;--oxide:#9ca3af;
+  --cyan:#0891b2;--cyan-rgb:8,145,178;--blue:#2563eb;--blue-rgb:37,99,235;
+  --amber:#d97706;--amber-rgb:217,119,6;--emerald:#059669;--emerald-rgb:5,150,105;
+  --crimson:#dc2626;--crimson-rgb:220,38,38;
+  --chassis-rgb:229,231,235;
+  --glass:rgba(255,255,255,0.65);--glass-border:rgba(59,130,246,0.08);
+  --glow-cyan:rgba(8,145,178,0.12);--glow-blue:rgba(37,99,235,0.1);
+  --grid:rgba(59,130,246,0.02);
+}
+
+/* ===== THEME CROSSFADE ===== */
+html.theme-transitioning * {
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:var(--oxide);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--cyan)}
+
+/* ===== SELECTION ===== */
+::selection{background:rgba(var(--blue-rgb),0.2);color:var(--steel)}
+
+/* ===== AMBIENT LAYERS ===== */
+.bg-image{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2674&auto=format&fit=crop') center/cover no-repeat;
+  opacity:0.06;filter:saturate(0.2) contrast(1.3) blur(1px);
+  animation:ambientParallax 40s ease-in-out infinite;
+}
+[data-theme="light"] .bg-image{opacity:0.04}
+@keyframes ambientParallax{
+  0%{transform:scale(1.05) translate(0,0)}
+  25%{transform:scale(1.08) translate(-12px,-6px)}
+  50%{transform:scale(1.06) translate(8px,-10px)}
+  75%{transform:scale(1.07) translate(-6px,4px)}
+  100%{transform:scale(1.05) translate(0,0)}
+}
+
+.grid-overlay{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+.scan-line{
+  position:fixed;top:0;left:0;right:0;height:2px;z-index:1000;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0.3;animation:scan 8s linear infinite;
+}
+@keyframes scan{0%{top:-2px}100%{top:100vh}}
+
+.vignette{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.4) 100%);
+}
+[data-theme="light"] .vignette{
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.06) 100%);
+}
+
+.noise{
+  position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0.02;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ===== APP ===== */
+.app{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;flex-direction:column;gap:5rem}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 2.5rem;
+  background:linear-gradient(180deg,var(--void) 0%,transparent 100%);
+  backdrop-filter:blur(20px) saturate(1.2);
+  -webkit-backdrop-filter:blur(20px) saturate(1.2);
+  transition:all 0.5s ease;
+}
+.nav.scrolled{
+  background:rgba(var(--chassis-rgb),0.85);
+  box-shadow:0 4px 30px rgba(0,0,0,0.3),0 0 0 1px var(--glass-border);
+}
+[data-theme="light"] .nav.scrolled{
+  background:rgba(255,255,255,0.9);
+  box-shadow:0 4px 30px rgba(0,0,0,0.06),0 0 0 1px var(--glass-border);
+}
+
+.nav-brand{
+  display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;
+  font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--steel);
+  text-decoration:none;
+}
+.nav-brand .brand-icon{
+  width:32px;height:32px;border-radius:4px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:#fff;
+  box-shadow:0 0 20px rgba(var(--blue-rgb),0.3);animation:brandPulse 3s ease-in-out infinite;
+}
+@keyframes brandPulse{
+  0%,100%{box-shadow:0 0 20px rgba(var(--blue-rgb),0.3)}
+  50%{box-shadow:0 0 30px rgba(var(--blue-rgb),0.5)}
+}
+
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center}
+.nav-links a{
+  color:var(--slag);text-decoration:none;font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;
+  position:relative;padding:0.4rem 0;transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;
+  background:var(--cyan);transition:width 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:0 0 8px rgba(var(--cyan-rgb),0.6);
+}
+.nav-links a:hover{color:var(--steel)}
+.nav-links a:hover::after{width:100%}
+
+.nav-status{
+  display:flex;align-items:center;gap:8px;
+  padding:0.4rem 1rem;border-radius:4px;background:var(--glass);
+  border:1px solid var(--glass-border);font-family:'JetBrains Mono',monospace;
+  font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;color:var(--emerald);
+}
+.nav-status .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--emerald);
+  box-shadow:0 0 8px rgba(var(--emerald-rgb),0.6);animation:statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse{0%,100%{opacity:0.6}50%{opacity:1}}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:10rem 0 6rem;position:relative;gap:2rem;
+}
+
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;max-width:fit-content;
+  padding:6px 16px;border-radius:4px;background:var(--glass);
+  border:1px solid var(--glass-border);font-family:'JetBrains Mono',monospace;
+  font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);
+  backdrop-filter:blur(10px);
+}
+.hero-tag .pulse-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--emerald);
+  box-shadow:0 0 8px rgba(var(--emerald-rgb),0.6);animation:tagPulse 2s ease-in-out infinite;
+}
+@keyframes tagPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+.hero h1{
+  font-family:'Rajdhani',sans-serif;font-size:clamp(3rem,7vw,6rem);font-weight:700;
+  line-height:0.95;letter-spacing:-1px;color:var(--steel);max-width:700px;
+  text-shadow:0 4px 30px rgba(0,0,0,0.3);
+}
+.hero h1 .cyan{color:var(--cyan);text-shadow:0 0 40px rgba(var(--cyan-rgb),0.3)}
+.hero h1 .blue{color:var(--blue);text-shadow:0 0 40px rgba(var(--blue-rgb),0.3)}
+
+.hero-desc{
+  max-width:560px;font-size:1.05rem;color:var(--slag);font-weight:400;line-height:1.8;
+}
+
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+
+.btn-cyan{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:0.9rem 2rem;border-radius:4px;border:none;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;
+  font-family:'JetBrains Mono',monospace;font-size:0.8rem;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-decoration:none;
+  box-shadow:0 4px 20px rgba(var(--blue-rgb),0.3),0 0 0 1px rgba(255,255,255,0.1) inset;
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden;
+}
+.btn-cyan::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.15) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform 0.6s;
+}
+.btn-cyan:hover{
+  transform:translateY(-2px);box-shadow:0 8px 30px rgba(var(--blue-rgb),0.4),0 0 0 1px rgba(255,255,255,0.15) inset;
+  letter-spacing:2px;
+}
+.btn-cyan:hover::before{transform:translateX(100%)}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:0.9rem 2rem;border-radius:4px;border:1px solid var(--glass-border);
+  background:var(--glass);color:var(--steel);font-family:'JetBrains Mono',monospace;
+  font-size:0.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;backdrop-filter:blur(10px);
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.btn-ghost:hover{
+  border-color:rgba(var(--cyan-rgb),0.3);background:rgba(var(--cyan-rgb),0.05);
+  box-shadow:0 0 20px rgba(var(--cyan-rgb),0.1);transform:translateY(-2px);
+}
+
+.hero-metrics{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem;
+  padding-top:2rem;border-top:1px solid var(--glass-border);
+}
+.hero-metric{text-align:center}
+.hero-metric .value{
+  font-family:'Rajdhani',sans-serif;font-size:2.2rem;font-weight:700;color:var(--steel);line-height:1;
+}
+.hero-metric .value .unit{font-size:0.9rem;color:var(--slag);margin-left:2px}
+.hero-metric .label{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--slag);margin-top:0.5rem;
+}
+.hero-metric .trend{
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--emerald);margin-top:0.25rem;
+}
+.hero-metric .trend.down{color:var(--crimson)}
+
+/* ============================================================
+   SHOWCASE SECTIONS
+   ============================================================ */
+.showcase{
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin:4rem 0;
+}
+.showcase.reverse{direction:rtl}
+.showcase.reverse>*{direction:ltr}
+
+.showcase-img-wrap{
+  position:relative;border-radius:8px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 0 1px var(--glass-border);
+  transition:all 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.showcase-img-wrap:hover{
+  box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(var(--cyan-rgb),0.2),0 0 40px rgba(var(--cyan-rgb),0.05);
+  transform:translateY(-8px);
+}
+.showcase-img-wrap::before{
+  content:'';position:absolute;inset:0;border:1px solid rgba(var(--cyan-rgb),0.1);border-radius:8px;z-index:2;pointer-events:none;
+}
+.showcase-img-wrap::after{
+  content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(7,10,15,0.7) 100%);z-index:1;pointer-events:none;
+}
+[data-theme="light"] .showcase-img-wrap::after{
+  background:linear-gradient(180deg,transparent 60%,rgba(243,244,246,0.6) 100%);
+}
+.showcase-img-wrap img{
+  width:100%;height:380px;object-fit:cover;transition:transform 1.2s cubic-bezier(0.4,0,0.2,1);
+  filter:saturate(0.7) contrast(1.1);
+}
+.showcase-img-wrap:hover img{transform:scale(1.08)}
+
+.showcase-text h2{
+  font-family:'Rajdhani',sans-serif;font-size:2.8rem;font-weight:700;line-height:1.1;
+  letter-spacing:-0.5px;color:var(--steel);margin-bottom:1.5rem;
+}
+.showcase-text h2 .cyan{color:var(--cyan)}
+.showcase-text p{
+  font-size:1.05rem;color:var(--slag);line-height:1.9;font-weight:400;margin-bottom:1.5rem;
+}
+.showcase-text .specs{
+  display:flex;flex-direction:column;gap:0.75rem;
+}
+.spec-row{
+  display:flex;align-items:center;gap:1rem;font-family:'JetBrains Mono',monospace;
+  font-size:0.75rem;color:var(--slag);
+}
+.spec-row .bar{flex:1;height:4px;border-radius:2px;background:var(--oxide);overflow:hidden;max-width:200px}
+.spec-row .bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 1.5s cubic-bezier(0.4,0,0.2,1)}
+.spec-row .pct{min-width:40px;text-align:right;color:var(--steel)}
+
+/* ============================================================
+   RACK UNITS
+   ============================================================ */
+.rack-section{margin:4rem 0}
+.section-header{
+  display:flex;align-items:center;gap:1rem;margin-bottom:3rem;
+}
+.section-header h3{
+  font-family:'JetBrains Mono',monospace;font-size:0.75rem;letter-spacing:3px;
+  text-transform:uppercase;color:var(--slag);font-weight:600;
+}
+.section-header .line{flex:1;height:1px;background:linear-gradient(90deg,var(--glass-border),transparent)}
+
+.rack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem}
+
+.rack-card{
+  background:var(--glass);backdrop-filter:blur(20px) saturate(1.2);
+  -webkit-backdrop-filter:blur(20px) saturate(1.2);
+  border:1px solid var(--glass-border);border-radius:6px;
+  padding:2rem;position:relative;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.03);
+  transition:all 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.rack-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  background:linear-gradient(180deg,var(--blue),var(--cyan));opacity:0.6;
+  transition:opacity 0.3s;
+}
+.rack-card:hover{
+  border-color:rgba(var(--cyan-rgb),0.2);transform:translateY(-6px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.3),0 0 30px rgba(var(--cyan-rgb),0.05),inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.rack-card:hover::before{opacity:1}
+
+.rack-card .rack-label{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--slag);margin-bottom:1rem;
+}
+.rack-card .rack-value{
+  font-family:'Rajdhani',sans-serif;font-size:2.5rem;font-weight:700;color:var(--steel);line-height:1;
+}
+.rack-card .rack-value .unit{font-size:1rem;color:var(--slag);margin-left:4px}
+.rack-card .rack-status{
+  display:flex;align-items:center;gap:8px;margin-top:1rem;
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;
+}
+.rack-card .rack-status .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--emerald);
+  box-shadow:0 0 8px rgba(var(--emerald-rgb),0.5);animation:statusPulse 2s ease-in-out infinite;
+}
+.rack-card .rack-status.warn{color:var(--amber)}
+.rack-card .rack-status.warn .dot{background:var(--amber);box-shadow:0 0 8px rgba(var(--amber-rgb),0.5)}
+.rack-card .rack-status.crit{color:var(--crimson)}
+.rack-card .rack-status.crit .dot{background:var(--crimson);box-shadow:0 0 8px rgba(var(--crimson-rgb),0.5)}
+
+.rack-card .temp-bar{
+  margin-top:1.5rem;height:3px;border-radius:2px;background:var(--oxide);overflow:hidden;
+}
+.rack-card .temp-fill{
+  height:100%;border-radius:2px;transition:width 1s ease;
+}
+.rack-card .temp-label{
+  display:flex;justify-content:space-between;margin-top:0.5rem;
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--slag);
+}
+
+/* ===== RACK HOVER TOOLTIP ===== */
+.rack-tooltip{
+  position:fixed;z-index:200;pointer-events:none;max-width:260px;
+  padding:1rem 1.25rem;border-radius:6px;
+  background:var(--panel);border:1px solid var(--glass-border);
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;
+  color:var(--steel);opacity:0;transform:translateY(6px);
+  transition:opacity 0.3s,transform 0.3s;
+  box-shadow:0 8px 32px rgba(0,0,0,0.35);
+}
+.rack-tooltip.visible{opacity:1;transform:translateY(0)}
+.rack-tooltip .tt-title{font-size:0.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:0.6rem;font-weight:600}
+.rack-tooltip .tt-info{color:var(--slag);line-height:1.7;font-size:0.7rem}
+.rack-tooltip .tt-detail{color:var(--steel);margin-top:0.4rem;padding-top:0.5rem;border-top:1px solid var(--glass-border);display:flex;gap:0.75rem;flex-wrap:wrap}
+.rack-tooltip .tt-detail span{font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;color:var(--slag)}
+.rack-tooltip .tt-detail span strong{color:var(--cyan);display:block;margin-top:2px;font-size:0.85rem}
+
+/* ============================================================
+   HEALTH NODES
+   ============================================================ */
+.health-section{margin:4rem 0}
+
+.health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem}
+
+.health-node{
+  background:var(--glass);backdrop-filter:blur(16px) saturate(1.1);
+  -webkit-backdrop-filter:blur(16px) saturate(1.1);
+  border:1px solid var(--glass-border);border-radius:6px;
+  padding:2rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1rem;
+  transition:all 0.5s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden;
+}
+.health-node::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(var(--cyan-rgb),0.2),transparent);
+  opacity:0;transition:opacity 0.5s;
+}
+.health-node:hover{
+  border-color:rgba(var(--cyan-rgb),0.15);transform:translateY(-6px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.25),0 0 20px rgba(var(--cyan-rgb),0.03);
+}
+.health-node:hover::before{opacity:1}
+
+.health-node .icon{
+  width:48px;height:48px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(var(--blue-rgb),0.1),rgba(var(--cyan-rgb),0.1));
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--blue);
+  border:1px solid rgba(var(--blue-rgb),0.15);transition:all 0.4s;
+}
+.health-node:hover .icon{
+  transform:scale(1.1);box-shadow:0 0 20px rgba(var(--blue-rgb),0.1);
+  border-color:rgba(var(--cyan-rgb),0.3);
+}
+.health-node .name{
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--slag);
+}
+.health-node .health-bar{
+  width:100%;height:4px;border-radius:2px;background:var(--oxide);overflow:hidden;
+}
+.health-node .health-fill{
+  width:0;height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.health-node .health-pct{
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--steel);
+}
+
+/* ============================================================
+   LOG PANEL
+   ============================================================ */
+.log-section{margin:4rem 0}
+
+.log-panel{
+  background:var(--glass);backdrop-filter:blur(24px) saturate(1.3);
+  -webkit-backdrop-filter:blur(24px) saturate(1.3);
+  border:1px solid var(--glass-border);border-radius:6px;
+  padding:2rem;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
+.log-panel::before{
+  content:'';position:absolute;top:0;left:0;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(var(--cyan-rgb),0.15),transparent);
+}
+
+.log-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;
+  padding-bottom:1rem;border-bottom:1px solid var(--glass-border);
+}
+.log-header h3{
+  font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--slag);font-weight:600;
+}
+.log-header .live-badge{
+  display:flex;align-items:center;gap:6px;font-size:0.6rem;letter-spacing:1px;
+  text-transform:uppercase;color:var(--emerald);
+}
+.log-header .live-badge .dot{
+  width:5px;height:5px;border-radius:50%;background:var(--emerald);
+  box-shadow:0 0 6px rgba(var(--emerald-rgb),0.6);animation:statusPulse 2s ease-in-out infinite;
+}
+
+.log-entry{
+  display:grid;grid-template-columns:80px 60px 1fr;gap:1rem;align-items:center;
+  padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  font-size:0.75rem;transition:all 0.3s;
+}
+.log-entry:hover{background:rgba(var(--blue-rgb),0.03);padding-left:0.5rem;margin:0 -0.5rem;border-radius:4px}
+
+.log-time{color:var(--oxide);font-size:0.65rem}
+.log-lvl{padding:2px 8px;border-radius:3px;font-size:0.6rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;width:fit-content}
+.log-lvl.info{background:rgba(var(--blue-rgb),0.1);color:var(--blue)}
+.log-lvl.ok{background:rgba(var(--emerald-rgb),0.1);color:var(--emerald)}
+.log-lvl.warn{background:rgba(var(--amber-rgb),0.1);color:var(--amber)}
+.log-lvl.crit{background:rgba(var(--crimson-rgb),0.1);color:var(--crimson)}
+.log-msg{color:var(--slag)}
+
+/* ============================================================
+   NETWORK MAP
+   ============================================================ */
+.network-section{margin:4rem 0}
+
+.network-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+
+.network-node{
+  background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glass-border);
+  border-radius:6px;padding:2rem;transition:all 0.5s cubic-bezier(0.4,0,0.2,1);
+  position:relative;overflow:hidden;
+}
+.network-node::before{
+  content:'';position:absolute;inset:0;border-radius:6px;
+  background:radial-gradient(circle at 50% 0%,rgba(var(--cyan-rgb),0.03) 0%,transparent 70%);pointer-events:none;
+}
+.network-node:hover{
+  border-color:rgba(var(--cyan-rgb),0.15);transform:translateY(-4px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.25);
+}
+.network-node .node-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;
+}
+.network-node .node-header h4{
+  font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:600;color:var(--steel);
+}
+.network-node .node-header .status{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:1px;
+  text-transform:uppercase;padding:3px 10px;border-radius:3px;
+}
+.network-node .node-header .status.online{background:rgba(var(--emerald-rgb),0.1);color:var(--emerald)}
+.network-node .node-header .status.degraded{background:rgba(var(--amber-rgb),0.1);color:var(--amber)}
+
+.network-node .metrics{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.network-node .metric .label{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:1px;
+  text-transform:uppercase;color:var(--slag);margin-bottom:0.4rem;
+}
+.network-node .metric .value{
+  font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;color:var(--steel);line-height:1;
+}
+.network-node .metric .value .unit{font-size:0.8rem;color:var(--slag);margin-left:2px}
+
+/* ============================================================
+   FOOTER & THEME
+   ============================================================ */
+.footer{
+  display:flex;flex-direction:column;align-items:center;gap:2rem;
+  padding:5rem 0 3rem;border-top:1px solid var(--glass-border);margin-top:4rem;
+}
+.footer-brand{
+  display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;
+  font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--steel);
+}
+.footer-brand .dot{
+  width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));
+  animation:statusPulse 2s ease-in-out infinite;
+}
+.footer-links{display:flex;gap:2.5rem;list-style:none;flex-wrap:wrap;justify-content:center}
+.footer-links a{
+  color:var(--slag);text-decoration:none;font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s;
+}
+.footer-links a:hover{color:var(--cyan)}
+.footer-copy{
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:1px;
+  color:var(--oxide);margin-top:1rem;
+}
+
+.theme-switcher{display:flex;gap:1rem;align-items:center}
+.theme-switcher span{
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--slag);
+}
+.theme-btn{
+  padding:0.6rem 1.4rem;border-radius:4px;border:1px solid var(--glass-border);
+  background:var(--glass);color:var(--slag);font-family:'JetBrains Mono',monospace;
+  font-size:0.65rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+  backdrop-filter:blur(10px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.theme-btn:hover{border-color:rgba(var(--cyan-rgb),0.3);color:var(--steel);background:rgba(var(--cyan-rgb),0.05)}
+.theme-btn.active{border-color:rgba(var(--cyan-rgb),0.4);color:var(--cyan);background:rgba(var(--cyan-rgb),0.08);box-shadow:0 0 15px rgba(var(--cyan-rgb),0.1)}
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal{opacity:0;transform:translateY(50px);transition:all 1s cubic-bezier(0.4,0,0.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:900px){
+  .showcase{grid-template-columns:1fr;gap:3rem}
+  .showcase.reverse{direction:ltr}
+  .hero-metrics{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+  .app{padding:0 1.25rem}
+  .hero h1{font-size:clamp(2.5rem,10vw,4rem)}
+  .showcase-text h2{font-size:2rem}
+  .log-entry{grid-template-columns:60px 50px 1fr}
+}
+@media(max-width:768px){
+  .hero-metrics{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .rack-grid{grid-template-columns:repeat(2,1fr)}
+  .health-grid{grid-template-columns:repeat(2,1fr)}
+  .showcase{grid-template-columns:1fr;gap:2rem}
+  .showcase.reverse{direction:ltr}
+  .nav-links{display:none}
+  .nav{padding:0.75rem 1.25rem}
+  .app{padding:0 1rem;gap:3rem}
+  .hero{padding:7rem 0 4rem}
+  .hero h1{font-size:clamp(2rem,8vw,3.5rem)}
+  .network-grid{grid-template-columns:1fr}
+  .hero-metrics{margin-top:2rem;padding-top:1.5rem}
+  .rack-card{padding:1.5rem}
+  .health-node{padding:1.5rem}
+  .hero-tag{font-size:0.6rem}
+  .btn-cyan,.btn-ghost{padding:0.7rem 1.4rem;font-size:0.7rem}
+}
+@media(max-width:600px){
+  .rack-grid{grid-template-columns:1fr}
+  .health-grid{grid-template-columns:1fr 1fr}
+  .network-grid{grid-template-columns:1fr}
+  .hero-metrics{grid-template-columns:1fr 1fr;gap:1rem}
+  .footer-links{gap:1.5rem}
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+.load-screen{
+  position:fixed;inset:0;z-index:9999;background:var(--void);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+  transition:opacity 0.8s,visibility 0.8s;
+}
+.load-screen.hidden{opacity:0;visibility:hidden}
+.load-bar{
+  width:200px;height:3px;border-radius:2px;background:var(--oxide);overflow:hidden;
+}
+.load-bar .fill{
+  height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));
+  animation:loadFill 1.5s ease-out forwards;width:0;
+}
+@keyframes loadFill{to{width:100%}}
+.load-text{
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:4px;
+  text-transform:uppercase;color:var(--slag);animation:loadPulse 1.5s ease-in-out infinite;
+}
+@keyframes loadPulse{0%,100%{opacity:0.4}50%{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="load-screen" id="loader">
+  <div class="load-bar"><div class="fill"></div></div>
+  <div class="load-text">Initializing CloudForge...</div>
+</div>
+
+<!-- Ambient Layers -->
+<div class="bg-image"></div>
+<div class="grid-overlay"></div>
+<div class="scan-line"></div>
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="navbar">
+  <a href="#" class="nav-brand">
+    <div class="brand-icon"><i class="fas fa-server"></i></div>
+    CLOUDFORGE
+  </a>
+  <ul class="nav-links">
+    <li><a href="#racks">Racks</a></li>
+    <li><a href="#health">Health</a></li>
+    <li><a href="#logs">Logs</a></li>
+    <li><a href="#network">Network</a></li>
+  </ul>
+  <div class="nav-status">
+    <span class="dot"></span>
+    System Online
+  </div>
+</nav>
+
+<!-- Rack Hover Tooltip -->
+<div class="rack-tooltip" id="rackTooltip">
+  <div class="tt-title"></div>
+  <div class="tt-info"></div>
+  <div class="tt-detail"></div>
+</div>
+
+<!-- App -->
+<div class="app">
+
+<!-- HERO -->
+<section class="hero" id="racks">
+  <div class="hero-tag reveal">
+    <span class="pulse-dot"></span>
+    System Operational — Uptime 99.97%
+  </div>
+
+  <h1 class="reveal reveal-delay-1">
+    INFRASTRUCTURE<br>
+    THAT <span class="cyan">BREATHES</span>
+  </h1>
+
+  <p class="hero-desc reveal reveal-delay-2">
+    Antarmuka data center modern dengan estetika industrial-frosted.
+    Logam dingin, kaca buram, indikator presisi — setiap piksel mencerminkan
+    keandalan infrastruktur kelas enterprise.
+  </p>
+
+  <div class="hero-actions reveal reveal-delay-3">
+    <a href="#health" class="btn-cyan"><i class="fas fa-terminal"></i> Open Console</a>
+    <a href="#logs" class="btn-ghost"><i class="fas fa-chart-line"></i> View Metrics</a>
+  </div>
+
+  <div class="hero-metrics reveal reveal-delay-4">
+    <div class="hero-metric">
+      <div class="value" data-target="99.97">99.97<span class="unit">%</span></div>
+      <div class="label">Uptime</div>
+      <div class="trend">↑ +0.02%</div>
+    </div>
+    <div class="hero-metric">
+      <div class="value" data-target="2.4">2.4<span class="unit">ms</span></div>
+      <div class="label">Latency</div>
+      <div class="trend">↓ -12%</div>
+    </div>
+    <div class="hero-metric">
+      <div class="value" data-target="847">847<span class="unit">TB</span></div>
+      <div class="label">Storage</div>
+      <div class="trend">↑ +34TB</div>
+    </div>
+    <div class="hero-metric">
+      <div class="value" data-target="12.4">12.4<span class="unit">k</span></div>
+      <div class="label">Nodes</div>
+      <div class="trend">↑ +3</div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE 1 -->
+<section class="showcase reveal">
+  <div class="showcase-img-wrap">
+    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop" alt="Data Center" loading="lazy">
+  </div>
+  <div class="showcase-text">
+    <h2>Enterprise <span class="cyan">Grade</span> Hardware</h2>
+    <p>
+      Setiap rack dirancang untuk redundansi maksimal. PSU hot-swappable,
+      pendingin cair berbasis AI, dan monitoring suhu per-node yang berjalan
+      24/7 tanpa henti.
+    </p>
+    <div class="specs">
+      <div class="spec-row">
+        <span>CPU</span>
+        <div class="bar"><div class="bar-fill" style="width:68%"></div></div>
+        <span class="pct">68%</span>
+      </div>
+      <div class="spec-row">
+        <span>RAM</span>
+        <div class="bar"><div class="bar-fill" style="width:42%"></div></div>
+        <span class="pct">42%</span>
+      </div>
+      <div class="spec-row">
+        <span>IO</span>
+        <div class="bar"><div class="bar-fill" style="width:91%"></div></div>
+        <span class="pct">91%</span>
+      </div>
+      <div class="spec-row">
+        <span>NET</span>
+        <div class="bar"><div class="bar-fill" style="width:55%"></div></div>
+        <span class="pct">55%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RACK UNITS -->
+<section class="rack-section reveal" id="health">
+  <div class="section-header">
+    <h3>Rack Telemetry</h3>
+    <div class="line"></div>
+  </div>
+  <div class="rack-grid">
+    <div class="rack-card reveal reveal-delay-1" data-detail='{"cpu":"48 Cores","ram":"256GB","uptime":"142d 7h","ip":"10.0.1.1/24"}'>
+      <div class="rack-label">Rack A-01 — Compute</div>
+      <div class="rack-value" data-target="84.2">84.2<span class="unit">TB</span></div>
+      <div class="rack-status">
+        <span class="dot"></span> Operational — 12 nodes active
+      </div>
+      <div class="temp-bar"><div class="temp-fill" style="width:45%;background:linear-gradient(90deg,var(--emerald),var(--cyan))"></div></div>
+      <div class="temp-label"><span>Temp</span><span>42°C / 75°C</span></div>
+    </div>
+    <div class="rack-card reveal reveal-delay-2" data-detail='{"hdd":"8×18TB","cache":"2TB NVMe","status":"Healthy","ip":"10.0.2.1/24"}'>
+      <div class="rack-label">Rack C-07 — Storage</div>
+      <div class="rack-value" data-target="12">12<span class="unit">Nodes</span></div>
+      <div class="rack-status">
+        <span class="dot"></span> Operational — RAID 6 healthy
+      </div>
+      <div class="temp-bar"><div class="temp-fill" style="width:38%;background:linear-gradient(90deg,var(--emerald),var(--cyan))"></div></div>
+      <div class="temp-label"><span>Temp</span><span>38°C / 75°C</span></div>
+    </div>
+    <div class="rack-card reveal reveal-delay-3" data-detail='{"uplink":"100GbE","peers":"12","routes":"248k","ip":"10.0.3.1/24"}'>
+      <div class="rack-label">Rack G-03 — Network</div>
+      <div class="rack-value" data-target="2.4">2.4<span class="unit">ms</span></div>
+      <div class="rack-status">
+        <span class="dot"></span> Optimal — BGP stable
+      </div>
+      <div class="temp-bar"><div class="temp-fill" style="width:32%;background:linear-gradient(90deg,var(--emerald),var(--cyan))"></div></div>
+      <div class="temp-label"><span>Temp</span><span>35°C / 75°C</span></div>
+    </div>
+    <div class="rack-card reveal reveal-delay-4" data-detail='{"maint":"2026-07-18","next":"2026-08-15","load":"72%","ip":"10.0.4.1/24"}'>
+      <div class="rack-label">Rack K-12 — Archive</div>
+      <div class="rack-value" data-target="99.97">99.97<span class="unit">%</span></div>
+      <div class="rack-status warn">
+        <span class="dot"></span> Maintenance — scheduled
+      </div>
+      <div class="temp-bar"><div class="temp-fill" style="width:72%;background:linear-gradient(90deg,var(--amber),var(--crimson))"></div></div>
+      <div class="temp-label"><span>Temp</span><span>58°C / 75°C</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE 2 -->
+<section class="showcase reverse reveal">
+  <div class="showcase-img-wrap">
+    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop" alt="Server Hardware" loading="lazy">
+  </div>
+  <div class="showcase-text">
+    <h2>Zero-Downtime <span class="cyan">Migration</span></h2>
+    <p>
+      Migrasi live tanpa downtime — data mengalir seperti sungai antara node,
+      tanpa satu pun paket yang hilang. Teknologi NVMe over Fabrics memastikan
+      throughput maksimal dengan latensi minimal.
+    </p>
+    <div class="specs">
+      <div class="spec-row">
+        <span>R/W</span>
+        <div class="bar"><div class="bar-fill" style="width:94%"></div></div>
+        <span class="pct">94%</span>
+      </div>
+      <div class="spec-row">
+        <span>IOPS</span>
+        <div class="bar"><div class="bar-fill" style="width:87%"></div></div>
+        <span class="pct">87%</span>
+      </div>
+      <div class="spec-row">
+        <span>THR</span>
+        <div class="bar"><div class="bar-fill" style="width:76%"></div></div>
+        <span class="pct">76%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HEALTH NODES -->
+<section class="health-section reveal">
+  <div class="section-header">
+    <h3>Service Health</h3>
+    <div class="line"></div>
+  </div>
+  <div class="health-grid">
+    <div class="health-node reveal reveal-delay-1">
+      <div class="icon"><i class="fas fa-server"></i></div>
+      <div class="name">Compute</div>
+      <div class="health-bar"><div class="health-fill" data-target="68" style="background:linear-gradient(90deg,var(--blue),var(--cyan))"></div></div>
+      <div class="health-pct">68% allocated</div>
+    </div>
+    <div class="health-node reveal reveal-delay-2">
+      <div class="icon"><i class="fas fa-database"></i></div>
+      <div class="name">Storage</div>
+      <div class="health-bar"><div class="health-fill" data-target="42" style="background:linear-gradient(90deg,var(--emerald),var(--cyan))"></div></div>
+      <div class="health-pct">42% used</div>
+    </div>
+    <div class="health-node reveal reveal-delay-3">
+      <div class="icon"><i class="fas fa-network-wired"></i></div>
+      <div class="name">Network</div>
+      <div class="health-bar"><div class="health-fill" data-target="91" style="background:linear-gradient(90deg,var(--amber),var(--crimson))"></div></div>
+      <div class="health-pct">91% throughput</div>
+    </div>
+    <div class="health-node reveal reveal-delay-4">
+      <div class="icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="name">Security</div>
+      <div class="health-bar"><div class="health-fill" data-target="100" style="background:linear-gradient(90deg,var(--emerald),var(--cyan))"></div></div>
+      <div class="health-pct">0 incidents</div>
+    </div>
+  </div>
+</section>
+
+<!-- LOG PANEL -->
+<section class="log-section reveal" id="logs">
+  <div class="log-panel">
+    <div class="log-header">
+      <h3><i class="fas fa-scroll"></i> System Event Log</h3>
+      <div class="live-badge">
+        <span class="dot"></span>
+        Live Stream
+      </div>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl info">INFO</span>
+      <span class="log-msg">Node C-07 heartbeat acknowledged — latency 1.2ms</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl ok">OK</span>
+      <span class="log-msg">SSL/TLS cert rotation completed for *.cloudforge.io</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl info">INFO</span>
+      <span class="log-msg">Load balancer redistributed — pool delta +3 nodes</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl warn">WARN</span>
+      <span class="log-msg">Disk IO spike on K-12 — monitoring escalated to L2</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl ok">OK</span>
+      <span class="log-msg">All containers healthy after rolling update v2.4.1</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl info">INFO</span>
+      <span class="log-msg">Backup snapshot completed — 847TB incremental</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl ok">OK</span>
+      <span class="log-msg">DDoS mitigation triggered — 2.4M req/s filtered</span>
+    </div>
+    <div class="log-entry">
+      <span class="log-time">--:--:--</span>
+      <span class="log-lvl info">INFO</span>
+      <span class="log-msg">Auto-scaling group expanded — +2 GPU instances</span>
+    </div>
+  </div>
+</section>
+
+<!-- NETWORK MAP -->
+<section class="network-section reveal" id="network">
+  <div class="section-header">
+    <h3>Network Topology</h3>
+    <div class="line"></div>
+  </div>
+  <div class="network-grid">
+    <div class="network-node reveal reveal-delay-1">
+      <div class="node-header">
+        <h4>US-East-1</h4>
+        <span class="status online">Online</span>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Throughput</div>
+          <div class="value">847<span class="unit">Gbps</span></div>
+        </div>
+        <div class="metric">
+          <div class="label">Latency</div>
+          <div class="value">2.1<span class="unit">ms</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="network-node reveal reveal-delay-2">
+      <div class="node-header">
+        <h4>EU-West-1</h4>
+        <span class="status online">Online</span>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Throughput</div>
+          <div class="value">623<span class="unit">Gbps</span></div>
+        </div>
+        <div class="metric">
+          <div class="label">Latency</div>
+          <div class="value">3.4<span class="unit">ms</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="network-node reveal reveal-delay-3">
+      <div class="node-header">
+        <h4>AP-South-1</h4>
+        <span class="status degraded">Degraded</span>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Throughput</div>
+          <div class="value">412<span class="unit">Gbps</span></div>
+        </div>
+        <div class="metric">
+          <div class="label">Latency</div>
+          <div class="value">8.7<span class="unit">ms</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="network-node reveal reveal-delay-4">
+      <div class="node-header">
+        <h4>SA-East-1</h4>
+        <span class="status online">Online</span>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Throughput</div>
+          <div class="value">298<span class="unit">Gbps</span></div>
+        </div>
+        <div class="metric">
+          <div class="label">Latency</div>
+          <div class="value">5.2<span class="unit">ms</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">
+    <span class="dot"></span>
+    CLOUDFORGE
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Documentation</a></li>
+    <li><a href="#">API Reference</a></li>
+    <li><a href="#">Status Page</a></li>
+    <li><a href="#">Security</a></li>
+  </ul>
+  <div class="theme-switcher">
+    <span>Mode</span>
+    <button class="theme-btn active" id="themeDark">Dark Metal</button>
+    <button class="theme-btn" id="themeLight">White Frost</button>
+  </div>
+  <div class="footer-copy">
+    © 2026 CloudForge Systems. All infrastructure monitored.
+  </div>
+</footer>
+
+</div>
+
+<script>
+// ============================================================
+// THEME SWITCHER
+// ============================================================
+function setTheme(t){
+  const html=document.documentElement;
+  html.classList.add('theme-transitioning');
+  html.setAttribute('data-theme',t);
+  localStorage.setItem('forge-theme',t);
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.toLowerCase().includes(t));
+  });
+  setTimeout(()=>html.classList.remove('theme-transitioning'),400);
+}
+document.getElementById('themeDark').addEventListener('click',()=>setTheme('dark'));
+document.getElementById('themeLight').addEventListener('click',()=>setTheme('light'));
+
+// ============================================================
+// SCROLL REVEAL (IntersectionObserver)
+// ============================================================
+const revealObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+// ============================================================
+// NAV SCROLL
+// ============================================================
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  if(window.scrollY>50)navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+},{passive:true});
+
+// ============================================================
+// LOADING
+// ============================================================
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('hidden');
+  },1500);
+});
+
+// ============================================================
+// ANIMATED METRICS (IntersectionObserver)
+// ============================================================
+function animateValue(el,target,duration){
+  const num=parseFloat(target);
+  if(isNaN(num))return;
+  const parts=target.toString().split('.');
+  const decimals=parts.length>1?parts[1].length:0;
+  const unitSpan=el.querySelector('.unit');
+  const startTime=performance.now();
+  const dur=duration||1500;
+
+  function update(now){
+    const t=Math.min((now-startTime)/dur,1);
+    const eased=t===1?1:1-Math.pow(2,-10*t);
+    const current=(num*eased).toFixed(decimals);
+
+    if(unitSpan){
+      el.innerHTML=current+' <span class="unit">'+unitSpan.textContent+'</span>';
+    }else{
+      el.textContent=current;
+    }
+
+    if(t<1)requestAnimationFrame(update);
+    else if(unitSpan){
+      // restore original clean HTML after animation
+      el.innerHTML=target+' <span class="unit">'+unitSpan.textContent+'</span>';
+    }
+  }
+  requestAnimationFrame(update);
+}
+
+const metricObserver=new IntersectionObserver((entries,obs)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const target=el.dataset.target;
+      if(target)animateValue(el,target);
+      obs.unobserve(el);
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('[data-target]').forEach(el=>{
+  // skip health-fill elements — handled separately
+  if(el.classList.contains('health-fill'))return;
+  metricObserver.observe(el);
+});
+
+// ============================================================
+// HEALTH BAR ANIMATION (IntersectionObserver)
+// ============================================================
+const healthObserver=new IntersectionObserver((entries,obs)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const target=parseFloat(el.dataset.target);
+      if(!isNaN(target))el.style.width=target+'%';
+      obs.unobserve(el);
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('.health-fill[data-target]').forEach(el=>healthObserver.observe(el));
+
+// ============================================================
+// RACK HOVER DETAIL
+// ============================================================
+const rackTooltip=document.getElementById('rackTooltip');
+document.querySelectorAll('.rack-card').forEach(card=>{
+  card.addEventListener('mouseenter',function(e){
+    const label=this.querySelector('.rack-label').textContent;
+    const detail=this.dataset.detail;
+    rackTooltip.querySelector('.tt-title').textContent=label;
+    if(detail){
+      try{
+        const d=JSON.parse(detail);
+        rackTooltip.querySelector('.tt-info').textContent='Hover for hardware specs';
+        const dd=rackTooltip.querySelector('.tt-detail');
+        dd.innerHTML=Object.entries(d).map(([k,v])=>
+          '<span>'+k.toUpperCase()+'<strong>'+v+'</strong></span>'
+        ).join('');
+      }catch{
+        rackTooltip.querySelector('.tt-info').textContent=detail;
+        rackTooltip.querySelector('.tt-detail').innerHTML='';
+      }
+    }else{
+      rackTooltip.querySelector('.tt-info').textContent='No additional info';
+      rackTooltip.querySelector('.tt-detail').innerHTML='';
+    }
+    rackTooltip.classList.add('visible');
+  });
+  card.addEventListener('mousemove',function(e){
+    const x=e.clientX+20, y=e.clientY-10;
+    const tw=rackTooltip.offsetWidth, th=rackTooltip.offsetHeight;
+    const maxX=window.innerWidth-tw-10, maxY=window.innerHeight-th-10;
+    rackTooltip.style.left=Math.min(x,maxX)+'px';
+    rackTooltip.style.top=Math.min(y,maxY)+'px';
+  });
+  card.addEventListener('mouseleave',function(){
+    rackTooltip.classList.remove('visible');
+  });
+});
+
+// ============================================================
+// LIVE LOG SIMULATION
+// ============================================================
+const logMessages=[
+  {lvl:'info',msg:'Health check passed — all nodes responding'},
+  {lvl:'ok',msg:'Cache invalidation completed — 12.4M keys flushed'},
+  {lvl:'info',msg:'Replication lag reduced to 0.3ms'},
+  {lvl:'warn',msg:'Memory pressure on A-01 — 87% utilized'},
+  {lvl:'ok',msg:'Failover test completed successfully'},
+  {lvl:'info',msg:'New pod scheduled — us-east-1b'},
+  {lvl:'info',msg:'Metrics aggregation cycle completed'},
+  {lvl:'ok',msg:'TLS handshake optimization deployed'},
+  {lvl:'crit',msg:'Elevated error rate on K-12 — investigating'},
+  {lvl:'info',msg:'DNS propagation complete — 0.3s TTL'},
+  {lvl:'warn',msg:'Certificate expires in 14 days — renew'},
+];
+
+function pad(n){return String(n).padStart(2,'0')}
+
+function getTimestamp(){
+  const now=new Date();
+  return pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+}
+
+function addLogEntry(){
+  const panel=document.querySelector('.log-panel');
+  if(!panel)return;
+  const entries=panel.querySelectorAll('.log-entry');
+  if(entries.length>12)entries[entries.length-1].remove();
+
+  const msg=logMessages[Math.floor(Math.random()*logMessages.length)];
+  const time=getTimestamp();
+
+  const entry=document.createElement('div');
+  entry.className='log-entry';
+  entry.innerHTML='<span class="log-time">'+time+'</span><span class="log-lvl '+msg.lvl+'">'+msg.lvl.toUpperCase()+'</span><span class="log-msg">'+msg.msg+'</span>';
+  entry.style.opacity='0';
+  entry.style.transform='translateX(-20px)';
+  entry.style.transition='all 0.4s ease';
+
+  const header=panel.querySelector('.log-header');
+  header.after(entry);
+
+  requestAnimationFrame(()=>{
+    entry.style.opacity='1';
+    entry.style.transform='translateX(0)';
+  });
+}
+
+// Update initial log entries with real timestamps
+function initLogTimestamps(){
+  document.querySelectorAll('.log-entry .log-time').forEach(el=>{
+    el.textContent=getTimestamp();
+  });
+}
+
+setInterval(addLogEntry,4000);
+
+// ============================================================
+// LIVE CLOCK — update nav status with timestamp
+// ============================================================
+function updateClock(){
+  const statusEl=document.querySelector('.nav-status');
+  if(!statusEl)return;
+  const time=getTimestamp();
+  const dots=statusEl.querySelector('.dot');
+  statusEl.innerHTML='';
+  if(dots)statusEl.appendChild(dots);
+  statusEl.innerHTML+=' UTC '+time+' • System Online';
+  // rebuild the dot reference
+  const newDot=document.createElement('span');
+  newDot.className='dot';
+  statusEl.prepend(newDot);
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// ============================================================
+// INIT — set log timestamps on load
+// ============================================================
+initLogTimestamps();
+</script>
+</body>
+</html>
