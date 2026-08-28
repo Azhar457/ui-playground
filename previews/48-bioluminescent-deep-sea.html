@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="mariana-abyss">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABYSSAL·99 // Bioluminescent Deep Sea Trench Interface</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('abyss-theme')||'mariana-abyss';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 ABYSSAL DEEP SEA PALETTES
+       ========================================================= */
+    :root, [data-theme="mariana-abyss"] {
+      --bg-ocean: #020713;
+      --bg-trench: #040F24;
+      --bg-card: rgba(4, 21, 48, 0.65);
+      --bio-cyan: #00F0FF;
+      --bio-pink: #FF007F;
+      --bio-mint: #00FFB2;
+      --text-main: #E0F2FE;
+      --text-dim: #5B7F9C;
+      --border-bio: rgba(0, 240, 255, 0.28);
+      --glow-primary: rgba(0, 240, 255, 0.4);
+      --glow-secondary: rgba(255, 0, 127, 0.35);
+      --sonar-sweep: #00F0FF;
+      --caustic-color: rgba(0, 240, 255, 0.08);
+    }
+
+    [data-theme="hadal-twilight"] {
+      --bg-ocean: #060212;
+      --bg-trench: #11052C;
+      --bg-card: rgba(24, 8, 56, 0.65);
+      --bio-cyan: #A855F7;
+      --bio-pink: #EC4899;
+      --bio-mint: #38BDF8;
+      --text-main: #F3E8FF;
+      --text-dim: #846D9B;
+      --border-bio: rgba(168, 85, 247, 0.32);
+      --glow-primary: rgba(168, 85, 247, 0.4);
+      --glow-secondary: rgba(236, 72, 153, 0.35);
+      --sonar-sweep: #A855F7;
+      --caustic-color: rgba(168, 85, 247, 0.08);
+    }
+
+    [data-theme="emerald-shelf"] {
+      --bg-ocean: #01110B;
+      --bg-trench: #032418;
+      --bg-card: rgba(3, 46, 31, 0.65);
+      --bio-cyan: #10B981;
+      --bio-pink: #F59E0B;
+      --bio-mint: #34D399;
+      --text-main: #ECFDF5;
+      --text-dim: #578672;
+      --border-bio: rgba(16, 185, 129, 0.32);
+      --glow-primary: rgba(16, 185, 129, 0.4);
+      --glow-secondary: rgba(245, 158, 11, 0.3);
+      --sonar-sweep: #10B981;
+      --caustic-color: rgba(16, 185, 129, 0.08);
+    }
+
+    [data-theme="hydrothermal-vent"] {
+      --bg-ocean: #0B0404;
+      --bg-trench: #220808;
+      --bg-card: rgba(46, 12, 12, 0.65);
+      --bio-cyan: #EF4444;
+      --bio-pink: #F59E0B;
+      --bio-mint: #FB7185;
+      --text-main: #FEF2F2;
+      --text-dim: #995B5B;
+      --border-bio: rgba(239, 68, 68, 0.35);
+      --glow-primary: rgba(239, 68, 68, 0.4);
+      --glow-secondary: rgba(245, 158, 11, 0.35);
+      --sonar-sweep: #EF4444;
+      --caustic-color: rgba(239, 68, 68, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-ocean);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    /* Ambient Ocean Particles Canvas */
+    #ocean-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Caustics Light Rays Layer */
+    .caustics-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 10%, var(--caustic-color) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+
+    /* Content Wrapper */
+    .app-shell {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Navigation Bar */
+    .trench-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 28px;
+      background: rgba(2, 7, 19, 0.75);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-bio);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-tag {
+      font-family: 'Syncopate', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--bio-cyan);
+      text-shadow: 0 0 12px var(--glow-primary);
+    }
+
+    .depth-badge {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--border-bio);
+      color: var(--bio-mint);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 6px; height: 6px;
+      background: var(--bio-mint);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--bio-mint);
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    /* Theme Switcher */
+    .theme-nav {
+      display: flex;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 4px;
+      border-radius: 24px;
+      border: 1px solid var(--border-bio);
+    }
+
+    .th-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .th-btn.active, .th-btn:hover {
+      background: var(--bio-cyan);
+      color: var(--bg-ocean);
+      font-weight: 700;
+      box-shadow: 0 0 14px var(--glow-primary);
+    }
+
+    /* Main Dashboard Layout */
+    .trench-grid {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr 340px;
+      gap: 24px;
+      flex: 1;
+    }
+
+    @media (max-width: 1180px) {
+      .trench-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Glass Cards */
+    .bio-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid var(--border-bio);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .bio-card:hover {
+      border-color: var(--bio-cyan);
+      transform: translateY(-2px);
+    }
+
+    .card-title {
+      font-family: 'Syncopate', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+      color: var(--bio-cyan);
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Bathymetric Depth Gauge (Left Column) */
+    .depth-slider-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .depth-readout {
+      text-align: center;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border: 1px solid var(--border-bio);
+    }
+
+    .depth-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--bio-cyan);
+      text-shadow: 0 0 16px var(--glow-primary);
+    }
+
+    .depth-zone {
+      font-size: 0.8rem;
+      color: var(--bio-pink);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .vertical-depth-range {
+      width: 100%;
+      accent-color: var(--bio-cyan);
+      cursor: pointer;
+    }
+
+    .telemetry-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border-bio);
+    }
+    .telemetry-row:last-child { border-bottom: none; }
+    .telemetry-row span:last-child { font-weight: 700; color: var(--bio-mint); }
+
+    /* Center Section: Sonar Radar & Specimen Bio-Pods */
+    .center-col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Sonar Radar Canvas Component */
+    .sonar-panel {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .radar-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+    }
+
+    #radar-canvas {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 2px solid var(--border-bio);
+      box-shadow: 0 0 24px var(--glow-primary), inset 0 0 24px var(--glow-primary);
+      background: radial-gradient(circle, rgba(0,240,255,0.05) 0%, rgba(0,0,0,0.8) 80%);
+    }
+
+    .sonar-controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 200px;
+    }
+
+    .ping-btn {
+      background: linear-gradient(135deg, var(--bio-cyan), var(--bio-pink));
+      color: #020713;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: 'Syncopate', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 0 20px var(--glow-primary);
+      transition: all 0.25s;
+    }
+    .ping-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px var(--glow-secondary);
+    }
+
+    /* Specimen Dossier Cards Grid */
+    .specimen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .specimen-pod {
+      background: rgba(2, 7, 19, 0.45);
+      border: 1px solid var(--border-bio);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .specimen-pod:hover, .specimen-pod.active {
+      border-color: var(--bio-pink);
+      background: rgba(255, 0, 127, 0.08);
+      box-shadow: 0 0 20px var(--glow-secondary);
+      transform: translateY(-3px);
+    }
+
+    .pod-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .pod-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+    .lum-tag {
+      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 255, 178, 0.15);
+      color: var(--bio-mint);
+      border: 1px solid var(--bio-mint);
+    }
+
+    .pod-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .pod-organ-glow {
+      height: 4px;
+      background: linear-gradient(90deg, var(--bio-cyan), var(--bio-pink));
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--bio-cyan);
+    }
+
+    /* Right Column: Hydrophone & Bioluminescence Spectrum */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .freq-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 90px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-bio);
+    }
+    .bar {
+      flex: 1;
+      background: var(--bio-cyan);
+      border-radius: 2px 2px 0 0;
+      transition: height 0.1s ease;
+      box-shadow: 0 0 6px var(--glow-primary);
+    }
+
+    /* Taxonomy Log List */
+    .log-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--border-bio);
+      color: var(--text-dim);
+    }
+    .log-item .time { color: var(--bio-cyan); margin-right: 6px; }
+    .log-item .highlight { color: var(--bio-pink); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND PARTICLES & CAUSTICS -->
+  <canvas id="ocean-canvas"></canvas>
+  <div class="caustics-overlay"></div>
+
+  <!-- APPLICATION SHELL -->
+  <div class="app-shell">
+    
+    <!-- TOP NAVIGATION -->
+    <header class="trench-nav">
+      <div class="brand-group">
+        <span style="font-family:'JetBrains Mono';font-size:0.85rem;color:var(--bio-mint);font-weight:700;">#48</span>
+        <div class="brand-tag">ABYSSAL // DEEP SEA</div>
+        <div class="depth-badge">
+          <div class="pulse-dot"></div>
+          <span id="live-depth-pill">DEPTH: 8,420M</span>
+        </div>
+      </div>
+
+      <div class="theme-nav">
+        <button class="th-btn active" onclick="setTheme('mariana-abyss')">Mariana</button>
+        <button class="th-btn" onclick="setTheme('hadal-twilight')">Hadal</button>
+        <button class="th-btn" onclick="setTheme('emerald-shelf')">Reef</button>
+        <button class="th-btn" onclick="setTheme('hydrothermal-vent')">Vent</button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD CONTAINER -->
+    <main class="trench-grid">
+      
+      <!-- LEFT: BATHYMETRIC DEPTH GAUGE -->
+      <section class="bio-card">
+        <div class="card-title">
+          <span>Bathymetry</span>
+          <i class="fas fa-water"></i>
+        </div>
+
+        <div class="depth-slider-wrap">
+          <div class="depth-readout">
+            <div class="depth-val" id="depth-text">8,420 m</div>
+            <div class="depth-zone" id="zone-text">Hadal Trench Zone</div>
+          </div>
+
+          <label style="font-size:0.75rem;color:var(--text-dim);display:flex;justify-content:space-between;">
+            <span>EPIPELAGIC (0m)</span>
+            <span>TRENCH (11,000m)</span>
+          </label>
+          <input type="range" min="100" max="11000" step="50" value="8420" class="vertical-depth-range" id="depthSlider" oninput="updateDepth(this.value)">
+
+          <div style="margin-top:16px;">
+            <div class="telemetry-row"><span>HYDROSTATIC PRESSURE</span><span id="pres-text">842.0 Bar</span></div>
+            <div class="telemetry-row"><span>WATER TEMPERATURE</span><span id="temp-text">1.4 °C</span></div>
+            <div class="telemetry-row"><span>LIGHT TRANSMISSION</span><span id="light-text">0.00 %</span></div>
+            <div class="telemetry-row"><span>SALINITY (PSU)</span><span>34.8 ‰</span></div>
+            <div class="telemetry-row"><span>SONIC SOUNDSPEED</span><span>1,524 m/s</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CENTER: SONAR RADAR & SPECIMEN PODS -->
+      <section class="center-col">
+        
+        <!-- SONAR SWEEP PANEL -->
+        <div class="bio-card sonar-panel">
+          <div class="radar-wrapper">
+            <canvas id="radar-canvas" width="220" height="220"></canvas>
+          </div>
+
+          <div class="sonar-controls">
+            <div class="card-title" style="margin-bottom:6px;">
+              <span>Acoustic Sonar Sweep</span>
+              <span style="font-size:0.7rem;color:var(--bio-mint);">ACTIVE PING</span>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-dim);line-height:1.4;">
+              Active 12kHz omnidirectional acoustic pulse mapping organism density in a 5,000m perimeter.
+            </p>
+            <button class="ping-btn" onclick="triggerSonarPing()">
+              <i class="fas fa-satellite-dish"></i> Emit Active Ping
+            </button>
+          </div>
+        </div>
+
+        <!-- SPECIMEN DOSSIER GRID -->
+        <div class="specimen-grid">
+          
+          <div class="specimen-pod active" onclick="selectSpecimen('Bathynomus giganteus', 'Giant Isopod', 'Scavenger with pale ice-blue photophores along abdominal segments.', '470nm Cyan Glow')">
+            <div class="pod-header">
+              <span class="pod-title">Giant Isopod</span>
+              <span class="lum-tag">470nm Cyan</span>
+            </div>
+            <div class="pod-desc">Armored deep trench scavenger thriving at 900+ Bar pressure.</div>
+            <div class="pod-organ-glow"></div>
+          </div>
+
+          <div class="specimen-pod" onclick="selectSpecimen('Vampyroteuthis infernalis', 'Vampire Squid', 'Epitrachelian light organs producing clouds of glowing bioluminescent mucus.', '530nm Emerald')">
+            <div class="pod-header">
+              <span class="pod-title">Vampire Squid</span>
+              <span class="lum-tag" style="color:var(--bio-pink);border-color:var(--bio-pink);">530nm Bio-Mucus</span>
+            </div>
+            <div class="pod-desc">Relic cephalopod deploying blinding luminous clouds to evade predators.</div>
+            <div class="pod-organ-glow" style="background:linear-gradient(90deg,var(--bio-pink),var(--bio-mint))"></div>
+          </div>
+
+          <div class="specimen-pod" onclick="selectSpecimen('Melanocetus johnsonii', 'Humpback Anglerfish', 'Esca lure hosting millions of symbiotic Photobacterium kishitanii.', '480nm Azure')">
+            <div class="pod-header">
+              <span class="pod-title">Anglerfish</span>
+              <span class="lum-tag">480nm Symbiont</span>
+            </div>
+            <div class="pod-desc">Symbiotic bacterial illumination lure mounted on modified dorsal spine.</div>
+            <div class="pod-organ-glow"></div>
+          </div>
+
+          <div class="specimen-pod" onclick="selectSpecimen('Macropinna microstoma', 'Barreleye Fish', 'Transparent fluid-filled dome skull with hyper-sensitive emerald tubular eyes.', '510nm Mint')">
+            <div class="pod-header">
+              <span class="pod-title">Barreleye Fish</span>
+              <span class="lum-tag" style="color:var(--bio-mint);border-color:var(--bio-mint);">Fluid Dome</span>
+            </div>
+            <div class="pod-desc">Rotatable green lenses capturing faint downwelling bioluminescent signals.</div>
+            <div class="pod-organ-glow" style="background:linear-gradient(90deg,var(--bio-mint),var(--bio-cyan))"></div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- RIGHT: HYDROPHONE ACOUSTICS & EVENT TELEMETRY -->
+      <section class="right-col">
+        
+        <!-- ACOUSTIC HYDROPHONE -->
+        <div class="bio-card">
+          <div class="card-title">
+            <span>Hydrophone 12kHz</span>
+            <i class="fas fa-wave-square" style="color:var(--bio-cyan);"></i>
+          </div>
+          <div class="freq-bars" id="freq-container">
+            <!-- 16 Live Visualizer Bars -->
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:'JetBrains Mono';font-size:0.7rem;color:var(--text-dim);">
+            <span>20 Hz (Infra)</span>
+            <span>12 kHz (Sonar)</span>
+            <span>40 kHz (Ultra)</span>
+          </div>
+        </div>
+
+        <!-- SPECIMEN ANALYSIS -->
+        <div class="bio-card" id="analysis-card">
+          <div class="card-title">
+            <span>Target Dossier</span>
+            <i class="fas fa-dna" style="color:var(--bio-pink);"></i>
+          </div>
+          <div style="font-family:'JetBrains Mono';font-size:0.85rem;color:var(--bio-cyan);font-weight:700;" id="specimen-name">
+            Giant Isopod
+          </div>
+          <div style="font-size:0.75rem;color:var(--text-dim);font-style:italic;margin-bottom:8px;" id="specimen-latin">
+            Bathynomus giganteus
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-main);line-height:1.4;" id="specimen-info">
+            Scavenger with pale ice-blue photophores along abdominal segments. Highly adapted to benthic sediment foraging under massive hydrostatic load.
+          </p>
+        </div>
+
+        <!-- LIVE HYDROPHONE LOG -->
+        <div class="bio-card" style="flex:1;">
+          <div class="card-title">
+            <span>Telemetry Feed</span>
+            <i class="fas fa-terminal"></i>
+          </div>
+          <div id="log-list">
+            <div class="log-item"><span class="time">00:04:12</span> Sonar ping returned: <span class="highlight">4 targets</span> detected</div>
+            <div class="log-item"><span class="time">00:03:55</span> Ambient bioluminescence flux: <span class="highlight">14.2 µW/m²</span></div>
+            <div class="log-item"><span class="time">00:03:10</span> Depth descent stable at <span class="highlight">8,420m</span></div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Theme switching logic
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('abyss-theme', t);
+      document.querySelectorAll('.th-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(t.split('-')[0]));
+      });
+    }
+
+    // Depth gauge calculations
+    function updateDepth(depth) {
+      document.getElementById('depth-text').textContent = `${Number(depth).toLocaleString()} m`;
+      document.getElementById('live-depth-pill').textContent = `DEPTH: ${Number(depth).toLocaleString()}M`;
+      
+      const pressure = (depth * 0.1).toFixed(1);
+      document.getElementById('pres-text').textContent = `${pressure} Bar`;
+
+      let zone = 'Epipelagic Sunlight Zone';
+      let temp = '22.4 °C';
+      let light = '100.0 %';
+
+      if (depth > 200 && depth <= 1000) {
+        zone = 'Mesopelagic Twilight Zone';
+        temp = '8.2 °C';
+        light = '1.20 %';
+      } else if (depth > 1000 && depth <= 4000) {
+        zone = 'Bathypelagic Midnight Zone';
+        temp = '3.5 °C';
+        light = '0.00 %';
+      } else if (depth > 4000 && depth <= 6000) {
+        zone = 'Abyssopelagic Abyss Zone';
+        temp = '2.1 °C';
+        light = '0.00 %';
+      } else if (depth > 6000) {
+        zone = 'Hadal Trench Deep';
+        temp = '1.2 °C';
+        light = '0.00 %';
+      }
+
+      document.getElementById('zone-text').textContent = zone;
+      document.getElementById('temp-text').textContent = temp;
+      document.getElementById('light-text').textContent = light;
+    }
+
+    // Specimen Selection
+    function selectSpecimen(latin, title, desc, lum) {
+      document.getElementById('specimen-name').textContent = title;
+      document.getElementById('specimen-latin').textContent = latin;
+      document.getElementById('specimen-info').textContent = desc;
+
+      const log = document.getElementById('log-list');
+      const now = new Date().toTimeString().split(' ')[0];
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      item.innerHTML = `<span class="time">${now}</span> Specimen locked: <span class="highlight">${title}</span> (${lum})`;
+      log.insertBefore(item, log.firstChild);
+
+      document.querySelectorAll('.specimen-pod').forEach(pod => {
+        pod.classList.toggle('active', pod.querySelector('.pod-title').textContent === title);
+      });
+    }
+
+    // Hydrophone Frequency Bar Animator
+    const freqContainer = document.getElementById('freq-container');
+    const barCount = 18;
+    for (let i = 0; i < barCount; i++) {
+      const b = document.createElement('div');
+      b.className = 'bar';
+      b.style.height = `${Math.floor(Math.random() * 60) + 15}%`;
+      freqContainer.appendChild(b);
+    }
+
+    setInterval(() => {
+      document.querySelectorAll('.bar').forEach(b => {
+        b.style.height = `${Math.floor(Math.random() * 75) + 10}%`;
+      });
+    }, 120);
+
+    // Sonar Radar Sweep Simulation
+    const radarCanvas = document.getElementById('radar-canvas');
+    const ctx = radarCanvas.getContext('2d');
+    let radarAngle = 0;
+    const targets = [
+      { r: 40, a: 1.2, size: 4 },
+      { r: 75, a: 3.8, size: 5 },
+      { r: 60, a: 5.1, size: 3 },
+      { r: 90, a: 2.3, size: 6 }
+    ];
+
+    function drawRadar() {
+      ctx.clearRect(0, 0, 220, 220);
+      const cx = 110, cy = 110;
+
+      // Concentric range rings
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+      ctx.lineWidth = 1;
+      [30, 60, 90].forEach(r => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+
+      // Axis lines
+      ctx.beginPath();
+      ctx.moveTo(cx, 10); ctx.lineTo(cx, 210);
+      ctx.moveTo(10, cy); ctx.lineTo(210, cy);
+      ctx.stroke();
+
+      // Sweep Cone
+      radarAngle += 0.035;
+      if (radarAngle > Math.PI * 2) radarAngle = 0;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, 95, radarAngle - 0.5, radarAngle);
+      ctx.closePath();
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 95);
+      grad.addColorStop(0, 'rgba(0, 240, 255, 0.4)');
+      grad.addColorStop(1, 'rgba(0, 240, 255, 0.0)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+
+      // Blips
+      targets.forEach(t => {
+        const tx = cx + Math.cos(t.a) * t.r;
+        const ty = cy + Math.sin(t.a) * t.r;
+        const diff = Math.abs(radarAngle - t.a);
+        const alpha = diff < 0.8 ? 1 - diff : 0.25;
+
+        ctx.beginPath();
+        ctx.arc(tx, ty, t.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 0, 127, ${alpha})`;
+        ctx.shadowBlur = alpha > 0.6 ? 10 : 0;
+        ctx.shadowColor = '#FF007F';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      requestAnimationFrame(drawRadar);
+    }
+    drawRadar();
+
+    // Synthesized Web Audio Sonar Ping
+    function triggerSonarPing() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const actx = new AudioContext();
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(920, actx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(740, actx.currentTime + 0.8);
+
+        gain.gain.setValueAtTime(0.3, actx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 1.2);
+
+        osc.connect(gain);
+        gain.connect(actx.destination);
+        osc.start();
+        osc.stop(actx.currentTime + 1.2);
+      } catch(e) {}
+
+      // Add to event log
+      const log = document.getElementById('log-list');
+      const now = new Date().toTimeString().split(' ')[0];
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      item.innerHTML = `<span class="time">${now}</span> <span class="highlight">12kHz SONAR PING EMITTED</span> (Echo latency 1.4s)`;
+      log.insertBefore(item, log.firstChild);
+    }
+
+    // Ambient Floating Spores Canvas
+    const bgCanvas = document.getElementById('ocean-canvas');
+    const bctx = bgCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeBg);
+    resizeBg();
+
+    for (let i = 0; i < 65; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 3 + 1,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: -Math.random() * 0.5 - 0.2,
+        alpha: Math.random() * 0.6 + 0.2
+      });
+    }
+
+    function animateBg() {
+      bctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.y < 0) { p.y = bgCanvas.height; p.x = Math.random() * bgCanvas.width; }
+        if (p.x < 0) p.x = bgCanvas.width;
+        if (p.x > bgCanvas.width) p.x = 0;
+
+        bctx.beginPath();
+        bctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        bctx.fillStyle = `rgba(0, 240, 255, ${p.alpha})`;
+        bctx.shadowBlur = 8;
+        bctx.shadowColor = '#00F0FF';
+        bctx.fill();
+        bctx.shadowBlur = 0;
+      });
+      requestAnimationFrame(animateBg);
+    }
+    animateBg();
+  </script>
+</body>
+</html>

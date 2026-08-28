@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="blueprint-cyan">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCH·SPEC // Architectural Blueprint & Cyano-Draft System</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('arch-theme')||'blueprint-cyan';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 ARCHITECTURAL DRAFTING PALETTES
+       ========================================================= */
+    :root, [data-theme="blueprint-cyan"] {
+      --bg-draft: #08182B;
+      --bg-surface: #0E2642;
+      --bg-panel: rgba(14, 38, 66, 0.85);
+      --line-primary: #FFFFFF;
+      --line-grid-minor: rgba(0, 229, 255, 0.08);
+      --line-grid-major: rgba(0, 229, 255, 0.2);
+      --line-accent: #00E5FF;
+      --dim-text: #7E9EBE;
+      --highlight-rev: #FFDD00;
+      --stamp-red: #FF3B30;
+      --stamp-border: #FF3B30;
+      --border-color: rgba(0, 229, 255, 0.35);
+      --glow: rgba(0, 229, 255, 0.25);
+      --font-draft: 'Architects Daughter', cursive;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Space Grotesk', sans-serif;
+    }
+
+    [data-theme="diazo-white"] {
+      --bg-draft: #F4F6F9;
+      --bg-surface: #FFFFFF;
+      --bg-panel: rgba(255, 255, 255, 0.9);
+      --line-primary: #18283E;
+      --line-grid-minor: rgba(24, 40, 62, 0.06);
+      --line-grid-major: rgba(24, 40, 62, 0.15);
+      --line-accent: #0055FF;
+      --dim-text: #5A7188;
+      --highlight-rev: #F59E0B;
+      --stamp-red: #DC2626;
+      --stamp-border: #DC2626;
+      --border-color: rgba(24, 40, 62, 0.25);
+      --glow: rgba(0, 85, 255, 0.15);
+    }
+
+    [data-theme="sepia-vellum"] {
+      --bg-draft: #F3EBDD;
+      --bg-surface: #E8DDC9;
+      --bg-panel: rgba(232, 221, 201, 0.9);
+      --line-primary: #3B2412;
+      --line-grid-minor: rgba(59, 36, 18, 0.08);
+      --line-grid-major: rgba(59, 36, 18, 0.2);
+      --line-accent: #C2410C;
+      --dim-text: #7C5E43;
+      --highlight-rev: #D97706;
+      --stamp-red: #991B1B;
+      --stamp-border: #991B1B;
+      --border-color: rgba(59, 36, 18, 0.35);
+      --glow: rgba(194, 65, 12, 0.15);
+    }
+
+    [data-theme="dark-cad"] {
+      --bg-draft: #090D14;
+      --bg-surface: #121A26;
+      --bg-panel: rgba(18, 26, 38, 0.88);
+      --line-primary: #E2E8F0;
+      --line-grid-minor: rgba(0, 245, 212, 0.05);
+      --line-grid-major: rgba(0, 245, 212, 0.15);
+      --line-accent: #00F5D4;
+      --dim-text: #64748B;
+      --highlight-rev: #FACC15;
+      --stamp-red: #F43F5E;
+      --stamp-border: #F43F5E;
+      --border-color: rgba(0, 245, 212, 0.3);
+      --glow: rgba(0, 245, 212, 0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-draft);
+      color: var(--line-primary);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      background-image: 
+        linear-gradient(var(--line-grid-major) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line-grid-major) 1px, transparent 1px),
+        linear-gradient(var(--line-grid-minor) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line-grid-minor) 1px, transparent 1px);
+      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+      background-position: -1px -1px;
+      overflow-x: hidden;
+      cursor: crosshair;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Control Bar */
+    .cad-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cad-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .cad-logo .badge-num {
+      background: var(--line-accent);
+      color: var(--bg-draft);
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .cad-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cad-btn {
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--line-primary);
+      padding: 6px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .cad-btn:hover, .cad-btn.active {
+      background: var(--line-accent);
+      color: var(--bg-draft);
+      border-color: var(--line-accent);
+      box-shadow: 0 0 12px var(--glow);
+    }
+
+    /* Theme Switcher */
+    .theme-selector {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 3px;
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+    }
+
+    .th-btn {
+      padding: 4px 10px;
+      border: none;
+      background: transparent;
+      color: var(--dim-text);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .th-btn.active {
+      background: var(--line-accent);
+      color: var(--bg-draft);
+      font-weight: 700;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+    }
+
+    @media (max-width: 1024px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* Architectural Drawing Viewport */
+    .viewport-frame {
+      border: 2px solid var(--border-color);
+      background: var(--bg-panel);
+      position: relative;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Corner Crop Marks */
+    .viewport-frame::before, .viewport-frame::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: var(--line-accent);
+      pointer-events: none;
+    }
+    .viewport-frame::before { top: -2px; left: -2px; border-top: 3px solid; border-left: 3px solid; }
+    .viewport-frame::after { bottom: -2px; right: -2px; border-bottom: 3px solid; border-right: 3px solid; }
+
+    .drawing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .drawing-title h1 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      letter-spacing: 0.5px;
+      color: var(--line-primary);
+    }
+    .drawing-title p {
+      color: var(--dim-text);
+      font-size: 0.82rem;
+      margin-top: 4px;
+    }
+
+    .coordinate-tag {
+      font-size: 0.75rem;
+      color: var(--line-accent);
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    /* SVG Canvas Area */
+    .blueprint-canvas-wrapper {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      min-height: 480px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #cad-svg {
+      width: 100%;
+      height: 480px;
+      user-select: none;
+    }
+
+    /* SVG Layers & Styling */
+    .cad-wall { stroke: var(--line-primary); stroke-width: 3; fill: none; stroke-linecap: square; }
+    .cad-door { stroke: var(--line-accent); stroke-width: 1.5; stroke-dasharray: 4,4; fill: none; }
+    .cad-dim-line { stroke: var(--dim-text); stroke-width: 1; marker-start: url(#arrow-start); marker-end: url(#arrow-end); }
+    .cad-dim-text { fill: var(--dim-text); font-family: var(--font-mono); font-size: 11px; text-anchor: middle; }
+    .cad-hvac { stroke: #00F5D4; stroke-width: 2; stroke-dasharray: 6,3; fill: none; }
+    .cad-electrical { stroke: #FACC15; stroke-width: 1.5; fill: none; }
+    .cad-note { font-family: var(--font-draft); fill: var(--highlight-rev); font-size: 15px; }
+
+    /* Live Drafting Compass */
+    .compass-overlay {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 60px;
+      height: 60px;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Floating Stamp */
+    .approved-stamp {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      border: 3px double var(--stamp-border);
+      color: var(--stamp-red);
+      padding: 10px 16px;
+      text-transform: uppercase;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      transform: rotate(-8deg);
+      border-radius: 4px;
+      background: rgba(255, 59, 48, 0.05);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.3s;
+    }
+    .approved-stamp:hover {
+      transform: rotate(0deg) scale(1.05);
+      box-shadow: 0 0 16px rgba(255, 59, 48, 0.3);
+    }
+
+    /* Technical Title Block */
+    .title-block-table {
+      width: 100%;
+      margin-top: 24px;
+      border-collapse: collapse;
+      font-size: 0.76rem;
+      border: 2px solid var(--border-color);
+    }
+    .title-block-table td {
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+    }
+    .title-block-table .tbl-label {
+      color: var(--dim-text);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .title-block-table .tbl-val {
+      font-weight: 700;
+      color: var(--line-primary);
+    }
+
+    /* Sidebar Panels */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .cad-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      padding: 18px;
+      position: relative;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    .card-head h3 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--line-accent);
+    }
+
+    /* Layer Toggles */
+    .layer-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--border-color);
+      font-size: 0.8rem;
+    }
+    .layer-item:last-child { border-bottom: none; }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 18px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255,255,255,0.1);
+      border: 1px solid var(--border-color);
+      transition: .3s;
+      border-radius: 2px;
+    }
+    .slider:before {
+      position: absolute; content: "";
+      height: 12px; width: 12px; left: 2px; bottom: 2px;
+      background-color: var(--dim-text);
+      transition: .3s;
+      border-radius: 1px;
+    }
+    input:checked + .slider { background-color: var(--line-accent); }
+    input:checked + .slider:before { transform: translateX(18px); background-color: var(--bg-draft); }
+
+    /* Material Schedule */
+    .schedule-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .schedule-row span:last-child {
+      font-weight: 700;
+      color: var(--line-accent);
+    }
+
+    /* Interactive Measure Banner */
+    .measure-banner {
+      background: rgba(0, 229, 255, 0.05);
+      border: 1px dashed var(--line-accent);
+      padding: 12px;
+      font-size: 0.75rem;
+      color: var(--line-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="cad-bar">
+    <div class="cad-logo">
+      <span class="badge-num">#43</span>
+      <span>ARCH·SPEC // CYANO-DRAFT</span>
+    </div>
+
+    <div class="cad-tools">
+      <button class="cad-btn active" id="tool-pan" onclick="setTool('pan')"><i class="fas fa-hand"></i> Pan</button>
+      <button class="cad-btn" id="tool-measure" onclick="setTool('measure')"><i class="fas fa-ruler-combined"></i> Measure</button>
+      <button class="cad-btn" onclick="rotateOrientation()"><i class="fas fa-compass"></i> Rotate North</button>
+      <button class="cad-btn" onclick="toggleStamp()"><i class="fas fa-stamp"></i> Revise Stamp</button>
+    </div>
+
+    <div class="theme-selector">
+      <button class="th-btn active" onclick="setTheme('blueprint-cyan')">Cyan</button>
+      <button class="th-btn" onclick="setTheme('diazo-white')">Diazo</button>
+      <button class="th-btn" onclick="setTheme('sepia-vellum')">Vellum</button>
+      <button class="th-btn" onclick="setTheme('dark-cad')">CAD</button>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="container">
+    
+    <!-- LEFT: DRAWING SHEET -->
+    <main class="viewport-frame">
+      <div class="drawing-header">
+        <div class="drawing-title">
+          <h1>LEVEL 04 · METROPOLIS ATELIER WING</h1>
+          <p>STRUCTURAL REINFORCED CONCRETE // SPEC REF: ISO-128-20</p>
+        </div>
+        <div class="coordinate-tag" id="cursor-coords">X: 0.00mm | Y: 0.00mm</div>
+      </div>
+
+      <!-- INTERACTIVE SVG BLUEPRINT CANVAS -->
+      <div class="blueprint-canvas-wrapper" id="canvas-wrap">
+        
+        <!-- COMPASS ROSE SVG -->
+        <svg class="compass-overlay" id="compass-rose" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" stroke="var(--line-accent)" stroke-width="1.5" fill="none" stroke-dasharray="3,3"/>
+          <polygon points="50,10 56,45 50,40 44,45" fill="var(--stamp-red)"/>
+          <polygon points="50,90 56,55 50,60 44,55" fill="var(--dim-text)"/>
+          <text x="50" y="24" fill="var(--stamp-red)" font-family="var(--font-mono)" font-size="10" font-weight="700" text-anchor="middle">N</text>
+        </svg>
+
+        <!-- DRAFTING SVG -->
+        <svg id="cad-svg" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow-start" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 5 L 10 0 L 10 10 z" fill="var(--dim-text)"/>
+            </marker>
+            <marker id="arrow-end" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--dim-text)"/>
+            </marker>
+          </defs>
+
+          <!-- LAYER: STRUCTURAL WALLS -->
+          <g id="layer-structural">
+            <!-- Perimeter Walls -->
+            <rect x="100" y="80" width="600" height="320" class="cad-wall"/>
+            <!-- Interior Partitions -->
+            <line x1="320" y1="80" x2="320" y2="400" class="cad-wall"/>
+            <line x1="320" y1="240" x2="700" y2="240" class="cad-wall"/>
+            <line x1="100" y1="240" x2="240" y2="240" class="cad-wall"/>
+            
+            <!-- Concrete Columns -->
+            <rect x="94" y="74" width="12" height="12" fill="var(--line-primary)"/>
+            <rect x="314" y="74" width="12" height="12" fill="var(--line-primary)"/>
+            <rect x="694" y="74" width="12" height="12" fill="var(--line-primary)"/>
+            <rect x="94" y="394" width="12" height="12" fill="var(--line-primary)"/>
+            <rect x="314" y="394" width="12" height="12" fill="var(--line-primary)"/>
+            <rect x="694" y="394" width="12" height="12" fill="var(--line-primary)"/>
+            <rect x="314" y="234" width="12" height="12" fill="var(--line-primary)"/>
+
+            <!-- Door Swings -->
+            <path d="M 240 240 A 60 60 0 0 0 300 180" class="cad-door"/>
+            <line x1="240" y1="240" x2="240" y2="180" stroke="var(--line-accent)" stroke-width="1.5"/>
+            <path d="M 520 240 A 60 60 0 0 0 580 180" class="cad-door"/>
+            <line x1="520" y1="240" x2="520" y2="180" stroke="var(--line-accent)" stroke-width="1.5"/>
+          </g>
+
+          <!-- LAYER: ELECTRICAL -->
+          <g id="layer-electrical">
+            <!-- Lighting Grid -->
+            <circle cx="210" cy="160" r="14" class="cad-electrical"/>
+            <line x1="200" y1="160" x2="220" y2="160" stroke="#FACC15" stroke-width="1.5"/>
+            <line x1="210" y1="150" x2="210" y2="170" stroke="#FACC15" stroke-width="1.5"/>
+
+            <circle cx="210" cy="320" r="14" class="cad-electrical"/>
+            <line x1="200" y1="320" x2="220" y2="320" stroke="#FACC15" stroke-width="1.5"/>
+            <line x1="210" y1="310" x2="210" y2="330" stroke="#FACC15" stroke-width="1.5"/>
+
+            <circle cx="510" cy="160" r="14" class="cad-electrical"/>
+            <line x1="500" y1="160" x2="520" y2="160" stroke="#FACC15" stroke-width="1.5"/>
+            <line x1="510" y1="150" x2="510" y2="170" stroke="#FACC15" stroke-width="1.5"/>
+
+            <!-- Conduit Conduits -->
+            <path d="M 210 160 Q 360 200 510 160" stroke="#FACC15" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+            <path d="M 210 320 Q 210 240 210 160" stroke="#FACC15" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+          </g>
+
+          <!-- LAYER: HVAC & PLUMBING -->
+          <g id="layer-plumbing">
+            <!-- HVAC Ducts -->
+            <rect x="140" y="110" width="40" height="260" class="cad-hvac"/>
+            <rect x="420" y="110" width="180" height="40" class="cad-hvac"/>
+            <line x1="140" y1="110" x2="180" y2="370" stroke="#00F5D4" stroke-width="0.8"/>
+            <line x1="420" y1="110" x2="600" y2="150" stroke="#00F5D4" stroke-width="0.8"/>
+          </g>
+
+          <!-- LAYER: DIMENSIONS -->
+          <g id="layer-dimensions">
+            <!-- Horizontal Overall Dimension -->
+            <line x1="100" y1="50" x2="700" y2="50" class="cad-dim-line"/>
+            <line x1="100" y1="40" x2="100" y2="70" stroke="var(--dim-text)" stroke-width="1"/>
+            <line x1="700" y1="40" x2="700" y2="70" stroke="var(--dim-text)" stroke-width="1"/>
+            <text x="400" y="44" class="cad-dim-text">12,000 mm [SPAN A-C]</text>
+
+            <!-- Horizontal Sub Dimension -->
+            <line x1="100" y1="420" x2="320" y2="420" class="cad-dim-line"/>
+            <text x="210" y="435" class="cad-dim-text">4,400 mm</text>
+            <line x1="320" y1="420" x2="700" y2="420" class="cad-dim-line"/>
+            <text x="510" y="435" class="cad-dim-text">7,600 mm</text>
+
+            <!-- Vertical Overall Dimension -->
+            <line x1="60" y1="80" x2="60" y2="400" class="cad-dim-line"/>
+            <line x1="50" y1="80" x2="80" y2="80" stroke="var(--dim-text)" stroke-width="1"/>
+            <line x1="50" y1="400" x2="80" y2="400" stroke="var(--dim-text)" stroke-width="1"/>
+            <text x="48" y="245" class="cad-dim-text" transform="rotate(-90 48 245)">6,400 mm</text>
+          </g>
+
+          <!-- LAYER: ANNOTATIONS -->
+          <g id="layer-annotations">
+            <text x="180" y="210" class="cad-note">Studio A · 28.16 m²</text>
+            <text x="180" y="370" class="cad-note">Storage B · 18.40 m²</text>
+            <text x="480" y="340" class="cad-note">Main Gallery · 48.64 m²</text>
+            <text x="480" y="210" class="cad-note">Server Vault · 24.20 m²</text>
+          </g>
+
+          <!-- DYNAMIC MEASURE LINE (INTERACTIVE) -->
+          <g id="measure-group" style="display:none;">
+            <line id="m-line" x1="0" y1="0" x2="0" y2="0" stroke="var(--highlight-rev)" stroke-width="2" stroke-dasharray="4,4"/>
+            <circle id="m-start" cx="0" cy="0" r="4" fill="var(--highlight-rev)"/>
+            <circle id="m-end" cx="0" cy="0" r="4" fill="var(--highlight-rev)"/>
+            <text id="m-text" x="0" y="0" fill="var(--highlight-rev)" font-family="var(--font-mono)" font-size="12" font-weight="700">0 mm</text>
+          </g>
+        </svg>
+
+        <!-- APPROVED STAMP -->
+        <div class="approved-stamp" id="stamp" onclick="toggleStamp()">
+          <div style="font-size:0.65rem;margin-bottom:2px;">CITY BUILDING DEPT</div>
+          <div>APPROVED</div>
+          <div style="font-size:0.7rem;margin-top:2px;">REV: 2026.08.B</div>
+        </div>
+
+      </div>
+
+      <!-- TITLE BLOCK TABLE -->
+      <table class="title-block-table">
+        <tr>
+          <td style="width:25%;"><span class="tbl-label">PROJECT</span><span class="tbl-val">METROPOLIS ATELIER TOWER</span></td>
+          <td style="width:25%;"><span class="tbl-label">DRAWING NO.</span><span class="tbl-val">ARC-104-DRAFT</span></td>
+          <td style="width:25%;"><span class="tbl-label">SCALE</span><span class="tbl-val">1:50 @ A1 METRIC</span></td>
+          <td style="width:25%;"><span class="tbl-label">STATUS</span><span class="tbl-val" style="color:var(--stamp-red);">ISSUED FOR TENDER</span></td>
+        </tr>
+        <tr>
+          <td><span class="tbl-label">PRINCIPAL ARCHITECT</span><span class="tbl-val">ATELIER STUDIO DRAFTING</span></td>
+          <td><span class="tbl-label">STRUCTURAL ENGINEER</span><span class="tbl-val">SYS-ENG CONSULTANTS</span></td>
+          <td><span class="tbl-label">CHECKED DATE</span><span class="tbl-val">2026-08-28</span></td>
+          <td><span class="tbl-label">CAD SPEC CODE</span><span class="tbl-val">ISO-DWG-889</span></td>
+        </tr>
+      </table>
+    </main>
+
+    <!-- RIGHT: TECHNICAL SIDEBAR -->
+    <aside class="side-panel">
+      
+      <!-- LAYER VISIBILITY CONTROLS -->
+      <div class="cad-card">
+        <div class="card-head">
+          <h3><i class="fas fa-layer-group"></i> Layer Manager</h3>
+          <span style="font-size:0.7rem;color:var(--dim-text);">5 ACTIVE</span>
+        </div>
+        
+        <div class="layer-item">
+          <span><i class="fas fa-cubes" style="color:var(--line-primary);width:16px;"></i> Structural Core</span>
+          <label class="switch">
+            <input type="checkbox" checked onchange="toggleLayer('structural', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="layer-item">
+          <span><i class="fas fa-bolt" style="color:#FACC15;width:16px;"></i> Electrical Grid</span>
+          <label class="switch">
+            <input type="checkbox" checked onchange="toggleLayer('electrical', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="layer-item">
+          <span><i class="fas fa-wind" style="color:#00F5D4;width:16px;"></i> HVAC & Plumbing</span>
+          <label class="switch">
+            <input type="checkbox" checked onchange="toggleLayer('plumbing', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="layer-item">
+          <span><i class="fas fa-ruler-horizontal" style="color:var(--dim-text);width:16px;"></i> Dimensions</span>
+          <label class="switch">
+            <input type="checkbox" checked onchange="toggleLayer('dimensions', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="layer-item">
+          <span><i class="fas fa-pen" style="color:var(--highlight-rev);width:16px;"></i> Room Notes</span>
+          <label class="switch">
+            <input type="checkbox" checked onchange="toggleLayer('annotations', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- MEASURE TOOL INFO -->
+      <div class="cad-card">
+        <div class="card-head">
+          <h3><i class="fas fa-crosshairs"></i> Telemetry</h3>
+        </div>
+        <div class="measure-banner">
+          <i class="fas fa-info-circle" style="color:var(--line-accent);font-size:1.2rem;"></i>
+          <span>Switch to <strong>Measure</strong> mode and drag between any 2 points on the blueprint to calculate real-world millimeter distance.</span>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="schedule-row"><span>GRID RESOLUTION</span><span>20mm × 20mm</span></div>
+          <div class="schedule-row"><span>TOTAL FLOOR AREA</span><span>119.4 m²</span></div>
+          <div class="schedule-row"><span>STRUCTURAL LOAD</span><span>4.5 kN/m²</span></div>
+          <div class="schedule-row"><span>CEILING CLEARANCE</span><span>3,600 mm</span></div>
+        </div>
+      </div>
+
+      <!-- BILL OF MATERIALS -->
+      <div class="cad-card">
+        <div class="card-head">
+          <h3><i class="fas fa-clipboard-list"></i> Spec Schedule</h3>
+        </div>
+        <div class="schedule-row"><span>Reinforced Core C40</span><span>42.5 m³</span></div>
+        <div class="schedule-row"><span>Glazed Thermal Pane</span><span>68.0 m²</span></div>
+        <div class="schedule-row"><span>Galvanized HVAC Run</span><span>124.0 m</span></div>
+        <div class="schedule-row"><span>Copper Conduit 12AWG</span><span>380.0 m</span></div>
+        <div class="schedule-row"><span>Fire Suppression Node</span><span>8 UNITS</span></div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <script>
+    // Theme Switcher Logic
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('arch-theme', t);
+      document.querySelectorAll('.th-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(t.split('-')[0]));
+      });
+    }
+
+    // Layer Toggle Logic
+    function toggleLayer(layerId, isVisible) {
+      const g = document.getElementById('layer-' + layerId);
+      if (g) g.style.display = isVisible ? 'inline' : 'none';
+    }
+
+    // Orientation Rotation Logic
+    let compassAngle = 0;
+    function rotateOrientation() {
+      compassAngle = (compassAngle + 90) % 360;
+      document.getElementById('compass-rose').style.transform = `rotate(${compassAngle}deg)`;
+    }
+
+    // Stamp toggle
+    let stampApproved = true;
+    function toggleStamp() {
+      stampApproved = !stampApproved;
+      const s = document.getElementById('stamp');
+      if(stampApproved) {
+        s.innerHTML = '<div style="font-size:0.65rem;margin-bottom:2px;">CITY BUILDING DEPT</div><div>APPROVED</div><div style="font-size:0.7rem;margin-top:2px;">REV: 2026.08.B</div>';
+        s.style.color = 'var(--stamp-red)';
+        s.style.borderColor = 'var(--stamp-border)';
+      } else {
+        s.innerHTML = '<div style="font-size:0.65rem;margin-bottom:2px;">CITY BUILDING DEPT</div><div style="color:#FF9500">PENDING REVIEW</div><div style="font-size:0.7rem;margin-top:2px;">REV: 2026.08.C</div>';
+        s.style.color = '#FF9500';
+        s.style.borderColor = '#FF9500';
+      }
+    }
+
+    // Tool selection & Interactive Measuring Canvas
+    let activeTool = 'pan';
+    function setTool(tool) {
+      activeTool = tool;
+      document.getElementById('tool-pan').classList.toggle('active', tool === 'pan');
+      document.getElementById('tool-measure').classList.toggle('active', tool === 'measure');
+      const wrap = document.getElementById('canvas-wrap');
+      wrap.style.cursor = tool === 'measure' ? 'crosshair' : 'grab';
+    }
+
+    const svg = document.getElementById('cad-svg');
+    const coordsEl = document.getElementById('cursor-coords');
+    const mGroup = document.getElementById('measure-group');
+    const mLine = document.getElementById('m-line');
+    const mStart = document.getElementById('m-start');
+    const mEnd = document.getElementById('m-end');
+    const mText = document.getElementById('m-text');
+
+    let isMeasuring = false;
+    let startX = 0, startY = 0;
+
+    function getSvgCoords(e) {
+      const rect = svg.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (800 / rect.width);
+      const y = (e.clientY - rect.top) * (480 / rect.height);
+      return { x: Math.round(x), y: Math.round(y) };
+    }
+
+    svg.addEventListener('mousemove', (e) => {
+      const { x, y } = getSvgCoords(e);
+      coordsEl.textContent = `X: ${(x * 20).toFixed(0)}mm | Y: ${(y * 20).toFixed(0)}mm`;
+
+      if (isMeasuring && activeTool === 'measure') {
+        mLine.setAttribute('x2', x);
+        mLine.setAttribute('y2', y);
+        mEnd.setAttribute('cx', x);
+        mEnd.setAttribute('cy', y);
+
+        const dx = (x - startX) * 20;
+        const dy = (y - startY) * 20;
+        const dist = Math.round(Math.sqrt(dx * dx + dy * dy));
+
+        mText.setAttribute('x', (startX + x) / 2 + 10);
+        mText.setAttribute('y', (startY + y) / 2 - 10);
+        mText.textContent = `${dist.toLocaleString()} mm`;
+      }
+    });
+
+    svg.addEventListener('mousedown', (e) => {
+      if (activeTool !== 'measure') return;
+      isMeasuring = true;
+      const { x, y } = getSvgCoords(e);
+      startX = x; startY = y;
+      mStart.setAttribute('cx', x);
+      mStart.setAttribute('cy', y);
+      mLine.setAttribute('x1', x);
+      mLine.setAttribute('y1', y);
+      mLine.setAttribute('x2', x);
+      mLine.setAttribute('y2', y);
+      mEnd.setAttribute('cx', x);
+      mEnd.setAttribute('cy', y);
+      mText.textContent = '0 mm';
+      mGroup.style.display = 'inline';
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isMeasuring) {
+        isMeasuring = false;
+      }
+    });
+  </script>
+</body>
+</html>
