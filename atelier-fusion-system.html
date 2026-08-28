@@ -99,7 +99,10 @@
   <section>
     <div class="sec-head">
       <div><span class="sec-label"><i class="fas fa-cubes"></i> Step 1 · Select Two Styles</span><h2 class="sec-title">Choose A + B</h2></div>
-      <span class="badge" id="fusion-count">42 styles</span>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button id="btnRandomize" class="badge copy-btn" style="position:static;background:rgba(var(--a1r),.1);color:var(--a1);border-color:rgba(var(--a1r),.25);cursor:pointer;transition:all 0.2s;" onclick="randomizeFusion()"><i class="fas fa-dice"></i> Surprise Me!</button>
+        <span class="badge" id="fusion-count">60 styles</span>
+      </div>
     </div>
     <div class="picker-row">
       <div class="picker"><label>Style A <span style="color:var(--a1)">●</span></label><select id="styleA" onchange="updateFusion()"></select></div>
@@ -137,11 +140,12 @@
   <!-- SECTION 4: PROMPT + PRESETS -->
   <section>
     <div class="sec-head">
-      <div><span class="sec-label"><i class="fas fa-code"></i> Step 4 · Fusion Output</span><h2 class="sec-title">Generated Prompt</h2></div>
+      <div><span class="sec-label"><i class="fas fa-code"></i> Step 4 · Fusion Output</span><h2 class="sec-title">Generated System Prompt</h2></div>
     <div style="display:flex;gap:8px;align-items:center">
       <span class="badge" style="background:rgba(var(--a1r),.05);color:var(--dim)">↓ Exportable</span>
+      <button class="badge copy-btn" onclick="downloadDesignMD()" style="position:static;border-color:var(--a1);background:var(--a1);color:var(--bg)"><i class="fas fa-file-code"></i> Download DESIGN.md</button>
       <button class="badge copy-btn" onclick="downloadFusion()" style="position:static;"><i class="fas fa-download"></i> Download HTML</button>
-      <button class="badge copy-btn" onclick="copyPrompt()" style="position:static;"><i class="far fa-copy"></i> Copy</button>
+      <button class="badge copy-btn" onclick="copyPrompt()" style="position:static;"><i class="far fa-copy"></i> Copy Prompt</button>
     </div>
     </div>
     <div class="prompt-box">
@@ -211,11 +215,14 @@ const STYLES = [
   {id:40,title:"Monochrome",path:"previews/40-monochrome-editorial.html",key:"ONLY black #000 and white #FFF, Didot 4-8rem, invert hover, clip-path wipe"},
   {id:41,title:"Sticky Note Board",path:"previews/41-sticky-note-board.html",key:"cork texture, post-it colors, pushpin SVG, string connections, handwritten"},
   {id:42,title:"Gothic Horror",path:"previews/42-gothic-horror.html",key:"cobweb texture, thorn borders, blood drip, blackletter, candle flicker"},
+  {id:43,title:"Architectural Blueprint",path:"previews/43-architectural-blueprint.html",key:"drafting Prussian cyan grid, ISO title block, interactive measuring tool, layer manager (structural/electrical/plumbing), approved stamp, 4 themes"},
   {id:44,title:"GEO·METRIC Bauhaus",path:"previews/44-geo-metric-bauhaus.html",key:"Bauhaus geometric, isometric cubes, vertex clip-path morph, hard 4px shadows, 4 themes"},
   {id:45,title:"Sen-Suiga Zen Ink",path:"previews/45-sen-suga-ink-wash.html",key:"sumi-e ink wash, enso circle, kakejiku scroll, red seal stamp, ink drop, 4 themes"},
   {id:46,title:"Aero·Flight Cockpit",path:"previews/46-aero-flight-system.html",key:"glass cockpit GA-892, PFD artificial horizon, 6 flight instruments, autopilot 8 modes, weather radar canvas, checklist 33 items, 4 themes"},
   {id:47,title:"CloudForge Industrial",path:"previews/47-cloudforge-industrial.html",key:"cold metal data center, server rack metrics, health bars, live system log, scan line, 2 themes"},
+  {id:48,title:"Bioluminescent Deep Sea",path:"previews/48-bioluminescent-deep-sea.html",key:"midnight trench void, drifting bioluminescent spores, interactive 11,000m bathymetric depth gauge, 12kHz synthesized sonar ping, specimen dossiers, 4 themes"},
   {id:49,title:"8-Bit Pixel RPG",path:"previews/49-pixel-8bit-rpg.html",key:"NES/SNES pixel art, 4 palettes, CRT scanline, stat bars HP/MP/XP/STR, 4x2 inventory, typewriter dialog, quest log"},
+  {id:50,title:"Solarpunk Utopia",path:"previews/50-solarpunk-utopia.html",key:"biophilic living architecture, solar heliostat arc dial (06:00-18:00), living algae bioreactor & flora modules, air quality AQI & O2 metrics, 4 themes"},
   {id:51,title:"Risograph Duotone",path:"previews/51-risograph.html",key:"misregistration offset, soy ink duotone, crop marks, grain noise, 4 themes"},
   {id:52,title:"Isometric Grid",path:"previews/52-isometric-grid.html",key:"axonometric 3D SaaS blocks, diamond floor grid, extruded faces, camera orbit tilt, 4 themes"},
   {id:53,title:"Scientific Journal",path:"previews/53-scientific-journal.html",key:"academic two-column reading grid, justified serif, figure box captions, inline citation tooltips, 4 themes"},
@@ -225,7 +232,8 @@ const STYLES = [
   {id:57,title:"Sports Broadcast",path:"previews/57-sports-analytics.html",key:"angled lower third, live score bug, comparison stat bars, screen shake goal event, live ticker, 4 themes"},
   {id:58,title:"Op Art Illusion",path:"previews/58-op-art.html",key:"CSS moiré rotation, vibrating striped borders, kinetic pulse, 5-second retinal afterimage test, 4 themes"},
   {id:59,title:"Analog Tape Deck",path:"previews/59-analog-tape-deck.html",key:"dual spinning tape reels, realistic bouncing needle VU meters, mechanical controls, odometer counter, 4 themes"},
-  {id:60,title:"Folk Art Naive",path:"previews/60-folk-art.html",key:"hand-drawn wavy borders, earthy mixed paint, naive folklore motifs, spinning sun, rolling hills, 4 themes"}
+  {id:60,title:"Folk Art Naive",path:"previews/60-folk-art.html",key:"hand-drawn wavy borders, earthy mixed paint, naive folklore motifs, spinning sun, rolling hills, 4 themes"},
+  {id:61,title:"Prismatic Holographic",path:"previews/61-prismatic-holographic.html",key:"deep void #050409, spectral radial blobs, chromatic RGB-split glass panels, floating gradient headlines, Syne 800 display, 3D card lift"}
 ];
 
 const PRESETS = [
@@ -246,6 +254,11 @@ const PRESETS = [
   {a:37,b:23,name:"Pop Memphis",desc:"Comic Pop Art + Memphis"},
   {a:42,b:28,name:"Gothic Steampunk",desc:"Gothic Horror + Steampunk"},
   {a:38,b:27,name:"Mission HUD",desc:"NASA Technical + Sci-Fi HUD"},
+  // New V5 Fusions
+  {a:43,b:12,name:"Blueprint Swiss",desc:"Architectural Blueprint + Swiss Style"},
+  {a:48,b:13,name:"Abyssal Cyber",desc:"Bioluminescent Deep Sea + Cyberpunk"},
+  {a:50,b:36,name:"Solar Cottage",desc:"Solarpunk + Cottagecore"},
+  {a:61,b:2,name:"Prismatic Glass",desc:"Prismatic Holographic + Glassmorphism"}
 ];
 
 const FUSION_PREFIXES = ['Neo','Hyper','Super','Ultra','Mega','Meta','Retro','Proto','Dark','Light','Pixel','Chrome','Frost','Ghost','Cyber','Solar','Lunar','Vapor','Quantum','Fusion','Hybrid','Cross','Liquid','Solid','Flux','Core','Nexus','Aether','Zen','Acid'];
@@ -285,7 +298,31 @@ function genName(a,b,r){
 function genPrompt(a,b,r){
   if(!a||!b)return'Pilih dua gaya desain dari menu di atas.';
   const pA=r,pB=100-r,d=pA>=pB?a:b,s=pA>=pB?b:a;
-  return`Build a UI concept fusing "${a.title}" (${pA}%) with "${b.title}" (${pB}%) using HTML/CSS/JS.\n\nDOMINANT (${d.title}):\n${d.key}\n\nSECONDARY (${s.title}):\n${s.key}\n\nFUSION RULES:\n- Start with dominant's layout and color logic\n- Overlay secondary's surface treatment on key interactive elements\n- Where palettes conflict, use dominant's base colors + secondary's accents\n- Keep interactive behaviors from both where they don't conflict\n- One "signature element" per section that purely represents the secondary style\n\nCommit to the fusion — do not fall back to generic defaults.`;
+  return `# DESIGN.md : ${genName(a,b,r)}
+  
+## 1. Aesthetic Definition
+This UI is a fusion of **${a.title}** (${pA}%) and **${b.title}** (${pB}%).
+The goal is to create a harmonious blend that feels like a single cohesive premium theme.
+
+### Dominant Theme: ${d.title}
+Key Characteristics to enforce:
+- ${d.key}
+
+### Secondary Theme: ${s.title}
+Key Characteristics to inject as accents/modifiers:
+- ${s.key}
+
+## 2. Fusion Guidelines
+- **Foundation**: Use the dominant theme's layout principles, grid system, and base background colors.
+- **Surface & Borders**: Overlay the secondary theme's surface treatment (glass, texture, or borders) on interactive elements (cards, modals, panels).
+- **Typography**: Primary headings from dominant theme, secondary/monospace details from secondary theme.
+- **Accents**: Where color palettes conflict, use the dominant theme's base colors + secondary theme's accent colors.
+- **Micro-interactions**: Retain interactive behaviors (hover effects, spring physics, scroll animations) from both styles where they don't clash.
+
+## 3. Strict Rules
+- Do NOT use generic fallback styles (no default Tailwind borders/shadows if they conflict with the theme).
+- Commit fully to the fusion. If blending Cyberpunk and Cottagecore, the result must clearly exhibit both neon grids and floral laces.
+- Keep the design highly dynamic, rich, and "WOW" at first glance.`;
 }
 
 function updateFusion(){
@@ -317,29 +354,35 @@ function renderPresets(){
 
 window.copyPrompt=function(){fusionPrompt.select();navigator.clipboard.writeText(fusionPrompt.value);};
 
-/** Download the current fusion as a self-contained HTML file.
- *  Combines the active iframes' document HTML + active theme variant + ratio comment.
- *  Zero-dependency — uses Blob + ObjectURL. Works offline. */
-window.downloadFusion = async function() {
+window.downloadDesignMD = function() {
+  const content = document.getElementById('fusionPrompt').value;
+  const selA = document.getElementById('styleA');
+  const selB = document.getElementById('styleB');
+  const sA = getStyle(selA.value);
+  const sB = getStyle(selB.value);
+  if (!sA || !sB) return;
+  const name = `DESIGN_${sA.title.replace(/\s+/g,'-')}_x_${sB.title.replace(/\s+/g,'-')}.md`;
+  
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+};
+
+window.downloadFusion = function() {
   const selA = document.getElementById('styleA');
   const selB = document.getElementById('styleB');
   const ratio = document.getElementById('ratioSlider').value;
-  const sA = STYLES.find(s => s.id == selA.value);
-  const sB = STYLES.find(s => s.id == selB.value);
+  const sA = getStyle(selA.value);
+  const sB = getStyle(selB.value);
   if (!sA || !sB) return;
 
-  const fetchHtml = async (path) => (await fetch(path)).text();
-  let [htmlA, htmlB] = await Promise.all([fetchHtml(sA.path), fetchHtml(sB.path)]);
-
-  // Strip head/script noise, keep visual fidelity per side by ratio
-  // Simple strategy: bracket A on top with ratio%, B on bottom with (100-ratio)%
   const tag = `
-<!-- Atelier Fusion System · Auto-generated zero-dep demo -->
-<!-- Left: #${String(sA.id).padStart(2,'0')} ${sA.title} (${ratio}%) -->
-<!-- Right: #${String(sB.id).padStart(2,'0')} ${sB.title} (${100-ratio}%) -->
-<!-- Prompt:
-${document.getElementById('fusionPrompt').value.trim()}
--->
+<!-- Atelier Fusion System · Standalone Wrapper -->
+<!-- Note: If downloading this file, make sure it remains in the root folder so iframe paths work! -->
 <style>
   body { margin: 0; font-family: 'JetBrains Mono', monospace; background: #0a0e1a; color: #cbd5e1; }
   .fusion-split { display: grid; grid-template-rows: ${ratio}fr ${100-ratio}fr; height: 100vh; }
@@ -353,11 +396,11 @@ ${document.getElementById('fusionPrompt').value.trim()}
 <div class="fusion-split">
   <div class="fusion-pane">
     <span class="fusion-label">A · #${String(sA.id).padStart(2,'0')} ${sA.title}</span>
-    <iframe srcdoc="${htmlA.replace(/"/g, '"')}"></iframe>
+    <iframe src="${sA.path}"></iframe>
   </div>
   <div class="fusion-pane">
     <span class="fusion-label">B · #${String(sB.id).padStart(2,'0')} ${sB.title}</span>
-    <iframe srcdoc="${htmlB.replace(/"/g, '"')}"></iframe>
+    <iframe src="${sB.path}"></iframe>
   </div>
 </div>
 `;
@@ -366,9 +409,36 @@ ${document.getElementById('fusionPrompt').value.trim()}
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `fusion-#${String(sA.id).padStart(2,'0')}-${sA.title.toLowerCase().replace(/\s+/g,'-')}_x_#${String(sB.id).padStart(2,'0')}-${sB.title.toLowerCase().replace(/\s+/g,'-')}.html`;
+  a.download = `fusion-#${String(sA.id).padStart(2,'0')}_x_#${String(sB.id).padStart(2,'0')}.html`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 5000);
+};
+
+window.randomizeFusion = function() {
+  const btn = document.getElementById('btnRandomize');
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Rolling...';
+  
+  setTimeout(() => {
+    const keys = STYLES.map(s => s.id);
+    const idA = keys[Math.floor(Math.random() * keys.length)];
+    let idB = keys[Math.floor(Math.random() * keys.length)];
+    while(idB === idA && keys.length > 1) idB = keys[Math.floor(Math.random() * keys.length)];
+    
+    selA.value = idA;
+    selB.value = idB;
+    rSlider.value = Math.floor(Math.random() * 61) + 20; // 20-80%
+    
+    updateFusion();
+    btn.innerHTML = '<i class="fas fa-dice"></i> Surprise Me!';
+    
+    const panels = document.querySelector('.preview-panels');
+    if(panels && panels.animate) {
+      panels.animate([
+        { opacity: 0.2, filter: 'blur(8px) saturate(200%)', transform: 'scale(0.97)' },
+        { opacity: 1, filter: 'blur(0) saturate(100%)', transform: 'scale(1)' }
+      ], { duration: 500, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+    }
+  }, 300);
 };
 
 window.setTheme=function(t){document.documentElement.className='theme-'+t;localStorage.setItem('atelier-fusion-theme',t);document.querySelectorAll('.thbtn').forEach(b=>b.classList.toggle('active',b.getAttribute('data-thbtn')===t));};
