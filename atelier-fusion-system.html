@@ -92,7 +92,7 @@
   <section class="hero-zone">
     <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--a1);text-transform:uppercase;letter-spacing:2px;font-weight:700;"><i class="fas fa-wand-magic-sparkles"></i> Style Fusion Engine</span>
     <h1>Fuse. Blend. Discover.</h1>
-    <p>Pilih 2 gaya arsitektur UI dari 32 yang tersedia, atur rasio fusion-nya, dan lihat bagaimana dua bahasa visual bergabung menjadi sesuatu yang baru. Dapatkan prompt siap pakai untuk AI coding tool.</p>
+    <p>Pilih 2 gaya arsitektur UI dari 61 yang tersedia, atur rasio fusion-nya, dan lihat bagaimana dua bahasa visual bergabung menjadi sesuatu yang baru. Dapatkan prompt siap pakai untuk AI coding tool.</p>
   </section>
 
   <!-- SECTION 2: PICKER + RATIO -->
@@ -101,7 +101,7 @@
       <div><span class="sec-label"><i class="fas fa-cubes"></i> Step 1 · Select Two Styles</span><h2 class="sec-title">Choose A + B</h2></div>
       <div style="display:flex;gap:12px;align-items:center;">
         <button id="btnRandomize" class="badge copy-btn" style="position:static;background:rgba(var(--a1r),.1);color:var(--a1);border-color:rgba(var(--a1r),.25);cursor:pointer;transition:all 0.2s;" onclick="randomizeFusion()"><i class="fas fa-dice"></i> Surprise Me!</button>
-        <span class="badge" id="fusion-count">60 styles</span>
+        <span class="badge" id="fusion-count">61 styles</span>
       </div>
     </div>
     <div class="picker-row">
@@ -166,7 +166,7 @@
       <button class="thbtn" onclick="setTheme('sea')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-droplet"></i> Sea</button>
       <button class="thbtn" onclick="setTheme('rose')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-heart"></i> Rose</button>
     </div>
-    ATELIER FUSION SYSTEM // UI PLAYGROUND BETA // 50 STYLES // 2026
+    ATELIER FUSION SYSTEM // UI PLAYGROUND BETA // 61 STYLES // 2026
   </footer>
 </div>
 
@@ -258,7 +258,23 @@ const PRESETS = [
   {a:43,b:12,name:"Blueprint Swiss",desc:"Architectural Blueprint + Swiss Style"},
   {a:48,b:13,name:"Abyssal Cyber",desc:"Bioluminescent Deep Sea + Cyberpunk"},
   {a:50,b:36,name:"Solar Cottage",desc:"Solarpunk + Cottagecore"},
-  {a:61,b:2,name:"Prismatic Glass",desc:"Prismatic Holographic + Glassmorphism"}
+  {a:61,b:2,name:"Prismatic Glass",desc:"Prismatic Holographic + Glassmorphism"},
+  // V6 improvisations — cross-fusing the new deep-dive styles (#43/#48/#50/#61) with the library
+  {a:43,b:46,name:"Aviation Draft",desc:"Architectural Blueprint + Aero Flight Cockpit"},
+  {a:48,b:55,name:"Thermal Depth",desc:"Bioluminescent Deep Sea + Thermal FLIR"},
+  {a:50,b:15,name:"Solar Aurora",desc:"Solarpunk + Aurora UI"},
+  {a:61,b:24,name:"Prism Wave",desc:"Prismatic Holographic + Vaporwave"},
+  {a:43,b:38,name:"Engineering Spec",desc:"Architectural Blueprint + NASA Technical"},
+  {a:48,b:27,name:"Abyssal HUD",desc:"Bioluminescent Deep Sea + Sci-Fi HUD"},
+  {a:50,b:31,name:"Solar Lo-Fi",desc:"Solarpunk + Lo-Fi Anime"},
+  {a:61,b:8,name:"Prismatic 3D",desc:"Prismatic Holographic + Three.js 3D"},
+  {a:43,b:48,name:"Abyssal Draft",desc:"Architectural Blueprint + Bioluminescent Deep Sea"},
+  {a:48,b:50,name:"Reef Solar",desc:"Bioluminescent Deep Sea + Solarpunk"},
+  {a:61,b:43,name:"Prism Draft",desc:"Prismatic Holographic + Architectural Blueprint"},
+  {a:43,b:50,name:"Green Draft",desc:"Architectural Blueprint + Solarpunk"},
+  {a:61,b:39,name:"Prism Delic",desc:"Prismatic Holographic + Psychedelic 60s"},
+  {a:50,b:60,name:"Solar Folk",desc:"Solarpunk + Folk Art Naive"},
+  {a:48,b:19,name:"Abyssal Terminal",desc:"Bioluminescent Deep Sea + CRT Terminal"}
 ];
 
 const FUSION_PREFIXES = ['Neo','Hyper','Super','Ultra','Mega','Meta','Retro','Proto','Dark','Light','Pixel','Chrome','Frost','Ghost','Cyber','Solar','Lunar','Vapor','Quantum','Fusion','Hybrid','Cross','Liquid','Solid','Flux','Core','Nexus','Aether','Zen','Acid'];
