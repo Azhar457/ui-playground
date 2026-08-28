@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Storytelling — 5 Section Transitions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: auto; }
+
+    body {
+      background: #050508;
+      color: white;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Scroll spacer creates the scrollable track */
+    .scroll-spacer {
+      height: 700vh;
+      position: relative;
+      z-index: 0;
+    }
+
+    /* All sections are fixed and stacked */
+    .story-section {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      will-change: transform, opacity, clip-path, filter;
+      backface-visibility: hidden;
+    }
+
+    /* Progress indicator */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+      z-index: 9999;
+      transform-origin: left;
+      transition: transform 0.1s linear;
+    }
+
+    .section-label {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9998;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.6);
+      transition: all 0.3s ease;
+    }
+
+    /* ===== SECTION 1: HERO ===== */
+    .s1-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(236,72,153,0.08) 0%, transparent 50%),
+        #050508;
+    }
+
+    .s1-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .s1-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      animation: float-particle linear infinite;
+    }
+
+    @keyframes float-particle {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ===== SECTION 2: HORIZONTAL GALLERY ===== */
+    .horizontal-wrapper {
+      display: flex;
+      width: 200vw;
+      height: 100vh;
+    }
+
+    .horizontal-panel {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .gallery-card {
+      width: 300px;
+      height: 400px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 40px rgba(99,102,241,0.2);
+    }
+
+    .gallery-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ===== SECTION 3: CONTENT RISE ===== */
+    .s3-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      width: 90%;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .feature-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.12);
+      transform: translateY(-4px);
+    }
+
+    /* ===== SECTION 4: ZOOM PORTAL ===== */
+    .portal-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portal {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 80px rgba(99,102,241,0.3), 0 0 160px rgba(168,85,247,0.15);
+      border: 3px solid rgba(255,255,255,0.1);
+      will-change: transform;
+    }
+
+    .portal img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .portal-ring {
+      position: absolute;
+      inset: -20px;
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 50%;
+      animation: portal-spin 8s linear infinite;
+    }
+
+    @keyframes portal-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== SECTION 5: PEEL REVEAL ===== */
+    .s5-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 70%),
+        #08080c;
+    }
+
+    /* Peel paper effect for S4 */
+    .peel-shadow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* Footer inside S5 */
+    .story-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 24px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.3);
+    }
+
+    /* Grain */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9997;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9996;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.3);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: hint-bounce 2s ease infinite;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    @keyframes hint-bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    .scroll-hint.hidden { opacity: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progressBar" style="transform: scaleX(0);"></div>
+
+  <!-- Section label -->
+  <div class="section-label" id="sectionLabel">Section 1 / 5</div>
+
+  <!-- Grain -->
+  <div class="grain"></div>
+
+  <!-- Scroll hint -->
+  <div class="scroll-hint" id="scrollHint">
+    <span>Scroll to explore</span>
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="1" y="1" width="14" height="22" rx="7"/>
+      <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <!-- Scroll spacer -->
+  <div class="scroll-spacer"></div>
+
+  <!-- ===== SECTION 1: HERO ===== -->
+  <section class="story-section" id="s1" style="z-index: 50;">
+    <div class="s1-bg"></div>
+    <div class="s1-particles" id="s1Particles"></div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Scroll Storytelling Experience
+      </div>
+      <h1 class="text-6xl md:text-8xl font-bold tracking-tighter bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent mb-6">
+        Journey
+      </h1>
+      <p class="text-lg md:text-xl text-white/40 max-w-md leading-relaxed">
+        Lima section. Empat transisi. Satu scroll. <br>
+        Geser horizontal, naik vertikal, zoom portal, dan peel reveal.
+      </p>
+      <div class="mt-12 flex gap-3">
+        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: HORIZONTAL GALLERY ===== -->
+  <section class="story-section" id="s2" style="z-index: 40; transform: translateX(100vw);">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-950/50 via-purple-950/30 to-pink-950/20"></div>
+
+    <div class="horizontal-wrapper" id="horizontalWrapper">
+      <!-- Left panel (S2 content) -->
+      <div class="horizontal-panel flex flex-col items-center justify-center px-8">
+        <h2 class="text-5xl md:text-7xl font-bold tracking-tight mb-4">Gallery</h2>
+        <p class="text-white/40 text-lg max-w-md text-center mb-12">Horizontal slide transition. Scroll ke bawah, tapi konten geser ke samping.</p>
+
+        <div class="flex gap-6 overflow-visible">
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" alt="Mountain">
+          </div>
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80" alt="Forest">
+          </div>
+          <div class="gallery-card">
+            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=80" alt="Valley">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right panel (empty, just for transition space) -->
+      <div class="horizontal-panel"></div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: CONTENT RISE ===== -->
+  <section class="story-section" id="s3" style="z-index: 30; transform: translateY(100vh);">
+    <div class="absolute inset-0 bg-gradient-to-b from-neutral-950 via-slate-950 to-neutral-950"></div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center h-full px-6">
+      <h2 class="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-center">Rise Up</h2>
+      <p class="text-white/40 text-lg max-w-lg text-center mb-16">Vertical rise transition. Section ini naik dari bawah sambil section sebelumnya terdorong ke atas.</p>
+
+      <div class="s3-grid">
+        <div class="feature-card">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-semibold text-white mb-2">Lightning Fast</h3>
+          <p class="text-sm text-white/40">Performa optimal dengan GPU acceleration</p>
+        </div>
+        <div class="feature-card">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+          </div>
+          <h3 class="font-semibold text-white mb-2">Modular Grid</h3>
+          <p class="text-sm text-white/40">Layout fleksibel yang responsif</p>
+        </div>
+        <div class="feature-card">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </div>
+          <h3 class="font-semibold text-white mb-2">Immersive View</h3>
+          <p class="text-sm text-white/40">Visual depth dengan parallax layers</p>
+        </div>
+        <div class="feature-card">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          </div>
+          <h3 class="font-semibold text-white mb-2">Full Control</h3>
+          <p class="text-sm text-white/40">Kontrol scroll dengan presisi tinggi</p>
+        </div>
+        <div class="feature-card">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </div>
+          <h3 class="font-semibold text-white mb-2">Seamless Loop</h3>
+          <p class="text-sm text-white/40">Transisi tanpa jeda antar section</p>
+        </div>
+        <div class="feature-card">
+          <div class="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          </div>
+          <h3 class="font-semibold text-white mb-2">Crafted with Care</h3>
+          <p class="text-sm text-white/40">Detail pixel-perfect di setiap transisi</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 4: ZOOM PORTAL ===== -->
+  <section class="story-section" id="s4" style="z-index: 20; opacity: 0;">
+    <div class="absolute inset-0 bg-gradient-to-br from-violet-950/40 via-fuchsia-950/20 to-neutral-950"></div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center h-full px-6">
+      <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-center">Zoom Portal</h2>
+      <p class="text-white/40 text-lg max-w-lg text-center mb-12">Portal di tengah membesar hingga memenuhi layar, lalu reveal section berikutnya.</p>
+
+      <div class="portal-container">
+        <div class="portal" id="portal">
+          <div class="portal-ring"></div>
+          <div class="portal-ring" style="inset: -40px; border-color: rgba(168,85,247,0.15); animation-duration: 12s; animation-direction: reverse;"></div>
+          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80" alt="Portal">
+        </div>
+      </div>
+
+      <div class="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-8 text-center">
+        <div>
+          <div class="text-2xl font-bold text-white/80">240+</div>
+          <div class="text-xs text-white/30 mt-1">Transitions</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-white/80">60fps</div>
+          <div class="text-xs text-white/30 mt-1">Smooth Scroll</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-white/80">Zero</div>
+          <div class="text-xs text-white/30 mt-1">Dependencies</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 5: PEEL REVEAL ===== -->
+  <section class="story-section" id="s5" style="z-index: 10;">
+    <div class="s5-bg"></div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center h-full px-6 pb-32">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+        Final Section
+      </div>
+      <h2 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-center">The End</h2>
+      <p class="text-lg text-white/40 max-w-md text-center mb-12 leading-relaxed">
+        Section 4 terangkat seperti kertas yang di-peel, <br>
+        revealing section terakhir dari baliknya.
+      </p>
+
+      <div class="flex gap-4">
+        <button class="px-8 py-3 rounded-full bg-white text-black font-semibold text-sm hover:bg-white/90 transition shadow-lg shadow-white/10">
+          Mulai Lagi
+        </button>
+        <button class="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white font-medium text-sm hover:bg-white/10 transition">
+          Lihat Kode
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="story-footer">
+      <p class="text-white/20 text-sm">Built with pure HTML + CSS + JS · Tailwind CDN · No GSAP · No libraries</p>
+      <div class="flex justify-center gap-4 mt-3">
+        <a href="#" class="text-white/30 hover:text-white/60 text-xs transition">GitHub</a>
+        <a href="#" class="text-white/30 hover:text-white/60 text-xs transition">Twitter</a>
+        <a href="#" class="text-white/30 hover:text-white/60 text-xs transition">Dribbble</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ===== SCROLL CONTROLLER =====
+    const s1 = document.getElementById('s1');
+    const s2 = document.getElementById('s2');
+    const s3 = document.getElementById('s3');
+    const s4 = document.getElementById('s4');
+    const s5 = document.getElementById('s5');
+    const portal = document.getElementById('portal');
+    const progressBar = document.getElementById('progressBar');
+    const sectionLabel = document.getElementById('sectionLabel');
+    const scrollHint = document.getElementById('scrollHint');
+    const horizontalWrapper = document.getElementById('horizontalWrapper');
+
+    let lastScroll = 0;
+    let hintHidden = false;
+
+    function updateScroll() {
+      const scroll = window.scrollY;
+      const wh = window.innerHeight;
+      const progress = scroll / wh; // 0-based, each 1.0 = 100vh
+
+      // Hide scroll hint after first scroll
+      if (scroll > 50 && !hintHidden) {
+        scrollHint.classList.add('hidden');
+        hintHidden = true;
+      }
+
+      // Progress bar (0 to 6)
+      const totalProgress = Math.min(progress / 6, 1);
+      progressBar.style.transform = `scaleX(${totalProgress})`;
+
+      // ===== ZONE 0-1: S1 Static =====
+      if (progress < 1) {
+        s1.style.transform = 'translate3d(0, 0, 0)';
+        s1.style.opacity = '1';
+        s2.style.transform = 'translate3d(100vw, 0, 0)';
+        sectionLabel.textContent = 'Section 1 / 5 — Hero';
+      }
+
+      // ===== ZONE 1-2: S1 → S2 Horizontal Slide =====
+      else if (progress < 2) {
+        const p = progress - 1; // 0 to 1
+        const eased = easeInOutCubic(p);
+
+        // S1 slides left
+        s1.style.transform = `translate3d(${-eased * 100}vw, 0, 0)`;
+        s1.style.opacity = `${1 - p * 0.5}`;
+
+        // S2 slides in from right
+        s2.style.transform = `translate3d(${(1 - eased) * 100}vw, 0, 0)`;
+        s2.style.opacity = '1';
+
+        // Horizontal wrapper parallax (cards move slightly faster)
+        horizontalWrapper.style.transform = `translateX(${-p * 5}vw)`;
+
+        sectionLabel.textContent = 'Section 2 / 5 — Horizontal Gallery';
+      }
+
+      // ===== ZONE 2-3: S2 → S3 Vertical Rise =====
+      else if (progress < 3) {
+        const p = progress - 2;
+        const eased = easeInOutCubic(p);
+
+        // S2 rises up faster (parallax)
+        s2.style.transform = `translate3d(0, ${-eased * 120}vh, 0)`;
+        s2.style.opacity = `${1 - p}`;
+
+        // S3 rises from bottom
+        s3.style.transform = `translate3d(0, ${(1 - eased) * 100}vh, 0)`;
+        s3.style.opacity = '1';
+
+        sectionLabel.textContent = 'Section 3 / 5 — Vertical Rise';
+      }
+
+      // ===== ZONE 3-4: S3 → S4 Zoom Portal =====
+      else if (progress < 4) {
+        const p = progress - 3;
+        const eased = easeInOutCubic(p);
+
+        // S3 fades out
+        s3.style.transform = 'translate3d(0, 0, 0)';
+        s3.style.opacity = `${1 - p}`;
+
+        // S4 fades in behind portal
+        s4.style.opacity = `${p}`;
+        s4.style.transform = 'translate3d(0, 0, 0)';
+
+        // Portal zooms from 1 to 15
+        const scale = 1 + eased * 14;
+        portal.style.transform = `scale(${scale})`;
+        portal.style.opacity = p < 0.7 ? '1' : `${1 - (p - 0.7) / 0.3}`;
+
+        sectionLabel.textContent = 'Section 4 / 5 — Zoom Portal';
+      }
+
+      // ===== ZONE 4-5: S4 → S5 Peel Reveal =====
+      else if (progress < 5) {
+        const p = progress - 4;
+        const eased = easeInOutCubic(p);
+
+        // S4 peels up like a page being lifted
+        s4.style.transform = `translate3d(0, ${-eased * 100}vh, 0) rotateX(${eased * 8}deg)`;
+        s4.style.transformOrigin = 'bottom center';
+        s4.style.opacity = `${1 - p * 0.8}`;
+        s4.style.boxShadow = `0 ${-eased * 30}px ${eased * 80}px rgba(0,0,0,${eased * 0.8})`;
+
+        // S5 stays visible behind
+        s5.style.transform = 'translate3d(0, 0, 0)';
+        s5.style.opacity = '1';
+
+        // Portal hidden
+        portal.style.transform = 'scale(15)';
+        portal.style.opacity = '0';
+
+        sectionLabel.textContent = 'Section 5 / 5 — Peel Reveal';
+      }
+
+      // ===== ZONE 5-6: S5 Static + Footer =====
+      else {
+        s4.style.transform = 'translate3d(0, -100vh, 0)';
+        s4.style.opacity = '0';
+        s5.style.transform = 'translate3d(0, 0, 0)';
+        s5.style.opacity = '1';
+        sectionLabel.textContent = 'Section 5 / 5 — Complete';
+      }
+    }
+
+    // Easing function
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // Throttled scroll listener
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Initial call
+    updateScroll();
+
+    // ===== S1 PARTICLES =====
+    const particleContainer = document.getElementById('s1Particles');
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement('div');
+      p.className = 's1-particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (10 + Math.random() * 20) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      p.style.opacity = Math.random() * 0.5 + 0.2;
+      particleContainer.appendChild(p);
+    }
+  </script>
+
+</body>
+</html>

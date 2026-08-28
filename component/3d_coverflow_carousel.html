@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Coverflow Carousel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(180deg, #0a0a0f 0%, #12121a 50%, #0a0a0f 100%);
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .scene {
+    width: 100%;
+    max-width: 1200px;
+    height: 520px;
+    perspective: 1200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  .coverflow-card {
+    position: absolute;
+    width: 340px;
+    height: 440px;
+    left: 50%;
+    top: 50%;
+    margin-left: -170px;
+    margin-top: -220px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #1a1a2e;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    cursor: grab;
+    transition: box-shadow 0.4s;
+    will-change: transform, opacity;
+  }
+  .coverflow-card:active { cursor: grabbing; }
+  .coverflow-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+  .coverflow-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 40%, transparent 70%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px;
+    pointer-events: none;
+  }
+  .coverflow-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.01em;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .coverflow-subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .coverflow-reflection {
+    position: absolute;
+    bottom: -440px;
+    left: 0;
+    width: 100%;
+    height: 440px;
+    transform: scaleY(-1);
+    opacity: 0.15;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent);
+    pointer-events: none;
+  }
+  .coverflow-reflection img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(2px);
+  }
+  .indicators {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 50;
+  }
+  .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  .indicator.active {
+    background: rgba(255,255,255,0.9);
+    transform: scale(1.3);
+  }
+  .hint {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.3);
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+
+<div class="hint">Swipe or drag horizontally · Auto-rotates every 4s</div>
+
+<div class="scene" id="scene">
+  <div class="carousel" id="carousel"></div>
+  <div class="indicators" id="indicators"></div>
+</div>
+
+<script>
+(function(){
+  const cards = [
+    { title: "Northern Lights", subtitle: "Tromsø, Norway", img: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&h=800&fit=crop&q=80" },
+    { title: "Santorini Sunset", subtitle: "Oia, Greece", img: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&h=800&fit=crop&q=80" },
+    { title: "Tokyo Nights", subtitle: "Shibuya, Japan", img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=800&fit=crop&q=80" },
+    { title: "Patagonia Peaks", subtitle: "Torres del Paine", img: "https://images.unsplash.com/photo-1518182170546-0766bc6f9213?w=600&h=800&fit=crop&q=80" },
+    { title: "Maldives Atoll", subtitle: "Indian Ocean", img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=800&fit=crop&q=80" },
+    { title: "Moroccan Medina", subtitle: "Marrakech", img: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600&h=800&fit=crop&q=80" },
+    { title: "Swiss Alps", subtitle: "Zermatt, Switzerland", img: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&h=800&fit=crop&q=80" },
+  ];
+
+  const carousel = document.getElementById('carousel');
+  const indicators = document.getElementById('indicators');
+  const scene = document.getElementById('scene');
+
+  let current = 0;
+  let offset = 0;
+  let velocity = 0;
+  let isDragging = false;
+  let startX = 0;
+  let lastX = 0;
+  let autoTimer = null;
+  let isHovering = false;
+
+  function build() {
+    carousel.innerHTML = '';
+    indicators.innerHTML = '';
+    cards.forEach((c, i) => {
+      const el = document.createElement('div');
+      el.className = 'coverflow-card';
+      el.innerHTML = `
+        <img src="${c.img}" alt="${c.title}" loading="lazy" />
+        <div class="coverflow-overlay">
+          <div class="coverflow-title">${c.title}</div>
+          <div class="coverflow-subtitle">${c.subtitle}</div>
+        </div>
+        <div class="coverflow-reflection">
+          <img src="${c.img}" alt="" />
+        </div>
+      `;
+      carousel.appendChild(el);
+
+      const dot = document.createElement('div');
+      dot.className = 'indicator' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goTo(i));
+      indicators.appendChild(dot);
+    });
+    render();
+  }
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(cards.length - 1, index));
+    offset = 0;
+    velocity = 0;
+    render();
+    updateIndicators();
+  }
+
+  function updateIndicators() {
+    Array.from(indicators.children).forEach((dot, i) => {
+      dot.classList.toggle('active', i === current);
+    });
+  }
+
+  function render() {
+    const cardEls = carousel.querySelectorAll('.coverflow-card');
+    const spacing = 380;
+
+    cardEls.forEach((el, i) => {
+      const dist = i - current - offset / spacing;
+      const absDist = Math.abs(dist);
+
+      let translateX = dist * spacing;
+      let rotateY = dist * -45;
+      let scale = 1 - absDist * 0.2;
+      let translateZ = -absDist * 200;
+      let opacity = 1 - absDist * 0.5;
+
+      if (scale < 0.5) scale = 0.5;
+      if (opacity < 0) opacity = 0;
+      if (absDist > 3) opacity = 0;
+
+      const zIndex = 100 - Math.round(absDist * 10);
+
+      el.style.transform = `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+      el.style.opacity = opacity;
+      el.style.zIndex = zIndex;
+    });
+  }
+
+  // Inertia & snap
+  function inertiaLoop() {
+    if (!isDragging && Math.abs(velocity) > 0.5) {
+      offset += velocity;
+      velocity *= 0.92;
+
+      const spacing = 380;
+      if (Math.abs(offset) > spacing * 0.4) {
+        const dir = offset > 0 ? 1 : -1;
+        current = Math.max(0, Math.min(cards.length - 1, current - dir));
+        offset = 0;
+        velocity = 0;
+        updateIndicators();
+      }
+      render();
+    } else if (!isDragging && Math.abs(offset) > 1) {
+      offset *= 0.85;
+      render();
+    }
+    requestAnimationFrame(inertiaLoop);
+  }
+
+  // Input handlers
+  function onDown(x) {
+    isDragging = true;
+    startX = x;
+    lastX = x;
+    velocity = 0;
+    clearInterval(autoTimer);
+  }
+
+  function onMove(x) {
+    if (!isDragging) return;
+    const dx = x - lastX;
+    offset += dx;
+    velocity = dx;
+    lastX = x;
+    render();
+  }
+
+  function onUp() {
+    isDragging = false;
+    if (Math.abs(velocity) < 2 && Math.abs(offset) < 60) {
+      offset = 0;
+      render();
+    }
+    startAuto();
+  }
+
+  scene.addEventListener('mousedown', e => onDown(e.clientX));
+  window.addEventListener('mousemove', e => onMove(e.clientX));
+  window.addEventListener('mouseup', onUp);
+
+  scene.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) onDown(e.touches[0].clientX);
+  }, { passive: false });
+  window.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) onMove(e.touches[0].clientX);
+  }, { passive: false });
+  window.addEventListener('touchend', onUp);
+
+  scene.addEventListener('mouseenter', () => { isHovering = true; clearInterval(autoTimer); });
+  scene.addEventListener('mouseleave', () => { isHovering = false; startAuto(); });
+
+  function startAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => {
+      if (isHovering) return;
+      current = (current + 1) % cards.length;
+      offset = 0;
+      velocity = 0;
+      render();
+      updateIndicators();
+    }, 4000);
+  }
+
+  build();
+  inertiaLoop();
+  startAuto();
+})();
+</script>
+
+</body>
+</html>

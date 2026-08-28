@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wave Sine Marquee</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0f;
+      overflow: hidden;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Subtle grid background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Noise texture overlay */
+    .noise {
+      position: fixed;
+      inset: 0;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Marquee track */
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+    }
+
+    .marquee-left {
+      animation: scroll-left var(--duration, 40s) linear infinite;
+    }
+
+    .marquee-right {
+      animation: scroll-right var(--duration, 40s) linear infinite;
+    }
+
+    @keyframes scroll-left {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @keyframes scroll-right {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Card */
+    .wave-card {
+      width: 350px;
+      height: 250px;
+      flex-shrink: 0;
+      margin-right: 24px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      cursor: pointer;
+      will-change: transform, filter;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .wave-card:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 30px rgba(99,102,241,0.2);
+      z-index: 100;
+    }
+
+    .wave-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .wave-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .wave-card .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 100%);
+      transition: opacity 0.3s ease;
+    }
+
+    .wave-card:hover .overlay {
+      opacity: 0.3;
+    }
+
+    .wave-card .title {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s ease;
+    }
+
+    .wave-card:hover .title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Splash ripple effect */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(99,102,241,0.6);
+      background: rgba(99,102,241,0.1);
+      pointer-events: none;
+      animation: ripple-expand 0.8s ease-out forwards;
+    }
+
+    @keyframes ripple-expand {
+      0% { width: 0; height: 0; opacity: 1; }
+      100% { width: 300px; height: 300px; opacity: 0; }
+    }
+
+    /* Frozen card state */
+    .frozen {
+      animation-play-state: paused !important;
+    }
+
+    /* UI */
+    .ui-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(10,10,15,0.9) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .ui-bar > * { pointer-events: auto; }
+
+    .speed-badge {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      border-radius: 100px;
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .info-footer {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      color: rgba(255,255,255,0.3);
+      font-size: 12px;
+      text-align: center;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+    }
+
+    /* Loading */
+    .loader-screen {
+      position: fixed;
+      inset: 0;
+      background: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .loader-screen.done {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-ring {
+      width: 48px;
+      height: 48px;
+      border: 2px solid rgba(99,102,241,0.2);
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Loading -->
+  <div class="loader-screen" id="loader">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- Backgrounds -->
+  <div class="bg-grid"></div>
+  <div class="noise"></div>
+
+  <!-- UI -->
+  <div class="ui-bar">
+    <div>
+      <h1 class="text-white text-xl font-bold tracking-tight">Wave Sine Marquee</h1>
+      <p class="text-white/40 text-xs mt-0.5">Travelling wave carousel</p>
+    </div>
+    <div class="speed-badge" id="speedBadge">Speed: 1.0x</div>
+  </div>
+
+  <div class="info-footer">
+    Hover card to freeze · Click for splash · Move mouse horizontally to shift speed
+  </div>
+
+  <!-- Marquee Container -->
+  <div id="marquee-container" class="relative z-10 flex flex-col justify-center h-screen gap-6 py-8">
+    <!-- Rows injected by JS -->
+  </div>
+
+  <script>
+    // Unsplash images
+    const images = [
+      { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", title: "Alpine Peak" },
+      { url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80", title: "Sunlit Forest" },
+      { url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", title: "Misty Valley" },
+      { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80", title: "Forest Bridge" },
+      { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", title: "Ocean Sunset" },
+      { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", title: "Aerial Valley" },
+      { url: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&q=80", title: "Waterfall" },
+      { url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80", title: "Lake Reflection" },
+      { url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", title: "Green Hills" },
+      { url: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80", title: "Aerial Nature" },
+    ];
+
+    // Row configs
+    const rows = [
+      { amplitude: 60, frequency: 0.02, phaseSpeed: 2, direction: 'left', duration: '50s', name: 'row1' },
+      { amplitude: 40, frequency: 0.03, phaseSpeed: -1.5, direction: 'right', duration: '65s', name: 'row2' },
+      { amplitude: 80, frequency: 0.015, phaseSpeed: 1, direction: 'left', duration: '40s', name: 'row3' },
+    ];
+
+    const container = document.getElementById('marquee-container');
+    let time = 0;
+    let globalSpeed = 1.0;
+    let mouseX = 0.5;
+    let cardElements = [];
+
+    // Build rows
+    function buildRows() {
+      rows.forEach((row, rowIndex) => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'overflow-hidden w-full';
+        rowEl.style.maskImage = 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)';
+        rowEl.style.webkitMaskImage = 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)';
+
+        const track = document.createElement('div');
+        track.className = `marquee-track marquee-${row.direction}`;
+        track.style.setProperty('--duration', row.duration);
+        track.dataset.row = rowIndex;
+
+        // Double the images for seamless loop
+        const allImages = [...images, ...images, ...images, ...images];
+
+        allImages.forEach((img, i) => {
+          const card = document.createElement('div');
+          card.className = 'wave-card';
+          card.dataset.row = rowIndex;
+          card.dataset.index = i;
+          card.dataset.baseX = i * 374; // card width + margin
+
+          card.innerHTML = `
+            <img src="${img.url}" alt="${img.title}" loading="lazy">
+            <div class="overlay"></div>
+            <div class="title">${img.title}</div>
+          `;
+
+          // Hover: freeze wave
+          card.addEventListener('mouseenter', () => {
+            card.dataset.frozen = 'true';
+          });
+          card.addEventListener('mouseleave', () => {
+            card.dataset.frozen = 'false';
+          });
+
+          // Click: splash ripple
+          card.addEventListener('click', (e) => {
+            const rect = card.getBoundingClientRect();
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = (e.clientX - rect.left - 150) + 'px';
+            ripple.style.top = (e.clientY - rect.top - 150) + 'px';
+            card.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
+          });
+
+          track.appendChild(card);
+          cardElements.push({ el: card, row: rowIndex, config: row, index: i });
+        });
+
+        rowEl.appendChild(track);
+        container.appendChild(rowEl);
+      });
+    }
+
+    // Wave animation loop
+    function animate() {
+      time += 0.016 * globalSpeed;
+
+      cardElements.forEach(({ el, row, config, index }) => {
+        if (el.dataset.frozen === 'true') return;
+
+        const baseX = index * 374;
+        const x = baseX;
+
+        // Wave formula: y = amplitude * sin(frequency * x + phaseSpeed * time)
+        const waveY = config.amplitude * Math.sin(config.frequency * x + config.phaseSpeed * time);
+
+        // Normalize waveY for effects (-1 to 1)
+        const normalized = waveY / config.amplitude;
+
+        // Scale: bigger at peak, smaller at trough
+        const scale = 1 + normalized * 0.1;
+
+        // Brightness: brighter at peak
+        const brightness = 100 + normalized * 25;
+
+        // Z-index: higher at peak (come forward)
+        const zIndex = Math.round(50 + normalized * 50);
+
+        el.style.transform = `translateY(${waveY}px) scale(${scale})`;
+        el.style.filter = `brightness(${brightness}%)`;
+        el.style.zIndex = zIndex;
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    // Mouse speed control
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX / window.innerWidth;
+      globalSpeed = 0.5 + mouseX * 1.5;
+      document.getElementById('speedBadge').textContent = `Speed: ${globalSpeed.toFixed(1)}x`;
+    });
+
+    // Loading
+    let loaded = 0;
+    function checkLoad() {
+      loaded++;
+      if (loaded >= images.length * rows.length * 4) {
+        setTimeout(() => document.getElementById('loader').classList.add('done'), 300);
+      }
+    }
+
+    // Fallback
+    setTimeout(() => document.getElementById('loader').classList.add('done'), 3000);
+
+    // Init
+    buildRows();
+    animate();
+  </script>
+
+</body>
+</html>

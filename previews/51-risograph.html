@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="orange-teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RISO·LAB // 051 — Independent Zine Publisher & Print Lab — 5 Sections • Premium Theme</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('riso-theme')||'orange-teal';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 DIVERSE RISOGRAPH INK COMBINATIONS
+       ========================================================= */
+    :root, [data-theme="orange-teal"] {
+      --paper: #FDF6E3;
+      --ink-primary: #FF6B35;
+      --ink-secondary: #006D77;
+      --ink-accent: #FFD60A;
+      --ink-dark: #1E383B;
+      --misreg-color: #00FFFF;
+      --misreg-alt: #FF00FF;
+      --border-color: #006D77;
+    }
+
+    [data-theme="pink-blue"] {
+      --paper: #FFF8E7;
+      --ink-primary: #FF006E;
+      --ink-secondary: #0077B6;
+      --ink-accent: #FFBE0B;
+      --ink-dark: #1A2E40;
+      --misreg-color: #FF00FF;
+      --misreg-alt: #00F0FF;
+      --border-color: #0077B6;
+    }
+
+    [data-theme="acid-purple"] {
+      --paper: #F5F3E8;
+      --ink-primary: #84CC16;
+      --ink-secondary: #581C87;
+      --ink-accent: #E11D48;
+      --ink-dark: #2E1065;
+      --misreg-color: #A855F7;
+      --misreg-alt: #84CC16;
+      --border-color: #581C87;
+    }
+
+    [data-theme="vermilion-cobalt"] {
+      --paper: #F4EBD9;
+      --ink-primary: #DC2626;
+      --ink-secondary: #1D4ED8;
+      --ink-accent: #D97706;
+      --ink-dark: #0F172A;
+      --misreg-color: #38BDF8;
+      --misreg-alt: #F43F5E;
+      --border-color: #1D4ED8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink-dark);
+      font-family: 'Courier Prime', 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Grain noise overlay */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.12;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Top navigation bar & Theme Switcher */
+    header.top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--paper);
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-primary);
+      position: relative;
+      display: inline-block;
+      text-shadow: 0 0 1px currentColor;
+    }
+
+    .brand-title::before {
+      content: attr(data-text);
+      position: absolute;
+      left: 2px;
+      top: 0;
+      color: var(--misreg-color);
+      mix-blend-mode: multiply;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .theme-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.03);
+      padding: 4px 8px;
+      border: 1px dashed var(--border-color);
+    }
+
+    .theme-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border: 1px solid var(--border-color);
+      background: var(--paper);
+      color: var(--ink-dark);
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--ink-primary);
+      color: var(--paper);
+      box-shadow: 2px 2px 0px var(--ink-secondary);
+    }
+
+    /* Container & Layout */
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 60px;
+      border: 2px solid var(--border-color);
+      padding: 36px;
+      background: var(--paper);
+      position: relative;
+    }
+
+    /* Crop marks on sheets */
+    .crop-tl, .crop-tr, .crop-bl, .crop-br {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      pointer-events: none;
+    }
+    .crop-tl { top: -2px; left: -2px; border-top: 2px solid var(--ink-primary); border-left: 2px solid var(--ink-primary); }
+    .crop-tr { top: -2px; right: -2px; border-top: 2px solid var(--ink-primary); border-right: 2px solid var(--ink-primary); }
+    .crop-bl { bottom: -2px; left: -2px; border-bottom: 2px solid var(--ink-primary); border-left: 2px solid var(--ink-primary); }
+    .crop-br { bottom: -2px; right: -2px; border-bottom: 2px solid var(--ink-primary); border-right: 2px solid var(--ink-primary); }
+
+    .registration-marks {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      display: flex;
+      gap: 6px;
+    }
+    .reg-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid var(--ink-dark);
+    }
+    .reg-dot.c1 { background: var(--ink-primary); }
+    .reg-dot.c2 { background: var(--ink-secondary); }
+    .reg-dot.c3 { background: var(--ink-accent); }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--ink-secondary);
+      border: 1px solid var(--ink-secondary);
+      padding: 3px 8px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.05;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-primary);
+      margin-bottom: 20px;
+      position: relative;
+      text-shadow: 0 0 1px currentColor;
+    }
+
+    .hero-title .misreg {
+      position: absolute;
+      left: 3px;
+      top: 2px;
+      color: var(--misreg-color);
+      mix-blend-mode: multiply;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      margin-bottom: 28px;
+      color: var(--ink-dark);
+      max-width: 48ch;
+    }
+
+    /* Ink Smear Button */
+    .btn-smear-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .btn-smear-shadow {
+      position: absolute;
+      inset: 0;
+      background: var(--ink-secondary);
+      border: 2px solid var(--ink-secondary);
+      transition: transform 0.2s ease, filter 0.2s ease;
+      transform: translate(0, 0);
+      filter: blur(0px);
+      z-index: 1;
+    }
+
+    .btn-smear {
+      position: relative;
+      z-index: 2;
+      background: var(--ink-primary);
+      color: var(--paper);
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 14px 28px;
+      border: 2px solid var(--ink-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.15s ease;
+    }
+
+    .btn-smear-wrap:hover .btn-smear-shadow {
+      transform: translate(6px, 3px);
+      filter: blur(2px);
+      opacity: 0.8;
+    }
+    .btn-smear-wrap:hover .btn-smear {
+      transform: translate(-2px, -2px);
+    }
+
+    /* Duotone artwork card in Hero */
+    .hero-art-card {
+      position: relative;
+      border: 2px solid var(--ink-secondary);
+      padding: 16px;
+      background: var(--paper);
+      box-shadow: 6px 6px 0px var(--ink-secondary);
+      transform: rotate(0.4deg);
+      transition: transform 0.3s ease;
+    }
+
+    .hero-art-card:hover {
+      transform: rotate(-0.5deg) scale(1.01);
+    }
+
+    .duotone-frame {
+      width: 100%;
+      height: 260px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--ink-dark);
+      background: #eee;
+    }
+
+    /* SVG Art styled with duotone filters */
+    .duotone-svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(160%) grayscale(100%);
+      mix-blend-mode: multiply;
+    }
+
+    .duotone-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--ink-primary) 0%, var(--ink-secondary) 100%);
+      mix-blend-mode: screen;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .duotone-caption {
+      margin-top: 10px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-secondary);
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+    }
+
+    /* Zine Archive Grid */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      border-bottom: 2px dashed var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ink-primary);
+      letter-spacing: 0.05em;
+    }
+
+    .filter-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: 'Courier Prime', monospace;
+      font-size: 12px;
+      padding: 3px 10px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--ink-dark);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--ink-secondary);
+      color: var(--paper);
+      border-color: var(--ink-secondary);
+    }
+
+    .issues-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 28px;
+      margin-bottom: 60px;
+    }
+
+    .issue-sheet {
+      border: 2px solid var(--border-color);
+      background: var(--paper);
+      padding: 20px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .issue-sheet:hover {
+      transform: translate(-3px, -3px) rotate(-0.3deg);
+      box-shadow: 6px 6px 0px var(--ink-primary);
+    }
+
+    .issue-sheet:hover .issue-title-misreg {
+      transform: translate(5px, 2px);
+      opacity: 0.9;
+    }
+
+    .issue-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-secondary);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .issue-thumb-wrap {
+      width: 100%;
+      height: 180px;
+      border: 1px solid var(--ink-dark);
+      position: relative;
+      margin-bottom: 16px;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    .issue-svg-art {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .issue-title-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .issue-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      text-transform: uppercase;
+      position: relative;
+      z-index: 2;
+    }
+
+    .issue-title-misreg {
+      position: absolute;
+      left: 2px;
+      top: 1px;
+      color: var(--misreg-color);
+      mix-blend-mode: multiply;
+      opacity: 0.7;
+      z-index: 1;
+      pointer-events: none;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .issue-excerpt {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--ink-dark);
+      margin-bottom: 16px;
+    }
+
+    .issue-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-secondary);
+    }
+
+    /* Print Lab Specs Section */
+    .lab-specs {
+      background: rgba(0,0,0,0.02);
+      border: 2px solid var(--border-color);
+      padding: 30px;
+      margin-bottom: 60px;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .spec-card {
+      border-left: 3px solid var(--ink-primary);
+      padding-left: 14px;
+    }
+
+    .spec-card h4 {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--ink-primary);
+      margin-bottom: 4px;
+    }
+
+    .spec-card p {
+      font-size: 13px;
+      color: var(--ink-dark);
+    }
+
+    /* Footer */
+    footer.site-footer {
+      border-top: 2px solid var(--border-color);
+      padding: 32px 24px;
+      text-align: center;
+      background: var(--paper);
+    }
+
+    .footer-stamp {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-secondary);
+      display: inline-block;
+      border: 1px dashed var(--ink-secondary);
+      padding: 8px 16px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    /* Modal for Issue Preview */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--paper);
+      border: 3px solid var(--ink-dark);
+      max-width: 680px;
+      width: 100%;
+      padding: 32px;
+      position: relative;
+      box-shadow: 10px 10px 0px var(--ink-primary);
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: var(--ink-primary);
+      color: var(--paper);
+      border: 1px solid var(--ink-dark);
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .hero-section { grid-template-columns: 1fr; padding: 24px; }
+      .issues-grid { grid-template-columns: 1fr; }
+    }
+
+    /* =========================================================
+       EXTENDED SECTIONS — Sticker Shop, Manifesto, Next Runs,
+       Footer Upgrade, Focus & Reduced-Motion
+       ========================================================= */
+    :focus-visible {
+      outline: 2px dashed var(--ink-primary);
+      outline-offset: 3px;
+    }
+
+    /* Zine Archive wrapper (semantic section) */
+    .zine-archive {
+      margin-bottom: 60px;
+    }
+
+    /* --- Sticker Shop / Merch --- */
+    .sticker-shop {
+      border: 2px solid var(--border-color);
+      padding: 30px;
+      margin-bottom: 60px;
+      position: relative;
+      background: var(--paper);
+    }
+
+    .sticker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .sticker-card {
+      position: relative;
+      border: 2px dashed var(--ink-secondary);
+      padding: 16px;
+      background: var(--paper);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sticker-card:hover {
+      transform: translate(-3px, -3px) rotate(-0.4deg);
+      box-shadow: 6px 6px 0px var(--ink-accent);
+    }
+
+    .sticker-art {
+      width: 100%;
+      height: 140px;
+      border: 1px solid var(--ink-dark);
+      background: var(--paper);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .sticker-art svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .sticker-label-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .sticker-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-primary);
+      position: relative;
+      z-index: 2;
+    }
+
+    .sticker-label-misreg {
+      position: absolute;
+      left: 2px;
+      top: 1px;
+      color: var(--misreg-color);
+      mix-blend-mode: multiply;
+      opacity: 0.7;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .sticker-price {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-secondary);
+      border: 1px solid var(--ink-secondary);
+      padding: 2px 10px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    /* --- Manifesto / About Press --- */
+    .manifesto {
+      border: 2px solid var(--ink-dark);
+      background: rgba(0,0,0,0.02);
+      padding: 40px;
+      margin-bottom: 60px;
+      position: relative;
+    }
+
+    .manifesto-quote {
+      position: relative;
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      text-transform: uppercase;
+      color: var(--ink-primary);
+      margin-bottom: 28px;
+      max-width: 26ch;
+      text-shadow: 0 0 1px currentColor;
+    }
+
+    .manifesto-quote .misreg {
+      position: absolute;
+      left: 3px;
+      top: 2px;
+      color: var(--misreg-color);
+      mix-blend-mode: multiply;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .manifesto-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .manifesto-body p {
+      font-size: 14px;
+      color: var(--ink-dark);
+      text-align: justify;
+    }
+
+    .manifesto-signature {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--ink-secondary);
+      margin-top: 24px;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 16px;
+    }
+
+    /* --- Next Runs / Events --- */
+    .next-runs {
+      margin-bottom: 60px;
+    }
+
+    .run-list {
+      border: 2px solid var(--border-color);
+      background: var(--paper);
+    }
+
+    .run-row {
+      display: grid;
+      grid-template-columns: 130px 1fr auto;
+      gap: 16px;
+      align-items: baseline;
+      padding: 14px 18px;
+      border-bottom: 1px dashed var(--border-color);
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+    }
+
+    .run-row:last-child { border-bottom: none; }
+
+    .run-row:hover { background: rgba(0,0,0,0.03); }
+
+    .run-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      text-transform: uppercase;
+    }
+
+    .run-title { color: var(--ink-dark); font-weight: 700; }
+
+    .run-loc {
+      font-size: 11px;
+      color: var(--ink-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: right;
+    }
+
+    .run-flag {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--ink-primary);
+      margin-right: 6px;
+    }
+
+    /* --- Footer upgrade --- */
+    footer.site-footer {
+      border-top: 2px solid var(--border-color);
+      padding: 40px 24px 32px;
+      text-align: center;
+      background: var(--paper);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 28px;
+      max-width: 900px;
+      margin: 0 auto 24px;
+      text-align: left;
+    }
+
+    .footer-col h5 {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--ink-primary);
+      margin-bottom: 12px;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      font-family: 'Courier Prime', monospace;
+      font-size: 13px;
+      padding: 8px 10px;
+      border: 2px solid var(--border-color);
+      background: var(--paper);
+      color: var(--ink-dark);
+    }
+
+    .newsletter-input:focus-visible {
+      outline: 2px dashed var(--ink-secondary);
+      outline-offset: 2px;
+    }
+
+    .newsletter-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border: 2px solid var(--ink-dark);
+      background: var(--ink-primary);
+      color: var(--paper);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .newsletter-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 3px 3px 0px var(--ink-secondary);
+    }
+
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .social-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-secondary);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .social-link:hover {
+      background: var(--ink-secondary);
+      color: var(--paper);
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--ink-dark);
+      opacity: 0.7;
+      margin-top: 16px;
+    }
+
+    /* Sticker toast notification */
+    .sticker-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink-dark);
+      color: var(--paper);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 12px 20px;
+      border: 2px solid var(--ink-primary);
+      z-index: 1200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .sticker-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      .run-row { grid-template-columns: 1fr; gap: 4px; text-align: left; }
+      .run-loc { text-align: left; }
+      .newsletter-form { flex-direction: column; }
+      .manifesto { padding: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grain Texture Overlay -->
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- Header & Navigation -->
+  <header class="top-nav">
+    <div class="brand-wrap">
+      <div class="brand-title" data-text="RISO·LAB // 051">RISO·LAB // 051</div>
+    </div>
+
+    <!-- 4 Theme Selector -->
+    <div class="theme-selector" role="group" aria-label="Risograph Palette Switcher">
+      <button class="theme-btn active" onclick="setTheme('orange-teal')" data-theme-target="orange-teal">01 Fluo Orange</button>
+      <button class="theme-btn" onclick="setTheme('pink-blue')" data-theme-target="pink-blue">02 Hot Pink</button>
+      <button class="theme-btn" onclick="setTheme('acid-purple')" data-theme-target="acid-purple">03 Acid Purple</button>
+      <button class="theme-btn" onclick="setTheme('vermilion-cobalt')" data-theme-target="vermilion-cobalt">04 Vermilion</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <!-- Crop Marks & Registration -->
+      <div class="crop-tl"></div><div class="crop-tr"></div>
+      <div class="crop-bl"></div><div class="crop-br"></div>
+      <div class="registration-marks">
+        <div class="reg-dot c1" title="Primary Spot Ink"></div>
+        <div class="reg-dot c2" title="Secondary Spot Ink"></div>
+        <div class="reg-dot c3" title="Accent Spot Ink"></div>
+      </div>
+
+      <div class="hero-content">
+        <span class="hero-badge">✦ LIMITED DUOTONE ARCHIVE • EDITION 051</span>
+        <h1 class="hero-title">
+          ANALOGUE<br>DUOTONE PRINT
+          <span class="misreg" aria-hidden="true">ANALOGUE<br>DUOTONE PRINT</span>
+        </h1>
+        <p class="hero-desc">
+          Independent publication archive exploring mechanical misregistration, high-density halftone screen angles, and tactile soy-based spot inks. Every impression carries unique tactile imperfections.
+        </p>
+
+        <!-- Ink Smear Button Interaction -->
+        <div class="btn-smear-wrap">
+          <div class="btn-smear-shadow"></div>
+          <button class="btn-smear" onclick="triggerSmearToast()">
+            <span>ORDER ZINE ARCHIVE ($18)</span>
+            <span style="font-size: 16px;">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Duotone Art Card -->
+      <div class="hero-art-card">
+        <div class="duotone-frame">
+          <svg class="duotone-svg" viewBox="0 0 400 300" preserveAspectRatio="none">
+            <defs>
+              <pattern id="halftone-dot" width="8" height="8" patternUnits="userSpaceOnUse">
+                <circle cx="4" cy="4" r="2.5" fill="#000" />
+              </pattern>
+            </defs>
+            <rect width="400" height="300" fill="#fff" />
+            <circle cx="120" cy="150" r="90" fill="url(#halftone-dot)" />
+            <polygon points="220,50 360,250 160,250" fill="url(#halftone-dot)" opacity="0.8" />
+            <path d="M 0,220 Q 200,100 400,240" stroke="#000" stroke-width="24" fill="none" />
+            <text x="30" y="270" font-family="Space Mono" font-size="28" font-weight="700" fill="#000">SPECIMEN #01</text>
+          </svg>
+          <div class="duotone-overlay"></div>
+        </div>
+        <div class="duotone-caption">
+          <span>DRUM: GR-3770 (DUAL DRUM)</span>
+          <span>MESH: 300 DPI</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Print Runs / Zine Archive -->
+    <section class="zine-archive">
+    <div class="section-header">
+      <h2 class="section-title">FEATURED PRINT RUNS</h2>
+      <div class="filter-tags">
+        <button class="filter-btn active" onclick="filterZines('all')">ALL RUNS</button>
+        <button class="filter-btn" onclick="filterZines('zine')">ZINES</button>
+        <button class="filter-btn" onclick="filterZines('poster')">POSTERS</button>
+        <button class="filter-btn" onclick="filterZines('monograph')">MONOGRAPHS</button>
+      </div>
+    </div>
+
+    <!-- Zine Grid -->
+    <div class="issues-grid" id="issues-container">
+      <!-- Cards rendered dynamically via JS -->
+    </div>
+    </section>
+
+    <!-- Print Lab Tech Specs -->
+    <section class="lab-specs">
+      <h3 style="font-family:'Space Mono',monospace; font-size:1.1rem; color:var(--ink-primary); text-transform:uppercase;">
+        ✦ PRINT PROCESS SPECIFICATIONS
+      </h3>
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h4>INK MATRIX</h4>
+          <p>Soy & Rice Bran oil vehicle with micronized mineral pigments. Zero petroleum distillate.</p>
+        </div>
+        <div class="spec-card">
+          <h4>PAPER BASE</h4>
+          <p>Munken Print White 115gsm, uncoated rough surface with 1.8 bulk factor.</p>
+        </div>
+        <div class="spec-card">
+          <h4>SCREEN ANGLE</h4>
+          <p>Drum 1: 45° | Drum 2: 75° | Stochastic dithering to prevent moiré artifacts.</p>
+        </div>
+        <div class="spec-card">
+          <h4>TOLERANCE</h4>
+          <p>Intentional mechanical registration drift: ±1.5mm to ±3.2mm per pass.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sticker Shop / Merch -->
+    <section class="sticker-shop">
+      <div class="section-header" style="margin-bottom:20px;">
+        <h2 class="section-title">STICKER SHOP // MERCH</h2>
+        <span class="hero-badge" style="margin-bottom:0;">HAND-CUT • GLOSS / MATTE MIX</span>
+      </div>
+
+      <div class="sticker-grid">
+        <div class="sticker-card" onclick="addStickerToCart('COLLECTOR PACK')">
+          <div class="sticker-art">
+            <svg viewBox="0 0 200 120" preserveAspectRatio="none">
+              <defs>
+                <pattern id="halftone-stk1" width="8" height="8" patternUnits="userSpaceOnUse">
+                  <circle cx="4" cy="4" r="3" fill="var(--ink-primary)" />
+                </pattern>
+              </defs>
+              <rect width="200" height="120" fill="var(--paper)" />
+              <rect x="20" y="15" width="60" height="90" fill="url(#halftone-stk1)" />
+              <rect x="120" y="15" width="60" height="90" fill="var(--ink-secondary)" opacity="0.75" />
+              <line x1="15" y1="15" x2="185" y2="105" stroke="var(--misreg-color)" stroke-width="2" />
+            </svg>
+          </div>
+          <div class="sticker-label-wrap">
+            <span class="sticker-label">COLLECTOR PACK</span>
+            <span class="sticker-label-misreg" aria-hidden="true">COLLECTOR PACK</span>
+          </div>
+          <div class="sticker-price">6 SHEETS • $4.00</div>
+        </div>
+
+        <div class="sticker-card" onclick="addStickerToCart('DUOTONE LAPEL SET')">
+          <div class="sticker-art">
+            <svg viewBox="0 0 200 120" preserveAspectRatio="none">
+              <defs>
+                <pattern id="halftone-stk2" width="6" height="6" patternUnits="userSpaceOnUse">
+                  <circle cx="3" cy="3" r="2" fill="var(--ink-secondary)" />
+                </pattern>
+              </defs>
+              <rect width="200" height="120" fill="var(--paper)" />
+              <circle cx="60" cy="60" r="42" fill="url(#halftone-stk2)" />
+              <circle cx="140" cy="60" r="42" fill="none" stroke="var(--ink-primary)" stroke-width="14" />
+              <path d="M 60,18 L 140,102" stroke="var(--misreg-alt)" stroke-width="3" stroke-dasharray="6,4" />
+            </svg>
+          </div>
+          <div class="sticker-label-wrap">
+            <span class="sticker-label">DUOTONE LAPEL SET</span>
+            <span class="sticker-label-misreg" aria-hidden="true">DUOTONE LAPEL SET</span>
+          </div>
+          <div class="sticker-price">3 PINS • $6.00</div>
+        </div>
+
+        <div class="sticker-card" onclick="addStickerToCart('HALFTONE PATCH')">
+          <div class="sticker-art">
+            <svg viewBox="0 0 200 120" preserveAspectRatio="none">
+              <defs>
+                <pattern id="halftone-stk3" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <circle cx="5" cy="5" r="3.5" fill="var(--ink-accent)" />
+                </pattern>
+              </defs>
+              <rect width="200" height="120" fill="var(--paper)" />
+              <polygon points="100,15 185,120 15,120" fill="url(#halftone-stk3)" />
+              <polygon points="100,15 185,120 15,120" fill="none" stroke="var(--ink-dark)" stroke-width="3" stroke-dasharray="4,3" />
+            </svg>
+          </div>
+          <div class="sticker-label-wrap">
+            <span class="sticker-label">HALFTONE PATCH</span>
+            <span class="sticker-label-misreg" aria-hidden="true">HALFTONE PATCH</span>
+          </div>
+          <div class="sticker-price">WOVEN • $5.00</div>
+        </div>
+
+        <div class="sticker-card" onclick="addStickerToCart('SPECIMEN SHEET')">
+          <div class="sticker-art">
+            <svg viewBox="0 0 200 120" preserveAspectRatio="none">
+              <defs>
+                <pattern id="halftone-stk4" width="7" height="7" patternUnits="userSpaceOnUse">
+                  <circle cx="3.5" cy="3.5" r="2.2" fill="var(--ink-dark)" />
+                </pattern>
+              </defs>
+              <rect width="200" height="120" fill="var(--paper)" />
+              <rect x="25" y="25" width="150" height="70" fill="url(#halftone-stk4)" opacity="0.85" />
+              <text x="40" y="68" font-family="Space Mono" font-size="20" font-weight="700" fill="var(--paper)">#051</text>
+              <rect x="25" y="25" width="150" height="70" fill="none" stroke="var(--misreg-color)" stroke-width="2" transform="translate(4,2)" />
+            </svg>
+          </div>
+          <div class="sticker-label-wrap">
+            <span class="sticker-label">SPECIMEN SHEET</span>
+            <span class="sticker-label-misreg" aria-hidden="true">SPECIMEN SHEET</span>
+          </div>
+          <div class="sticker-price">A4 • $8.00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Manifesto / About Press -->
+    <section class="manifesto">
+      <div class="crop-tl"></div><div class="crop-tr"></div>
+      <div class="crop-bl"></div><div class="crop-br"></div>
+
+      <div class="manifesto-quote">
+        IMPERFECTION IS<br>THE SIGNATURE.
+        <span class="misreg" aria-hidden="true">IMPERFECTION IS<br>THE SIGNATURE.</span>
+      </div>
+
+      <div class="manifesto-body">
+        <p>
+          RISO·LAB is an independent two-drum press refusing the myth of pixel-perfect reproduction. We set our registration intentionally off — every third pass slips, every sheet's ink kiss is unique, and no two copies of an issue leave the drying rack identical. That drift is not a defect; it is the physical record of the machine's hand.
+        </p>
+        <p>
+          Our output is deliberately small: editions cap at three hundred impressions because a risograph is a mimeograph descendant, closer to letterpress and stone lithography than to digital toner. We treat each drum pass as a spot-color decision, halftones screened at opposing angles to hold shadow detail without moiré, and soy inks pressed into rough uncoated stock that drinks the color.
+        </p>
+        <p>
+          The lab runs on scavenged drums, rebuilt gears, and a decade of accumulated roller-slip tables. Every run is an experiment; every misregistered overprint is filed in the archive as a legitimate plate, not a failed state.
+        </p>
+      </div>
+
+      <div class="manifesto-signature">— THE RISO·LAB COLLECTIVE, EDITION 051</div>
+    </section>
+
+    <!-- Next Runs / Events -->
+    <section class="next-runs">
+      <div class="section-header" style="margin-bottom:20px;">
+        <h2 class="section-title">NEXT RUNS // EVENTS</h2>
+        <span class="hero-badge" style="margin-bottom:0;">TAKE-AWAY EDITIONS ONLY</span>
+      </div>
+
+      <div class="run-list">
+        <div class="run-row">
+          <span class="run-date"><span class="run-flag"></span>26 AUG</span>
+          <span class="run-title">OPEN STUDIO + DRUM WALKTHROUGH</span>
+          <span class="run-loc">LAB, WAREHOUSE 7</span>
+        </div>
+        <div class="run-row">
+          <span class="run-date"><span class="run-flag"></span>09 SEP</span>
+          <span class="run-title">HALFTONE CLINIC — SCREEN ANGLE WORKSHOP</span>
+          <span class="run-loc">ZINE FAIR, DOCK HALL</span>
+        </div>
+        <div class="run-row">
+          <span class="run-date"><span class="run-flag"></span>21 SEP</span>
+          <span class="run-title">SYNTHETIC BOTANY RELEASE PARTY</span>
+          <span class="run-loc">CRATE & RACK PRESS</span>
+        </div>
+        <div class="run-row">
+          <span class="run-date"><span class="run-flag"></span>04 OCT</span>
+          <span class="run-title">PRINT SWAP — BRING ONE, TAKE ONE</span>
+          <span class="run-loc">PAPER PLATE CAFÉ</span>
+        </div>
+        <div class="run-row">
+          <span class="run-date"><span class="run-flag"></span>18 OCT</span>
+          <span class="run-title">MISREGISTRATION MASTERCLASS</span>
+          <span class="run-loc">ONLINE, LIMITED SEATS</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Preview -->
+  <div class="modal-overlay" id="issue-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">✕ CLOSE</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-stamp">PRINTED IN A LIMITED RUN OF ∞ • DUOTONE LAB</div>
+        <p class="footer-note" style="opacity:0.6; margin-top:8px;">
+          Risograph &amp; duotone exploratory theme. 5 sections: Hero, Archive, Specs, Sticker Shop, Manifesto, Next Runs.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h5>MAILING LIST // INK-WEEKLY</h5>
+        <p class="footer-note" style="opacity:0.6; margin-bottom:8px;">One print-related missive per week. No toner collateral.</p>
+        <form class="newsletter-form" id="newsletter-form">
+          <input class="newsletter-input" id="newsletter-email" type="email" placeholder="your@inbox.paper" aria-label="Email address" required>
+          <button class="newsletter-btn" type="submit">SUBSCRIBE</button>
+        </form>
+      </div>
+      <div class="footer-col">
+        <h5>FIND THE PRESS</h5>
+        <div class="social-links">
+          <a class="social-link" href="#" onclick="triggerSmearToast()">INSTAGRAM</a>
+          <a class="social-link" href="#" onclick="triggerSmearToast()">ARTSY</a>
+          <a class="social-link" href="#" onclick="triggerSmearToast()">BLEAKO</a>
+          <a class="social-link" href="#" onclick="triggerSmearToast()">ISSUU</a>
+        </div>
+      </div>
+    </div>
+    <p class="footer-note">
+      RISO·ARCHIVE / UI Exploration Batch 5 (#51) — Misregistration &amp; Duotone Architecture • 5 Sections Premium Theme
+    </p>
+  </footer>
+
+  <!-- Sticker Toast -->
+  <div class="sticker-toast" id="sticker-toast" aria-live="polite"></div>
+
+  <script>
+    const zineData = [
+      {
+        id: 1, type: 'zine',
+        title: 'CONCRETE MONOLITHS',
+        issue: 'ISSUE #09',
+        date: 'OCT 2024',
+        inks: 'FLUO ORANGE + TEAL',
+        pages: '48 PGS • EDITION OF 250',
+        desc: 'Photographic documentation of brutalist architecture across Eastern Europe, printed on warm recycled newsprint.'
+      },
+      {
+        id: 2, type: 'poster',
+        title: 'CYBERNETIC DIALECTICS',
+        issue: 'POSTER FOLIO #03',
+        date: 'NOV 2024',
+        inks: 'HOT PINK + OCEAN BLUE',
+        pages: 'A2 FOLDOUT • EDITION OF 100',
+        desc: 'Exploration of early algorithmic typography and ASCII pattern poetry rendered with 2-color halftone separations.'
+      },
+      {
+        id: 3, type: 'monograph',
+        title: 'TACTILE INTERFACES',
+        issue: 'MONO #04',
+        date: 'DEC 2024',
+        inks: 'ACID LIME + PURPLE',
+        pages: '64 PGS • HARDCOVER',
+        desc: 'Theoretical essays on physical knobs, mechanical switches, and analogue sound visualizers in digital design.'
+      },
+      {
+        id: 4, type: 'zine',
+        title: 'SYNTHETIC BOTANY',
+        issue: 'ISSUE #10',
+        date: 'JAN 2025',
+        inks: 'VERMILION + COBALT',
+        pages: '36 PGS • EDITION OF 300',
+        desc: 'Illustrations of fictional speculative flora generated from biological neural net prompts and hand-screened.'
+      },
+      {
+        id: 5, type: 'poster',
+        title: 'FREQUENCY SPECTRUM',
+        issue: 'PRINT #12',
+        date: 'FEB 2025',
+        inks: 'ORANGE + TEAL + YELLOW',
+        pages: 'A3 SCREEN • SIGNED RUN',
+        desc: 'Visual wave diagrams and oscilloscope curves mapped to 3-color spot plate separations with registration drift.'
+      },
+      {
+        id: 6, type: 'monograph',
+        title: 'THE IMPERFECT PRESS',
+        issue: 'VOL. 02',
+        date: 'MAR 2025',
+        inks: 'BLACK + FLUO ORANGE',
+        pages: '80 PGS • THREAD BIND',
+        desc: 'A manifesto celebrating print roller slip, ink bleed, and analogue noise as resistance to sterile pixel perfection.'
+      }
+    ];
+
+    function renderZines(filter = 'all') {
+      const container = document.getElementById('issues-container');
+      container.innerHTML = '';
+
+      const filtered = filter === 'all' ? zineData : zineData.filter(z => z.type === filter);
+
+      filtered.forEach((item, idx) => {
+        const card = document.createElement('article');
+        card.className = 'issue-sheet';
+        card.onclick = () => openModal(item);
+
+        card.innerHTML = `
+          <div class="crop-tl"></div><div class="crop-tr"></div>
+          <div class="crop-bl"></div><div class="crop-br"></div>
+          <div class="issue-meta">
+            <span>${item.issue}</span>
+            <span>${item.date}</span>
+          </div>
+          <div class="issue-thumb-wrap">
+            <div class="issue-svg-art">
+              <svg width="100%" height="100%" viewBox="0 0 200 120">
+                <circle cx="${40 + (idx * 25) % 120}" cy="60" r="35" fill="var(--ink-primary)" opacity="0.7" />
+                <rect x="${70 + (idx * 15) % 80}" y="20" width="70" height="70" fill="var(--ink-secondary)" opacity="0.6" />
+                <line x1="20" y1="100" x2="180" y2="20" stroke="var(--ink-dark)" stroke-width="3" stroke-dasharray="4,4" />
+              </svg>
+            </div>
+          </div>
+          <div class="issue-title-wrap">
+            <div class="issue-title">${item.title}</div>
+            <div class="issue-title-misreg" aria-hidden="true">${item.title}</div>
+          </div>
+          <p class="issue-excerpt">${item.desc}</p>
+          <div class="issue-footer">
+            <span>${item.inks}</span>
+            <span>${item.pages}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterZines(type) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderZines(type);
+    }
+
+    function openModal(item) {
+      const modal = document.getElementById('issue-modal');
+      const content = document.getElementById('modal-content');
+      content.innerHTML = `
+        <span class="hero-badge">${item.issue} • ${item.date}</span>
+        <h2 style="font-family:'Space Mono',monospace; font-size:1.8rem; color:var(--ink-primary); margin:12px 0; text-transform:uppercase;">
+          ${item.title}
+        </h2>
+        <p style="font-size:14px; margin-bottom:16px; color:var(--ink-dark);">${item.desc}</p>
+        <div style="background:rgba(0,0,0,0.03); border:1px solid var(--border-color); padding:16px; margin-bottom:20px;">
+          <div style="font-size:12px; font-weight:700; color:var(--ink-secondary);">PRINT RUN SPECS:</div>
+          <div style="font-size:13px; color:var(--ink-dark); margin-top:4px;">${item.inks} • ${item.pages}</div>
+        </div>
+        <button class="btn-smear" style="width:100%; justify-content:center;" onclick="alert('Order queued for ${item.title}! Print run will ship in 48 hours.'); closeModal();">
+          CONFIRM ORDER ($18.00)
+        </button>
+      `;
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('issue-modal').classList.remove('active');
+    }
+
+    function triggerSmearToast() {
+      alert('Order initiated! Adding latest Risograph Archive bundle to bag.');
+    }
+
+    function showStickerToast(msg) {
+      const toast = document.getElementById('sticker-toast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(showStickerToast._t);
+      showStickerToast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function addStickerToCart(name) {
+      showStickerToast('✦ ' + name + ' printed — adding to cart.');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('newsletter-form');
+      if (!form) return;
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('newsletter-email');
+        if (!input || !input.value) return;
+        showStickerToast('INSCRIBED ON THE LIST — WELCOME, ' + input.value.split('@')[0].toUpperCase());
+        input.value = '';
+        try { localStorage.setItem('riso-newsletter', '1'); } catch(err) {}
+      });
+    });
+
+    function setTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      try { localStorage.setItem('riso-theme', themeName); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === themeName);
+      });
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'orange-teal';
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === currentTheme);
+      });
+      renderZines('all');
+    });
+  </script>
+</body>
+</html>

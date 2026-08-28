@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mosaic Morph Grid</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0c0c0e;
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Grid container */
+    .mosaic-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: 140px;
+      grid-auto-flow: dense;
+      gap: 12px;
+      padding: 80px 24px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Cell sizes */
+    .cell-small { grid-column: span 1; grid-row: span 1; }
+    .cell-wide { grid-column: span 2; grid-row: span 1; }
+    .cell-tall { grid-column: span 1; grid-row: span 2; }
+    .cell-large { grid-column: span 2; grid-row: span 2; }
+
+    /* Individual cell */
+    .morph-cell {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 
+        grid-column 1s cubic-bezier(0.4, 0, 0.2, 1),
+        grid-row 1s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 0.4s ease,
+        opacity 0.6s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .morph-cell:hover {
+      transform: scale(1.04);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 30px var(--glow-color, rgba(99,102,241,0.15));
+      z-index: 50;
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .morph-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease, filter 0.4s ease;
+    }
+
+    .morph-cell:hover img {
+      transform: scale(1.08);
+      filter: brightness(1.1);
+    }
+
+    .morph-cell .cell-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%);
+      transition: opacity 0.3s ease;
+    }
+
+    .morph-cell:hover .cell-overlay {
+      opacity: 0.4;
+    }
+
+    .morph-cell .cell-title {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: all 0.3s ease 0.05s;
+      pointer-events: none;
+    }
+
+    .morph-cell:hover .cell-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered entrance */
+    .morph-cell.entering {
+      opacity: 0;
+      transform: scale(0.8) translateY(20px);
+    }
+
+    .morph-cell.entered {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Ghost trail during morph */
+    .morph-cell.morphing {
+      opacity: 0.7;
+      transform: scale(1.02);
+    }
+
+    /* Pop-out overlay */
+    .popout-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .popout-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .popout-image {
+      max-width: 85vw;
+      max-height: 80vh;
+      border-radius: 20px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+      transform: scale(0.9);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .popout-overlay.active .popout-image {
+      transform: scale(1);
+    }
+
+    .popout-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .popout-close:hover {
+      background: rgba(255,255,255,0.2);
+      transform: rotate(90deg);
+    }
+
+    .popout-title {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+      opacity: 0;
+      transition: opacity 0.4s ease 0.1s;
+    }
+
+    .popout-overlay.active .popout-title {
+      opacity: 1;
+    }
+
+    /* UI Header */
+    .ui-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(12,12,14,0.95) 0%, transparent 100%);
+    }
+
+    .morph-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .morph-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .morph-paused .morph-dot {
+      background: #f59e0b;
+      animation: none;
+    }
+
+    /* Countdown bar */
+    .countdown-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      z-index: 101;
+      transition: width 0.1s linear;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .mosaic-grid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 100px;
+        gap: 8px;
+        padding: 70px 12px 30px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .mosaic-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 90px;
+      }
+      .cell-wide { grid-column: span 2; }
+      .cell-tall { grid-row: span 2; }
+      .cell-large { grid-column: span 2; grid-row: span 2; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grain -->
+  <div class="grain"></div>
+
+  <!-- Countdown bar -->
+  <div class="countdown-bar" id="countdownBar" style="width: 0%;"></div>
+
+  <!-- UI Header -->
+  <div class="ui-header">
+    <div>
+      <h1 class="text-white text-lg font-bold tracking-tight">Mosaic Morph Grid</h1>
+      <p class="text-white/40 text-xs mt-0.5">Living gallery wall</p>
+    </div>
+    <div class="morph-indicator" id="morphIndicator">
+      <div class="morph-dot"></div>
+      <span id="morphStatus">Auto-morph ON</span>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="mosaic-grid" id="mosaicGrid"></div>
+
+  <!-- Pop-out Overlay -->
+  <div class="popout-overlay" id="popoutOverlay">
+    <button class="popout-close" id="popoutClose">&times;</button>
+    <img class="popout-image" id="popoutImage" src="" alt="">
+    <div class="popout-title" id="popoutTitle"></div>
+  </div>
+
+  <script>
+    // Images
+    const images = [
+      { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", title: "Alpine Peak", color: "#6366f1" },
+      { url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80", title: "Sunlit Forest", color: "#22c55e" },
+      { url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", title: "Misty Valley", color: "#94a3b8" },
+      { url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80", title: "Forest Bridge", color: "#a855f7" },
+      { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", title: "Ocean Sunset", color: "#f97316" },
+      { url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", title: "Aerial Valley", color: "#14b8a6" },
+      { url: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&q=80", title: "Waterfall", color: "#3b82f6" },
+      { url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80", title: "Lake Reflection", color: "#06b6d4" },
+      { url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80", title: "Green Hills", color: "#84cc16" },
+      { url: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80", title: "Aerial Nature", color: "#10b981" },
+      { url: "https://images.unsplash.com/photo-1518173946687-a4c036bc3c95?w=800&q=80", title: "Foggy Mountains", color: "#64748b" },
+      { url: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&q=80", title: "Mountain Lake", color: "#0ea5e9" },
+      { url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80", title: "Rocky Summit", color: "#78716c" },
+      { url: "https://images.unsplash.com/photo-1439853949127-fa647821eba0?w=800&q=80", title: "River Canyon", color: "#d97706" },
+      { url: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80", title: "Autumn Road", color: "#ea580c" },
+      { url: "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&q=80", title: "Morning Light", color: "#fbbf24" },
+      { url: "https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=800&q=80", title: "Starry Night", color: "#4f46e5" },
+      { url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80", title: "Snow Peak", color: "#e2e8f0" },
+    ];
+
+    const grid = document.getElementById('mosaicGrid');
+    const popoutOverlay = document.getElementById('popoutOverlay');
+    const popoutImage = document.getElementById('popoutImage');
+    const popoutTitle = document.getElementById('popoutTitle');
+    const popoutClose = document.getElementById('popoutClose');
+    const morphIndicator = document.getElementById('morphIndicator');
+    const morphStatus = document.getElementById('morphStatus');
+    const countdownBar = document.getElementById('countdownBar');
+
+    const MORPH_INTERVAL = 5000;
+    const cellTypes = ['cell-small', 'cell-wide', 'cell-tall', 'cell-large'];
+    let autoMorph = true;
+    let morphTimer = null;
+    let countdownStart = 0;
+    let cells = [];
+
+    // Shuffle array
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // Random cell type with weights
+    function randomCellType() {
+      const r = Math.random();
+      if (r < 0.5) return 'cell-small';
+      if (r < 0.75) return 'cell-wide';
+      if (r < 0.9) return 'cell-tall';
+      return 'cell-large';
+    }
+
+    // Build grid
+    function buildGrid() {
+      grid.innerHTML = '';
+      cells = [];
+
+      const shuffled = shuffle(images);
+
+      shuffled.forEach((img, i) => {
+        const cell = document.createElement('div');
+        const type = randomCellType();
+
+        cell.className = `morph-cell ${type} entering`;
+        cell.dataset.id = img.url;
+        cell.style.setProperty('--glow-color', img.color + '25');
+
+        cell.innerHTML = `
+          <img src="${img.url}" alt="${img.title}" loading="lazy">
+          <div class="cell-overlay"></div>
+          <div class="cell-title">${img.title}</div>
+        `;
+
+        // Hover pause
+        cell.addEventListener('mouseenter', () => {
+          if (autoMorph) {
+            autoMorph = false;
+            clearTimeout(morphTimer);
+            morphIndicator.classList.add('morph-paused');
+            morphStatus.textContent = 'Paused (hover)';
+          }
+        });
+
+        cell.addEventListener('mouseleave', () => {
+          autoMorph = true;
+          morphIndicator.classList.remove('morph-paused');
+          morphStatus.textContent = 'Auto-morph ON';
+          scheduleMorph();
+        });
+
+        // Click pop-out
+        cell.addEventListener('click', () => {
+          popoutImage.src = img.url;
+          popoutTitle.textContent = img.title;
+          popoutOverlay.classList.add('active');
+
+          // Dim other cells
+          document.querySelectorAll('.morph-cell').forEach(c => {
+            if (c !== cell) c.style.opacity = '0.3';
+          });
+        });
+
+        grid.appendChild(cell);
+        cells.push(cell);
+
+        // Staggered entrance
+        setTimeout(() => {
+          cell.classList.remove('entering');
+          cell.classList.add('entered');
+        }, i * 80 + 100);
+      });
+    }
+
+    // Morph function
+    function morph() {
+      if (!autoMorph) return;
+
+      // Add morphing class briefly
+      cells.forEach(c => c.classList.add('morphing'));
+
+      setTimeout(() => {
+        const shuffled = shuffle(images);
+
+        cells.forEach((cell, i) => {
+          const img = shuffled[i];
+          const type = randomCellType();
+
+          // Remove old size classes
+          cell.classList.remove('cell-small', 'cell-wide', 'cell-tall', 'cell-large');
+          cell.classList.add(type);
+
+          // Update content
+          cell.dataset.id = img.url;
+          cell.style.setProperty('--glow-color', img.color + '25');
+          cell.querySelector('img').src = img.url;
+          cell.querySelector('img').alt = img.title;
+          cell.querySelector('.cell-title').textContent = img.title;
+        });
+
+        setTimeout(() => {
+          cells.forEach(c => c.classList.remove('morphing'));
+        }, 500);
+      }, 200);
+
+      scheduleMorph();
+    }
+
+    // Schedule next morph
+    function scheduleMorph() {
+      countdownStart = Date.now();
+      morphTimer = setTimeout(morph, MORPH_INTERVAL);
+    }
+
+    // Countdown animation
+    function updateCountdown() {
+      if (!autoMorph) {
+        countdownBar.style.width = '0%';
+        requestAnimationFrame(updateCountdown);
+        return;
+      }
+
+      const elapsed = Date.now() - countdownStart;
+      const progress = Math.min(elapsed / MORPH_INTERVAL, 1);
+      countdownBar.style.width = (progress * 100) + '%';
+      requestAnimationFrame(updateCountdown);
+    }
+
+    // Close popout
+    popoutClose.addEventListener('click', () => {
+      popoutOverlay.classList.remove('active');
+      document.querySelectorAll('.morph-cell').forEach(c => {
+        c.style.opacity = '';
+      });
+    });
+
+    popoutOverlay.addEventListener('click', (e) => {
+      if (e.target === popoutOverlay) {
+        popoutOverlay.classList.remove('active');
+        document.querySelectorAll('.morph-cell').forEach(c => {
+          c.style.opacity = '';
+        });
+      }
+    });
+
+    // Keyboard close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && popoutOverlay.classList.contains('active')) {
+        popoutOverlay.classList.remove('active');
+        document.querySelectorAll('.morph-cell').forEach(c => {
+          c.style.opacity = '';
+        });
+      }
+    });
+
+    // Init
+    buildGrid();
+    scheduleMorph();
+    updateCountdown();
+  </script>
+
+</body>
+</html>

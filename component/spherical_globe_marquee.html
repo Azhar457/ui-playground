@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spherical Globe Marquee</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(ellipse at 50% 40%, #15192b 0%, #0b0d14 50%, #050508 100%);
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+    color: #fff;
+  }
+  .viewport {
+    width: 100vw;
+    height: 100vh;
+    perspective: 1500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .globe {
+    position: relative;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .card {
+    position: absolute;
+    width: 160px;
+    height: 110px;
+    left: -80px;
+    top: -55px;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    cursor: pointer;
+  }
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.4s;
+    position: relative;
+    background: #1a1a2e;
+  }
+  .card:hover .card-inner {
+    transform: scale(1.2);
+    box-shadow: 0 0 36px rgba(255,255,255,0.15), 0 12px 48px rgba(0,0,0,0.7);
+    border-color: rgba(255,255,255,0.3);
+    z-index: 999;
+  }
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+  .card-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .card-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 12px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .card:hover .card-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+  }
+  .hint {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.35);
+    font-size: 13px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .dot { opacity: 0.4; }
+  .title-overlay {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .title-overlay h1 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.85);
+  }
+  .title-overlay p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="title-overlay">
+  <h1>Spherical Globe Marquee</h1>
+  <p>Drag to rotate · Double-click to reset</p>
+</div>
+
+<div class="viewport" id="viewport">
+  <div class="globe" id="globe"></div>
+</div>
+
+<div class="hint">
+  <span>Drag untuk memutar</span>
+  <span class="dot">·</span>
+  <span>Double-click reset</span>
+</div>
+
+<script>
+(function() {
+  const places = [
+    { name: 'Tokyo',      img: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=280&fit=crop&q=80' },
+    { name: 'Paris',      img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&h=280&fit=crop&q=80' },
+    { name: 'New York',   img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&h=280&fit=crop&q=80' },
+    { name: 'Sydney',     img: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=400&h=280&fit=crop&q=80' },
+    { name: 'Cairo',      img: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=400&h=280&fit=crop&q=80' },
+    { name: 'Rio',        img: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&h=280&fit=crop&q=80' },
+    { name: 'London',     img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=280&fit=crop&q=80' },
+    { name: 'Dubai',      img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&h=280&fit=crop&q=80' },
+    { name: 'Singapore',  img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&h=280&fit=crop&q=80' },
+    { name: 'Kyoto',      img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=280&fit=crop&q=80' },
+    { name: 'Santorini',  img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&h=280&fit=crop&q=80' },
+    { name: 'Reykjavik',  img: 'https://images.unsplash.com/photo-1476610182048-b716b8518aae?w=400&h=280&fit=crop&q=80' },
+    { name: 'Marrakech',  img: 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=400&h=280&fit=crop&q=80' },
+    { name: 'Cape Town',  img: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&h=280&fit=crop&q=80' },
+    { name: 'Hanoi',      img: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&h=280&fit=crop&q=80' },
+    { name: 'Venice',     img: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=400&h=280&fit=crop&q=80' },
+    { name: 'Patagonia',  img: 'https://images.unsplash.com/photo-1518182170546-0766bc6f9213?w=400&h=280&fit=crop&q=80' },
+    { name: 'Maldives',   img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&h=280&fit=crop&q=80' },
+    { name: 'Bhutan',     img: 'https://images.unsplash.com/photo-1578565698835-0855f46b94c6?w=400&h=280&fit=crop&q=80' },
+    { name: 'Seoul',      img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400&h=280&fit=crop&q=80' },
+  ];
+
+  const N = places.length;
+  const R = 340;
+  const goldenRatio = (1 + Math.sqrt(5)) / 2;
+  const goldenAngle = 2 * Math.PI * (1 - 1 / goldenRatio);
+
+  const globe = document.getElementById('globe');
+
+  places.forEach((place, i) => {
+    const t = i / (N - 1);
+    const y = 1 - 2 * t;
+    const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
+    const theta = goldenAngle * i;
+
+    const x = Math.cos(theta) * radiusAtY;
+    const z = Math.sin(theta) * radiusAtY;
+
+    const rotY = Math.atan2(x, z) * 180 / Math.PI;
+    const rotX = -Math.asin(Math.max(-1, Math.min(1, y))) * 180 / Math.PI;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.transform = `rotateY(${rotY.toFixed(3)}deg) rotateX(${rotX.toFixed(3)}deg) translateZ(${R}px)`;
+
+    card.innerHTML = `
+      <div class="card-inner">
+        <img src="${place.img}" alt="${place.name}" loading="lazy" />
+        <div class="card-shine"></div>
+        <div class="card-label">${place.name}</div>
+      </div>
+    `;
+
+    globe.appendChild(card);
+  });
+
+  // Starfield
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 200; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.opacity = (Math.random() * 0.6 + 0.1).toFixed(3);
+    starsContainer.appendChild(star);
+  }
+
+  // Physics
+  let rotX = 0, rotY = 0, rotZ = 0;
+  const autoSpeed = { x: 0.1, y: 0.18, z: 0.06 };
+  let dragVelX = 0, dragVelY = 0;
+  let isDragging = false;
+  let lastMX = 0, lastMY = 0;
+  const friction = 0.96;
+  const viewport = document.getElementById('viewport');
+
+  function onDown(x, y) {
+    isDragging = true;
+    lastMX = x;
+    lastMY = y;
+    dragVelX = 0;
+    dragVelY = 0;
+    viewport.style.cursor = 'grabbing';
+  }
+
+  function onMove(x, y) {
+    if (!isDragging) return;
+    const dx = x - lastMX;
+    const dy = y - lastMY;
+    rotY += dx * 0.3;
+    rotX -= dy * 0.3;
+    dragVelX = dx * 0.3;
+    dragVelY = -dy * 0.3;
+    lastMX = x;
+    lastMY = y;
+  }
+
+  function onUp() {
+    isDragging = false;
+    viewport.style.cursor = 'grab';
+  }
+
+  viewport.addEventListener('mousedown', e => onDown(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', onUp);
+
+  viewport.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) onDown(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  window.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) onMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  window.addEventListener('touchend', onUp);
+
+  viewport.addEventListener('dblclick', () => {
+    rotX = 0;
+    rotY = 0;
+    rotZ = 0;
+    dragVelX = 0;
+    dragVelY = 0;
+  });
+
+  function animate() {
+    if (!isDragging) {
+      rotX += autoSpeed.x;
+      rotY += autoSpeed.y;
+      rotZ += autoSpeed.z;
+      rotX += dragVelX;
+      rotY += dragVelY;
+      dragVelX *= friction;
+      dragVelY *= friction;
+      if (Math.abs(dragVelX) < 0.005) dragVelX = 0;
+      if (Math.abs(dragVelY) < 0.005) dragVelY = 0;
+    }
+    globe.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) rotateZ(${rotZ.toFixed(2)}deg)`;
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+})();
+</script>
+
+</body>
+</html>

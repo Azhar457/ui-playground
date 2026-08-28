@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prismatic Holographic — UI Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #07060D;
+      --bg-surface: #0D0B19;
+      --text-primary: #EEEFF5;
+      --text-muted: #8884A3;
+      --prism-1: #00F0FF;
+      --prism-2: #B026FF;
+      --prism-3: #FF4DCD;
+      --prism-4: #FFB347;
+      --prism-5: #6CFF9B;
+      --border-glow: rgba(0, 240, 255, 0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── bg noise overlay ── */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── wall prism ── */
+    .prism-bg {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+    }
+    .prism-bg span {
+      position: absolute; border-radius: 50%;
+      filter: blur(90px); opacity: 0.12;
+      animation: prismDrift 16s ease-in-out infinite alternate;
+    }
+    .prism-bg span:nth-child(1) {
+      width: 55vw; height: 55vw; top: -20%; left: -15%;
+      background: radial-gradient(circle, #00F0FF, transparent);
+    }
+    .prism-bg span:nth-child(2) {
+      width: 45vw; height: 45vw; bottom: -10%; right: -10%;
+      background: radial-gradient(circle, #B026FF, transparent);
+      animation-delay: -5s;
+    }
+    .prism-bg span:nth-child(3) {
+      width: 35vw; height: 35vw; top: 40%; left: 50%;
+      background: radial-gradient(circle, #FF4DCD, transparent);
+      animation-delay: -10s;
+    }
+
+    @keyframes prismDrift {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(4vw, -3vw) scale(1.15); }
+    }
+
+    /* ── prismatic shape decorations ── */
+    .geo-prism {
+      position: fixed; pointer-events: none; z-index: 0;
+      opacity: 0.07;
+    }
+    .geo-prism.tri {
+      width: 0; height: 0;
+      border-left: 120px solid transparent; border-right: 120px solid transparent;
+      border-bottom: 200px solid var(--prism-2);
+      top: 15%; right: 5%;
+      transform: rotate(15deg);
+      animation: geoFloat 20s ease-in-out infinite alternate;
+    }
+    .geo-prism.hex {
+      width: 100px; height: 100px;
+      background: linear-gradient(135deg, var(--prism-1), var(--prism-3));
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+      bottom: 12%; left: 6%;
+      animation: geoFloat 18s ease-in-out infinite alternate-reverse;
+    }
+    .geo-prism.ring {
+      width: 180px; height: 180px;
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      border-radius: 50%;
+      bottom: 20%; right: 20%;
+      animation: geoFloat 22s ease-in-out infinite alternate;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.05);
+    }
+    .geo-prism.ring::after {
+      content: ''; position: absolute; inset: 20px;
+      border: 1px solid rgba(176, 38, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    @keyframes geoFloat {
+      0%   { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-30px) rotate(8deg); }
+    }
+
+    /* ── scan line effect ── */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px
+      );
+      pointer-events: none;
+    }
+
+    /* ── layout ── */
+    .container { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+    /* ── nav ── */
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px 40px; position: relative; z-index: 10;
+    }
+    nav .logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--prism-1), var(--prism-3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    nav .logo span { color: var(--text-muted); -webkit-text-fill-color: var(--text-muted); }
+    nav .nav-links { display: flex; gap: 32px; align-items: center; }
+    nav .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: 0.85rem;
+      font-weight: 500; letter-spacing: 0.3px; transition: color 0.3s;
+    }
+    nav .nav-links a:hover { color: var(--text-primary); }
+
+    /* ── hero ── */
+    .hero {
+      min-height: 85vh; display: flex; flex-direction: column; justify-content: center;
+      position: relative; padding: 80px 0;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px;
+      align-items: center;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1.05;
+    }
+    .hero h1 .prism-text {
+      background: linear-gradient(135deg, var(--prism-1) 0%, var(--prism-2) 30%, var(--prism-3) 55%, var(--prism-4) 80%, var(--prism-5) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: prismShift 6s ease-in-out infinite alternate;
+    }
+    @keyframes prismShift {
+      0%   { background-position: 0% 0%; }
+      50%  { background-position: 100% 100%; }
+      100% { background-position: 0% 100%; }
+    }
+    .hero p {
+      color: var(--text-muted); font-size: 1.05rem; max-width: 480px;
+      margin-top: 24px; line-height: 1.8;
+    }
+    .hero-cta {
+      display: flex; gap: 16px; margin-top: 40px;
+    }
+    .btn-primary {
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
+      padding: 14px 36px; border: none; border-radius: 100px;
+      cursor: pointer; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--prism-1), var(--prism-2), var(--prism-3));
+      background-size: 200% 200%;
+      color: #FFF; transition: transform 0.3s, box-shadow 0.3s;
+      animation: prismShift 4s ease-in-out infinite;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(176, 38, 255, 0.3);
+    }
+    .btn-secondary {
+      font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.9rem;
+      padding: 14px 36px; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px; background: transparent; color: var(--text-primary);
+      cursor: pointer; transition: all 0.3s; backdrop-filter: blur(12px);
+    }
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.03);
+    }
+
+    /* ── prism card visual ── */
+    .prism-card {
+      position: relative; width: 100%; aspect-ratio: 1 / 1.1;
+      border-radius: 24px; overflow: hidden;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .prism-card-inner {
+      position: absolute; inset: 0;
+      background: conic-gradient(from 0deg at 50% 50%,
+        rgba(0, 240, 255, 0.04), rgba(176, 38, 255, 0.04),
+        rgba(255, 77, 205, 0.04), rgba(255, 179, 71, 0.04),
+        rgba(108, 255, 155, 0.04), rgba(0, 240, 255, 0.04));
+      animation: spinPrism 12s linear infinite;
+    }
+    @keyframes spinPrism {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .prism-card-overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center;
+      backdrop-filter: blur(2px);
+    }
+    .gem-border {
+      width: 100px; height: 100px; border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; position: relative;
+      background: var(--bg-surface);
+    }
+    .gem-border::before {
+      content: ''; position: absolute; inset: -2px; border-radius: 26px;
+      background: conic-gradient(from 0deg at 50% 50%,
+        var(--prism-1), var(--prism-2), var(--prism-3),
+        var(--prism-4), var(--prism-5), var(--prism-1));
+      animation: spinPrism 8s linear infinite;
+      z-index: 0;
+    }
+    .gem-border::after {
+      content: ''; position: absolute; inset: 0; border-radius: 24px;
+      background: var(--bg-surface); z-index: 1;
+    }
+    .gem-border i {
+      position: relative; z-index: 2; font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--prism-1), var(--prism-3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .prism-card-overlay p { color: var(--text-muted); font-size: 0.85rem; max-width: 200px; }
+
+    /* ── prism chromatic edge ── */
+    .chromatic-edge {
+      position: absolute; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04),
+                  -2px 0 0 rgba(0, 240, 255, 0.15),
+                  2px 0 0 rgba(255, 77, 205, 0.15),
+                  0 -1px 0 rgba(176, 38, 255, 0.08),
+                  0 1px 0 rgba(108, 255, 155, 0.08);
+      border-radius: inherit;
+    }
+
+    /* ── features ── */
+    .features { padding: 100px 0; }
+    .features h2 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      text-align: center; margin-bottom: 16px;
+    }
+    .features h2 .prism-text { background: linear-gradient(135deg, var(--prism-2), var(--prism-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .features .sub {
+      text-align: center; color: var(--text-muted); max-width: 520px;
+      margin: 0 auto 60px; font-size: 0.95rem;
+    }
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .feature-card {
+      background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px; padding: 36px 28px;
+      position: relative; overflow: hidden;
+      transition: transform 0.4s, border-color 0.4s;
+    }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.12); }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--prism-1), var(--prism-2), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card i {
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--prism-1), var(--prism-3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 20px; display: inline-block;
+    }
+    .feature-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 12px; }
+    .feature-card p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.7; }
+
+    /* ── prism stats ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px; overflow: hidden; margin: 0 0 80px;
+      background: var(--bg-surface);
+    }
+    .stat-item {
+      padding: 40px 24px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item .num {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 2rem; margin-bottom: 6px;
+    }
+    .stat-item .num.prism-text {
+      background: linear-gradient(135deg, var(--prism-1), var(--prism-4));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-item .label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── responsive ── */
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .prism-card { max-width: 300px; margin: 0 auto; }
+      .feature-grid { grid-template-columns: 1fr; gap: 16px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      nav .nav-links { display: none; }
+    }
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- prismatic blobs -->
+  <div class="prism-bg"><span></span><span></span><span></span></div>
+  <!-- geometric prisms -->
+  <div class="geo-prism tri"></div>
+  <div class="geo-prism hex"></div>
+  <div class="geo-prism ring"></div>
+  <!-- scanlines -->
+  <div class="scanlines"></div>
+
+  <!-- nav -->
+  <nav>
+    <div class="logo">prism<span>·</span>lab</div>
+    <div class="nav-links">
+      <a href="#">features</a>
+      <a href="#">showcase</a>
+      <a href="#">pricing</a>
+      <a href="#" style="color:var(--prism-1)">contact</a>
+    </div>
+  </nav>
+
+  <!-- hero -->
+  <div class="container">
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <h1>
+            Light<br>
+            <span class="prism-text">refracted</span><br>
+            into code
+          </h1>
+          <p>Where spectral gradients meet geometric precision. Every surface is a prism — every interaction bends light.</p>
+          <div class="hero-cta">
+            <button class="btn-primary">Explore <i class="fas fa-arrow-right" style="margin-left:8px;font-size:0.75rem"></i></button>
+            <button class="btn-secondary"><i class="far fa-eye" style="margin-right:8px"></i>Showcase</button>
+          </div>
+        </div>
+        <div class="prism-card">
+          <div class="prism-card-inner"></div>
+          <div class="prism-card-overlay">
+            <div class="gem-border">
+              <i class="fas fa-gem"></i>
+            </div>
+            <p>rotating prism core</p>
+          </div>
+          <div class="chromatic-edge"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- features -->
+  <div class="features">
+    <div class="container">
+      <h2><span class="prism-text">spectral</span> capabilities</h2>
+      <p class="sub">Each layer bends light differently — the full spectrum, mapped to interaction.</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <i class="fas fa-water"></i>
+          <h3>Iridescent Shell</h3>
+          <p>Multi-stop gradients that shift with viewport and motion — no two angles see the same color.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-cube"></i>
+          <h3>Prism Geometry</h3>
+          <p>Sacred-geometry overlays with refractive edge glow. Borders split into spectral components.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-lightbulb"></i>
+          <h3>Chromatic Response</h3>
+          <p>Pointer-reactive highlight shifts. Move your cursor — the surface dispersion follows.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-meteor"></i>
+          <h3>Light Leak FX</h3>
+          <p>Per-component chromatic aberration and bloom thresholds. Controlled glare as a design tool.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-snowflake"></i>
+          <h3>Scanline Veil</h3>
+          <p>Subtle CRT scanline overlay adds texture without readability loss. Analog warmth, digital precision.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-droplet"></i>
+          <h3>Dispersion Engine</h3>
+          <p>Color separation at motion boundaries — UI elements leave spectral trails during scroll and hover.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- prism stats -->
+  <div class="container">
+    <div class="stats">
+      <div class="stat-item">
+        <div class="num prism-text">64</div>
+        <div class="label">spectrum stops</div>
+      </div>
+      <div class="stat-item">
+        <div class="num prism-text">360°</div>
+        <div class="label">hue arc</div>
+      </div>
+      <div class="stat-item">
+        <div class="num prism-text">0.4</div>
+        <div class="label">avg glare ratio</div>
+      </div>
+      <div class="stat-item">
+        <div class="num prism-text">∞</div>
+        <div class="label">refraction paths</div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="text-align:center;padding:60px 40px;color:var(--text-muted);font-size:0.8rem;border-top:1px solid rgba(255,255,255,0.04);margin-top:40px">
+    <span style="background:linear-gradient(135deg,var(--prism-1),var(--prism-3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">prism·lab</span> &mdash; spectrum exploration playground &bull; 2026
+  </footer>
+
+</body>
+</html>

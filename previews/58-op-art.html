@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="monochrome-strobe">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OP·ART // VASARELY-99 — Optical Illusions & Moiré Interference</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('opart-theme')||'monochrome-strobe';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 COMPLEMENTARY OP-ART PAIRS
+       ========================================================= */
+    :root, [data-theme="monochrome-strobe"] {
+      --c1: #000000;
+      --c2: #FFFFFF;
+      --buzz-shadow: 1px 0px 0px #FF0000, -1px 0px 0px #00FFFF;
+      --afterimage-color: #FF0000;
+      --bg: #FFFFFF;
+      --ink-1: #000000;
+      --ink-2: #FFFFFF;
+      --p1: #FF0000;
+      --p2: #00FFFF;
+    }
+
+    [data-theme="red-cyan-buzz"] {
+      --c1: #FF0000;
+      --c2: #00FFFF;
+      --buzz-shadow: 2px 0px 0px #000000, -2px 0px 0px #FFFFFF;
+      --afterimage-color: #00FFFF;
+      --bg: #00FFFF;
+      --ink-1: #FF0000;
+      --ink-2: #00FFFF;
+      --p1: #000000;
+      --p2: #FFFFFF;
+    }
+
+    [data-theme="blue-yellow-shift"] {
+      --c1: #0000FF;
+      --c2: #FFFF00;
+      --buzz-shadow: 2px 0px 0px #FF00FF, -2px 0px 0px #00FF00;
+      --afterimage-color: #FFFF00;
+      --bg: #FFFF00;
+      --ink-1: #0000FF;
+      --ink-2: #FFFF00;
+      --p1: #FF00FF;
+      --p2: #00FF00;
+    }
+
+    [data-theme="green-magenta-pulse"] {
+      --c1: #00FF00;
+      --c2: #FF00FF;
+      --buzz-shadow: 2px 0px 0px #0000FF, -2px 0px 0px #FFFF00;
+      --afterimage-color: #FF00FF;
+      --bg: #FF00FF;
+      --ink-1: #00FF00;
+      --ink-2: #FF00FF;
+      --p1: #0000FF;
+      --p2: #FFFF00;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--c2);
+      color: var(--c1);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    button, input { font-family: inherit; }
+
+    :focus-visible {
+      outline: 3px dashed var(--p1);
+      outline-offset: 3px;
+    }
+
+    /* Top Op-Art Nav */
+    header.op-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--c1);
+      color: var(--c2);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-shadow: var(--buzz-shadow);
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 6px;
+    }
+
+    .theme-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border: 1px solid var(--c2);
+      background: var(--c1);
+      color: var(--c2);
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--c2);
+      color: var(--c1);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Hero Moiré Section */
+    .moire-hero {
+      position: relative;
+      height: 380px;
+      border: 4px solid var(--c1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 50px;
+      overflow: hidden;
+    }
+
+    .moire-layer-1 {
+      position: absolute;
+      inset: -50%;
+      background: repeating-linear-gradient(45deg, var(--c1), var(--c1) 4px, var(--c2) 4px, var(--c2) 8px);
+    }
+
+    .moire-layer-2 {
+      position: absolute;
+      inset: -50%;
+      background: repeating-linear-gradient(48deg, var(--c1), var(--c1) 4px, transparent 4px, transparent 8px);
+      animation: moireRotate 20s linear infinite;
+    }
+
+    @keyframes moireRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hero-glass-badge {
+      position: relative;
+      z-index: 10;
+      background: var(--c2);
+      color: var(--c1);
+      padding: 24px 40px;
+      border: 4px solid var(--c1);
+      text-align: center;
+      box-shadow: 10px 10px 0px var(--c1);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      text-shadow: var(--buzz-shadow);
+      margin-bottom: 8px;
+    }
+
+    /* Gallery of Illusion Cards */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .illusion-card {
+      border: 4px solid var(--c1);
+      padding: 20px;
+      background: var(--c2);
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .illusion-card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 8px 8px 0px var(--c1);
+    }
+
+    .pattern-canvas-box {
+      width: 100%;
+      height: 220px;
+      border: 2px solid var(--c1);
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Concentric Circles */
+    .concentric-circles {
+      width: 100%;
+      height: 100%;
+      background: repeating-radial-gradient(circle, var(--c1) 0, var(--c1) 6px, var(--c2) 6px, var(--c2) 12px);
+      animation: pulseRings 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseRings {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.3); }
+    }
+
+    /* Checkerboard Warp */
+    .checker-warp {
+      width: 100%;
+      height: 100%;
+      background:
+        repeating-conic-gradient(var(--c1) 0% 25%, var(--c2) 0% 50%)
+        50% / 30px 30px;
+    }
+
+    /* Vibrating Striped Border Card */
+    .vibrating-stripes {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, var(--c1) 0, var(--c1) 3px, var(--c2) 3px, var(--c2) 6px);
+    }
+
+    .illusion-title {
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      text-shadow: var(--buzz-shadow);
+    }
+
+    .illusion-desc {
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    /* Retinal Afterimage Stare Section */
+    .afterimage-deck {
+      border: 4px solid var(--c1);
+      background: var(--c1);
+      color: var(--c2);
+      padding: 36px;
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .afterimage-box {
+      width: 180px;
+      height: 180px;
+      margin: 20px auto;
+      background: var(--afterimage-color);
+      border: 3px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .stare-dot {
+      width: 12px;
+      height: 12px;
+      background: #000;
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+
+    .countdown-timer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 900;
+      margin: 12px 0;
+      color: var(--c2);
+    }
+
+    .btn-stare {
+      padding: 10px 24px;
+      background: var(--c2);
+      color: var(--c1);
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       KINETIC PULSE — FULL-WIDTH FEATURE SLABS
+       ========================================================= */
+    .kinetic-pulse { margin-bottom: 70px; }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-shadow: var(--buzz-shadow);
+      margin-bottom: 6px;
+    }
+
+    .section-sub {
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0.8;
+      margin-bottom: 28px;
+    }
+
+    .slab-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 34px;
+    }
+
+    .feature-slab {
+      border: 4px solid var(--c1);
+      background: var(--c2);
+    }
+
+    .slab-stage {
+      position: relative;
+      height: 260px;
+      overflow: hidden;
+      border-bottom: 4px solid var(--c1);
+    }
+
+    .slab-scan {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background: repeating-linear-gradient(180deg, var(--p1) 0 2px, transparent 2px 14px);
+      opacity: 0.16;
+      pointer-events: none;
+    }
+
+    .slab-rings {
+      position: absolute;
+      inset: -60%;
+      background: repeating-radial-gradient(circle, var(--c1) 0, var(--c1) 6px, var(--c2) 6px, var(--c2) 12px);
+      animation: slabSpin 28s linear infinite;
+    }
+
+    .slab-checker {
+      position: absolute;
+      inset: -40%;
+      background: repeating-conic-gradient(var(--c1) 0% 25%, var(--c2) 0% 50%) 50% / 34px 34px;
+      animation: checkerParallax 7s ease-in-out infinite alternate;
+    }
+
+    .slab-lines {
+      position: absolute;
+      inset: -40%;
+      background: repeating-linear-gradient(70deg, var(--c1) 0, var(--c1) 7px, var(--c2) 7px, var(--c2) 14px);
+      background-size: 42px 42px;
+      animation: lineMarch 3.5s linear infinite, slabSpin 40s linear infinite;
+    }
+
+    @keyframes slabSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes checkerParallax {
+      from { transform: translateY(-6%) skewX(0deg); }
+      to { transform: translateY(6%) skewX(12deg); }
+    }
+
+    @keyframes lineMarch {
+      from { background-position: 0 0; }
+      to { background-position: 84px 42px; }
+    }
+
+    .slab-caption {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+    }
+
+    .slab-caption h3 {
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-shadow: var(--buzz-shadow);
+    }
+
+    .slab-caption p {
+      font-size: 12px;
+      font-weight: 700;
+      flex: 1 1 240px;
+      line-height: 1.5;
+    }
+
+    .slab-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      border: 1px solid var(--c1);
+      background: var(--bg);
+      color: var(--ink-1);
+      padding: 6px 10px;
+    }
+
+    /* =========================================================
+       PATTERN LAB — INTERACTIVE CSS GENERATOR
+       ========================================================= */
+    .pattern-lab {
+      border: 4px solid var(--c1);
+      background: var(--bg);
+      color: var(--ink-1);
+      padding: 28px;
+      margin-bottom: 70px;
+    }
+
+    .lab-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+    }
+
+    .lab-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .lab-field {
+      border: 2px solid var(--ink-1);
+      padding: 14px;
+    }
+
+    .lab-field legend {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 6px;
+    }
+
+    .lab-field label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 0;
+      cursor: pointer;
+    }
+
+    .lab-field input[type="radio"] { accent-color: var(--ink-1); }
+
+    .lab-slider {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lab-slider input[type="range"] {
+      width: 100%;
+      accent-color: var(--ink-1);
+    }
+
+    #labAngleVal {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0;
+    }
+
+    .lab-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .lab-preview {
+      flex: 1;
+      min-height: 280px;
+      border: 3px solid var(--ink-1);
+      position: relative;
+      overflow: hidden;
+      background: var(--ink-2);
+    }
+
+    .lab-canvas {
+      position: absolute;
+      inset: -35%;
+    }
+
+    .lab-preview::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border: 2px solid var(--p2);
+      opacity: 0.4;
+    }
+
+    .lab-snippet {
+      background: var(--ink-1);
+      color: var(--bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.55;
+      padding: 14px;
+      white-space: pre-wrap;
+      min-height: 88px;
+      overflow-x: auto;
+    }
+
+    /* =========================================================
+       ABOUT MOVEMENT — RILEY / VASARELY
+       ========================================================= */
+    .about-movement { margin-bottom: 70px; }
+
+    .about-flow {
+      border: 4px solid var(--c1);
+      background: var(--c2);
+      padding: 28px;
+    }
+
+    .about-pattern-float {
+      float: left;
+      width: 230px;
+      height: 260px;
+      margin: 4px 24px 16px 0;
+      border-radius: 50%;
+      background: repeating-radial-gradient(circle, var(--c1) 0, var(--c1) 5px, var(--c2) 5px, var(--c2) 10px);
+      border: 3px solid var(--c1);
+      box-shadow: 10px 10px 0 var(--p1);
+      shape-outside: circle(50%);
+      animation: aboutSpin 30s linear infinite;
+    }
+
+    @keyframes aboutSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .about-movement h3 {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin: 16px 0 4px;
+      text-shadow: var(--buzz-shadow);
+    }
+
+    .about-movement p {
+      font-size: 14px;
+      line-height: 1.65;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .about-accent { color: var(--p1); font-weight: 900; }
+
+    /* Footer */
+    footer.site-footer {
+      border-top: 4px solid var(--c1);
+      padding: 24px;
+      text-align: center;
+      font-weight: 900;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       REDUCED MOTION — KILL ALL KINETIC EFFECTS
+       ========================================================= */
+    @media (prefers-reduced-motion: reduce) {
+      .moire-layer-2,
+      .concentric-circles,
+      .slab-rings,
+      .slab-checker,
+      .slab-lines,
+      .about-pattern-float {
+        animation: none !important;
+      }
+      .illusion-card { transition: none; }
+      .lab-canvas { transition: none; }
+    }
+
+    /* =========================================================
+       MOBILE — STACK EVERYTHING
+       ========================================================= */
+    @media (max-width: 768px) {
+      header.op-nav {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        padding: 10px 14px;
+      }
+
+      .brand-title { font-size: 13px; text-align: center; }
+
+      .theme-selector { flex-wrap: wrap; justify-content: center; }
+
+      .theme-btn { font-size: 9px; padding: 4px 6px; }
+
+      .container { padding: 24px 14px 60px; }
+
+      .moire-hero { height: 260px; }
+
+      .hero-glass-badge { padding: 16px 18px; box-shadow: 6px 6px 0px var(--c1); }
+
+      .gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      .afterimage-deck { padding: 24px 16px; }
+
+      .afterimage-box { width: 150px; height: 150px; }
+
+      .slab-stage { height: 190px; }
+
+      .lab-layout { grid-template-columns: 1fr; }
+
+      .lab-preview { min-height: 220px; }
+
+      .about-pattern-float {
+        float: none;
+        width: 180px;
+        height: 200px;
+        margin: 0 auto 18px;
+        shape-outside: none;
+      }
+
+      .pattern-lab, .about-flow { padding: 18px 14px; }
+
+      footer.site-footer { padding: 16px 10px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="op-nav">
+    <div class="brand-title">OP·ART GALLERY // BRIDGET RILEY STUDY</div>
+    <div class="theme-selector" role="group" aria-label="Op-Art High Contrast Switcher">
+      <button class="theme-btn active" onclick="setTheme('monochrome-strobe')" data-theme-target="monochrome-strobe">01 B&W Monochrome</button>
+      <button class="theme-btn" onclick="setTheme('red-cyan-buzz')" data-theme-target="red-cyan-buzz">02 Red-Cyan Buzz</button>
+      <button class="theme-btn" onclick="setTheme('blue-yellow-shift')" data-theme-target="blue-yellow-shift">03 Blue-Yellow</button>
+      <button class="theme-btn" onclick="setTheme('green-magenta-pulse')" data-theme-target="green-magenta-pulse">04 Green-Magenta</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Moiré Animation -->
+    <div class="moire-hero">
+      <div class="moire-layer-1"></div>
+      <div class="moire-layer-2"></div>
+      <div class="hero-glass-badge">
+        <h1 class="hero-title">MOIRÉ INTERFERENCE</h1>
+        <p style="font-weight:700; font-size:14px;">ROTATIONAL HIGH FREQUENCY HARMONIC SHIFT</p>
+      </div>
+    </div>
+
+    <!-- Gallery of Illusions -->
+    <div class="gallery-grid">
+      <!-- Card 1: Concentric Rings -->
+      <div class="illusion-card">
+        <div class="pattern-canvas-box">
+          <div class="concentric-circles"></div>
+        </div>
+        <div class="illusion-title">01. KINETIC PULSE</div>
+        <p class="illusion-desc">Concentric radial bands producing apparent depth expansion and contraction.</p>
+      </div>
+
+      <!-- Card 2: Checker Warp -->
+      <div class="illusion-card">
+        <div class="pattern-canvas-box">
+          <div class="checker-warp"></div>
+        </div>
+        <div class="illusion-title">02. HERING GRID WARP</div>
+        <p class="illusion-desc">High-frequency conic intersections creating phantom grey smudges at grid junctions.</p>
+      </div>
+
+      <!-- Card 3: Vibrating Stripes -->
+      <div class="illusion-card">
+        <div class="pattern-canvas-box">
+          <div class="vibrating-stripes"></div>
+        </div>
+        <div class="illusion-title">03. CHROMATIC BUZZ</div>
+        <p class="illusion-desc">Micro-striped vertical lattices triggering retinal oscillation and edge tremor.</p>
+      </div>
+    </div>
+
+    <!-- Retinal Afterimage Interactive Test -->
+    <section class="afterimage-deck">
+      <h2 style="font-size:1.6rem; font-weight:900; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:6px;">
+        RETINAL AFTERIMAGE EXPERIMENT
+      </h2>
+      <p style="font-size:13px; opacity:0.85;">
+        Stare unblinkingly at the central black dot for 5 seconds, then the card will flash pure white.
+      </p>
+
+      <div class="afterimage-box" id="afterBox" onclick="startAfterimageTest()">
+        <div class="stare-dot"></div>
+      </div>
+
+      <div class="countdown-timer" id="countdown">READY</div>
+      <button class="btn-stare" onclick="startAfterimageTest()">START 5S EXPERIMENT</button>
+    </section>
+
+    <!-- Kinetic Pulse — Full-Width Feature Slabs -->
+    <section class="kinetic-pulse">
+      <h2 class="section-title">KINETIC PULSE</h2>
+      <p class="section-sub">Full-width rotating field slabs. Watch for the moiré beat where the scan overlay crosses.</p>
+
+      <div class="slab-stack">
+        <div class="feature-slab">
+          <div class="slab-stage">
+            <div class="slab-rings"></div>
+            <div class="slab-scan"></div>
+          </div>
+          <div class="slab-caption">
+            <h3>CONCENTRIC RING FIELD</h3>
+            <p>Radial bands spun on a 28s cycle; the fixed scan line makes the rings appear to shear as they pass it.</p>
+            <span class="slab-chip">radial-gradient // rotate 28s</span>
+          </div>
+        </div>
+
+        <div class="feature-slab">
+          <div class="slab-stage">
+            <div class="slab-checker"></div>
+            <div class="slab-scan"></div>
+          </div>
+          <div class="slab-caption">
+            <h3>CHECKER PARALLAX WARP</h3>
+            <p>Alternating conic checkerboard skewing and drifting vertically — a cheap 3D parallax made from pure CSS.</p>
+            <span class="slab-chip">conic-gradient // skew 12°</span>
+          </div>
+        </div>
+
+        <div class="feature-slab">
+          <div class="slab-stage">
+            <div class="slab-lines"></div>
+            <div class="slab-scan"></div>
+          </div>
+          <div class="slab-caption">
+            <h3>LINE MARCH / MOIRÉ SHIFT</h3>
+            <p>Diagonal raster marching diagonally while the whole field rotates — two frequencies beating against each other.</p>
+            <span class="slab-chip">linear-gradient // bg-position 3.5s</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pattern Lab — Interactive CSS Generator -->
+    <section class="pattern-lab" id="patternLab">
+      <h2 class="section-title">PATTERN LAB</h2>
+      <p class="section-sub">Compose a pattern live — the CSS is generated for you in real time.</p>
+
+      <div class="lab-layout">
+        <div class="lab-controls">
+          <fieldset class="lab-field">
+            <legend>Pattern</legend>
+            <label><input type="radio" name="labPattern" value="stripes" checked> Stripes</label>
+            <label><input type="radio" name="labPattern" value="circles"> Circles</label>
+            <label><input type="radio" name="labPattern" value="checker"> Checker</label>
+          </fieldset>
+
+          <fieldset class="lab-field">
+            <legend>Complementary Pair</legend>
+            <label><input type="radio" name="labPair" value="mono" checked> B&W / #000–#FFF</label>
+            <label><input type="radio" name="labPair" value="red-cyan"> Red / Cyan</label>
+            <label><input type="radio" name="labPair" value="blue-yellow"> Blue / Yellow</label>
+            <label><input type="radio" name="labPair" value="green-magenta"> Green / Magenta</label>
+          </fieldset>
+
+          <label class="lab-slider">
+            Rotation <span id="labAngleVal">15°</span>
+            <input type="range" id="labAngle" min="0" max="90" step="5" value="15">
+          </label>
+        </div>
+
+        <div class="lab-stage">
+          <div class="lab-preview"><div class="lab-canvas" id="labCanvas"></div></div>
+          <pre class="lab-snippet" id="labSnippet"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Movement -->
+    <section class="about-movement">
+      <h2 class="section-title">ABOUT MOVEMENT</h2>
+      <div class="about-flow">
+        <div class="about-pattern-float" aria-hidden="true"></div>
+
+        <h3>BRIDGET RILEY — RETINA BEFORE EYE</h3>
+        <p>
+          <span class="about-accent">Riley</span> (b. 1931, London) translated her post-war
+          experiments with grey-scale dots and stripes into hard-edged geometry: works like
+          <em>Movement in Squares</em> (1961) and <em>Fall</em> (1963) send the grid itself
+          into compression and release. Her paintings vibrate because the eye cannot resolve
+          the spatial rhythm; the brain keeps re-scanning, and the afterimage does the rest.
+        </p>
+
+        <h3>VICTOR VASARELY — THE GEOMETRIC PARENT</h3>
+        <p>
+          <span class="about-accent">Vasarely</span> (1906–1997), the self-declared "father of
+          Op Art", industrialized illusion. In <em>Zebra</em> (1937) and the later
+          <em>Planetary Folklore</em> series he locked black/white or complementary colour
+          pairs into systems where shape alone generates depth. He treated the canvas as a
+          programmed surface decades before the computer made that metaphor literal.
+        </p>
+
+        <h3>WHY COMPLEMENTARY PAIRS VIBRATE</h3>
+        <p>
+          Opponent-colour cells in the retina fire against each other at <span class="about-accent">exactly
+          complementary hues</span> — red against cyan, blue against yellow, green against magenta.
+          Set those fields edge to edge and the border tremor you see is your own neural wiring
+          reacting, not the screen. The four theme pairs on this page each tune a different
+          opponent channel. The stare-dot test above is the same mechanism shown in time:
+          fatigue one channel, release it, and the phantom colour appears.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    OP·ART // UI Exploration Batch 5 (#58) — Pure CSS Optical Kinetic System + Pattern Lab
+  </footer>
+
+  <script>
+    let timerId = null;
+
+    function startAfterimageTest() {
+      if (timerId) clearInterval(timerId);
+      let count = 5;
+      const countEl = document.getElementById('countdown');
+      const box = document.getElementById('afterBox');
+
+      box.style.background = 'var(--afterimage-color)';
+      countEl.textContent = `STARE... ${count}`;
+
+      timerId = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countEl.textContent = `STARE... ${count}`;
+        } else {
+          clearInterval(timerId);
+          countEl.textContent = 'NOW LOOK AT WHITE FLASH!';
+          box.style.background = '#FFFFFF';
+        }
+      }, 1000);
+    }
+
+    function setTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      try { localStorage.setItem('opart-theme', themeName); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === themeName);
+      });
+    }
+
+    const LAB_PAIRS = {
+      'mono': ['#000000', '#FFFFFF'],
+      'red-cyan': ['#FF0000', '#00FFFF'],
+      'blue-yellow': ['#0000FF', '#FFFF00'],
+      'green-magenta': ['#00FF00', '#FF00FF']
+    };
+
+    function updateLab() {
+      const pattern = document.querySelector('input[name="labPattern"]:checked').value;
+      const pair = document.querySelector('input[name="labPair"]:checked').value;
+      const angle = document.getElementById('labAngle').value;
+      const preview = document.getElementById('labCanvas');
+      const snippet = document.getElementById('labSnippet');
+      const val = document.getElementById('labAngleVal');
+      const [c1, c2] = LAB_PAIRS[pair];
+
+      val.textContent = angle + '\u00B0';
+
+      let bg, transform = '';
+      if (pattern === 'stripes') {
+        bg = `repeating-linear-gradient(${angle}deg, ${c1} 0, ${c1} 8px, ${c2} 8px, ${c2} 16px)`;
+      } else if (pattern === 'circles') {
+        bg = `repeating-radial-gradient(circle at 30% 40%, ${c1} 0, ${c1} 6px, ${c2} 6px, ${c2} 12px)`;
+        transform = `rotate(${angle}deg)`;
+      } else {
+        bg = `repeating-conic-gradient(${c1} 0% 25%, ${c2} 0% 50%) 50% / 26px 26px`;
+        transform = `rotate(${angle}deg)`;
+      }
+
+      preview.style.background = bg;
+      preview.style.transform = transform;
+
+      const lines = [`background: ${bg};`];
+      if (transform) lines.push(`transform: ${transform};`);
+      snippet.textContent = lines.join('\n');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = document.documentElement.getAttribute('data-theme') || 'monochrome-strobe';
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === savedTheme);
+      });
+
+      document.querySelectorAll('input[name="labPattern"], input[name="labPair"]').forEach(input => {
+        input.addEventListener('change', updateLab);
+      });
+      document.getElementById('labAngle').addEventListener('input', updateLab);
+      updateLab();
+    });
+  </script>
+</body>
+</html>

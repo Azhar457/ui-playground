@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinematic Scroll Experience</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #000;
+      overflow-x: hidden;
+    }
+
+    /* Hide scrollbar */
+    ::-webkit-scrollbar { width: 0; height: 0; }
+
+    /* Fixed viewport container */
+    .viewport {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sections */
+    .section {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      will-change: transform, opacity;
+    }
+
+    /* Noise overlay */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Vignette */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      background: radial-gradient(ellipse at center, transparent 40%, transparent 60%, rgba(0,0,0,0.5) 100%);
+    }
+
+    /* Navigation Dots */
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .nav-dot.active {
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 12px rgba(255,255,255,0.4);
+      transform: scale(1.4);
+    }
+    .nav-dot:hover {
+      background: rgba(255,255,255,0.5);
+    }
+
+    /* Section 2: Horizontal Gallery */
+    .gallery-track {
+      display: flex;
+      width: max-content;
+      height: 100vh;
+      will-change: transform;
+    }
+    .gallery-panel {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Section 3: Grid */
+    .grid-img {
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .grid-img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Section 4-5: Perspective container */
+    .perspective-stage {
+      perspective: 1500px;
+      transform-style: preserve-3d;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* Zoom target */
+    .zoom-portal {
+      transition: box-shadow 0.5s ease;
+    }
+    .zoom-portal:hover {
+      box-shadow: 0 0 80px rgba(255,255,255,0.15);
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #fff, rgba(255,255,255,0.3));
+      z-index: 10000;
+      transform-origin: left;
+    }
+
+    /* Scroll hint */
+    @keyframes scrollHint {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(8px); opacity: 0.8; }
+    }
+    .scroll-hint {
+      animation: scrollHint 2s ease-in-out infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .gallery-panel h2 { font-size: 2.5rem !important; }
+      .gallery-panel p { font-size: 0.875rem !important; }
+      .grid-img { height: 120px !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Spacer (drives the scroll) -->
+  <div id="scroll-spacer" style="height: 600vh;"></div>
+
+  <!-- Fixed Viewport -->
+  <div class="viewport" id="viewport">
+
+    <!-- ========== SECTION 1: HERO ========== -->
+    <section id="sec1" class="section" style="z-index: 10;">
+      <div class="absolute inset-0">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80" 
+             alt="Hero" 
+             class="w-full h-full object-cover scale-110"
+             id="hero-bg"
+             style="filter: brightness(0.5);">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70"></div>
+      </div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+        <p class="text-white/50 text-xs md:text-sm tracking-[0.4em] uppercase mb-6">Cinematic Scroll Experience</p>
+        <h1 class="text-6xl md:text-9xl font-black text-white tracking-tighter leading-none" style="text-shadow: 0 0 60px rgba(0,0,0,0.5);">
+          BEYOND
+        </h1>
+        <h2 class="text-4xl md:text-6xl font-light text-white/80 tracking-widest mt-2">THE HORIZON</h2>
+        <div class="mt-12 scroll-hint flex flex-col items-center text-white/40">
+          <span class="text-[10px] uppercase tracking-[0.3em] mb-2">Scroll to Begin</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 2: HORIZONTAL GALLERY ========== -->
+    <section id="sec2" class="section" style="z-index: 20; transform: translateX(100%);">
+      <div class="gallery-track" id="gallery-track">
+        <!-- Panel 1 -->
+        <div class="gallery-panel">
+          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.4);">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+          <div class="relative z-10 flex flex-col justify-center h-full px-12 md:px-24 max-w-2xl">
+            <span class="text-white/40 text-xs tracking-[0.3em] uppercase mb-4">01 / Gallery</span>
+            <h2 class="text-5xl md:text-7xl font-bold text-white leading-tight">Mountain<br>Whispers</h2>
+            <p class="mt-6 text-white/60 text-base md:text-lg leading-relaxed">The silence of the peaks speaks louder than any words. Discover the untouched beauty of high-altitude wilderness.</p>
+          </div>
+        </div>
+        <!-- Panel 2 -->
+        <div class="gallery-panel">
+          <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1920&q=80" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.4);">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+          <div class="relative z-10 flex flex-col justify-center h-full px-12 md:px-24 max-w-2xl">
+            <span class="text-white/40 text-xs tracking-[0.3em] uppercase mb-4">02 / Gallery</span>
+            <h2 class="text-5xl md:text-7xl font-bold text-white leading-tight">Forest<br>Depths</h2>
+            <p class="mt-6 text-white/60 text-base md:text-lg leading-relaxed">Ancient trees stand as silent guardians of secrets buried beneath centuries of fallen leaves and moss.</p>
+          </div>
+        </div>
+        <!-- Panel 3 -->
+        <div class="gallery-panel">
+          <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.4);">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+          <div class="relative z-10 flex flex-col justify-center h-full px-12 md:px-24 max-w-2xl">
+            <span class="text-white/40 text-xs tracking-[0.3em] uppercase mb-4">03 / Gallery</span>
+            <h2 class="text-5xl md:text-7xl font-bold text-white leading-tight">Ocean<br>Infinite</h2>
+            <p class="mt-6 text-white/60 text-base md:text-lg leading-relaxed">Where the sky meets the water, boundaries dissolve and the soul finds its true expanse.</p>
+          </div>
+        </div>
+        <!-- Panel 4 -->
+        <div class="gallery-panel">
+          <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1920&q=80" class="absolute inset-0 w-full h-full object-cover" style="filter: brightness(0.4);">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+          <div class="relative z-10 flex flex-col justify-center h-full px-12 md:px-24 max-w-2xl">
+            <span class="text-white/40 text-xs tracking-[0.3em] uppercase mb-4">04 / Gallery</span>
+            <h2 class="text-5xl md:text-7xl font-bold text-white leading-tight">Valley<br>of Mist</h2>
+            <p class="mt-6 text-white/60 text-base md:text-lg leading-relaxed">Morning fog rolls through the valleys like a river of clouds, carrying dreams from the night into dawn.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Gallery Progress -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2" id="gallery-dots">
+        <div class="w-8 h-1 rounded-full bg-white/20 overflow-hidden"><div class="h-full bg-white/80 rounded-full" id="gallery-progress" style="width: 25%;"></div></div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 3: CONTENT GRID ========== -->
+    <section id="sec3" class="section" style="z-index: 30; transform: translateY(100%);">
+      <div class="absolute inset-0 bg-neutral-950"></div>
+      <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-20 py-16">
+        <div class="max-w-6xl mx-auto w-full">
+          <p class="text-white/30 text-xs tracking-[0.4em] uppercase mb-8">The Collection</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-12" id="sec3-grid">
+            <div class="overflow-hidden rounded-xl relative group cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&q=80" class="grid-img w-full h-40 md:h-56 object-cover">
+              <div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition"></div>
+            </div>
+            <div class="overflow-hidden rounded-xl relative group cursor-pointer row-span-2">
+              <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80" class="grid-img w-full h-full object-cover" id="zoom-target" style="min-height: 100%;">
+              <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
+              <div class="absolute bottom-4 left-4">
+                <span class="text-white/80 text-xs font-medium tracking-wide">Into the Wild</span>
+              </div>
+            </div>
+            <div class="overflow-hidden rounded-xl relative group cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=600&q=80" class="grid-img w-full h-40 md:h-56 object-cover">
+              <div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition"></div>
+            </div>
+            <div class="overflow-hidden rounded-xl relative group cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80" class="grid-img w-full h-40 md:h-56 object-cover">
+              <div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition"></div>
+            </div>
+            <div class="overflow-hidden rounded-xl relative group cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1518173946687-a4c036bc3c95?w=600&q=80" class="grid-img w-full h-40 md:h-56 object-cover">
+              <div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition"></div>
+            </div>
+          </div>
+          <div class="max-w-xl">
+            <h3 class="text-3xl md:text-4xl font-bold text-white/90 mb-4">Captured Moments</h3>
+            <p class="text-white/40 text-sm md:text-base leading-relaxed">
+              Each frame holds a story untold. Scroll deeper to step through the portal and discover what lies beyond the surface of these frozen moments in time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 4: ZOOM PORTAL ========== -->
+    <section id="sec4" class="section" style="z-index: 40; opacity: 0; transform: scale(0.5);">
+      <div class="absolute inset-0 bg-black">
+        <img src="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=1920&q=80" 
+             class="absolute inset-0 w-full h-full object-cover opacity-30" 
+             style="filter: blur(2px);">
+      </div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+        <div class="zoom-portal relative w-64 h-64 md:w-96 md:h-96 rounded-full overflow-hidden border-2 border-white/10" id="portal-circle">
+          <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80" 
+               class="w-full h-full object-cover" 
+               style="filter: brightness(0.8);">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-bold text-white mt-10 tracking-tight">A New World</h2>
+        <p class="text-white/40 mt-4 text-sm md:text-base max-w-md">The portal opens. What awaits on the other side?</p>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 5: PEEL REVEAL (Behind Section 4) ========== -->
+    <section id="sec5" class="section" style="z-index: 35;">
+      <div class="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-950 to-black"></div>
+      <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+        <div class="max-w-3xl">
+          <p class="text-white/30 text-xs tracking-[0.4em] uppercase mb-6">The Revelation</p>
+          <h2 class="text-5xl md:text-8xl font-black text-white tracking-tighter leading-none mb-6">
+            UNVEILED
+          </h2>
+          <p class="text-white/40 text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-10">
+            What was hidden beneath the surface now stands in full light. Every layer peeled back reveals a deeper truth, a sharper vision, a clearer path forward.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;" 
+               class="px-8 py-3 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition backdrop-blur-md">
+              Back to Top
+            </a>
+            <span class="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white/40 text-sm">
+              End of Experience
+            </span>
+          </div>
+        </div>
+        <div class="absolute bottom-8 left-0 right-0 text-center">
+          <p class="text-white/15 text-[10px] tracking-widest uppercase">Built with GSAP + Tailwind</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /viewport -->
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+
+  <!-- Navigation Dots -->
+  <div class="fixed right-6 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-3" id="nav-dots">
+    <div class="nav-dot active" data-section="0" title="Hero"></div>
+    <div class="nav-dot" data-section="1" title="Gallery"></div>
+    <div class="nav-dot" data-section="2" title="Collection"></div>
+    <div class="nav-dot" data-section="3" title="Portal"></div>
+    <div class="nav-dot" data-section="4" title="Revelation"></div>
+  </div>
+
+  <!-- Noise + Vignette -->
+  <div class="noise"></div>
+  <div class="vignette"></div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ========== DOM REFERENCES ==========
+    const sec1 = document.getElementById('sec1');
+    const sec2 = document.getElementById('sec2');
+    const sec3 = document.getElementById('sec3');
+    const sec4 = document.getElementById('sec4');
+    const sec5 = document.getElementById('sec5');
+    const galleryTrack = document.getElementById('gallery-track');
+    const zoomTarget = document.getElementById('zoom-target');
+    const portalCircle = document.getElementById('portal-circle');
+    const progressBar = document.getElementById('progress-bar');
+    const navDots = document.querySelectorAll('.nav-dot');
+    const galleryProgress = document.getElementById('gallery-progress');
+    const heroBg = document.getElementById('hero-bg');
+
+    // ========== MASTER TIMELINE ==========
+    const masterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#scroll-spacer',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+        onUpdate: (self) => {
+          // Update progress bar
+          progressBar.style.width = (self.progress * 100) + '%';
+          
+          // Update nav dots
+          const p = self.progress;
+          let active = 0;
+          if (p < 0.15) active = 0;
+          else if (p < 0.35) active = 1;
+          else if (p < 0.55) active = 2;
+          else if (p < 0.75) active = 3;
+          else active = 4;
+          
+          navDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === active);
+          });
+
+          // Update gallery progress bar
+          if (p >= 0.15 && p <= 0.35) {
+            const gp = (p - 0.15) / 0.20;
+            galleryProgress.style.width = (Math.min(gp * 100, 100)) + '%';
+          }
+        }
+      }
+    });
+
+    // ========== PHASE 1: Section 2 slides in from right (0% - 15%) ==========
+    masterTl.fromTo(sec2, 
+      { x: '100%' }, 
+      { x: '0%', ease: 'none' }, 
+      0
+    );
+    // Hero parallax + fade
+    masterTl.fromTo(heroBg, 
+      { scale: 1.1 }, 
+      { scale: 1.3, ease: 'none' }, 
+      0
+    );
+    masterTl.fromTo(sec1.querySelector('h1'), 
+      { opacity: 1, y: 0 }, 
+      { opacity: 0, y: -50, ease: 'none' }, 
+      0
+    );
+
+    // ========== PHASE 2: Horizontal Gallery (15% - 35%) ==========
+    masterTl.fromTo(galleryTrack, 
+      { x: '0%' }, 
+      { x: '-75%', ease: 'none' }, 
+      0.15
+    );
+
+    // ========== PHASE 3: Curtain Reveal (35% - 50%) ==========
+    // Section 2 lifts up
+    masterTl.to(sec2, { 
+      y: '-100%', 
+      ease: 'none' 
+    }, 0.35);
+    
+    // Section 3 comes from bottom
+    masterTl.fromTo(sec3, 
+      { y: '100%' }, 
+      { y: '0%', ease: 'none' }, 
+      0.35
+    );
+
+    // Shadow on Section 2 as it lifts
+    masterTl.fromTo(sec2, 
+      { boxShadow: '0 0 0 rgba(0,0,0,0)' },
+      { boxShadow: '0 50px 100px rgba(0,0,0,0.8)', ease: 'none' },
+      0.35
+    );
+
+    // ========== PHASE 4: Zoom Transition (50% - 70%) ==========
+    // Section 3 zoom target scales up and fades
+    masterTl.fromTo(zoomTarget, 
+      { scale: 1, opacity: 1 }, 
+      { scale: 12, opacity: 0, ease: 'power2.in' }, 
+      0.50
+    );
+    
+    // Section 3 other elements fade out
+    masterTl.fromTo(sec3.querySelectorAll('.grid-img:not(#zoom-target)'), 
+      { opacity: 1 }, 
+      { opacity: 0, stagger: 0.02, ease: 'none' }, 
+      0.52
+    );
+    masterTl.fromTo(sec3.querySelector('h3'), 
+      { opacity: 1 }, 
+      { opacity: 0, ease: 'none' }, 
+      0.55
+    );
+
+    // Section 4 appears (zoom out)
+    masterTl.fromTo(sec4, 
+      { scale: 0.3, opacity: 0 }, 
+      { scale: 1, opacity: 1, ease: 'power2.out' }, 
+      0.58
+    );
+
+    // Portal circle animation
+    masterTl.fromTo(portalCircle, 
+      { scale: 0.5, rotation: -10 }, 
+      { scale: 1, rotation: 0, ease: 'none' }, 
+      0.58
+    );
+
+    // ========== PHASE 5: Peel / Flip Reveal (70% - 100%) ==========
+    // Section 4 flips up from top origin
+    masterTl.to(sec4, { 
+      rotateX: -95, 
+      transformOrigin: '50% 0%',
+      ease: 'power2.inOut',
+      boxShadow: '0 -30px 60px rgba(0,0,0,0.6)'
+    }, 0.70);
+
+    // Section 4 opacity fade slightly as it goes behind
+    masterTl.to(sec4, { 
+      opacity: 0.3, 
+      ease: 'power2.in' 
+    }, 0.85);
+
+    // Section 5 content reveals (subtle scale up)
+    masterTl.fromTo(sec5.querySelector('.max-w-3xl'), 
+      { scale: 0.9, opacity: 0.5 }, 
+      { scale: 1, opacity: 1, ease: 'none' }, 
+      0.75
+    );
+
+    // ========== SNAP SCROLL ==========
+    ScrollTrigger.create({
+      trigger: '#scroll-spacer',
+      start: 'top top',
+      end: 'bottom bottom',
+      snap: {
+        snapTo: [0, 0.25, 0.425, 0.60, 0.82, 1],
+        duration: { min: 0.3, max: 0.8 },
+        delay: 0,
+        ease: 'power2.inOut'
+      }
+    });
+
+    // ========== NAV DOTS CLICK ==========
+    navDots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        const positions = [0, 0.25, 0.425, 0.60, 0.82];
+        const scrollHeight = document.getElementById('scroll-spacer').offsetHeight - window.innerHeight;
+        window.scrollTo({
+          top: scrollHeight * positions[i],
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // ========== PARALLAX ON HERO (subtle mouse movement) ==========
+    let mouseX = 0, mouseY = 0;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      
+      gsap.to(heroBg, {
+        x: mouseX * 15,
+        y: mouseY * 10,
+        duration: 1,
+        ease: 'power2.out'
+      });
+    }, { passive: true });
+
+    // ========== GALLERY PANEL PARALLAX ==========
+    const panels = document.querySelectorAll('.gallery-panel img');
+    panels.forEach((img) => {
+      gsap.to(img, {
+        x: '-5%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#scroll-spacer',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1
+        }
+      });
+    });
+
+    console.log('Cinematic Scroll Experience loaded. Scroll to explore.');
+  </script>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="parchment-gold">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODEX·ILLUMINATA — Medieval Scriptoria & Gold Leaf Reader</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('codex-theme')||'parchment-gold';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 MEDIEVAL SCRIPTORIA PALETTES
+       ========================================================= */
+    :root, [data-theme="parchment-gold"] {
+      --bg-desk: #2A1810;
+      --parchment: #F4E8D0;
+      --parchment-border: #D8C3A0;
+      --ink: #2C1810;
+      --ink-muted: #5C4033;
+      --gold-1: #D4AF37;
+      --gold-2: #F3E5AB;
+      --gold-dark: #AA7C11;
+      --illum-red: #991B1B;
+      --illum-blue: #1E3A8A;
+      --vine-green: #2D5016;
+      --tooltip-bg: #2C1810;
+      --tooltip-text: #F4E8D0;
+      --gold: var(--gold-1);
+      --blue: var(--illum-blue);
+      --red: var(--illum-red);
+      --vine: var(--vine-green);
+      --vignette: rgba(138, 96, 34, 0.30);
+    }
+
+    [data-theme="royal-lapis"] {
+      --bg-desk: #0B132B;
+      --parchment: #F5EFEB;
+      --parchment-border: #CBD5E1;
+      --ink: #0F172A;
+      --ink-muted: #334155;
+      --gold-1: #EAB308;
+      --gold-2: #FEF08A;
+      --gold-dark: #A16207;
+      --illum-red: #B91C1C;
+      --illum-blue: #1E40AF;
+      --vine-green: #15803D;
+      --tooltip-bg: #1E3A8A;
+      --tooltip-text: #FFFFFF;
+      --gold: var(--gold-1);
+      --blue: var(--illum-blue);
+      --red: var(--illum-red);
+      --vine: var(--vine-green);
+      --vignette: rgba(30, 58, 138, 0.25);
+    }
+
+    [data-theme="monastic-obsidian"] {
+      --bg-desk: #050403;
+      --parchment: #1A1614;
+      --parchment-border: #3D342E;
+      --ink: #E8DCC4;
+      --ink-muted: #A89F91;
+      --gold-1: #F59E0B;
+      --gold-2: #FDE68A;
+      --gold-dark: #B45309;
+      --illum-red: #EF4444;
+      --illum-blue: #38BDF8;
+      --vine-green: #22C55E;
+      --tooltip-bg: #000000;
+      --tooltip-text: #FDE68A;
+      --gold: var(--gold-1);
+      --blue: var(--illum-blue);
+      --red: var(--illum-red);
+      --vine: var(--vine-green);
+      --vignette: rgba(0, 0, 0, 0.55);
+    }
+
+    [data-theme="rose-florilegium"] {
+      --bg-desk: #2E1822;
+      --parchment: #FDF4E7;
+      --parchment-border: #E8D3C0;
+      --ink: #381A26;
+      --ink-muted: #6B3E4F;
+      --gold-1: #C5A059;
+      --gold-2: #FDF0CD;
+      --gold-dark: #8C6A28;
+      --illum-red: #BE123C;
+      --illum-blue: #4338CA;
+      --vine-green: #3F6212;
+      --tooltip-bg: #381A26;
+      --tooltip-text: #FDF4E7;
+      --gold: var(--gold-1);
+      --blue: var(--illum-blue);
+      --red: var(--illum-red);
+      --vine: var(--vine-green);
+      --vignette: rgba(150, 60, 90, 0.22);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+      outline: 2px solid var(--gold-1);
+      outline-offset: 2px;
+    }
+
+    body {
+      background-color: var(--bg-desk);
+      font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 14px;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Top Navigation bar */
+    header.scriptorium-nav {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 10px 18px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--gold-dark);
+      border-radius: 4px;
+    }
+
+    .scriptorium-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-1);
+      letter-spacing: 0.1em;
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 6px;
+    }
+
+    .theme-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border: 1px solid var(--gold-dark);
+      background: rgba(0,0,0,0.6);
+      color: var(--gold-2);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--gold-1);
+      color: #000;
+      border-color: var(--gold-2);
+    }
+
+    /* Manuscript Vellum Folio */
+    .vellum-folio {
+      width: 100%;
+      max-width: 860px;
+      background-color: var(--parchment);
+      background-image: repeating-linear-gradient(0deg, rgba(120, 90, 50, 0.03) 0 2px, transparent 2px 5px);
+      color: var(--ink);
+      padding: 60px 70px;
+      position: relative;
+      border: 2px solid var(--parchment-border);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.6), inset 0 0 60px var(--vignette);
+      line-height: 1.85;
+      font-size: 18px;
+    }
+
+    /* Vellum page-curl corner */
+    .vellum-folio::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, transparent 0%, transparent 49.5%, var(--parchment-border) 50%, var(--parchment) 50.5%, var(--parchment) 100%);
+      box-shadow: -8px -8px 18px rgba(0,0,0,0.25);
+      pointer-events: none;
+      z-index: 2;
+      transition: width 0.35s ease, height 0.35s ease;
+    }
+    .vellum-folio:hover::after { width: 84px; height: 84px; }
+
+    /* Vine border framing */
+    .vine-frame-svg {
+      position: absolute;
+      inset: 12px;
+      width: calc(100% - 24px);
+      height: calc(100% - 24px);
+      pointer-events: none;
+    }
+
+    /* Gold shimmer keyframes */
+    @keyframes goldShimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .gold-leaf {
+      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-2) 50%, var(--gold-1) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldShimmer 6s linear infinite;
+    }
+
+    .chapter-heading {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .rubrication {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      color: var(--illum-red);
+      text-transform: uppercase;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .manuscript-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    /* Ornate Drop Cap */
+    .drop-cap-wrap {
+      float: left;
+      width: 76px;
+      height: 76px;
+      margin: 8px 16px 4px 0;
+      background: linear-gradient(135deg, var(--illum-blue), #0F172A);
+      border: 2px solid var(--gold-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .drop-cap-letter {
+      font-family: 'Cinzel', serif;
+      font-size: 52px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold-1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Marginalia Creatures (SVG) */
+    .marginalia-item {
+      position: absolute;
+      width: 55px;
+      height: 55px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .marginalia-left {
+      left: 8px;
+      top: 240px;
+    }
+
+    .marginalia-right {
+      right: 8px;
+      top: 420px;
+    }
+
+    .marginalia-item:hover {
+      transform: scale(1.2) rotate(-5deg);
+    }
+
+    /* Section divider */
+    .fleur-divider {
+      text-align: center;
+      margin: 36px 0;
+      color: var(--gold-1);
+      font-size: 24px;
+    }
+
+    /* =========================================================
+       FOLIO PAGE-TURNING STACK (3 chapters)
+       ========================================================= */
+    .chapter-folio {
+      display: none;
+      animation: folioAppear 0.5s ease;
+    }
+    .chapter-folio.active { display: block; }
+
+    @keyframes folioAppear {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Interactive Page Turner */
+    .page-turner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      border-top: 1px solid var(--parchment-border);
+      padding-top: 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+    }
+
+    .page-btn {
+      background: transparent;
+      border: 1px solid var(--gold-dark);
+      color: var(--ink);
+      padding: 6px 14px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+
+    .page-btn:hover {
+      background: var(--gold-1);
+      color: #000;
+    }
+
+    .folio-num {
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+
+    /* =========================================================
+       ILLUMINATION GALLERY — Folio Miniatures
+       ========================================================= */
+    .section-intro {
+      text-align: center;
+      font-style: italic;
+      color: var(--ink-muted);
+      margin-bottom: 26px;
+      font-size: 15px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 10px;
+    }
+
+    .folio-card {
+      background: var(--parchment);
+      border: 1px solid var(--gold-dark);
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .folio-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold-1);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--gold-1);
+    }
+
+    .folio-mini {
+      border: 1px solid var(--gold-1);
+      background: radial-gradient(circle at 50% 18%, var(--gold-2) 0%, transparent 55%);
+      padding: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .folio-mini svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .folio-mini::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+      transform: translateX(-130%);
+      pointer-events: none;
+    }
+
+    .folio-card:hover .folio-mini::after { animation: shimmerSweep 1.1s ease; }
+
+    @keyframes shimmerSweep {
+      to { transform: translateX(130%); }
+    }
+
+    .folio-caption {
+      text-align: center;
+      padding-top: 8px;
+    }
+
+    .mini-title {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+    }
+
+    .mini-latin {
+      display: block;
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* =========================================================
+       MARGINALIA BESTIARY
+       ========================================================= */
+    .bestiary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .bestiary-creature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: 1px solid var(--gold-dark);
+      padding: 18px 8px 14px;
+      cursor: pointer;
+      color: var(--ink);
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .bestiary-creature svg { width: 76px; height: 76px; }
+
+    .bestiary-creature:hover, .bestiary-creature:focus-visible {
+      transform: translateY(-4px);
+      background-color: var(--parchment-border);
+      border-color: var(--gold-1);
+    }
+
+    .bestiary-creature:focus-visible {
+      outline: 2px solid var(--gold-1);
+      outline-offset: 3px;
+    }
+
+    /* =========================================================
+       SCRIPTORIUM COLOPHON
+       ========================================================= */
+    .colophon {
+      position: relative;
+      border: 1px solid var(--gold-dark);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.10), rgba(212, 175, 55, 0.02));
+      padding: 30px 32px;
+      margin-top: 12px;
+    }
+
+    .colophon::before {
+      content: '❦';
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--parchment);
+      padding: 0 12px;
+      color: var(--gold-1);
+      font-size: 18px;
+    }
+
+    .colophon-lead {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .colophon-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      margin-top: 22px;
+    }
+
+    .colophon-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      color: var(--illum-red);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .materials-list { list-style: none; }
+
+    .materials-list li {
+      padding: 7px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      border-bottom: 1px dashed var(--parchment-border);
+    }
+
+    .materials-list li::before {
+      content: '⚜ ';
+      color: var(--gold-1);
+    }
+
+    .colophon-signature {
+      text-align: right;
+      font-style: italic;
+      color: var(--ink-muted);
+      margin-top: 22px;
+      line-height: 1.7;
+    }
+
+    .colophon-hand {
+      font-size: 13px;
+      color: var(--gold-dark);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* Tooltip */
+    #marginalia-tooltip {
+      position: fixed;
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
+      border: 1px solid var(--gold-1);
+      padding: 6px 12px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-style: italic;
+      z-index: 1000;
+      pointer-events: none;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .vellum-folio { padding: 40px 24px; }
+      .marginalia-item { display: none; }
+      .vellum-folio::after { display: none; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+      .bestiary-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .bestiary-creature svg { width: 64px; height: 64px; }
+      .colophon-grid { grid-template-columns: 1fr; gap: 18px; }
+      .colophon { padding: 24px 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .gold-leaf,
+      .chapter-folio,
+      .folio-mini::after,
+      .vellum-folio::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      .vellum-folio::after { width: 46px; height: 46px; }
+      .theme-btn, .page-btn, .folio-card, .bestiary-creature { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <header class="scriptorium-nav">
+    <div class="scriptorium-title">✦ CODEX SCRIPTUM // FOLIO LVI</div>
+    <div class="theme-selector" role="group" aria-label="Manuscript Palette Selector">
+      <button class="theme-btn active" onclick="setTheme('parchment-gold')" data-theme-target="parchment-gold">01 Vellum Gold</button>
+      <button class="theme-btn" onclick="setTheme('royal-lapis')" data-theme-target="royal-lapis">02 Royal Lapis</button>
+      <button class="theme-btn" onclick="setTheme('monastic-obsidian')" data-theme-target="monastic-obsidian">03 Dark Script</button>
+      <button class="theme-btn" onclick="setTheme('rose-florilegium')" data-theme-target="rose-florilegium">04 Florilegium</button>
+    </div>
+  </header>
+
+  <div id="marginalia-tooltip"></div>
+
+  <!-- Main Vellum Folio -->
+  <article class="vellum-folio">
+    <!-- SVG Vine Frame -->
+    <svg class="vine-frame-svg" viewBox="0 0 800 1000" preserveAspectRatio="none">
+      <rect x="6" y="6" width="788" height="988" fill="none" stroke="var(--gold-dark)" stroke-width="1.5" stroke-dasharray="8,4" />
+      <path d="M 20,20 Q 60,80 20,140 T 20,260" stroke="var(--vine-green)" stroke-width="2" fill="none" />
+      <path d="M 780,20 Q 740,80 780,140 T 780,260" stroke="var(--vine-green)" stroke-width="2" fill="none" />
+    </svg>
+
+    <!-- Marginalia Creature Left: Medieval Dragon -->
+    <div class="marginalia-item marginalia-left" onmouseenter="showMargTooltip(event, 'Hic draco dormit in herba — Here sleeps the dragon in the wild vines.')" onmouseleave="hideMargTooltip()">
+      <svg viewBox="0 0 100 100" width="100%" height="100%">
+        <path d="M 20,60 Q 40,20 70,40 T 80,80 Q 50,90 20,60 Z" fill="var(--illum-red)" opacity="0.85" />
+        <circle cx="65" cy="35" r="3" fill="var(--gold-2)" />
+        <path d="M 30,50 Q 10,30 35,20" stroke="var(--gold-1)" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+
+    <!-- Marginalia Creature Right: Illuminated Snail -->
+    <div class="marginalia-item marginalia-right" onmouseenter="showMargTooltip(event, 'Cochlea armata — The jousting knight snail of Canterbury.')" onmouseleave="hideMargTooltip()">
+      <svg viewBox="0 0 100 100" width="100%" height="100%">
+        <circle cx="45" cy="50" r="25" fill="none" stroke="var(--illum-blue)" stroke-width="4" />
+        <circle cx="45" cy="50" r="14" fill="none" stroke="var(--gold-1)" stroke-width="3" />
+        <path d="M 20,75 Q 60,75 80,60" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" fill="none" />
+      </svg>
+    </div>
+    <!-- ═══════════════ FOLIO LVI · CAPITULUM II ═══════════════ -->
+    <section id="folio-1" class="chapter-folio active">
+      <div class="chapter-heading">
+        <span class="rubrication">✦ Capitulum Secundum ✦</span>
+        <h1 class="manuscript-title gold-leaf">De Natura Universi</h1>
+      </div>
+
+      <p>
+        <span class="drop-cap-wrap">
+          <span class="drop-cap-letter">I</span>
+        </span>
+        n the beginning of natural philosophy, when ancient scribes measured the celestial spheres upon beaten vellum, they sought not mere arithmetic, but an illuminated concordance between geometry, sacred ink, and terrestrial harmony. The gold leaf, beaten to one thousandth of a millimeter, reflects the divine light through every shifting candle flame.
+      </p>
+
+      <p style="margin-top: 18px;">
+        Every stroke of the goose quill upon calfskin parchment required hours of patient grinding of lapis lazuli, vermilion cinnabar, and gum arabic. Herein lies the craft of tactile knowledge—where text is not transient light upon a screen, but a sacred covenant bound in leather and gold leaf.
+      </p>
+
+      <p style="margin-top: 18px;">
+        Let the reader ponder upon the marginalia, wherein the illustrator inscribes humorous beasts and whimsical flora to remind scholar and monk alike that wisdom without joy is but dry dust.
+      </p>
+    </section>
+
+    <!-- ═══════════════ FOLIO LVII · CAPITULUM III ═══════════════ -->
+    <section id="folio-2" class="chapter-folio">
+      <div class="chapter-heading">
+        <span class="rubrication">✦ Capitulum Tertium ✦</span>
+        <h2 class="manuscript-title gold-leaf">De Bestiis et Allegoriis</h2>
+      </div>
+
+      <p>
+        <span class="drop-cap-wrap">
+          <span class="drop-cap-letter">B</span>
+        </span>
+        easts of the margin are never idle: the hare flees the hounds of sloth, the fox preaches to the geese of vanity, and the dragon guards the hoard of hidden knowledge. The bestiary teaches that every creature, even the lowliest, is an emblem of the soul's pilgrimage upon the page.
+      </p>
+
+      <p style="margin-top: 18px;">
+        Thus the illuminator paints the mermaid among the waves of rhetoric, her comb drawing reason up from the drowned depths; and the scribe records in the margin what the sermon dare not say aloud. Each beast is a cipher, each claw a quill, each flight a rubrication in the book of virtue.
+      </p>
+
+      <p style="margin-top: 18px;">
+        Yet the margin also knows mercy: the jousting snail of Canterbury, the dancing rabbit of the Easter sequence, the fox who steals the hen of complacency — all are forgiven, for they teach through laughter what the text teaches through tears.
+      </p>
+    </section>
+
+    <!-- ═══════════════ FOLIO LVIII · CAPITULUM IV ═══════════════ -->
+    <section id="folio-3" class="chapter-folio">
+      <div class="chapter-heading">
+        <span class="rubrication">✦ Capitulum Quartum ✦</span>
+        <h2 class="manuscript-title gold-leaf">De Officio Scriptorii</h2>
+      </div>
+
+      <p>
+        <span class="drop-cap-wrap">
+          <span class="drop-cap-letter">S</span>
+        </span>
+        criptorium doors open with the bell of prime and close not until compline. There the scribe warms his ink over an oak-gall infusion, stretches his parchment upon the frame, and sets his quill to the page — three fingers upon the quill, two upon the heart, one eye fixed upon the exemplar.
+      </p>
+
+      <p style="margin-top: 18px;">
+        A single illuminated initial may consume a season of the liturgical year. The gold leaf must be breathed upon, laid with the softest of brushes, and burnished with the tooth of a dog until it catches the candlelight like a star. The reed of the desk is worn smooth by the weight of centuries.
+      </p>
+
+      <p style="margin-top: 18px;">
+        And when the hand falters, the scribe does not strike the page, but sets beside the error a little note — <em>hic littera peccavit</em> — for even in the most perfect of scriptoria, patience is the first material of the craft.
+      </p>
+    </section>
+
+    <!-- Interactive Page Turner -->
+    <div class="page-turner">
+      <button class="page-btn" type="button" onclick="turnPage(-1)" aria-label="Previous folio">◄ FOLIO PRIOR</button>
+      <span id="folio-label" class="folio-num">FOLIO LVI • DE NATURA UNIVERSI</span>
+      <button class="page-btn" type="button" onclick="turnPage(1)" aria-label="Next folio">FOLIO SEQUENS ►</button>
+    </div>
+
+    <!-- ═══════════════ ILLUMINATION GALLERY ═══════════════ -->
+    <div class="fleur-divider">❦ • ⚜ • ❦</div>
+
+    <section id="illumination-gallery">
+      <div class="chapter-heading">
+        <span class="rubrication">✦ Foliorum Cimelia ✦</span>
+        <h2 class="manuscript-title gold-leaf">Illumination Gallery</h2>
+      </div>
+      <p class="section-intro">Six plates from the scriptorium armarium — hover to see the gold catch the light.</p>
+
+      <div class="gallery-grid">
+
+        <figure class="folio-card">
+          <div class="folio-mini">
+            <svg viewBox="0 0 160 200" role="img" aria-label="Golden flower illumination">
+              <rect x="4" y="4" width="152" height="192" fill="none" stroke="var(--gold-1)" stroke-width="2"/>
+              <text x="80" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="32" fill="var(--gold-1)">A</text>
+              <path d="M 80,70 Q 60,115 80,155" stroke="var(--vine-green)" stroke-width="3" fill="none"/>
+              <path d="M 80,100 Q 45,92 38,68 Q 62,84 80,88" fill="var(--vine-green)"/>
+              <path d="M 80,115 Q 115,106 122,84 Q 98,100 80,103" fill="var(--vine-green)"/>
+              <g transform="translate(80,80)">
+                <circle r="13" fill="var(--gold-1)"/>
+                <ellipse rx="19" ry="9" fill="var(--illum-red)" transform="rotate(0)"/>
+                <ellipse rx="19" ry="9" fill="var(--illum-blue)" transform="rotate(72)"/>
+                <ellipse rx="19" ry="9" fill="var(--illum-red)" transform="rotate(144)"/>
+                <ellipse rx="19" ry="9" fill="var(--illum-blue)" transform="rotate(216)"/>
+                <ellipse rx="19" ry="9" fill="var(--illum-red)" transform="rotate(288)"/>
+              </g>
+              <path d="M 58,175 Q 80,190 102,175" stroke="var(--gold-dark)" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <figcaption class="folio-caption">
+            <span class="mini-title">Natura Floret</span>
+            <span class="mini-latin">Plate I — the golden flower of the field</span>
+          </figcaption>
+        </figure>
+
+        <figure class="folio-card">
+          <div class="folio-mini">
+            <svg viewBox="0 0 160 200" role="img" aria-label="Holy city illumination">
+              <rect x="4" y="4" width="152" height="192" fill="none" stroke="var(--gold-1)" stroke-width="2"/>
+              <text x="80" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="32" fill="var(--illum-blue)">U</text>
+              <path d="M 30,150 L 30,72 L 50,72 L 50,150 Z" fill="var(--parchment-border)"/>
+              <path d="M 110,150 L 110,72 L 130,72 L 130,150 Z" fill="var(--parchment-border)"/>
+              <path d="M 55,150 L 55,42 L 105,42 L 105,150 Z" fill="none" stroke="var(--gold-dark)" stroke-width="3"/>
+              <path d="M 70,150 L 70,56 L 90,56 L 90,150 Z" fill="var(--illum-blue)"/>
+              <path d="M 48,42 L 80,22 L 112,42 Z" fill="var(--gold-1)"/>
+              <path d="M 30,150 L 130,150 L 130,162 L 30,162 Z" fill="var(--vine-green)"/>
+            </svg>
+          </div>
+          <figcaption class="folio-caption">
+            <span class="mini-title">Urbs Sancta</span>
+            <span class="mini-latin">Plate II — the holy city under gabled roofs</span>
+          </figcaption>
+        </figure>
+
+        <figure class="folio-card">
+          <div class="folio-mini">
+            <svg viewBox="0 0 160 200" role="img" aria-label="Venetian ship illumination">
+              <rect x="4" y="4" width="152" height="192" fill="none" stroke="var(--gold-1)" stroke-width="2"/>
+              <text x="80" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="32" fill="var(--illum-red)">N</text>
+              <path d="M 26,132 Q 80,168 134,132 L 112,150 L 48,150 Z" fill="var(--gold-dark)"/>
+              <rect x="76" y="58" width="5" height="78" fill="var(--vine-green)"/>
+              <path d="M 78,58 L 78,116 L 132,106 Z" fill="var(--illum-red)"/>
+              <path d="M 82,58 L 82,116 L 28,106 Z" fill="var(--illum-blue)"/>
+              <path d="M 18,134 Q 80,160 142,134" stroke="var(--gold-1)" stroke-width="3" fill="none"/>
+            </svg>
+          </div>
+          <figcaption class="folio-caption">
+            <span class="mini-title">Navis Veneta</span>
+            <span class="mini-latin">Plate III — the war galley of the lagoon</span>
+          </figcaption>
+        </figure>
+
+        <figure class="folio-card">
+          <div class="folio-mini">
+            <svg viewBox="0 0 160 200" role="img" aria-label="Celestial spheres illumination">
+              <rect x="4" y="4" width="152" height="192" fill="none" stroke="var(--gold-1)" stroke-width="2"/>
+              <text x="80" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="32" fill="var(--gold-1)">O</text>
+              <circle cx="80" cy="112" r="34" fill="none" stroke="var(--illum-blue)" stroke-width="3"/>
+              <circle cx="80" cy="112" r="15" fill="var(--gold-1)"/>
+              <circle cx="80" cy="112" r="6" fill="var(--illum-red)"/>
+              <ellipse cx="80" cy="112" rx="50" ry="16" fill="none" stroke="var(--gold-dark)" stroke-width="2" transform="rotate(-16 80 112)"/>
+              <circle cx="80" cy="58" r="3" fill="var(--illum-red)"/>
+              <circle cx="134" cy="118" r="2.5" fill="var(--illum-red)"/>
+              <circle cx="32" cy="100" r="2" fill="var(--illum-blue)"/>
+              <circle cx="108" cy="170" r="2" fill="var(--gold-1)"/>
+              <path d="M 52,168 q 8,-9 16,0 q 8,9 16,0" stroke="var(--vine-green)" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <figcaption class="folio-caption">
+            <span class="mini-title">Orbis Stellae</span>
+            <span class="mini-latin">Plate IV — the orrery of the seven planets</span>
+          </figcaption>
+        </figure>
+
+        <figure class="folio-card">
+          <div class="folio-mini">
+            <svg viewBox="0 0 160 200" role="img" aria-label="Crowned king illumination">
+              <rect x="4" y="4" width="152" height="192" fill="none" stroke="var(--gold-1)" stroke-width="2"/>
+              <text x="80" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="32" fill="var(--gold-1)">R</text>
+              <path d="M 38,44 L 80,26 L 122,44 L 110,66 L 50,66 Z" fill="var(--gold-1)"/>
+              <circle cx="62" cy="42" r="4" fill="var(--illum-red)"/>
+              <circle cx="98" cy="42" r="4" fill="var(--illum-red)"/>
+              <circle cx="80" cy="50" r="4" fill="var(--illum-blue)"/>
+              <path d="M 48,66 L 48,122 A 32 36 0 0 0 112,122 L 112,66 Z" fill="var(--parchment-border)"/>
+              <path d="M 60,84 Q 80,102 100,84" stroke="var(--gold-dark)" stroke-width="2" fill="none"/>
+              <path d="M 44,128 Q 80,142 116,128 L 116,140 L 44,140 Z" fill="var(--gold-1)"/>
+            </svg>
+          </div>
+          <figcaption class="folio-caption">
+            <span class="mini-title">Rex Coronatus</span>
+            <span class="mini-latin">Plate V — the crowned head of the psalter</span>
+          </figcaption>
+        </figure>
+
+        <figure class="folio-card">
+          <div class="folio-mini">
+            <svg viewBox="0 0 160 200" role="img" aria-label="Knight and dragon illumination">
+              <rect x="4" y="4" width="152" height="192" fill="none" stroke="var(--gold-1)" stroke-width="2"/>
+              <text x="80" y="36" text-anchor="middle" font-family="Cinzel,serif" font-size="32" fill="var(--illum-red)">E</text>
+              <path d="M 52,38 L 52,150" stroke="var(--illum-blue)" stroke-width="12" stroke-linecap="round"/>
+              <path d="M 52,56 L 40,34 L 64,34 Z" fill="var(--gold-1)"/>
+              <path d="M 44,88 L 60,88 L 56,120 L 48,120 Z" fill="var(--gold-dark)"/>
+              <path d="M 96,74 Q 116,52 132,74 T 122,108 Q 106,120 94,104 Z" fill="var(--illum-red)"/>
+              <circle cx="126" cy="74" r="3" fill="var(--gold-2)"/>
+              <path d="M 96,74 L 76,62" stroke="var(--gold-1)" stroke-width="3" fill="none"/>
+              <path d="M 44,140 Q 80,160 116,140" stroke="var(--vine-green)" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <figcaption class="folio-caption">
+            <span class="mini-title">Eques et Draco</span>
+            <span class="mini-latin">Plate VI — the knight and the hoard-wyrm</span>
+          </figcaption>
+        </figure>
+
+      </div>
+    </section>
+    <!-- ═══════════════ MARGINALIA BESTIARY ═══════════════ -->
+    <div class="fleur-divider">❦ • ⚜ • ❦</div>
+
+    <section id="marginalia-bestiary">
+      <div class="chapter-heading">
+        <span class="rubrication">✦ Bestiarium Marginale ✦</span>
+        <h2 class="manuscript-title gold-leaf">Bestiary of the Margin</h2>
+      </div>
+      <p class="section-intro">Hover or focus each creature to read its marginal gloss.</p>
+
+      <div class="bestiary-grid">
+        <button type="button" class="bestiary-creature" data-tip="Draco silvestris — the forest dragon that sleeps upon its golden hoard.">
+          <svg viewBox="0 0 100 100" role="img" aria-label="Forest dragon">
+            <path d="M 20,60 Q 40,20 70,40 T 80,80 Q 50,90 20,60 Z" fill="var(--illum-red)" opacity="0.85"/>
+            <circle cx="65" cy="35" r="3" fill="var(--gold-2)"/>
+            <path d="M 30,50 Q 10,30 35,20" stroke="var(--gold-1)" stroke-width="2" fill="none"/>
+          </svg>
+          <span>DRACO</span>
+        </button>
+
+        <button type="button" class="bestiary-creature" data-tip="Lepus fugax — the fleet hare of the April margin, ever pursued.">
+          <svg viewBox="0 0 100 100" role="img" aria-label="Running hare">
+            <ellipse cx="56" cy="70" rx="24" ry="13" fill="var(--ink-muted)"/>
+            <circle cx="50" cy="46" r="13" fill="var(--ink-muted)"/>
+            <ellipse cx="64" cy="30" rx="6" ry="14" fill="var(--ink-muted)" transform="rotate(14 64 30)"/>
+            <ellipse cx="50" cy="20" rx="6" ry="14" fill="var(--ink-muted)" transform="rotate(-16 50 20)"/>
+            <circle cx="45" cy="42" r="2.5" fill="var(--parchment)"/>
+            <path d="M 30,72 Q 18,60 27,52" stroke="var(--gold-1)" stroke-width="2" fill="none"/>
+          </svg>
+          <span>LEPUS</span>
+        </button>
+
+        <button type="button" class="bestiary-creature" data-tip="Vulpes praedicator — the fox preaching to the geese of vanity.">
+          <svg viewBox="0 0 100 100" role="img" aria-label="Preaching fox">
+            <path d="M 42,42 L 58,42 L 58,80 L 42,80 Z" fill="var(--illum-red)"/>
+            <path d="M 38,46 L 50,22 L 56,42" fill="var(--illum-red)"/>
+            <path d="M 62,46 L 50,22 L 44,42" fill="var(--illum-red)"/>
+            <path d="M 50,80 Q 76,74 78,48 Q 72,78 52,80 Z" fill="var(--illum-red)"/>
+            <path d="M 42,58 L 58,58 L 55,72 L 45,72 Z" fill="var(--parchment-border)"/>
+            <circle cx="50" cy="34" r="2.5" fill="var(--parchment)"/>
+          </svg>
+          <span>VULPES</span>
+        </button>
+
+        <button type="button" class="bestiary-creature" data-tip="Sirena cantatrix — the mermaid luring sailors with her rhetoric.">
+          <svg viewBox="0 0 100 100" role="img" aria-label="Singing mermaid">
+            <circle cx="50" cy="30" r="10" fill="var(--illum-blue)"/>
+            <path d="M 42,40 L 58,40 L 56,56 L 44,56 Z" fill="var(--gold-1)"/>
+            <path d="M 44,56 Q 50,74 40,82 L 56,90 L 68,80 Q 54,66 56,56 Z" fill="var(--gold-dark)"/>
+            <path d="M 40,82 Q 24,90 18,76 Q 34,76 42,86" fill="var(--gold-dark)"/>
+            <path d="M 66,58 Q 80,46 88,50" stroke="var(--gold-1)" stroke-width="2.5" fill="none"/>
+            <circle cx="46" cy="28" r="1.5" fill="var(--parchment)"/>
+            <circle cx="54" cy="28" r="1.5" fill="var(--parchment)"/>
+          </svg>
+          <span>SIRENA</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SCRIPTORIUM COLOPHON ═══════════════ -->
+    <div class="fleur-divider">❦ • ⚜ • ❦</div>
+
+    <section id="scriptorium">
+      <div class="chapter-heading">
+        <span class="rubrication">✦ Scriptorium Sancti Benedicti ✦</span>
+        <h2 class="manuscript-title gold-leaf">The Scribe's Colophon</h2>
+      </div>
+
+      <div class="colophon">
+        <p class="colophon-lead">
+          Scriptum et illuminatum est hoc opus in scriptorio Sancti Benedicti, sub tutela
+          fratris <em>Ambrosii miniatoris</em>, anno Domini septingentesimo. The hand that set
+          these letters prayed before every stroke, that the word might be worthy of the light
+          that falls upon it. What cannot be spoken in the sermon is whispered in the margin.
+        </p>
+
+        <div class="colophon-grid">
+          <div>
+            <h3 class="colophon-sub">Materia & Instrumenta</h3>
+            <ul class="materials-list">
+              <li><strong>Aurum foliatum</strong> — gold leaf beaten to 1/1000 mm, laid over red bole and burnished</li>
+              <li><strong>Atramentum gallae</strong> — oak-gall ink of iron sulphate and gum arabic</li>
+              <li><strong>Pergamenum vitulinum</strong> — calfskin vellum, stretched, pumiced and chalked</li>
+              <li><strong>Lapis lazuli</strong> — ultramarine ground from the stone of distant Afghanistan</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="colophon-sub">Notae Productoriae</h3>
+            <ul class="materials-list">
+              <li>Scriba & miniator: Frater Ambrosius Miniator</li>
+              <li>Librarius rubricarum: Stephanus Rotulus</li>
+              <li>Inceptum Kalendae Martii · completum Vigilia Nativitatis</li>
+              <li>Folia CLXII · initiales XLVII · margini innumerabiles</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="colophon-signature">
+          ❦ Explicit liber · Laus Deo · ❦<br>
+          <span class="colophon-hand">+ Ambrosius scribebat in hoc codice · si quid errorem legas, ignosce</span>
+        </p>
+      </div>
+    </section>
+  </article>
+
+  <script>
+    const tooltip = document.getElementById('marginalia-tooltip');
+
+    function showMargTooltip(e, text) {
+      const rect = (e && e.currentTarget) ? e.currentTarget.getBoundingClientRect() : null;
+      tooltip.textContent = text;
+      tooltip.style.display = 'block';
+      if (e && (e.clientX || e.clientY)) {
+        tooltip.style.left = (e.clientX + 14) + 'px';
+        tooltip.style.top = (e.clientY + 14) + 'px';
+      } else if (rect) {
+        tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+        tooltip.style.top = (rect.top - 28) + 'px';
+      }
+    }
+
+    function hideMargTooltip() {
+      tooltip.style.display = 'none';
+    }
+
+    /* Bestiary: pointer + keyboard tooltips via data-tip */
+    document.querySelectorAll('.bestiary-creature').forEach(item => {
+      item.addEventListener('mouseenter', (e) => showMargTooltip(e, item.dataset.tip));
+      item.addEventListener('mouseleave', hideMargTooltip);
+      item.addEventListener('focus', (e) => showMargTooltip(e, item.dataset.tip));
+      item.addEventListener('blur', hideMargTooltip);
+    });
+
+    /* Page turner: swap visible chapter folios */
+    const folios = [
+      { el: 'folio-1', label: 'FOLIO LVI • DE NATURA UNIVERSI' },
+      { el: 'folio-2', label: 'FOLIO LVII • DE BESTIIS ET ALLEGORIIS' },
+      { el: 'folio-3', label: 'FOLIO LVIII • DE OFFICIO SCRIPTORII' },
+    ];
+    let currentFolio = 0;
+
+    function turnPage(delta) {
+      currentFolio = (currentFolio + delta + folios.length) % folios.length;
+      folios.forEach((f, i) => {
+        document.getElementById(f.el).classList.toggle('active', i === currentFolio);
+      });
+      const label = document.getElementById('folio-label');
+      if (label) label.textContent = folios[currentFolio].label;
+    }
+
+    function setTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      try { localStorage.setItem('codex-theme', themeName); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === themeName);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = document.documentElement.getAttribute('data-theme') || 'parchment-gold';
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === savedTheme);
+      });
+      const label = document.getElementById('folio-label');
+      if (label) label.textContent = folios[0].label;
+    });
+  </script>
+</body>
+</html>

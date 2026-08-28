@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holographic Card Deck</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(145deg, #080810 0%, #101018 50%, #06060a 100%);
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+  }
+  .deck-scene {
+    perspective: 1400px;
+    width: 100%;
+    max-width: 900px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .deck-title {
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    pointer-events: none;
+    text-align: center;
+  }
+  .holo-card {
+    position: absolute;
+    width: 260px;
+    height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #111118;
+    transform-style: preserve-3d;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    will-change: transform;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    transition: box-shadow 0.4s;
+  }
+  .holo-card:active { cursor: grabbing; }
+  .holo-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .holo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+  .holo-sheen {
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      transparent 0%,
+      rgba(99,102,241,0.15) 15%,
+      rgba(236,72,153,0.15) 30%,
+      rgba(34,211,238,0.15) 45%,
+      rgba(99,102,241,0.15) 60%,
+      rgba(168,85,247,0.15) 75%,
+      transparent 100%
+    );
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    transition: none;
+  }
+  .holo-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255,255,255,0.08) 45%,
+      rgba(255,255,255,0.15) 50%,
+      rgba(255,255,255,0.08) 55%,
+      transparent 60%
+    );
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .holo-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+  .holo-chromatic {
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(255,0,0,0.15), rgba(0,255,255,0.15));
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .holo-card:hover .holo-chromatic {
+    opacity: 1;
+  }
+  .holo-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 20px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+    pointer-events: none;
+  }
+  .holo-info .name {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .holo-info .rarity {
+    font-size: 11px;
+    margin-top: 6px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .holo-rarity-glow {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 12px currentColor;
+    pointer-events: none;
+  }
+  .deck-controls {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 100;
+  }
+  .deck-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .deck-btn:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+    transform: scale(1.1);
+  }
+</style>
+</head>
+<body>
+
+<div class="deck-scene" id="scene">
+  <div class="deck-title">Holographic Card Deck — Move your cursor</div>
+  <div id="deck"></div>
+  <div class="deck-controls">
+    <div class="deck-btn" id="prevBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="deck-btn" id="nextBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const cards = [
+    { name: "Aurora Borealis", rarity: "Legendary", color: "#22d3ee", img: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=520&h=760&fit=crop&q=80" },
+    { name: "Sakura Gate", rarity: "Epic", color: "#f472b6", img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=520&h=760&fit=crop&q=80" },
+    { name: "Nebula Drift", rarity: "Mythic", color: "#a78bfa", img: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=520&h=760&fit=crop&q=80" },
+    { name: "Golden Dune", rarity: "Rare", color: "#fbbf24", img: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=520&h=760&fit=crop&q=80" },
+    { name: "Volcanic Core", rarity: "Legendary", color: "#ef4444", img: "https://images.unsplash.com/photo-1462332420958-a05d1e002413?w=520&h=760&fit=crop&q=80" },
+  ];
+
+  const deck = document.getElementById('deck');
+  const scene = document.getElementById('scene');
+  let current = 0;
+  let mouseX = 0, mouseY = 0;
+
+  function buildDeck() {
+    deck.innerHTML = '';
+    cards.forEach((c, i) => {
+      const el = document.createElement('div');
+      el.className = 'holo-card';
+      el.dataset.index = i;
+      el.innerHTML = `
+        <div class="holo-card-inner">
+          <img src="${c.img}" alt="${c.name}" loading="lazy" />
+          <div class="holo-sheen" style="--angle: 0deg"></div>
+          <div class="holo-shine"></div>
+          <div class="holo-noise"></div>
+          <div class="holo-chromatic"></div>
+          <div class="holo-rarity-glow" style="color:${c.color};background:${c.color}"></div>
+          <div class="holo-info">
+            <div class="name">${c.name}</div>
+            <div class="rarity" style="color:${c.color}">${c.rarity}</div>
+          </div>
+        </div>
+      `;
+      deck.appendChild(el);
+    });
+    arrange();
+  }
+
+  function arrange() {
+    const els = deck.querySelectorAll('.holo-card');
+    els.forEach((el, i) => {
+      const diff = i - current;
+      const abs = Math.abs(diff);
+      const dir = diff > 0 ? 1 : -1;
+
+      let tx = diff * 90;
+      let tz = -abs * 180;
+      let rotY = diff * -25;
+      let scale = 1 - abs * 0.12;
+      let opacity = 1 - abs * 0.35;
+
+      if (abs > 2) {
+        opacity = 0;
+        scale = 0.5;
+      }
+
+      el.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${scale})`;
+      el.style.opacity = opacity;
+      el.style.zIndex = 10 - abs;
+    });
+  }
+
+  // Mouse tracking for holographic sheen
+  scene.addEventListener('mousemove', (e) => {
+    const rect = scene.getBoundingClientRect();
+    mouseX = (e.clientX - rect.left) / rect.width;
+    mouseY = (e.clientY - rect.top) / rect.height;
+
+    const angle = Math.atan2(mouseY - 0.5, mouseX - 0.5) * 180 / Math.PI + 90;
+
+    document.querySelectorAll('.holo-sheen').forEach(sheen => {
+      sheen.style.setProperty('--angle', angle + 'deg');
+    });
+
+    // 3D tilt on active card
+    const active = deck.querySelectorAll('.holo-card')[current];
+    if (active) {
+      const tiltX = (mouseY - 0.5) * -15;
+      const tiltY = (mouseX - 0.5) * 15;
+      active.style.transform = active.style.transform.replace(/rotateX\([^)]*\)/, '') + ` rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+    }
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    current = Math.max(0, current - 1);
+    arrange();
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    current = Math.min(cards.length - 1, current + 1);
+    arrange();
+  });
+
+  // Swipe
+  let startX = 0;
+  scene.addEventListener('touchstart', e => startX = e.touches[0].clientX, { passive: true });
+  scene.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) {
+      if (dx > 0 && current > 0) current--;
+      if (dx < 0 && current < cards.length - 1) current++;
+      arrange();
+    }
+  }, { passive: true });
+
+  buildDeck();
+})();
+</script>
+
+</body>
+</html>

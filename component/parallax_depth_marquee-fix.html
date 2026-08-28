@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallax Depth Marquee</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      overflow-x: hidden;
+    }
+
+    /* Marquee Keyframes */
+    @keyframes marquee-left {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+    @keyframes marquee-right {
+      0% { transform: translate3d(-50%, 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+
+    .track-left {
+      animation: marquee-left var(--speed, 30s) linear infinite;
+    }
+    .track-right {
+      animation: marquee-right var(--speed, 30s) linear infinite;
+    }
+
+    .paused { animation-play-state: paused !important; }
+
+    /* Card hover effects */
+    .card-wrap {
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+    }
+    .card-wrap:hover {
+      transform: scale(1.15);
+      z-index: 100;
+      box-shadow: 0 0 60px rgba(255,255,255,0.12), 0 25px 50px rgba(0,0,0,0.5);
+    }
+    .card-wrap:hover .card-img {
+      transform: scale(1.1);
+    }
+    .card-wrap:hover .card-overlay {
+      opacity: 0;
+    }
+    .card-wrap:hover .card-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-img {
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-overlay {
+      transition: opacity 0.3s ease;
+    }
+    .card-title {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.35s ease 0.05s;
+    }
+
+    /* Noise texture */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Vignette */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      background: radial-gradient(ellipse at center, transparent 30%, transparent 55%, rgba(0,0,0,0.55) 100%);
+    }
+
+    /* Scroll indicator */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .float-anim { animation: float 2.5s ease-in-out infinite; }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #444; }
+  </style>
+</head>
+<body>
+
+  <!-- Noise & Vignette -->
+  <div class="noise-overlay"></div>
+  <div class="vignette"></div>
+
+  <!-- Fixed Background -->
+  <div class="fixed inset-0" style="background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 40%, #080808 70%, #050505 100%);"></div>
+
+  <!-- Marquee Layers (Fixed) -->
+  <div id="layers-container" class="fixed inset-0 overflow-hidden">
+    <!-- Injected by JS -->
+  </div>
+
+  <!-- Hero Text (Fixed, pointer-events-none) -->
+  <div class="fixed inset-0 z-[60] flex flex-col items-center justify-center pointer-events-none select-none">
+    <h1 class="text-6xl md:text-8xl font-extrabold text-white/90 tracking-tighter" style="text-shadow: 0 0 100px rgba(255,255,255,0.08);">
+      DEPTH
+    </h1>
+    <p class="mt-3 text-white/35 text-base md:text-lg font-light tracking-[0.3em] uppercase">
+      Parallax Marquee Experience
+    </p>
+    <div class="mt-10 float-anim flex flex-col items-center text-white/25">
+      <span class="text-[10px] uppercase tracking-[0.25em] mb-2">Scroll to Explore</span>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Scroll Spacer -->
+  <div class="relative z-[70]" style="margin-top: 100vh;">
+    <div style="height: 250vh;"></div>
+  </div>
+
+  <!-- Footer Info -->
+  <div class="relative z-[70] bg-black/80 backdrop-blur-2xl border-t border-white/5">
+    <div class="max-w-5xl mx-auto px-6 py-20 text-center">
+      <h2 class="text-3xl md:text-5xl font-bold text-white/90 tracking-tight mb-4">6 Layers of Depth</h2>
+      <p class="text-white/40 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-12">
+        Setiap layer bergerak dengan kecepatan, blur, opacity, dan scale berbeda. 
+        Scroll menggeser layer secara vertikal dengan rate berbeda. 
+        Mouse horizontal mempercepat/memperlambat animasi.
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto mb-12">
+        <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] hover:bg-white/[0.06] transition">
+          <div class="text-white/70 font-semibold text-sm">Layer 1</div>
+          <div class="text-white/30 text-xs mt-1">180s &middot; blur-sm &middot; 30%</div>
+        </div>
+        <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] hover:bg-white/[0.06] transition">
+          <div class="text-white/70 font-semibold text-sm">Layer 2</div>
+          <div class="text-white/30 text-xs mt-1">140s &middot; blur-[2px] &middot; 45%</div>
+        </div>
+        <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] hover:bg-white/[0.06] transition">
+          <div class="text-white/70 font-semibold text-sm">Layer 3</div>
+          <div class="text-white/30 text-xs mt-1">100s &middot; blur-[1px] &middot; 60%</div>
+        </div>
+        <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] hover:bg-white/[0.06] transition">
+          <div class="text-white/70 font-semibold text-sm">Layer 4</div>
+          <div class="text-white/30 text-xs mt-1">70s &middot; sharp &middot; 75%</div>
+        </div>
+        <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] hover:bg-white/[0.06] transition">
+          <div class="text-white/70 font-semibold text-sm">Layer 5</div>
+          <div class="text-white/30 text-xs mt-1">45s &middot; sharp &middot; 90%</div>
+        </div>
+        <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.06] hover:bg-white/[0.06] transition">
+          <div class="text-white/70 font-semibold text-sm">Layer 6</div>
+          <div class="text-white/30 text-xs mt-1">25s &middot; sharp &middot; 100%</div>
+        </div>
+      </div>
+
+      <p class="text-white/20 text-xs tracking-wide">
+        Vanilla HTML + Tailwind CSS &middot; Pure CSS 3D Transforms &middot; No External Libraries
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIGURATION =====
+    const UNSPLASH_IMAGES = [
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80",
+      "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80",
+      "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80",
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80",
+      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
+      "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80",
+      "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80",
+      "https://images.unsplash.com/photo-1518173946687-a4c036bc3c95?w=800&q=80",
+      "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&q=80",
+      "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&q=80",
+      "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&q=80",
+      "https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=800&q=80",
+      "https://images.unsplash.com/photo-1511497584788-876760111969?w=800&q=80",
+      "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&q=80",
+      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&q=80",
+      "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&q=80",
+    ];
+
+    const TITLES = [
+      "Misty Peaks", "Golden Valley", "Ancient Forest", "Hidden Waterfall",
+      "Azure Lake", "Morning Mist", "Sunlit Woods", "Highland Meadow",
+      "Emerald Canopy", "Twilight Ridge", "Crystal River", "Wildflower Fields",
+      "Canyon Echo", "Storm Pass", "Silent Glacier", "Autumn Trail",
+      "Ocean Cliffs", "Desert Dunes", "Alpine Lake", "Rainforest Dawn"
+    ];
+
+    const LAYERS = [
+      { speed: 180, blur: "blur-sm", opacity: 0.30, scale: 0.82, grayscale: true, count: 8,  dir: "left",  sensitivity: 0.08, yOffset: -30 },
+      { speed: 140, blur: "blur-[2px]", opacity: 0.45, scale: 0.88, grayscale: false, count: 10, dir: "right", sensitivity: 0.15, yOffset: -15 },
+      { speed: 100, blur: "blur-[1px]", opacity: 0.60, scale: 0.94, grayscale: false, count: 12, dir: "left",  sensitivity: 0.25, yOffset: 0 },
+      { speed: 70,  blur: "", opacity: 0.75, scale: 1.00, grayscale: false, count: 14, dir: "right", sensitivity: 0.40, yOffset: 15 },
+      { speed: 45,  blur: "", opacity: 0.90, scale: 1.06, grayscale: false, count: 16, dir: "left",  sensitivity: 0.60, yOffset: 30 },
+      { speed: 25,  blur: "", opacity: 1.00, scale: 1.12, grayscale: false, count: 18, dir: "right", sensitivity: 0.85, yOffset: 45 },
+    ];
+
+    // ===== HELPERS =====
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getImages(count) {
+      const shuffled = shuffle(UNSPLASH_IMAGES);
+      const imgs = [];
+      for (let i = 0; i < count; i++) {
+        imgs.push({
+          url: shuffled[i % shuffled.length],
+          title: TITLES[i % TITLES.length]
+        });
+      }
+      return imgs;
+    }
+
+    function createCard(img, isFront) {
+      const hoverClass = isFront ? 'card-wrap cursor-pointer' : '';
+      return `
+        <div class="shrink-0 px-2 ${hoverClass}" style="position:relative;">
+          <div class="relative overflow-hidden rounded-xl shadow-2xl" style="width: 300px; aspect-ratio: 16/9;">
+            <img src="${img.url}" alt="${img.title}" class="card-img w-full h-full object-cover" loading="lazy" />
+            <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-3">
+              <div class="card-title">
+                <span class="text-white text-xs font-semibold tracking-wide drop-shadow-md">${img.title}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function createLayer(cfg, index) {
+      const images = getImages(cfg.count);
+      const doubled = [...images, ...images, ...images, ...images]; // 4x for seamless
+      const animClass = cfg.dir === 'left' ? 'track-left' : 'track-right';
+      const isFront = index === LAYERS.length - 1;
+      const cardsHtml = doubled.map(img => createCard(img, isFront)).join('');
+      const grayscaleClass = cfg.grayscale ? 'grayscale' : '';
+
+      return `
+        <div 
+          class="layer absolute inset-0 flex items-center ${grayscaleClass}"
+          data-index="${index}"
+          data-sensitivity="${cfg.sensitivity}"
+          data-base-speed="${cfg.speed}"
+          style="
+            z-index: ${index * 10};
+            opacity: ${cfg.opacity};
+            filter: ${cfg.blur ? cfg.blur + ' ' : ''};
+            transform: translateY(${cfg.yOffset}px) scale(${cfg.scale});
+            will-change: transform;
+          "
+        >
+          <div class="flex w-full overflow-hidden">
+            <div 
+              class="marquee-track flex shrink-0 ${animClass} ${isFront ? 'front-layer' : ''}"
+              style="--speed: ${cfg.speed}s;"
+            >
+              <div class="flex shrink-0">${cardsHtml}</div>
+              <div class="flex shrink-0">${cardsHtml}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ===== RENDER =====
+    const container = document.getElementById('layers-container');
+    container.innerHTML = LAYERS.map((cfg, i) => createLayer(cfg, i)).join('');
+
+    // ===== INTERACTIONS =====
+    let scrollY = 0;
+    let mouseX = window.innerWidth / 2;
+    let ticking = false;
+
+    // Parallax Scroll
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          scrollY = window.scrollY;
+          document.querySelectorAll('.layer').forEach((layer) => {
+            const idx = parseInt(layer.dataset.index);
+            const rate = 0.04 + (idx * 0.025);
+            const offset = scrollY * rate;
+            const baseYOffset = LAYERS[idx].yOffset;
+            const baseScale = LAYERS[idx].scale;
+            layer.style.transform = `translateY(${baseYOffset + offset}px) scale(${baseScale})`;
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Mouse Speed Influence
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      const normalized = (mouseX / window.innerWidth - 0.5) * 2; // -1 to 1
+
+      document.querySelectorAll('.marquee-track').forEach((track) => {
+        const layer = track.closest('.layer');
+        if (!layer) return;
+        const sensitivity = parseFloat(layer.dataset.sensitivity);
+        const baseSpeed = parseFloat(layer.dataset.baseSpeed);
+        const multiplier = 1 + (normalized * sensitivity * 0.5);
+        const newSpeed = Math.max(5, baseSpeed / multiplier);
+        track.style.setProperty('--speed', newSpeed + 's');
+      });
+    }, { passive: true });
+
+    // Front Layer Hover Pause
+    document.querySelectorAll('.front-layer').forEach(track => {
+      track.addEventListener('mouseenter', () => {
+        track.classList.add('paused');
+      });
+      track.addEventListener('mouseleave', () => {
+        track.classList.remove('paused');
+      });
+    });
+  </script>
+</body>
+</html>

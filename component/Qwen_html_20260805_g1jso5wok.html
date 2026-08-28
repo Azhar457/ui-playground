@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0B0D12" />
+<title>KELANA — Satu Gulungan, Lima Babak</title>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      ink:'#0B0D12', coal:'#12161E', bone:'#EDE7DA', paper:'#F1ECE1',
+      amber:{ DEFAULT:'#F5A83C', soft:'#FFC96B' }, oxblood:'#7A2E2E'
+    },
+    fontFamily: {
+      disp:['Unbounded','sans-serif'],
+      body:['"Space Grotesk"','sans-serif'],
+      mono:['"JetBrains Mono"','monospace']
+    }
+  }}
+}
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============ BASE ============ */
+html,body{ background:#0B0D12; }
+body{ font-family:'Space Grotesk',sans-serif; color:#EDE7DA; overflow-x:hidden; }
+::selection{ background:#F5A83C; color:#0B0D12; }
+::-webkit-scrollbar{ width:10px; }
+::-webkit-scrollbar-track{ background:#0B0D12; }
+::-webkit-scrollbar-thumb{ background:#2A2F3A; border:2px solid #0B0D12; border-radius:8px; }
+::-webkit-scrollbar-thumb:hover{ background:#F5A83C; }
+
+/* ============ STAGE & LAYERS ============ */
+#stage{ position:fixed; inset:0; width:100vw; height:100vh; height:100dvh;
+        overflow:hidden; perspective:1200px; background:#0B0D12; }
+.layer{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.layer.live{ pointer-events:auto; }
+.backhide{ backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+
+/* ============ TYPO UTILS ============ */
+.txt-outline{ -webkit-text-stroke:2px rgba(237,231,218,.92); color:transparent; }
+.txt-outline-dim{ -webkit-text-stroke:1.5px rgba(237,231,218,.18); color:transparent; }
+.txt-outline-ink{ -webkit-text-stroke:2px rgba(23,19,16,.9); color:transparent; }
+@media (max-width:768px){
+  .txt-outline,.txt-outline-ink{ -webkit-text-stroke-width:1.3px; }
+  .txt-outline-dim{ -webkit-text-stroke-width:1px; }
+}
+
+/* ============ AMBIENT: GRAIN / VIGNETTE / FLICKER / KEN BURNS ============ */
+.grain{ position:fixed; inset:-100%; z-index:80; pointer-events:none; opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 7s steps(10) infinite; }
+@keyframes grain{
+  0%,100%{transform:translate(0,0)} 10%{transform:translate(-5%,-8%)}
+  20%{transform:translate(-12%,3%)} 30%{transform:translate(6%,-14%)}
+  40%{transform:translate(-4%,12%)} 50%{transform:translate(-12%,8%)}
+  60%{transform:translate(12%,0)}   70%{transform:translate(0,10%)}
+  80%{transform:translate(3%,12%)}  90%{transform:translate(-8%,4%)} }
+.vignette{ position:fixed; inset:0; z-index:46; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.34) 100%); }
+.flicker{ animation:flick 4.6s steps(1) infinite; }
+@keyframes flick{
+  0%,100%{opacity:.04} 7%{opacity:.10} 8%{opacity:.03} 31%{opacity:.08}
+  32%{opacity:.02} 54%{opacity:.11} 55%{opacity:.04} 78%{opacity:.09} 79%{opacity:.05} }
+.kenburns{ animation:kb 24s ease-in-out infinite alternate; }
+@keyframes kb{ from{ transform:scale(1.06) translate(0,0);} to{ transform:scale(1.16) translate(-1.8%,1.4%);} }
+.hint-line{ animation:hint 1.7s cubic-bezier(.65,0,.35,1) infinite; transform-origin:top; }
+@keyframes hint{ 0%{transform:scaleY(0);transform-origin:top} 45%{transform:scaleY(1);transform-origin:top}
+  55%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+.pulse-dot{ animation:pd 1.4s ease-in-out infinite; }
+@keyframes pd{ 0%,100%{opacity:1} 50%{opacity:.25} }
+
+/* ============ SECTION TEXTURES ============ */
+.blueprint{ background-image:
+  linear-gradient(rgba(237,231,218,.045) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(237,231,218,.045) 1px, transparent 1px);
+  background-size:72px 72px; }
+.paper-tex{ background-image:radial-gradient(rgba(23,19,16,.06) 1px, transparent 1.4px);
+  background-size:22px 22px; }
+
+/* ============ GALLERY ============ */
+.panel .gcap{ transition:transform .8s cubic-bezier(.2,.7,.2,1), opacity .8s ease; }
+.panel .gcap{ transform:translateY(28px); opacity:.3; }
+.panel.live .gcap{ transform:translateY(0); opacity:1; }
+.panel img{ transition:transform 1.2s cubic-bezier(.2,.7,.2,1); }
+.panel:hover img{ transform:scale(1.035); }
+
+/* ============ S3 GRID / PORTAL ============ */
+.cell{ position:relative; overflow:hidden; }
+.cell img{ transition:transform .9s cubic-bezier(.2,.7,.2,1), filter .6s ease; }
+.cell:hover img{ transform:scale(1.06); }
+.cell .ctag{ transition:opacity .4s ease, transform .4s ease; opacity:0; transform:translateY(6px); }
+.cell:hover .ctag{ opacity:1; transform:translateY(0); }
+#portal{ border:1px solid rgba(245,168,60,.65); }
+#portal .pulse-tag{ animation:pd 1.6s ease-in-out infinite; }
+.corner{ position:absolute; width:14px; height:14px; border-color:#F5A83C; }
+
+/* ============ S4 POSTCARDS + MARQUEE ============ */
+.postcard{ transition:transform .6s cubic-bezier(.2,.7,.2,1), box-shadow .6s ease; }
+.postcard:hover{ transform:rotate(0deg) translateY(-12px) !important;
+  box-shadow:0 30px 60px -18px rgba(23,19,16,.45); }
+.postcard::before{ content:''; position:absolute; top:-12px; left:50%; width:86px; height:26px;
+  transform:translateX(-50%) rotate(-2deg); background:rgba(245,168,60,.5); }
+.mq-track{ width:max-content; animation:mq 18s linear infinite; }
+@keyframes mq{ to{ transform:translateX(-50%);} }
+
+/* ============ S5 EMBERS ============ */
+.ember{ position:absolute; bottom:-3vh; width:5px; height:5px; border-radius:9999px;
+  background:#FFC96B; filter:blur(1px); opacity:0;
+  animation:riseEmber var(--d,10s) linear var(--dl,0s) infinite; }
+@keyframes riseEmber{
+  0%{ transform:translate(0,0); opacity:0 } 8%{ opacity:.85 }
+  85%{ opacity:.2 } 100%{ transform:translate(var(--dx,20px),-108vh); opacity:0 } }
+.ember:nth-child(1){left:6%;  --d:11s; --dl:0s;   --dx:30px}
+.ember:nth-child(2){left:14%; --d:14s; --dl:2s;   --dx:-24px; width:4px;height:4px}
+.ember:nth-child(3){left:24%; --d:9s;  --dl:4s;   --dx:18px}
+.ember:nth-child(4){left:33%; --d:13s; --dl:1s;   --dx:-36px}
+.ember:nth-child(5){left:44%; --d:16s; --dl:6s;   --dx:22px; width:3px;height:3px}
+.ember:nth-child(6){left:52%; --d:10s; --dl:3s;   --dx:-14px}
+.ember:nth-child(7){left:61%; --d:15s; --dl:5s;   --dx:40px}
+.ember:nth-child(8){left:70%; --d:12s; --dl:.5s;  --dx:-28px; width:4px;height:4px}
+.ember:nth-child(9){left:78%; --d:17s; --dl:7s;   --dx:16px}
+.ember:nth-child(10){left:86%;--d:11s; --dl:2.5s; --dx:-20px}
+.ember:nth-child(11){left:93%;--d:14s; --dl:4.5s; --dx:26px; width:3px;height:3px}
+.ember:nth-child(12){left:38%;--d:12s; --dl:8s;   --dx:-18px}
+
+/* ============ NAV DOTS / READOUT / CURSOR ============ */
+.dot{ width:10px; height:10px; border:1px solid rgba(237,231,218,.45); border-radius:9999px;
+  transition:all .35s ease; background:transparent; }
+.dot.on{ background:#F5A83C; border-color:#F5A83C; box-shadow:0 0 0 5px rgba(245,168,60,.16); }
+.dlabel{ position:absolute; right:1.7rem; top:50%; transform:translateY(-50%) translateX(8px);
+  opacity:0; transition:all .35s ease; white-space:nowrap; pointer-events:none; }
+.dotbtn:hover .dlabel, .dotbtn.on .dlabel{ opacity:1; transform:translateY(-50%) translateX(0); }
+.cursor-el{ position:fixed; top:0; left:0; pointer-events:none; z-index:120;
+  transform:translate(-100px,-100px); }
+#cdot{ width:6px; height:6px; border-radius:9999px; background:#F5A83C; }
+#cring{ width:36px; height:36px; border-radius:9999px; border:1px solid rgba(237,231,218,.55);
+  transition:width .3s,height .3s,border-color .3s; }
+#cring.big{ width:58px; height:58px; border-color:#F5A83C; }
+body.has-cursor, body.has-cursor *{ cursor:none !important; }
+
+@media (prefers-reduced-motion:reduce){
+  .kenburns,.grain,.flicker,.mq-track,.ember,.hint-line,.pulse-dot,.pulse-tag{ animation:none !important; }
+}
+</style>
+</head>
+
+<body class="font-body antialiased">
+
+<!-- ================================================================
+     PETA SCROLL (total ≈ 1000vh) — ubah tinggi segmen di sini saja.
+     hero 150 + gallery 260 + curtain 110 + breathe 160 (di-set JS)
+     + zoom 150 + flip 150 = ±980vh (track di-pin via ScrollTrigger).
+================================================================= -->
+<div id="pinbox">
+  <div id="track">
+    <div id="seg-hero"    style="height:150vh"></div>
+    <div id="seg-gallery" style="height:260vh"></div>
+    <div id="seg-curtain" style="height:110vh"></div>
+    <div id="seg-breathe" style="height:160vh"></div><!-- tinggi final di-set JS -->
+    <div id="seg-zoom"    style="height:150vh"></div>
+    <div id="seg-flip"    style="height:150vh"></div>
+  </div>
+</div>
+
+<!-- ================= STAGE (semua layer section) ================= -->
+<div id="stage">
+
+  <!-- ---------- SECTION 1 · PROLOG (hero) · z-10 ---------- -->
+  <section id="s1" class="layer live z-10 overflow-hidden">
+    <div id="hero-bg" class="absolute -inset-[4%] will-change-transform">
+      <img class="kenburns h-full w-full object-cover opacity-60"
+           src="https://picsum.photos/seed/kelana-lanskap/1920/1080" alt="Lanskap pembuka">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-ink/80 via-transparent to-ink/40"></div>
+    <div class="flicker absolute inset-0 bg-amber mix-blend-overlay"></div>
+
+    <div id="hero-num" class="txt-outline-dim font-disp pointer-events-none absolute -right-[2vw] -bottom-[8vw] text-[42vw] leading-none select-none">01</div>
+
+    <div id="hero-content" class="relative z-10 flex h-full flex-col justify-between px-6 pb-8 pt-[11vh] md:px-14 will-change-transform">
+      <div class="max-w-5xl">
+        <p class="h-kick font-mono text-[11px] tracking-[.35em] text-amber md:text-xs">
+          SC.01 — PROLOG · 35MM · HENING</p>
+        <h1 class="font-disp mt-5 font-extrabold leading-[.94] tracking-tight">
+          <span class="block overflow-hidden"><span class="h-line block text-[11vw] md:text-[7.2vw]">SATU GULUNGAN,</span></span>
+          <span class="block overflow-hidden"><span class="h-line txt-outline block text-[11vw] md:text-[7.2vw]">LIMA BABAK</span></span>
+        </h1>
+        <p class="h-kick mt-5 max-w-md text-sm text-bone/60 md:text-base">
+          Sebuah film yang tidak diputar — ia <span class="text-amber">digulir</span>.
+          Tiap transisi adalah potongan adegan; gulirmu adalah proyektor.</p>
+      </div>
+
+      <div class="flex items-end justify-between gap-6">
+        <ul class="h-slate flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] text-bone/55 md:text-xs">
+          <li class="border-l border-bone/20 pl-3">DURASI <span class="text-bone">±02:00</span></li>
+          <li class="border-l border-bone/20 pl-3">RASIO <span class="text-bone">2.39:1</span></li>
+          <li class="border-l border-bone/20 pl-3">FORMAT <span class="text-bone">GULIR SINEMATIK</span></li>
+          <li class="border-l border-bone/20 pl-3">SUARA <span class="text-bone">—</span></li>
+        </ul>
+        <div id="hint" class="flex shrink-0 flex-col items-center gap-3">
+          <span class="hint-line block h-12 w-px bg-amber"></span>
+          <span class="font-mono text-[10px] tracking-[.3em] text-bone/70 [writing-mode:vertical-rl]">GULIR UNTUK MEMUTAR</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- SECTION 2 · BABAK I LANSKAP (horizontal gallery) · z-20 ---------- -->
+  <section id="s2" class="layer z-20 overflow-hidden bg-coal will-change-transform">
+    <!-- rail kiri: jejak Section 1 yang menetap -->
+    <div id="s2rail" class="absolute inset-y-0 left-0 z-20 hidden w-14 flex-col items-center justify-between border-r border-bone/10 bg-ink py-6 md:flex">
+      <span class="font-disp text-[10px] font-bold tracking-[.4em] text-amber [writing-mode:vertical-rl]">KELANA</span>
+      <span class="font-mono text-[9px] tracking-[.3em] text-bone/40 rotate-180 [writing-mode:vertical-rl]">BABAK I — LANSKAP — 4 PANEL</span>
+      <span class="font-mono text-[10px] text-bone/40">▞▞</span>
+    </div>
+
+    <div id="gtrack" class="flex h-full items-stretch gap-[5vw] pl-[5vw] pr-[10vw] will-change-transform">
+      <!-- Panel 1 -->
+      <article class="panel group relative h-full w-[88vw] shrink-0 overflow-hidden md:w-[80vw]">
+        <img class="absolute inset-0 h-full w-full object-cover will-change-transform" src="https://picsum.photos/seed/kabut-araya/1100/1400" alt="Kabut lembah Araya">
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/15 to-transparent"></div>
+        <div class="gcap absolute bottom-0 left-0 max-w-xl p-7 md:p-12">
+          <p class="mb-3 font-mono text-[10px] tracking-[.25em] text-amber md:text-xs">B.01 · 12s · 07°19'S 110°22'E</p>
+          <h3 class="font-disp text-3xl font-bold md:text-6xl">KABUT ARAYA</h3>
+          <p class="mt-3 max-w-md text-sm text-bone/65">Lembah menahan napas; matahari belum berani masuk.</p>
+        </div>
+        <span class="txt-outline-dim font-disp absolute right-6 top-4 text-7xl font-extrabold md:text-9xl">01</span>
+      </article>
+      <!-- Panel 2 -->
+      <article class="panel group relative h-full w-[88vw] shrink-0 overflow-hidden md:w-[80vw]">
+        <img class="absolute inset-0 h-full w-full object-cover will-change-transform" src="https://picsum.photos/seed/arus-selatan/1100/1400" alt="Laut arus selatan">
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/15 to-transparent"></div>
+        <div class="gcap absolute bottom-0 left-0 max-w-xl p-7 md:p-12">
+          <p class="mb-3 font-mono text-[10px] tracking-[.25em] text-amber md:text-xs">B.02 · 09s · 08°42'S 115°10'E</p>
+          <h3 class="font-disp text-3xl font-bold md:text-6xl">ARUS SELATAN</h3>
+          <p class="mt-3 max-w-md text-sm text-bone/65">Laut menulis ulang garis pantai setiap malam, tanpa pernah minta dibaca.</p>
+        </div>
+        <span class="txt-outline-dim font-disp absolute right-6 top-4 text-7xl font-extrabold md:text-9xl">02</span>
+      </article>
+      <!-- Panel 3 -->
+      <article class="panel group relative h-full w-[88vw] shrink-0 overflow-hidden md:w-[80vw]">
+        <img class="absolute inset-0 h-full w-full object-cover will-change-transform" src="https://picsum.photos/seed/kota-menyala/1100/1400" alt="Kota di malam hari">
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/15 to-transparent"></div>
+        <div class="gcap absolute bottom-0 left-0 max-w-xl p-7 md:p-12">
+          <p class="mb-3 font-mono text-[10px] tracking-[.25em] text-amber md:text-xs">B.03 · 15s · 06°10'S 106°49'E</p>
+          <h3 class="font-disp text-3xl font-bold md:text-6xl">KOTA MENYALA</h3>
+          <p class="mt-3 max-w-md text-sm text-bone/65">Jendela-jendela menjawab lampu jalan, satu per satu, seperti kode morse rindu.</p>
+        </div>
+        <span class="txt-outline-dim font-disp absolute right-6 top-4 text-7xl font-extrabold md:text-9xl">03</span>
+      </article>
+      <!-- Panel 4 -->
+      <article class="panel group relative h-full w-[88vw] shrink-0 overflow-hidden md:w-[80vw]">
+        <img class="absolute inset-0 h-full w-full object-cover will-change-transform" src="https://picsum.photos/seed/puncak-sunyi/1100/1400" alt="Puncak gunung sunyi">
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/15 to-transparent"></div>
+        <div class="gcap absolute bottom-0 left-0 max-w-xl p-7 md:p-12">
+          <p class="mb-3 font-mono text-[10px] tracking-[.25em] text-amber md:text-xs">B.04 · 20s · 08°20'S 115°37'E</p>
+          <h3 class="font-disp text-3xl font-bold md:text-6xl">PUNCAK SUNYI</h3>
+          <p class="mt-3 max-w-md text-sm text-bone/65">Di ketinggian ini, suara yang tersisa tinggal angin — dan itu cukup.</p>
+        </div>
+        <span class="txt-outline-dim font-disp absolute right-6 top-4 text-7xl font-extrabold md:text-9xl">04</span>
+      </article>
+    </div>
+
+    <!-- HUD gallery -->
+    <div class="absolute bottom-0 left-0 right-0 z-20 md:left-14">
+      <div class="relative h-px bg-bone/15"><div id="gline" class="absolute inset-0 origin-left scale-x-0 bg-amber"></div></div>
+      <div class="flex items-center justify-between px-5 py-3 font-mono text-[10px] text-bone/60 md:px-8 md:text-xs">
+        <span>FRAME <b id="gidx" class="text-amber">01</b> / 04</span>
+        <span id="gtitle" class="tracking-[.2em] text-bone/80">KABUT ARAYA</span>
+        <span class="hidden md:inline text-bone/40">GESER ← SEIRAMA NAFAS</span>
+      </div>
+    </div>
+    <!-- bayangan tirai (menempel di bawah Section 2) -->
+    <div id="s2shadow" class="pointer-events-none absolute left-0 right-0 top-full h-[36vh] bg-gradient-to-b from-black/85 to-transparent opacity-0"></div>
+  </section>
+
+  <!-- ---------- SECTION 3 · BABAK II RUANG ANTARA · z-30 ---------- -->
+  <section id="s3" class="layer blueprint z-30 overflow-hidden bg-ink will-change-transform">
+    <div id="s3-inner" class="relative w-full will-change-transform">
+      <span class="txt-outline-dim font-disp pointer-events-none absolute -right-[3vw] top-[4vh] text-[30vw] leading-none select-none">II</span>
+
+      <header class="s3-fade relative mx-auto max-w-7xl px-6 pt-[13vh] md:px-14">
+        <p class="font-mono text-[11px] tracking-[.35em] text-amber">SC.03 — BABAK II · RUANG ANTARA</p>
+        <h2 class="font-disp mt-4 font-extrabold leading-[.95]">
+          <span class="block text-[9vw] md:text-[5.4vw]">DI ANTARA</span>
+          <span class="txt-outline block text-[9vw] md:text-[5.4vw]">DUA CAHAYA</span>
+        </h2>
+        <p class="mt-5 max-w-xl text-sm text-bone/60 md:text-base">
+          Enam still dari ruang tunggu antar-babak. Kamera tidak akan mengetuk pintu —
+          ia masuk lewat <span class="text-amber">bingkai yang menyala</span>. Gulir terus, jangan berkedip.
+        </p>
+      </header>
+
+      <div id="s3grid" class="relative mx-auto mt-[7vh] grid max-w-6xl grid-cols-2 gap-3 px-6 pb-[9vh] md:grid-cols-3 md:gap-4 md:px-10">
+        <figure class="cell aspect-[4/3] border border-bone/10">
+          <img class="h-full w-full object-cover" src="https://picsum.photos/seed/still-koridor/800/600" alt="Koridor">
+          <figcaption class="ctag absolute bottom-2 left-2 font-mono text-[10px] text-bone/80">koridor</figcaption>
+        </figure>
+        <figure class="cell aspect-[4/3] border border-bone/10">
+          <img class="h-full w-full object-cover" src="https://picsum.photos/seed/still-jendela/800/600" alt="Jendela utara">
+          <figcaption class="ctag absolute bottom-2 left-2 font-mono text-[10px] text-bone/80">jendela utara</figcaption>
+        </figure>
+        <figure class="cell aspect-[4/3] border border-bone/10">
+          <img class="h-full w-full object-cover" src="https://picsum.photos/seed/still-meja/800/600" alt="Meja panjang">
+          <figcaption class="ctag absolute bottom-2 left-2 font-mono text-[10px] text-bone/80">meja panjang</figcaption>
+        </figure>
+        <figure class="cell aspect-[4/3] border border-bone/10">
+          <img class="h-full w-full object-cover" src="https://picsum.photos/seed/still-lampu/800/600" alt="Lampu tunggal">
+          <figcaption class="ctag absolute bottom-2 left-2 font-mono text-[10px] text-bone/80">lampu tunggal</figcaption>
+        </figure>
+        <figure class="cell aspect-[4/3] border border-bone/10">
+          <img class="h-full w-full object-cover" src="https://picsum.photos/seed/still-debu/800/600" alt="Debu pagi">
+          <figcaption class="ctag absolute bottom-2 left-2 font-mono text-[10px] text-bone/80">debu pagi</figcaption>
+        </figure>
+        <!-- PORTAL: sel yang di-zoom menuju Section 4 -->
+        <div id="portal" class="cell aspect-[4/3] will-change-transform" style="transform-origin:50% 50%">
+          <img class="h-full w-full object-cover" src="https://picsum.photos/seed/gerbang-cahaya/1000/750" alt="Gerbang cahaya">
+          <div class="pointer-events-none absolute inset-2 border border-amber/60"></div>
+          <span class="corner left-0 top-0 border-l-2 border-t-2"></span>
+          <span class="corner right-0 top-0 border-r-2 border-t-2"></span>
+          <span class="corner bottom-0 left-0 border-b-2 border-l-2"></span>
+          <span class="corner bottom-0 right-0 border-b-2 border-r-2"></span>
+          <span class="pulse-tag absolute bottom-3 right-3 bg-amber px-3 py-1 font-mono text-[10px] font-bold tracking-[.2em] text-ink">→ MASUK</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- SECTION 5 · EPILOG (di-belakang Section 4) · z-40 ---------- -->
+  <section id="s5" class="layer z-40 overflow-hidden bg-[#0A0908] text-bone will-change-transform">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_115%,rgba(245,168,60,.20),transparent_60%)]"></div>
+    <div class="pointer-events-none absolute inset-0">
+      <span class="ember"></span><span class="ember"></span><span class="ember"></span><span class="ember"></span>
+      <span class="ember"></span><span class="ember"></span><span class="ember"></span><span class="ember"></span>
+      <span class="ember"></span><span class="ember"></span><span class="ember"></span><span class="ember"></span>
+    </div>
+
+    <div class="relative flex h-full flex-col justify-between px-6 pb-6 pt-[10vh] md:px-14">
+      <p class="rise font-mono text-[11px] tracking-[.35em] text-amber">SC.05 — EPILOG · GULUNGAN HABIS</p>
+
+      <div class="text-center">
+        <h2 class="rise font-disp text-[17vw] font-extrabold leading-none md:text-[9.5rem]">TAMAT<span class="text-amber">.</span></h2>
+        <p class="rise mt-3 font-mono text-[10px] tracking-[.3em] text-bone/45 md:text-xs">SATU GULUNGAN · LIMA BABAK · ±02:00 · TANPA SUARA</p>
+      </div>
+
+      <div id="credits" class="rise mx-auto grid w-full max-w-4xl grid-cols-2 gap-x-8 gap-y-5 font-mono text-[10px] text-bone/55 md:grid-cols-4 md:text-xs">
+        <div><p class="text-amber">SUTRADARA</p><p class="mt-1 text-bone/80">Kamu, Sang Penggulir</p></div>
+        <div><p class="text-amber">SINEMATOGRAFI</p><p class="mt-1 text-bone/80">GSAP × ScrollTrigger</p></div>
+        <div><p class="text-amber">TATA CAHAYA</p><p class="mt-1 text-bone/80">CSS &amp; sedikit keberanian</p></div>
+        <div><p class="text-amber">MUSIK</p><p class="mt-1 text-bone/80">Hening, Remaster 2.0</p></div>
+      </div>
+
+      <div class="rise flex justify-center">
+        <button id="replay" class="inline-flex items-center gap-3 border border-amber/70 px-8 py-3 font-mono text-xs tracking-[.3em] text-amber transition-colors duration-300 hover:bg-amber hover:text-ink">
+          ⟲ PUTAR ULANG
+        </button>
+      </div>
+
+      <div class="rise flex flex-wrap justify-between gap-2 border-t border-bone/10 pt-4 font-mono text-[9px] text-bone/35 md:text-[10px]">
+        <span>© 2026 STUDIO KELANA</span>
+        <span>DIPUTAR OLEH GULIRMU</span>
+        <span>FRAME 4320 / 4320</span>
+      </div>
+    </div>
+    <div id="s5top" class="pointer-events-none absolute inset-x-0 top-0 h-[30vh] bg-gradient-to-b from-black/90 to-transparent opacity-0"></div>
+  </section>
+
+  <!-- ---------- SECTION 4 · BABAK III CAHAYA (dunia terang, terluar) · z-50 ---------- -->
+  <section id="s4" class="layer backhide z-50 will-change-transform" style="transform-origin:50% 0%">
+    <div class="paper-tex relative h-full w-full overflow-hidden bg-paper text-ink">
+      <div class="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-amber/25 blur-3xl"></div>
+
+      <div class="flex h-full flex-col px-6 pt-[9vh] md:px-16">
+        <div class="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p class="font-mono text-[11px] tracking-[.35em] text-ink/50">SC.04 — BABAK III · DUNIA TERANG</p>
+            <h2 class="font-disp mt-3 font-extrabold leading-[.9]">
+              <span class="block text-[13vw] md:text-[8vw]">CAHAYA</span>
+              <span class="txt-outline-ink block text-[7.5vw] md:text-[4.4vw]">DATANG DARI DALAM</span>
+            </h2>
+          </div>
+          <p class="max-w-xs pb-2 text-sm leading-relaxed text-ink/65">
+            Kamu tidak lagi menonton — kamu berdiri di tengah set.
+            Kertas, debu, dan pagi; semuanya kebagian sorot.
+          </p>
+        </div>
+
+        <div class="flex flex-1 items-center justify-center gap-3 py-6 md:gap-12">
+          <figure class="postcard relative w-[26vw] max-w-[220px] rotate-[-7deg] bg-white p-2 pb-6 shadow-lg md:w-52">
+            <img class="aspect-[5/6] w-full object-cover" src="https://picsum.photos/seed/set-pagi/600/700" alt="Pagi di set">
+            <figcaption class="mt-2 text-center font-mono text-[10px] text-ink/60">pagi di set · 06:14</figcaption>
+          </figure>
+          <figure class="postcard relative w-[26vw] max-w-[220px] rotate-[4deg] bg-white p-2 pb-6 shadow-lg md:w-52">
+            <img class="aspect-[5/6] w-full object-cover" src="https://picsum.photos/seed/set-debu/600/700" alt="Debu tersorot">
+            <figcaption class="mt-2 text-center font-mono text-[10px] text-ink/60">debu tersorot · take 3</figcaption>
+          </figure>
+          <figure class="postcard relative hidden w-52 rotate-[-2deg] bg-white p-2 pb-6 shadow-lg sm:block">
+            <img class="aspect-[5/6] w-full object-cover" src="https://picsum.photos/seed/set-jeda/600/700" alt="Jeda siang">
+            <figcaption class="mt-2 text-center font-mono text-[10px] text-ink/60">jeda siang · cut</figcaption>
+          </figure>
+        </div>
+
+        <div class="mq overflow-hidden border-y-2 border-ink/80 bg-amber">
+          <div class="mq-track flex whitespace-nowrap py-2.5 font-disp text-lg font-bold tracking-wide md:text-2xl">
+            <span class="px-4">TERANG ITU DATANG DARI DALAM ✳ JANGAN BERKEDIP ✳ TERANG ITU DATANG DARI DALAM ✳ JANGAN BERKEDIP ✳&nbsp;</span>
+            <span class="px-4" aria-hidden="true">TERANG ITU DATANG DARI DALAM ✳ JANGAN BERKEDIP ✳ TERANG ITU DATANG DARI DALAM ✳ JANGAN BERKEDIP ✳&nbsp;</span>
+          </div>
+        </div>
+        <p class="py-3 text-center font-mono text-[10px] tracking-[.3em] text-ink/45">GULIR — HALAMAN INI AKAN TERKELUPAS ↓</p>
+      </div>
+
+      <div id="s4shade" class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 opacity-0"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= OVERLAYS ================= -->
+<div id="flash" class="pointer-events-none fixed inset-0 z-[45] opacity-0"
+     style="background:radial-gradient(circle at 50% 50%, rgba(255,244,214,.98), rgba(245,168,60,.5) 45%, transparent 75%)"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<!-- Top bar -->
+<div id="bar" class="fixed left-0 top-0 z-[92] h-[2px] w-full origin-left scale-x-0 bg-amber"></div>
+<header id="topbar" class="fixed inset-x-0 top-0 z-[90] flex items-center justify-between px-5 py-4 font-mono text-[10px] tracking-[.25em] text-bone/80 md:px-8 md:text-[11px]">
+  <span class="font-disp font-bold text-bone"><span class="text-amber">◐</span> STUDIO KELANA</span>
+  <span class="hidden text-bone/40 sm:inline">ANTOLOGI GULIR · 2026</span>
+  <span><b id="tc" class="text-amber">00:00</b><span class="text-bone/40"> / 02:00 · 35MM</span></span>
+</header>
+
+<!-- Readout -->
+<div id="readout" class="fixed bottom-5 left-5 z-[90] flex items-center gap-2 font-mono text-[10px] tracking-[.3em] text-amber md:bottom-7 md:left-8 md:text-xs">
+  <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-amber"></span>
+  <span id="readout-txt">SC.01 — PROLOG</span>
+</div>
+
+<!-- Nav dots -->
+<nav id="dots" class="fixed right-4 top-1/2 z-[90] flex -translate-y-1/2 flex-col gap-5 md:right-7" aria-label="Navigasi babak">
+  <button class="dotbtn on relative flex items-center" data-i="0"><span class="dlabel font-mono text-[9px] tracking-[.3em] text-bone/70">PROLOG</span><span class="dot on"></span></button>
+  <button class="dotbtn relative flex items-center" data-i="1"><span class="dlabel font-mono text-[9px] tracking-[.3em] text-bone/70">LANSKAP</span><span class="dot"></span></button>
+  <button class="dotbtn relative flex items-center" data-i="2"><span class="dlabel font-mono text-[9px] tracking-[.3em] text-bone/70">RUANG</span><span class="dot"></span></button>
+  <button class="dotbtn relative flex items-center" data-i="3"><span class="dlabel font-mono text-[9px] tracking-[.3em] text-bone/70">CAHAYA</span><span class="dot"></span></button>
+  <button class="dotbtn relative flex items-center" data-i="4"><span class="dlabel font-mono text-[9px] tracking-[.3em] text-bone/70">TAMAT</span><span class="dot"></span></button>
+</nav>
+
+<!-- Cursor -->
+<div id="cdot" class="cursor-el"></div>
+<div id="cring" class="cursor-el"></div>
+
+<!-- GSAP -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+
+<script>
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SCRUB   = REDUCED ? true : 1;                 // scrub: 1 → smooth; 0.5 juga oke
+const isMobile= () => innerWidth < 768;
+const railW   = () => isMobile() ? 0 : 56;
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+const segs = {
+  hero: $('#seg-hero'), gallery: $('#seg-gallery'), curtain: $('#seg-curtain'),
+  breathe: $('#seg-breathe'), zoom: $('#seg-zoom'), flip: $('#seg-flip')
+};
+const gtrack = $('#gtrack'), panels = $$('.panel'), pImgs = panels.map(p => p.querySelector('img'));
+const panelTitles = ['KABUT ARAYA','ARUS SELATAN','KOTA MENYALA','PUNCAK SUNYI'];
+const s3inner = $('#s3-inner');
+const layers = [$('#s1'), $('#s2'), $('#s3'), $('#s4'), $('#s5')];
+
+/* ---------- STATE AWAL (dianimasikan oleh tiap timeline) ---------- */
+gsap.set('#s2',  { xPercent: 100 });
+gsap.set('#s3',  { yPercent: 100 });
+gsap.set('#s4',  { opacity: 0, scale: .55, rotateX: 14 });
+gsap.set('#s5',  { scale: 1.07 });
+gsap.set('#flash',{ opacity: 0 });
+
+const getDist  = () => gtrack.scrollWidth - (innerWidth - railW()) + innerWidth * .05;
+const travel   = () => Math.max(0, s3inner.scrollHeight - innerHeight);
+
+/* ============================================================
+   A. SECTION 1 → 2 · HORIZONTAL SLIDE  (pin + scrub)
+   Seluruh track di-pin oleh master ScrollTrigger di bawah;
+   section diam di tempat (efek pin), Section 2 masuk dari kanan.
+============================================================ */
+const tlA = gsap.timeline({
+  defaults:{ ease:'none' },
+  scrollTrigger:{ trigger:'#seg-hero', start:'top top', end:'bottom bottom',
+                  scrub:SCRUB, invalidateOnRefresh:true }
+});
+tlA.fromTo('#hero-bg', { scale:1.14 }, { scale:1.0, duration:1 }, 0)
+   .to('#hero-content', { yPercent:-14, opacity:.3, ease:'power1.in', duration:.85 }, .12)
+   .to('#hero-num',     { xPercent:-26, duration:1 }, 0)
+   .fromTo('#s2', { xPercent:100 }, { xPercent:0, ease:'power3.inOut', duration:.8 }, .2);
+
+/* ============================================================
+   B. SECTION 2 · HORIZONTAL GALLERY (4 panel geser ke kiri)
+============================================================ */
+const tlB = gsap.timeline({
+  scrollTrigger:{ trigger:'#seg-gallery', start:'top top',
+                  end: () => '+=' + getDist(),
+                  scrub:SCRUB, invalidateOnRefresh:true,
+                  onUpdate: self => {
+                    const p = self.progress;
+                    gsap.set('#gline', { scaleX: p });
+                    const i = Math.min(panels.length - 1, Math.floor(p * panels.length));
+                    $('#gidx').textContent   = String(i + 1).padStart(2,'0');
+                    $('#gtitle').textContent = panelTitles[i];
+                    panels.forEach((el,k) => el.classList.toggle('live', k === i));
+                  } }
+});
+tlB.to('#gtrack', { x: () => -getDist(), ease:'none', duration:1 }, 0);
+pImgs.forEach((img,i) =>                                 // parallax internal tiap panel
+  tlB.fromTo(img, { xPercent:-6 }, { xPercent:6, ease:'none', duration:.42 }, i * .16));
+panels[0].classList.add('live');
+
+/* ============================================================
+   C. SECTION 2 → 3 · CURTAIN LIFT (tirai naik + shadow depth)
+============================================================ */
+const tlC = gsap.timeline({
+  scrollTrigger:{ trigger:'#seg-curtain', start:'top top', end:'bottom bottom',
+                  scrub:SCRUB, invalidateOnRefresh:true }
+});
+tlC.to('#s2', { yPercent:-100, ease:'power3.inOut', duration:1 }, 0)
+   .to('#s3', { yPercent:0,    ease:'power3.inOut', duration:1 }, 0)
+   .fromTo('#s2shadow', { opacity:0 }, { opacity:.9, ease:'power1.in', duration:.5 }, 0)
+   .to('#s2shadow', { opacity:0, duration:.35 }, .6)
+   .fromTo('#s3-inner', { y:26 }, { y:0, duration:.4, ease:'power2.out' }, .6);
+
+/* ============================================================
+   D. SECTION 3 · "NORMAL SCROLL" konten (inner translate scrubbed)
+============================================================ */
+const tlD = gsap.timeline({
+  scrollTrigger:{ trigger:'#seg-breathe', start:'top top',
+                  end: () => '+=' + travel(),
+                  scrub:SCRUB, invalidateOnRefresh:true }
+});
+tlD.to('#s3-inner', { y: () => -travel(), ease:'none', duration:1 }, 0)
+   .fromTo('#s3grid .cell', { y:46, opacity:0 },
+           { y:0, opacity:1, duration:.35, stagger:.06, ease:'power2.out' }, 0);
+
+/* ============================================================
+   E. SECTION 3 → 4 · ZOOM PORTAL (scale 1 → 14+, flash, dunia baru)
+============================================================ */
+const tlE = gsap.timeline({
+  scrollTrigger:{ trigger:'#seg-zoom', start:'top top', end:'bottom bottom',
+                  scrub:SCRUB, invalidateOnRefresh:true }
+});
+tlE.to('.s3-fade', { opacity:0, y:-44, ease:'power1.in', duration:.4 }, 0)
+   .to('#s3grid .cell:not(#portal)', { opacity:0, scale:.92, duration:.35 }, .05)
+   .to('#portal',     { scale: () => isMobile() ? 10 : 14, ease:'power2.in', duration:.85 }, 0)
+   .to('#portal img', { filter:'blur(14px)', duration:.6 }, .25)
+   .to('#portal',     { opacity:0, duration:.3 }, .5)
+   .fromTo('#flash',  { opacity:0 }, { opacity:.95, ease:'power2.in', duration:.2 }, .45)
+   .to('#flash',      { opacity:0, duration:.25 }, .66)
+   .to('#s4',         { opacity:1, scale:1, rotateX:0, ease:'power3.out', duration:.5 }, .52);
+
+/* ============================================================
+   F. SECTION 4 → 5 · FLIP / PEEL (rotateX sumbu atas + shadow)
+============================================================ */
+const tlF = gsap.timeline({
+  scrollTrigger:{ trigger:'#seg-flip', start:'top top', end:'bottom bottom',
+                  scrub:SCRUB, invalidateOnRefresh:true }
+});
+tlF.to('#s4', { rotateX: () => isMobile() ? -96 : -105, ease:'power2.inOut', duration:1 }, 0)
+   .to('#s4', { filter:'brightness(.78)', duration:1, ease:'power1.in' }, 0)
+   .to('#s4shade', { opacity:.75, ease:'power1.in', duration:.6 }, 0)
+   .to('#s5', { scale:1, ease:'power2.out', duration:1 }, 0)
+   .to('#s5top', { opacity:.7,  duration:.45 }, .15)
+   .to('#s5top', { opacity:.28, duration:.4  }, .6)
+   .fromTo('#s5 .rise', { y:64, opacity:0 },
+           { y:0, opacity:1, duration:.4, stagger:.07, ease:'power3.out' }, .35);
+
+/* ============================================================
+   MASTER PIN — seluruh track di-pin; panjang dokumen = total segmen.
+   (Inilah "pin: true" yang menahan semua section selama transisi.)
+============================================================ */
+const fmt = p => { const t = Math.round(p * 120);
+  return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0'); };
+
+let B = { s2:0, s3:0, s4:0, s5:0 };
+function computeBounds(){
+  const vh = innerHeight;
+  B.s2 = segs.gallery.offsetTop - vh * .1;
+  B.s3 = segs.curtain.offsetTop + segs.curtain.offsetHeight * .5;
+  B.s4 = segs.zoom.offsetTop    + segs.zoom.offsetHeight    * .7;
+  B.s5 = segs.flip.offsetTop    + segs.flip.offsetHeight    * .62;
+}
+
+const readouts = ['SC.01 — PROLOG','SC.02 — BABAK I · LANSKAP','SC.03 — BABAK II · RUANG',
+                  'SC.04 — BABAK III · CAHAYA','SC.05 — EPILOG'];
+let active = -1;
+function setActive(i){
+  if (i === active) return;
+  active = i;
+  $$('#dots .dotbtn').forEach((b,k) => {
+    b.classList.toggle('on', k === i);
+    b.querySelector('.dot').classList.toggle('on', k === i);
+  });
+  layers.forEach((l,k) => l.classList.toggle('live', k === i));
+  const txt = $('#readout-txt');
+  gsap.to(txt, { y:-8, opacity:0, duration:.16, ease:'power1.in', onComplete(){
+    txt.textContent = readouts[i];
+    gsap.fromTo(txt, { y:10, opacity:0 }, { y:0, opacity:1, duration:.28, ease:'power2.out' });
+  }});
+}
+
+ScrollTrigger.create({
+  trigger:'#pinbox', start:'top top', pin:true, anticipatePin:1,
+  end: () => '+=' + ($('#track').scrollHeight - innerHeight),
+  scrub:SCRUB, invalidateOnRefresh:true,
+  onUpdate: self => {
+    gsap.set('#bar', { scaleX: self.progress });
+    $('#tc').textContent = fmt(self.progress);
+    const y = self.scroll();
+    setActive( y < B.s2 ? 0 : y < B.s3 ? 1 : y < B.s4 ? 2 : y < B.s5 ? 3 : 4 );
+  }
+});
+
+/* ---------- layout responsif + tinggi segmen dinamis ---------- */
+function layout(){
+  gtrack.style.marginLeft = railW() + 'px';
+  segs.breathe.style.height = (innerHeight + travel()) + 'px';
+}
+layout();
+ScrollTrigger.addEventListener('refreshInit', () => { layout(); computeBounds(); });
+addEventListener('load', () => { layout(); computeBounds(); ScrollTrigger.refresh(); });
+computeBounds();
+
+/* ---------- nav dots → lompat ke babak ---------- */
+const targets = () => [
+  0,
+  segs.gallery.offsetTop + innerHeight * .1,
+  segs.breathe.offsetTop + innerHeight * .05,
+  segs.zoom.offsetTop    + segs.zoom.offsetHeight * .98,
+  segs.flip.offsetTop    + segs.flip.offsetHeight * .99
+];
+$$('#dots .dotbtn').forEach(btn =>
+  btn.addEventListener('click', () => {
+    gsap.to(window, { scrollTo:{ y: targets()[+btn.dataset.i], autoKill:false },
+                      duration:1.4, ease:'power3.inOut' });
+  }));
+
+/* ---------- replay (magnetic) ---------- */
+const replay = $('#replay');
+replay.addEventListener('click', () =>
+  gsap.to(window, { scrollTo:0, duration:2.2, ease:'power3.inOut' }));
+replay.addEventListener('mousemove', e => {
+  const r = replay.getBoundingClientRect();
+  gsap.to(replay, { x:(e.clientX - r.left - r.width/2) * .3,
+                    y:(e.clientY - r.top  - r.height/2) * .3, duration:.3 });
+});
+replay.addEventListener('mouseleave', () =>
+  gsap.to(replay, { x:0, y:0, duration:.6, ease:'elastic.out(1,.4)' }));
+
+/* ---------- custom cursor (pointer halus saja) ---------- */
+if (matchMedia('(pointer:fine)').matches && !REDUCED){
+  document.body.classList.add('has-cursor');
+  const dot = $('#cdot'), ring = $('#cring');
+  gsap.set([dot,ring], { xPercent:-50, yPercent:-50 });
+  const xd = gsap.quickTo(dot,'x',{duration:.1,ease:'power2'}),
+        yd = gsap.quickTo(dot,'y',{duration:.1,ease:'power2'}),
+        xr = gsap.quickTo(ring,'x',{duration:.32,ease:'power3'}),
+        yr = gsap.quickTo(ring,'y',{duration:.32,ease:'power3'});
+  addEventListener('mousemove', e => { xd(e.clientX); yd(e.clientY); xr(e.clientX); yr(e.clientY); });
+  $$('a,button,.cell,.panel,.postcard').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('big'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+  });
+}
+
+/* ---------- intro load-in (bukan scroll) ---------- */
+if (!REDUCED){
+  gsap.timeline({ defaults:{ ease:'power3.out' } })
+    .from('#topbar',  { y:-26, opacity:0, duration:.8, delay:.15 })
+    .from('.h-kick',  { y:22, opacity:0, duration:.6 }, '-=.45')
+    .from('.h-line',  { yPercent:112, duration:1, stagger:.12 }, '-=.3')
+    .from('.h-slate li', { y:14, opacity:0, duration:.5, stagger:.07 }, '-=.55')
+    .from('#hint',    { opacity:0, duration:.6 }, '-=.3')
+    .from('#dots,#readout', { x:22, opacity:0, duration:.6 }, '-=.4');
+}
+setActive(0);
+</script>
+</body>
+</html>

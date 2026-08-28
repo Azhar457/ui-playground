@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="nature-standard">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NATURE // COMMUNICATIONS — Quantum Topology & Biological Entanglement</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('journal-theme')||'nature-standard';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 ACADEMIC JOURNAL PALETTES
+       ========================================================= */
+    :root, [data-theme="nature-standard"] {
+      --paper: #FAFAFA;
+      --text-main: #1A1A1A;
+      --text-muted: #555555;
+      --accent: #2563EB;
+      --rule-color: #D1D5DB;
+      --card-bg: #FFFFFF;
+      --header-border: #111827;
+      --figure-border: #1A1A1A;
+      --tooltip-bg: #1F2937;
+      --tooltip-text: #F9FAFB;
+    }
+
+    [data-theme="dark-archives"] {
+      --paper: #0E121A;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --accent: #60A5FA;
+      --rule-color: #334155;
+      --card-bg: #151C28;
+      --header-border: #60A5FA;
+      --figure-border: #475569;
+      --tooltip-bg: #F1F5F9;
+      --tooltip-text: #0F172A;
+    }
+
+    [data-theme="oxford-classic"] {
+      --paper: #FBF7EE;
+      --text-main: #2C241E;
+      --text-muted: #6B5E55;
+      --accent: #991B1B;
+      --rule-color: #D6CEC5;
+      --card-bg: #FFFDF9;
+      --header-border: #991B1B;
+      --figure-border: #2C241E;
+      --tooltip-bg: #2C241E;
+      --tooltip-text: #FBF7EE;
+    }
+
+    [data-theme="technical-monograph"] {
+      --paper: #F3F4F6;
+      --text-main: #111827;
+      --text-muted: #4B5563;
+      --accent: #0D9488;
+      --rule-color: #CBD5E1;
+      --card-bg: #FFFFFF;
+      --header-border: #0D9488;
+      --figure-border: #374151;
+      --tooltip-bg: #111827;
+      --tooltip-text: #F3F4F6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', 'Merriweather', Georgia, serif;
+      line-height: 1.75;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Fixed Running Header */
+    header.running-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--paper);
+      border-bottom: 2px solid var(--header-border);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+    }
+
+    .journal-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .theme-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border: 1px solid var(--rule-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Article Container */
+    .article-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Article Header */
+    .article-header {
+      border-bottom: 1px solid var(--rule-color);
+      padding-bottom: 30px;
+      margin-bottom: 36px;
+    }
+
+    .pub-category {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .article-title {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+
+    .author-list {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .author-list sup {
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .affiliations {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 18px;
+    }
+
+    .doi-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .submission-meta {
+      margin-top: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+    }
+
+    .submission-meta span { display: inline-flex; align-items: center; gap: 5px; }
+    .submission-meta strong { color: var(--text-main); font-weight: 600; }
+
+    /* Abstract Block */
+    .abstract-box {
+      margin: 28px 0;
+      padding: 20px 28px;
+      border-left: 3px solid var(--accent);
+      background: rgba(0,0,0,0.02);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .abstract-label {
+      font-family: 'Inter', sans-serif;
+      font-style: normal;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .abstract-keywords {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule-color);
+      font-style: normal;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .abstract-keywords strong {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Two-Column Body Grid (55% / 40% split) */
+    .article-body-grid {
+      display: grid;
+      grid-template-columns: 55% 40%;
+      gap: 5%;
+      margin-top: 30px;
+    }
+
+    .main-column {
+      text-align: justify;
+    }
+
+    .main-column p {
+      font-size: 15.5px;
+      margin-bottom: 20px;
+    }
+
+    .main-column h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 28px 0 14px;
+      border-bottom: 1px solid var(--rule-color);
+      padding-bottom: 6px;
+    }
+
+    /* Superscript citation reference */
+    .cite-ref {
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      padding: 0 2px;
+    }
+
+    .cite-ref:hover {
+      text-decoration: underline;
+    }
+
+    /* Figure Boxes */
+    .figure-box {
+      border: 1px solid var(--figure-border);
+      padding: 14px;
+      background: var(--card-bg);
+      margin: 24px 0 30px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .figure-box:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border-color: var(--accent);
+    }
+
+    .figure-canvas {
+      width: 100%;
+      height: 180px;
+      background: rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed var(--rule-color);
+      margin-bottom: 10px;
+    }
+
+    .figure-caption {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .figure-caption strong {
+      font-style: italic;
+      color: var(--text-main);
+    }
+
+    /* Sidebar Column */
+    .side-column {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+
+    .side-card {
+      border: 1px solid var(--rule-color);
+      padding: 18px;
+      background: var(--card-bg);
+      margin-bottom: 24px;
+    }
+
+    .side-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--rule-color);
+      padding-bottom: 4px;
+    }
+
+    .key-finding {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .key-finding:last-child { margin-bottom: 0; }
+
+    .key-finding .tick {
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .pdf-download-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s ease;
+    }
+
+    .pdf-download-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Marginalia / Related Reading */
+    .related-card {
+      border: 1px solid var(--rule-color);
+      border-left: 3px solid var(--accent);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: var(--card-bg);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .related-card:last-child { margin-bottom: 0; }
+
+    .related-card:hover {
+      border-left-color: var(--text-main);
+      transform: translateX(2px);
+    }
+
+    .related-card .cite-num {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 0 6px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .related-card .related-title {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    .related-card a { color: var(--accent); text-decoration: none; }
+    .related-card a:hover { text-decoration: underline; }
+
+    .related-card .related-meta {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      letter-spacing: 0.02em;
+    }
+
+    /* =========================================================
+       NEW SECTION — METHODS & DATA (journal tables)
+       ========================================================= */
+    .data-section {
+      margin-top: 46px;
+      border-top: 2px solid var(--header-border);
+      padding-top: 24px;
+    }
+
+    .section-head {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .section-lede {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      max-width: 62ch;
+    }
+
+    .table-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 8px;
+    }
+
+    .journal-table-wrap { min-width: 0; }
+
+    .table-caption {
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .journal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+
+    .journal-table thead th {
+      border-top: 1.5px solid var(--text-main);
+      border-bottom: 1px solid var(--rule-color);
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .journal-table tbody td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--rule-color);
+      vertical-align: top;
+    }
+
+    .journal-table tbody tr:last-child td { border-bottom: 1.5px solid var(--text-main); }
+
+    .journal-table .num {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .journal-table .metric-name { font-weight: 600; }
+
+    .data-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 12px;
+    }
+
+    /* =========================================================
+       NEW SECTION — FIGURE GALLERY
+       ========================================================= */
+    .gallery-section {
+      margin-top: 46px;
+      border-top: 2px solid var(--header-border);
+      padding-top: 24px;
+    }
+
+    .gallery-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 14px 0 22px;
+      flex-wrap: wrap;
+    }
+
+    .gallery-tab {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border: 1px solid var(--rule-color);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .gallery-tab:hover { border-color: var(--accent); color: var(--accent); }
+
+    .gallery-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .gallery-panel {
+      border: 1px solid var(--figure-border);
+      background: var(--card-bg);
+      padding: 16px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .gallery-panel:hover {
+      transform: scale(1.02);
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    }
+
+    .gallery-panel[hidden] { display: none; }
+
+    .gallery-canvas {
+      width: 100%;
+      height: 210px;
+      background: rgba(0,0,0,0.03);
+      border: 1px dashed var(--rule-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .gallery-panel .figure-caption { font-size: 12.5px; }
+
+    .gallery-legend {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--rule-color);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .gallery-legend span { display: inline-flex; align-items: center; gap: 5px; }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .gallery-note {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* =========================================================
+       NEW SECTION — DOWNLOAD & CITE
+       ========================================================= */
+    .cite-section {
+      margin-top: 46px;
+      border-top: 2px solid var(--header-border);
+      padding-top: 24px;
+    }
+
+    .cite-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .pdf-cover {
+      border: 1px solid var(--figure-border);
+      background: var(--card-bg);
+      padding: 18px;
+      text-align: center;
+    }
+
+    .cover-thumb {
+      width: 120px;
+      height: 158px;
+      margin: 0 auto 14px;
+      border: 1px solid var(--rule-color);
+      background: var(--paper);
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cover-bar {
+      height: 18px;
+      background: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+    }
+
+    .cover-bar span { color: #fff; font-size: 6px; font-weight: 700; letter-spacing: 0.08em; }
+
+    .cover-cols {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 6px;
+      padding: 0 6px;
+    }
+
+    .cover-line { height: 4px; background: var(--rule-color); margin-bottom: 4px; border-radius: 1px; }
+    .cover-col-side { height: 66px; background: var(--accent); opacity: 0.25; }
+
+    .pdf-download-btn.large { padding: 12px; font-size: 13px; }
+
+    .cite-blurb {
+      font-size: 13.5px;
+      margin-bottom: 12px;
+    }
+
+    .bibtex-block {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 11.5px;
+      line-height: 1.6;
+      background: var(--card-bg);
+      border: 1px solid var(--rule-color);
+      border-left: 3px solid var(--accent);
+      padding: 16px;
+      color: var(--text-muted);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 12px;
+    }
+
+    .copy-row {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .copy-bib-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border: 1px solid var(--rule-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .copy-bib-btn:hover, .copy-bib-btn.copied {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .copy-feedback {
+      font-size: 11px;
+      color: var(--accent);
+      margin-left: 10px;
+      font-weight: 600;
+    }
+
+    /* References Section */
+    .references-section {
+      margin-top: 50px;
+      border-top: 2px solid var(--header-border);
+      padding-top: 24px;
+    }
+
+    .ref-list {
+      list-style-type: decimal;
+      padding-left: 24px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .ref-list li {
+      margin-bottom: 10px;
+    }
+
+    /* Tooltip */
+    #citation-tooltip {
+      position: fixed;
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      max-width: 280px;
+      z-index: 999;
+      pointer-events: none;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* =========================================================
+       ACCESSIBILITY
+       ========================================================= */
+    button:focus-visible,
+    a:focus-visible,
+    .cite-ref:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .gallery-panel:hover { transform: none; }
+      .related-card:hover { transform: none; }
+    }
+
+    @media (max-width: 800px) {
+      .article-body-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .article-wrap { padding: 24px 16px 64px; }
+      .running-header { flex-wrap: wrap; gap: 10px; }
+      .article-title { font-size: clamp(1.8rem, 6vw, 2.6rem); }
+      .abstract-box { padding: 16px; }
+      .table-grid,
+      .gallery-grid,
+      .cite-grid { grid-template-columns: 1fr; }
+      .gallery-canvas { height: 190px; }
+      .running-header .journal-meta { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Running Header -->
+  <header class="running-header">
+    <div class="journal-meta">
+      <span>NATURE COMMUNICATIONS</span>
+      <span style="color:var(--rule-color)">|</span>
+      <span style="font-weight:400">VOL. 16 • ART. 4092</span>
+    </div>
+
+    <div class="theme-selector" role="group" aria-label="Academic Theme Selector">
+      <button class="theme-btn active" onclick="setTheme('nature-standard')" data-theme-target="nature-standard">01 Nature Standard</button>
+      <button class="theme-btn" onclick="setTheme('dark-archives')" data-theme-target="dark-archives">02 Dark Archives</button>
+      <button class="theme-btn" onclick="setTheme('oxford-classic')" data-theme-target="oxford-classic">03 Oxford Classic</button>
+      <button class="theme-btn" onclick="setTheme('technical-monograph')" data-theme-target="technical-monograph">04 Monograph</button>
+    </div>
+  </header>
+
+  <div id="citation-tooltip"></div>
+
+  <main class="article-wrap">
+    <article class="article-header">
+      <div class="pub-category">RESEARCH ARTICLE • QUANTUM BIOPHYSICS</div>
+      <h1 class="article-title">
+        Topological edge modes in biological photosynthetic complexes under ambient thermal decoherence
+      </h1>
+
+      <div class="author-list">
+        <strong>Elena Rostova</strong><sup>1,2*</sup>,
+        <strong>Marcus Thorne</strong><sup>1</sup>,
+        <strong>Kenji Takahashi</strong><sup>3</sup> &
+        <strong>David Chen</strong><sup>2</sup>
+      </div>
+
+      <div class="affiliations">
+        <sup>1</sup>Department of Physics, Cavendish Laboratory, Cambridge, UK.<br>
+        <sup>2</sup>Max Planck Institute for Quantum Optics, Garching, Germany.<br>
+        <sup>3</sup>Institute for Solid State Physics, University of Tokyo, Kashiwa, Japan.
+      </div>
+
+      <a href="#cite" class="doi-badge">
+        <span>DOI: 10.1038/s41467-025-40921-x</span>
+        <span>(OPEN ACCESS)</span>
+      </a>
+
+      <div class="submission-meta">
+        <span><strong>Received</strong> 12 Mar 2025</span>
+        <span><strong>Accepted</strong> 27 Jun 2025</span>
+        <span><strong>Published</strong> 14 Jul 2025</span>
+        <span><strong>Views</strong> 48,211</span>
+        <span><strong>Downloads</strong> 3,704</span>
+      </div>
+    </article>
+
+    <!-- Abstract -->
+    <div class="abstract-box">
+      <span class="abstract-label">Abstract</span>
+      Non-trivial topological invariants have recently revolutionized solid-state physics, yet their presence and robustness in wet, noisy biological systems remain fiercely debated. Here we demonstrate experimentally that excitation energy transfer in the FMO pigment-protein complex exhibits protected chiral edge modes that suppress thermal decoherence at physiological temperatures (298 K). Our findings suggest biological evolution harnesses topological protection for near-unity energy transfer efficiency.
+      <div class="abstract-keywords">
+        <strong>Keywords:</strong> topological photonics • quantum biology • excitation energy transfer • non-Hermitian systems • 2DES spectroscopy
+      </div>
+    </div>
+
+    <!-- Two-Column Grid -->
+    <div class="article-body-grid">
+      <!-- Main Reading Column (55%) -->
+      <div class="main-column">
+        <h2>Introduction</h2>
+        <p>
+          Photosynthetic light-harvesting complexes operate with quantum efficiencies approaching 98%, despite existing in warm, fluctuating molecular environments<sup class="cite-ref" onmouseenter="showTooltip(event, 'Engel, G. S. et al. Evidence for wavelike energy transfer through quantum coherence in photosynthetic systems. Nature 446, 782–786 (2007).')" onmouseleave="hideTooltip()">[1]</sup>. Traditional Förster resonance energy transfer (FRET) models fail to account for this resilience under strong vibrational coupling<sup class="cite-ref" onmouseenter="showTooltip(event, 'Scholes, G. D. et al. Quantum coherence in biology. Nature Phys. 7, 725–727 (2011).')" onmouseleave="hideTooltip()">[2]</sup>.
+        </p>
+
+        <p>
+          In this study, we map the chromophore coupling matrix of the Fenna-Matthews-Olson (FMO) trimer<sup class="cite-ref" onmouseenter="showTooltip(event, 'Fenna, R. E. & Matthews, B. W. Chlorophyll arrangement in a bacteriochlorophyll protein from Chlorobium limicola. Nature 258, 573–577 (1975).')" onmouseleave="hideTooltip()">[8]</sup> to a two-dimensional Su-Schrieffer-Heeger (SSH) Hamiltonian with non-Hermitian parity-time symmetry<sup class="cite-ref" onmouseenter="showTooltip(event, 'Su, W. P., Schrieffer, J. R. & Heeger, A. J. Solitons in polyacetylene. Phys. Rev. Lett. 42, 1698–1701 (1979).')" onmouseleave="hideTooltip()">[9]</sup>. We demonstrate that the highest energy transfer rates coincide with non-zero Chern numbers (\(C = 1\)), extending the solid-state classification of topological insulators<sup class="cite-ref" onmouseenter="showTooltip(event, 'Hasan, M. Z. & Kane, C. L. Colloquium: Topological insulators. Rev. Mod. Phys. 82, 3045 (2010).')" onmouseleave="hideTooltip()">[3]</sup> into the biological regime.
+        </p>
+
+        <!-- Figure 1 -->
+        <div class="figure-box">
+          <div class="figure-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 320 160">
+              <path d="M 20,80 Q 80,10 160,80 T 300,80" stroke="var(--accent)" stroke-width="3" fill="none" />
+              <circle cx="80" cy="45" r="7" fill="var(--figure-border)" />
+              <circle cx="160" cy="80" r="7" fill="var(--figure-border)" />
+              <circle cx="240" cy="115" r="7" fill="var(--accent)" />
+              <text x="30" y="140" font-family="Inter" font-size="11" fill="var(--text-muted)">Edge mode localized at Site 3 (\(P < 0.001\))</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 1 | Spectroscopic verification of topological protection.</strong>
+            2D electronic spectroscopy traces recorded across the 770–830 nm absorption band showing zero decay on the boundary chromophore nodes.
+          </p>
+        </div>
+
+        <h2>Results & Topology Mapping</h2>
+        <p>
+          By performing ultrafast two-dimensional electronic coherence spectroscopy (2DES) with 12-fs optical pulses, we resolved quantum beating signatures that persisted over 800 fs<sup class="cite-ref" onmouseenter="showTooltip(event, 'Panitchayangkoon, G. et al. Long-lived quantum coherence in photosynthetic complexes. PNAS 107, 12766 (2010).')" onmouseleave="hideTooltip()">[4]</sup>. The edge-mode population remained invariant against synthetic conformational distortions, consistent with the robustness criterion for topologically protected transport<sup class="cite-ref" onmouseenter="showTooltip(event, 'Novo, M., Mohseni, M. & Omar, Y. Disorder and dephasing in quantum network dynamics. Sci. Rep. 8, 3533 (2018).')" onmouseleave="hideTooltip()">[11]</sup>.
+        </p>
+
+        <p>
+          The absorption manifold shown in <strong>Fig. 2</strong> isolates the Q<sub>x</sub> band that serves as the coherent excitation source. When the probe window was swept across 77–320 K, the topological channel retained >96% of its room-temperature flux while the incoherent FRET channel collapsed by 41% (<strong>Fig. 3</strong>).
+        </p>
+
+        <!-- Figure 2 -->
+        <div class="figure-box">
+          <div class="figure-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 320 160">
+              <g stroke="var(--rule-color)" stroke-width="1">
+                <line x1="40" y1="130" x2="300" y2="130"/>
+                <line x1="40" y1="85" x2="300" y2="85"/>
+                <line x1="40" y1="40" x2="300" y2="40"/>
+              </g>
+              <rect x="48"  y="100" width="22" height="30" fill="var(--accent)" opacity="0.85"/>
+              <rect x="76"  y="78"  width="22" height="52" fill="var(--accent)" opacity="0.85"/>
+              <rect x="104" y="60"  width="22" height="70" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="132" y="52"  width="22" height="78" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="160" y="42"  width="22" height="88" fill="var(--accent)"/>
+              <rect x="188" y="56"  width="22" height="74" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="216" y="78"  width="22" height="52" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="244" y="102" width="22" height="28" fill="var(--accent)" opacity="0.85"/>
+              <text x="40" y="150" font-family="Inter" font-size="11" fill="var(--text-muted)">Absorption (a.u.) across the Qₓ band — maximum at 808 nm</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 2 | Absorption cross-section of the FMO trimer.</strong>
+            The dominant Q<sub>x</sub> band at 808 nm overlaps the 12-fs 2DES probe window, enabling full chromophore resolution.
+          </p>
+        </div>
+
+        <!-- Figure 3 -->
+        <div class="figure-box">
+          <div class="figure-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 320 160">
+              <line x1="40" y1="140" x2="300" y2="140" stroke="var(--rule-color)"/>
+              <line x1="40" y1="140" x2="40" y2="20" stroke="var(--rule-color)"/>
+              <path d="M 40,118 L 70,116 L 100,110 L 130,102 L 160,94 L 190,88 L 220,84 L 250,82 L 280,81 L 300,80" stroke="var(--accent)" stroke-width="2.5" fill="none"/>
+              <path d="M 40,126 L 70,125 L 100,124 L 130,123 L 160,122 L 190,122 L 220,121 L 250,120 L 280,120 L 300,119" stroke="var(--figure-border)" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+              <text x="45" y="35" font-family="Inter" font-size="10" fill="var(--accent)">— Topological transport</text>
+              <text x="45" y="50" font-family="Inter" font-size="10" fill="var(--figure-border)">- - FRET prediction</text>
+              <text x="40" y="156" font-family="Inter" font-size="11" fill="var(--text-muted)">Efficiency vs temperature (K) — 77 K → 320 K</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 3 | Transport efficiency across the physiological range.</strong>
+            Topological transport remains above 96% to 320 K, whereas FRET models predict a linear collapse with temperature.
+          </p>
+        </div>
+
+        <h2>Discussion</h2>
+        <p>
+          Our results place the FMO complex on a two-dimensional topological phase boundary whose protection is guaranteed by symmetry rather than by fine-tuned molecular geometry<sup class="cite-ref" onmouseenter="showTooltip(event, 'Cao, J. et al. Quantum biology revisited. Sci. Rep. 10, 7437 (2020).')" onmouseleave="hideTooltip()">[5]</sup>. Environment-assisted quantum transport models<sup class="cite-ref" onmouseenter="showTooltip(event, 'Mohseni, M., Rebentrost, P., Lloyd, S. & Aspuru-Guzik, A. Environment-assisted quantum walks in photosynthetic energy transfer. J. Chem. Phys. 129, 174106 (2008).')" onmouseleave="hideTooltip()">[6]</sup> already predicted that dephasing can assist — rather than destroy — transport; the chiral edge modes observed here may be the physical realization of that prediction under realistic vibrational dressing<sup class="cite-ref" onmouseenter="showTooltip(event, 'Fujihashi, Y., Fleming, G. R. & Ishizaki, A. Impact of environmentally induced fluctuations on exciton transport. J. Chem. Phys. 142, 212403 (2015).')" onmouseleave="hideTooltip()">[12]</sup>.
+        </p>
+
+        <p>
+          Beyond photosynthesis, the symmetry-protection argument generalizes to any ordered chromophore lattice, suggesting that topology — long regarded as a low-temperature condensed-matter curiosity — may be a general engineering principle of efficient biological energy transduction<sup class="cite-ref" onmouseenter="showTooltip(event, 'Scholes, G. D. & Mirkovic, T. Electronic energy transfer in photosynthesis: coherences matter. Annu. Rev. Phys. Chem. 61, 241 (2010).')" onmouseleave="hideTooltip()">[7]</sup>.
+        </p>
+      </div>
+
+      <!-- Marginalia / Sidebar Column (40%) -->
+      <aside class="side-column">
+        <!-- Download Box -->
+        <div class="side-card">
+          <div class="side-title">Article Resources</div>
+          <button class="pdf-download-btn" onclick="alert('Downloading complete PDF article (14.2 MB) with Supplementary Information.');">
+            <span>📄 DOWNLOAD FULL ARTICLE (PDF)</span>
+          </button>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:8px; text-align:center;">
+            Includes 12 Supplementary Figures & Dataset
+          </div>
+        </div>
+
+        <!-- Metrics & Citations -->
+        <div class="side-card">
+          <div class="side-title">Article Metrics</div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span>Citations:</span>
+            <strong>148</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span>Altmetric Attention:</span>
+            <strong style="color:var(--accent)">412 (Top 5%)</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span>Peer Review:</span>
+            <span>Double-blind</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Reproducibility:</span>
+            <strong>Code + Data</strong>
+          </div>
+        </div>
+
+        <!-- Key Findings -->
+        <div class="side-card">
+          <div class="side-title">Key Findings</div>
+          <div class="key-finding"><span class="tick">✓</span>Protected chiral edge modes detected at 298 K</div>
+          <div class="key-finding"><span class="tick">✓</span>Coherence lifetime extends beyond 800 fs</div>
+          <div class="key-finding"><span class="tick">✓</span>Non-zero Chern number (C = 1) mapped to FMO lattice</div>
+          <div class="key-finding"><span class="tick">✓</span>Efficiency retained above 96% to 320 K</div>
+        </div>
+
+        <!-- Related Reading / Marginalia -->
+        <div class="side-card">
+          <div class="side-title">Related Reading</div>
+          <div class="related-card">
+            <div class="related-title">
+              <span class="cite-num">Ref. 5</span>
+              <a href="#references">Quantum biology revisited — a decade of coherence</a>
+            </div>
+            <div class="related-meta">Cao, J. et al. • Sci. Rep. 10, 7437 (2020)</div>
+          </div>
+          <div class="related-card">
+            <div class="related-title">
+              <span class="cite-num">Ref. 6</span>
+              <a href="#references">Environment-assisted quantum walks in photosynthetic energy transfer</a>
+            </div>
+            <div class="related-meta">Mohseni, M. et al. • J. Chem. Phys. 129, 174106 (2008)</div>
+          </div>
+          <div class="related-card">
+            <div class="related-title">
+              <span class="cite-num">Ref. 7</span>
+              <a href="#references">Electronic energy transfer in photosynthesis — coherences matter</a>
+            </div>
+            <div class="related-meta">Scholes, G. D. & Mirkovic, T. • Annu. Rev. Phys. Chem. 61, 241 (2010)</div>
+          </div>
+          <div class="related-card">
+            <div class="related-title">
+              <span class="cite-num">Ref. 10</span>
+              <a href="#references">Topological Insulators and Topological Superconductors</a>
+            </div>
+            <div class="related-meta">Bernevig, B. A. & Hughes, T. L. • Princeton Univ. Press (2013)</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- NEW SECTION — METHODS & DATA -->
+    <section class="data-section" id="methods">
+      <h2 class="section-head">Methods &amp; Data</h2>
+      <p class="section-lede">
+        All experiments were performed on recombinantly expressed FMO trimers from <em>Chlorobaculum tepidum</em>. Transient absorption and 2DES measurements used the apparatus described in Methods detail; coupling parameters were extracted by fitting the measured beating spectra to the two-dimensional SSH Hamiltonian<sup class="cite-ref" onmouseenter="showTooltip(event, 'Su, W. P., Schrieffer, J. R. & Heeger, A. J. Solitons in polyacetylene. Phys. Rev. Lett. 42, 1698–1701 (1979).')" onmouseleave="hideTooltip()">[9]</sup> with a Bloch-state classifier<sup class="cite-ref" onmouseenter="showTooltip(event, 'Hasan, M. Z. & Kane, C. L. Colloquium: Topological insulators. Rev. Mod. Phys. 82, 3045 (2010).')" onmouseleave="hideTooltip()">[3]</sup>.
+      </p>
+
+      <div class="table-grid">
+        <div class="journal-table-wrap">
+          <div class="table-caption">Table 1 | Experimental parameters</div>
+          <table class="journal-table">
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Unit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Excitation wavelength</td><td class="num">808</td><td>nm</td></tr>
+              <tr><td>Pulse duration</td><td class="num">12</td><td>fs</td></tr>
+              <tr><td>Repetition rate</td><td class="num">80</td><td>MHz</td></tr>
+              <tr><td>Sample temperature</td><td class="num">298</td><td>K</td></tr>
+              <tr><td>FMO concentration</td><td class="num">5.4</td><td>µM</td></tr>
+              <tr><td>Sample volume</td><td class="num">200</td><td>µL</td></tr>
+              <tr><td>Detection window</td><td class="num">800</td><td>fs</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="journal-table-wrap">
+          <div class="table-caption">Table 2 | Sample statistics (n = 3 independent preparations)</div>
+          <table class="journal-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Mean</th>
+                <th>±SEM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="metric-name">Energy-transfer efficiency</td><td class="num">0.981</td><td class="num">0.004</td></tr>
+              <tr><td class="metric-name">Coherence lifetime</td><td class="num">826 fs</td><td class="num">41 fs</td></tr>
+              <tr><td class="metric-name">Edge-mode population</td><td class="num">0.94</td><td class="num">0.02</td></tr>
+              <tr><td class="metric-name">Chern index (C)</td><td class="num">1.0</td><td class="num">0.0</td></tr>
+              <tr><td class="metric-name">Site-averaged trapping</td><td class="num">3.2 ps</td><td class="num">0.3 ps</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="data-note">
+        Statistical significance assessed via two-tailed Welch's t-test; all reported error bars represent the standard error of the mean. Raw traces, fitting routines and instrument calibrations are deposited at figshare with accession code 4092-F.
+      </p>
+    </section>
+
+    <!-- NEW SECTION — FIGURE GALLERY -->
+    <section class="gallery-section" id="gallery">
+      <h2 class="section-head">Figure Gallery</h2>
+      <p class="section-lede">
+        Extended figures supporting the main text, rendered from the primary dataset. Use the filters to browse by category.
+      </p>
+
+      <div class="gallery-tabs" role="tablist" aria-label="Figure Gallery Filters">
+        <button class="gallery-tab active" data-gallery-tab="all">All Figures</button>
+        <button class="gallery-tab" data-gallery-tab="spectroscopy">Spectroscopy</button>
+        <button class="gallery-tab" data-gallery-tab="transport">Transport</button>
+        <button class="gallery-tab" data-gallery-tab="topology">Topology</button>
+      </div>
+
+      <div class="gallery-grid" role="tabpanel">
+        <!-- Fig 4 -->
+        <div class="gallery-panel" data-category="topology">
+          <div class="gallery-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 300 190" preserveAspectRatio="xMidYMid meet">
+              <rect x="0" y="0" width="150" height="190" fill="var(--accent)" opacity="0.12"/>
+              <rect x="150" y="0" width="150" height="190" fill="var(--accent)" opacity="0.04"/>
+              <line x1="150" y1="0" x2="150" y2="190" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 4"/>
+              <path d="M 10,170 C 60,160 100,90 150,50" stroke="var(--figure-border)" stroke-width="2" fill="none"/>
+              <circle cx="150" cy="50" r="5" fill="var(--accent)"/>
+              <text x="14" y="28" font-family="Inter" font-size="12" fill="var(--text-main)">Trivial phase (C = 0)</text>
+              <text x="156" y="178" font-family="Inter" font-size="12" fill="var(--text-main)">Topological (C = 1)</text>
+              <text x="150" y="205" font-family="Inter" font-size="11" fill="var(--text-muted)" text-anchor="middle">Fig. 4 — Phase diagram, Δ (eV)</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 4 | Two-dimensional topological phase diagram.</strong>
+            The FMO coupling manifold (shaded) crosses the trivial–topological boundary as the inter-site dimerization ratio is tuned, with the FMO operating point marked on the protected side.
+          </p>
+          <div class="gallery-legend">
+            <span><span class="legend-swatch" style="background:var(--accent)"></span>Topological regime</span>
+            <span><span class="legend-swatch" style="background:var(--figure-border)"></span>Trivial regime</span>
+            <span><span class="legend-swatch" style="background:var(--accent); border-radius:50%"></span>FMO operating point</span>
+          </div>
+        </div>
+
+        <!-- Fig 5 -->
+        <div class="gallery-panel" data-category="spectroscopy">
+          <div class="gallery-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 300 190" preserveAspectRatio="xMidYMid meet">
+              <g stroke="var(--rule-color)" stroke-width="1">
+                <line x1="30" y1="160" x2="290" y2="160"/>
+                <line x1="30" y1="100" x2="290" y2="100"/>
+                <line x1="30" y1="40" x2="290" y2="40"/>
+              </g>
+              <rect x="38"  y="150" width="24" height="10" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="70"  y="130" width="24" height="30" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="102" y="105" width="24" height="55" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="134" y="70"  width="24" height="90" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="166" y="42"  width="24" height="118" fill="var(--accent)"/>
+              <rect x="198" y="88"  width="24" height="72" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="230" y="120" width="24" height="40" fill="var(--figure-border)" opacity="0.9"/>
+              <rect x="262" y="142" width="24" height="18" fill="var(--figure-border)" opacity="0.9"/>
+              <text x="30" y="178" font-family="Inter" font-size="11" fill="var(--text-muted)">Fig. 5 — Coherence lifetime histogram (fs)</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 5 | Distribution of dephasing times across 2DES traces.</strong>
+            The modal coherence lifetime of 826 ± 41 fs exceeds the 400 fs threshold previously associated with vibrational-only coherence, supporting a non-trivial electronic component.
+          </p>
+          <div class="gallery-legend">
+            <span><span class="legend-swatch" style="background:var(--accent)"></span>Topological channel</span>
+            <span><span class="legend-swatch" style="background:var(--figure-border)"></span>Background channel</span>
+          </div>
+        </div>
+
+        <!-- Fig 6 -->
+        <div class="gallery-panel" data-category="topology">
+          <div class="gallery-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 300 190" preserveAspectRatio="xMidYMid meet">
+              <line x1="40" y1="160" x2="280" y2="160" stroke="var(--rule-color)"/>
+              <line x1="40" y1="160" x2="40" y2="20" stroke="var(--rule-color)"/>
+              <line x1="40" y1="45" x2="280" y2="45" stroke="var(--rule-color)" stroke-dasharray="4 3"/>
+              <path d="M 40,160 L 150,160 L 150,45 L 280,45" stroke="var(--accent)" stroke-width="2.5" fill="none"/>
+              <circle cx="150" cy="45" r="5" fill="var(--accent)"/>
+              <text x="48" y="35" font-family="Inter" font-size="12" fill="var(--text-main)">C = 1 (protected)</text>
+              <text x="48" y="152" font-family="Inter" font-size="12" fill="var(--text-muted)">C = 0</text>
+              <text x="40" y="182" font-family="Inter" font-size="11" fill="var(--text-muted)">Fig. 6 — Chern number vs dimerization strength</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 6 | Quantization of the Chern index across the gap-closing transition.</strong>
+            The integer jump from C = 0 to C = 1 at the critical dimerization confirms the FMO lattice occupies a genuinely topological, not merely disordered, regime.
+          </p>
+          <div class="gallery-legend">
+            <span><span class="legend-swatch" style="background:var(--accent)"></span>Chern number</span>
+            <span><span class="legend-swatch" style="background:var(--rule-color); border:1px solid var(--rule-color)"></span>Gap-closing point</span>
+          </div>
+        </div>
+
+        <!-- Fig 7 -->
+        <div class="gallery-panel" data-category="transport">
+          <div class="gallery-canvas">
+            <svg width="100%" height="100%" viewBox="0 0 300 190" preserveAspectRatio="xMidYMid meet">
+              <line x1="80"  y1="45"  x2="150" y2="95"  stroke="var(--rule-color)" stroke-width="1.5"/>
+              <line x1="150" y1="95"  x2="220" y2="45"  stroke="var(--rule-color)" stroke-width="1.5"/>
+              <line x1="150" y1="95"  x2="150" y2="160" stroke="var(--accent)" stroke-width="2.5"/>
+              <line x1="80"  y1="45"  x2="220" y2="45"  stroke="var(--rule-color)" stroke-width="1.5"/>
+              <circle cx="80"  cy="45"  r="12" fill="var(--figure-border)" opacity="0.85"/>
+              <circle cx="150" cy="95"  r="14" fill="var(--accent)"/>
+              <circle cx="220" cy="45"  r="12" fill="var(--figure-border)" opacity="0.85"/>
+              <circle cx="150" cy="160" r="10" fill="var(--figure-border)" opacity="0.6"/>
+              <text x="66" y="30"  font-family="Inter" font-size="10" fill="var(--paper)">B_{800}</text>
+              <text x="136" y="80" font-family="Inter" font-size="10" fill="#fff">CENTER</text>
+              <text x="208" y="30" font-family="Inter" font-size="10" fill="var(--paper)">B_{810}</text>
+              <text x="136" y="176" font-family="Inter" font-size="10" fill="var(--text-muted)">TRAP</text>
+              <text x="30" y="205" font-family="Inter" font-size="11" fill="var(--text-muted)">Fig. 7 — Exciton network, edge channel highlighted</text>
+            </svg>
+          </div>
+          <p class="figure-caption">
+            <strong>Fig. 7 | Exciton migration network with protected edge channel.</strong>
+            Population injected on the boundary node migrates to the trap along the chiral channel (bold) while bulk nodes remain dark, consistent with C = 1 edge-state dynamics.
+          </p>
+          <div class="gallery-legend">
+            <span><span class="legend-swatch" style="background:var(--accent)"></span>Protected edge channel</span>
+            <span><span class="legend-swatch" style="background:var(--figure-border)"></span>Bulk chromophore</span>
+            <span><span class="legend-swatch" style="background:var(--text-muted)"></span>Energy trap</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="gallery-note">
+        All gallery figures are reproduced from source data under a CC-BY 4.0 licence; interactive source files are available on figshare (accession 4092-F).
+      </p>
+    </section>
+
+    <!-- NEW SECTION — DOWNLOAD & CITE -->
+    <section class="cite-section" id="cite">
+      <h2 class="section-head">Download &amp; Cite</h2>
+      <p class="section-lede">
+        This article is published under open access. Download the typeset PDF or copy the BibTeX entry for your bibliography manager.
+      </p>
+
+      <div class="cite-grid">
+        <div class="pdf-cover">
+          <div class="cover-thumb" aria-hidden="true">
+            <div class="cover-bar"><span>NATURE COMMS</span></div>
+            <div class="cover-cols">
+              <div>
+                <div class="cover-line" style="width:90%"></div>
+                <div class="cover-line" style="width:75%"></div>
+                <div class="cover-line" style="width:85%"></div>
+                <div class="cover-line" style="width:60%"></div>
+                <div class="cover-line" style="width:80%"></div>
+                <div class="cover-line" style="width:70%"></div>
+                <div class="cover-line" style="width:88%"></div>
+                <div class="cover-line" style="width:58%"></div>
+              </div>
+              <div class="cover-col-side"></div>
+            </div>
+          </div>
+          <button class="pdf-download-btn large" id="download-pdf-btn">
+            <span>Download PDF (14.2 MB)</span>
+          </button>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:8px;">
+            Includes 12 Supplementary Figures, dataset & peer-review file
+          </div>
+        </div>
+
+        <div>
+          <p class="cite-blurb">
+            Cite this article as: <em>Rostova, E.</em> et al. Topological edge modes in biological photosynthetic complexes under ambient thermal decoherence. <em>Nat. Commun.</em> <strong>16</strong>, 4092 (2025).
+          </p>
+          <pre class="bibtex-block" id="bibtex-text">@article{rostova2025topological,
+  author    = {Rostova, Elena and Thorne, Marcus and Takahashi, Kenji and Chen, David},
+  title     = {Topological edge modes in biological photosynthetic complexes
+               under ambient thermal decoherence},
+  journal   = {Nature Communications},
+  volume    = {16},
+  pages     = {4092},
+  year      = {2025},
+  month     = {jul},
+  publisher = {Springer Nature},
+  doi       = {10.1038/s41467-025-40921-x},
+  url       = {https://doi.org/10.1038/s41467-025-40921-x}
+}</pre>
+          <div class="copy-row">
+            <button class="copy-bib-btn" id="copy-bib-btn">Copy BibTeX</button>
+            <span class="copy-feedback" id="copy-feedback" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- References -->
+    <section class="references-section" id="references">
+      <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:14px; font-family:'Inter', sans-serif;">
+        REFERENCES
+      </h3>
+      <ol class="ref-list">
+        <li>Engel, G. S. et al. Evidence for wavelike energy transfer through quantum coherence in photosynthetic systems. <em>Nature</em> <strong>446</strong>, 782–786 (2007).</li>
+        <li>Scholes, G. D. et al. Quantum coherence in biology. <em>Nature Phys.</em> <strong>7</strong>, 725–727 (2011).</li>
+        <li>Hasan, M. Z. & Kane, C. L. Colloquium: Topological insulators. <em>Rev. Mod. Phys.</em> <strong>82</strong>, 3045 (2010).</li>
+        <li>Panitchayangkoon, G. et al. Long-lived quantum coherence in photosynthetic complexes at physiological temperatures. <em>PNAS</em> <strong>107</strong>, 12766–12770 (2010).</li>
+        <li>Cao, J. et al. Quantum biology revisited. <em>Sci. Rep.</em> <strong>10</strong>, 7437 (2020).</li>
+        <li>Mohseni, M., Rebentrost, P., Lloyd, S. & Aspuru-Guzik, A. Environment-assisted quantum walks in photosynthetic energy transfer. <em>J. Chem. Phys.</em> <strong>129</strong>, 174106 (2008).</li>
+        <li>Scholes, G. D. & Mirkovic, T. Electronic energy transfer in photosynthesis: coherences matter. <em>Annu. Rev. Phys. Chem.</em> <strong>61</strong>, 241–261 (2010).</li>
+        <li>Fenna, R. E. & Matthews, B. W. Chlorophyll arrangement in a bacteriochlorophyll protein from <em>Chlorobium limicola</em>. <em>Nature</em> <strong>258</strong>, 573–577 (1975).</li>
+        <li>Su, W. P., Schrieffer, J. R. & Heeger, A. J. Solitons in polyacetylene. <em>Phys. Rev. Lett.</em> <strong>42</strong>, 1698–1701 (1979).</li>
+        <li>Bernevig, B. A. & Hughes, T. L. <em>Topological Insulators and Topological Superconductors</em>. Princeton University Press (2013).</li>
+        <li>Novo, M., Mohseni, M. & Omar, Y. Disorder and dephasing in quantum network dynamics. <em>Sci. Rep.</em> <strong>8</strong>, 3533 (2018).</li>
+        <li>Fujihashi, Y., Fleming, G. R. & Ishizaki, A. Impact of environmentally induced fluctuations on exciton transport in the FMO complex. <em>J. Chem. Phys.</em> <strong>142</strong>, 212403 (2015).</li>
+      </ol>
+    </section>
+  </main>
+
+  <script>
+    const tooltip = document.getElementById('citation-tooltip');
+
+    function showTooltip(e, text) {
+      tooltip.textContent = text;
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY + 14) + 'px';
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = 'none';
+    }
+
+    function setTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      try { localStorage.setItem('journal-theme', themeName); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === themeName);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = document.documentElement.getAttribute('data-theme') || 'nature-standard';
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === savedTheme);
+      });
+
+      /* Figure gallery tab filtering */
+      const galleryTabs = document.querySelectorAll('.gallery-tab');
+      const galleryPanels = document.querySelectorAll('.gallery-panel');
+
+      function filterGallery(category) {
+        galleryPanels.forEach(panel => {
+          panel.hidden = !(category === 'all' || panel.dataset.category === category);
+        });
+        galleryTabs.forEach(tab => {
+          tab.classList.toggle('active', tab.dataset.galleryTab === category);
+        });
+      }
+
+      galleryTabs.forEach(tab => {
+        tab.addEventListener('click', () => filterGallery(tab.dataset.galleryTab));
+      });
+
+      /* BibTeX copy button */
+      const copyBibBtn = document.getElementById('copy-bib-btn');
+      const bibtexText = document.getElementById('bibtex-text');
+      const copyFeedback = document.getElementById('copy-feedback');
+
+      copyBibBtn.addEventListener('click', () => {
+        const text = bibtexText.textContent;
+        const done = () => {
+          copyBibBtn.classList.add('copied');
+          copyFeedback.textContent = 'Copied to clipboard';
+          setTimeout(() => {
+            copyBibBtn.classList.remove('copied');
+            copyFeedback.textContent = '';
+          }, 2000);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        } else {
+          fallbackCopy(text, done);
+        }
+      });
+
+      function fallbackCopy(text, done) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
+        done();
+      }
+
+      /* PDF download button (top of the Download & Cite section) */
+      const downloadBtn = document.getElementById('download-pdf-btn');
+      downloadBtn.addEventListener('click', () => {
+        const original = downloadBtn.textContent;
+        downloadBtn.textContent = 'Preparing PDF…';
+        setTimeout(() => { downloadBtn.textContent = original; }, 1200);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagonal Marquee Carousel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'marquee-left': 'marquee-left var(--speed, 120s) linear infinite',
+            'marquee-right': 'marquee-right var(--speed, 120s) linear infinite',
+          },
+          keyframes: {
+            'marquee-left': {
+              '0%': { transform: 'translate3d(0, 0, 0)' },
+              '100%': { transform: 'translate3d(-50%, 0, 0)' },
+            },
+            'marquee-right': {
+              '0%': { transform: 'translate3d(-50%, 0, 0)' },
+              '100%': { transform: 'translate3d(0, 0, 0)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .animate-marquee-left {
+      animation: marquee-left var(--speed, 120s) linear infinite;
+    }
+    .animate-marquee-right {
+      animation: marquee-right var(--speed, 120s) linear infinite;
+    }
+    @keyframes marquee-left {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+    @keyframes marquee-right {
+      0% { transform: translate3d(-50%, 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+  </style>
+</head>
+<body class="bg-neutral-950 text-white overflow-hidden">
+
+  <!-- Main Container -->
+  <div id="carousel-root" class="relative flex h-screen w-full items-center justify-center overflow-hidden">
+
+    <!-- Rotated Marquee Container -->
+    <div id="marquee-container" class="absolute z-0 flex w-[200vw] flex-col gap-8" style="transform: rotate(-25deg);">
+      <!-- Rows will be injected by JS -->
+    </div>
+
+    <!-- Top Fade -->
+    <div class="pointer-events-none absolute inset-x-0 top-0 z-10 h-1/4 bg-gradient-to-b from-neutral-950 to-transparent"></div>
+
+    <!-- Bottom Fade -->
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-1/4 bg-gradient-to-t from-neutral-950 to-transparent"></div>
+
+    <!-- Content Overlay -->
+    <div class="relative z-20 flex flex-col items-center justify-center text-center px-4">
+      <h1 class="text-5xl font-bold tracking-tight text-white drop-shadow-lg md:text-7xl">
+        Diagonal Marquee
+      </h1>
+      <p class="mt-4 text-lg text-white/70 drop-shadow-md max-w-md">
+        Hover over the cards to pause the animation. Pure HTML + Tailwind + Unsplash.
+      </p>
+      <div class="mt-8 flex gap-4">
+        <button onclick="toggleDirection()" class="px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition text-sm font-medium">
+          Toggle Direction
+        </button>
+        <button onclick="changeSpeed()" class="px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition text-sm font-medium">
+          Change Speed
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Unsplash Images
+    const cards = [
+      { id: 1, url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", title: "Mountain Peak" },
+      { id: 2, url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80", title: "Sunlit Forest" },
+      { id: 3, url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80", title: "Misty Valley" },
+      { id: 4, url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&q=80", title: "Forest Bridge" },
+      { id: 5, url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", title: "Ocean Sunset" },
+      { id: 6, url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", title: "Aerial Valley" },
+    ];
+
+    let alternateDirections = true;
+    let baseSpeed = 120;
+
+    function createCard(card) {
+      return `
+        <div class="shrink-0 pr-8">
+          <div class="group relative h-[300px] w-[400px] shrink-0 cursor-pointer overflow-hidden rounded-xl shadow-2xl">
+            <img src="${card.url}" alt="${card.title}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span class="text-white text-sm font-medium drop-shadow-md">${card.title}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function createRow(cardsData, speed, direction) {
+      const doubled = [...cardsData, ...cardsData];
+      const cardsHtml = doubled.map(c => createCard(c)).join("");
+      const animClass = direction === -1 ? "animate-marquee-left" : "animate-marquee-right";
+
+      return `
+        <div class="flex w-full overflow-hidden">
+          <div class="marquee-track flex shrink-0 cursor-pointer ${animClass}" style="--speed: ${speed}s">
+            <div class="flex shrink-0">${cardsHtml}</div>
+            <div class="flex shrink-0">${cardsHtml}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const container = document.getElementById("marquee-container");
+      const rowCards = [...cards, ...cards, ...cards];
+      const rowCardsReverse = [...rowCards].reverse();
+
+      container.innerHTML = `
+        ${createRow(rowCards, baseSpeed, -1)}
+        ${createRow(rowCardsReverse, Math.max(baseSpeed - 15, 30), alternateDirections ? 1 : -1)}
+        ${createRow(rowCards, baseSpeed + 15, -1)}
+        ${createRow(rowCardsReverse, Math.max(baseSpeed - 6, 35), alternateDirections ? 1 : -1)}
+        ${createRow(rowCards, baseSpeed + 24, -1)}
+      `;
+    }
+
+    function toggleDirection() {
+      alternateDirections = !alternateDirections;
+      render();
+    }
+
+    function changeSpeed() {
+      baseSpeed = baseSpeed === 120 ? 60 : baseSpeed === 60 ? 200 : 120;
+      render();
+    }
+
+    // Initial render
+    render();
+  </script>
+
+</body>
+</html>

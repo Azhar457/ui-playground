@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic Typography Scramble</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #050508;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Courier New", monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+  }
+  .scramble-scene {
+    width: 100%;
+    max-width: 900px;
+    padding: 40px;
+    text-align: center;
+  }
+  .scramble-hint {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    margin-bottom: 60px;
+  }
+  .scramble-line {
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    min-height: 1.3em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.08em;
+  }
+  .scramble-line.small {
+    font-size: clamp(16px, 2.5vw, 28px);
+    color: rgba(255,255,255,0.45);
+    font-weight: 400;
+    margin-top: 32px;
+  }
+  .scramble-char {
+    display: inline-block;
+    min-width: 0.5em;
+    transition: color 0.15s;
+    will-change: contents;
+  }
+  .scramble-char.settled {
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }
+  .scramble-char.scrambling {
+    color: #22d3ee;
+    text-shadow: 0 0 10px rgba(34,211,238,0.5);
+  }
+  .scramble-char.space {
+    min-width: 0.3em;
+  }
+  .scramble-controls {
+    margin-top: 60px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .scramble-btn {
+    padding: 12px 28px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.02em;
+  }
+  .scramble-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.18);
+    transform: translateY(-2px);
+  }
+  .scramble-btn.primary {
+    background: rgba(34,211,238,0.1);
+    border-color: rgba(34,211,238,0.25);
+    color: #22d3ee;
+  }
+  .scramble-btn.primary:hover {
+    background: rgba(34,211,238,0.18);
+    box-shadow: 0 4px 20px rgba(34,211,238,0.15);
+  }
+  .cursor-blink {
+    display: inline-block;
+    width: 3px;
+    height: 0.9em;
+    background: #22d3ee;
+    margin-left: 4px;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .scanline {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<div class="scramble-scene" id="scene">
+  <div class="scramble-hint">Kinetic Typography Scramble — Hover or click replay</div>
+
+  <div class="scramble-line" id="line1"></div>
+  <div class="scramble-line" id="line2"></div>
+  <div class="scramble-line small" id="line3"></div>
+
+  <div class="scramble-controls">
+    <button class="scramble-btn primary" id="replayBtn">Replay Scramble</button>
+    <button class="scramble-btn" id="autoBtn">Toggle Auto</button>
+    <button class="scramble-btn" id="speedBtn">Speed: Normal</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const lines = [
+    { el: document.getElementById('line1'), text: "BUILD THE FUTURE" },
+    { el: document.getElementById('line2'), text: "ONE PIXEL AT A TIME" },
+    { el: document.getElementById('line3'), text: "Where code meets creativity and physics" },
+  ];
+
+  const charPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+  const symbolPool = "!@#$%^&*()_+-=[]{}|;:,.<>?/~`";
+  let speedMultiplier = 1;
+  let autoInterval = null;
+  let isAuto = false;
+
+  function scrambleLine(lineObj, delay = 0) {
+    const el = lineObj.el;
+    const text = lineObj.text;
+    el.innerHTML = '';
+
+    const chars = [];
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'scramble-char' + (text[i] === ' ' ? ' space' : '');
+      span.textContent = text[i] === ' ' ? ' ' : text[i];
+      el.appendChild(span);
+      if (text[i] !== ' ') {
+        chars.push({ el: span, target: text[i], index: i });
+      }
+    }
+
+    // Add cursor to last line
+    if (lineObj === lines[lines.length - 1]) {
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor-blink';
+      el.appendChild(cursor);
+    }
+
+    chars.forEach((c, idx) => {
+      const startDelay = delay + idx * 40 / speedMultiplier;
+      const scrambleDuration = 400 + Math.random() * 500;
+      const startTime = performance.now() + startDelay;
+
+      function update(now) {
+        const elapsed = now - startTime;
+        if (elapsed < 0) {
+          requestAnimationFrame(update);
+          return;
+        }
+
+        const progress = elapsed / scrambleDuration;
+        if (progress >= 1) {
+          c.el.textContent = c.target;
+          c.el.classList.remove('scrambling');
+          c.el.classList.add('settled');
+          return;
+        }
+
+        c.el.classList.add('scrambling');
+        // Probability of showing correct char increases over time
+        const revealThreshold = Math.pow(progress, 3);
+        if (Math.random() < revealThreshold) {
+          c.el.textContent = c.target;
+        } else {
+          const pool = Math.random() > 0.3 ? charPool : symbolPool;
+          c.el.textContent = pool[Math.floor(Math.random() * pool.length)];
+        }
+        requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  }
+
+  function runAll() {
+    lines.forEach((line, i) => {
+      scrambleLine(line, i * 300 / speedMultiplier);
+    });
+  }
+
+  // Controls
+  document.getElementById('replayBtn').addEventListener('click', runAll);
+
+  document.getElementById('autoBtn').addEventListener('click', () => {
+    isAuto = !isAuto;
+    document.getElementById('autoBtn').textContent = isAuto ? 'Auto: ON' : 'Toggle Auto';
+    if (isAuto) {
+      runAll();
+      autoInterval = setInterval(runAll, 5000);
+    } else {
+      clearInterval(autoInterval);
+    }
+  });
+
+  const speedBtn = document.getElementById('speedBtn');
+  speedBtn.addEventListener('click', () => {
+    if (speedMultiplier === 1) { speedMultiplier = 2; speedBtn.textContent = 'Speed: Fast'; }
+    else if (speedMultiplier === 2) { speedMultiplier = 0.5; speedBtn.textContent = 'Speed: Slow'; }
+    else { speedMultiplier = 1; speedBtn.textContent = 'Speed: Normal'; }
+  });
+
+  // Hover to re-scramble individual lines
+  lines.forEach(line => {
+    line.el.addEventListener('mouseenter', () => {
+      scrambleLine(line, 0);
+    });
+  });
+
+  // Initial run
+  setTimeout(runAll, 300);
+})();
+</script>
+
+</body>
+</html>

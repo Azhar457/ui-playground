@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="vintage-walnut">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REVOX·STUDIO // B-77 — Analog Tape Deck & Mastering Console</title>
+
+  <!-- Ambient studio dust + lamp glow: built-in canvas effect in this file -->
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('tape-theme')||'vintage-walnut';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 VINTAGE STUDIO CONSOLES
+       ========================================================= */
+    :root, [data-theme="vintage-walnut"] {
+      --wood-dark: #3A2312;
+      --wood-light: #5C381E;
+      --faceplate: linear-gradient(180deg, #D4D4D8 0%, #E4E4E7 40%, #A1A1AA 100%);
+      --faceplate-border: #71717A;
+      --faceplate-text: #18181B;
+      --vu-bg: #FFF7ED;
+      --vu-needle: #DC2626;
+      --tape-color: #5C3218;
+      --led-amber: #F59E0B;
+      --led-red: #EF4444;
+      --meter-green: #22C55E;
+      --meter-yellow: #EAB308;
+      --meter-red: #EF4444;
+
+      --aluminum: repeating-linear-gradient(90deg, rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 4px), linear-gradient(180deg, #D4D4D8 0%, #E4E4E7 45%, #A8A8B0 100%);
+      --aluminum-border: #71717A;
+      --display: #0A0908;
+      --backlight: rgba(245,158,11,0.22);
+      --led-dim: #3F3F46;
+      --led-cyan: #7DD3FC;
+      --knob-face: #1F1F23;
+      --knob-ring: #5C5C66;
+      --knob-ind: #F59E0B;
+      --switch-on-bg: rgba(245,158,11,0.35);
+      --switch-on-thumb: #F59E0B;
+      --switch-off-bg: #27272A;
+      --track-bg: rgba(0,0,0,0.18);
+      --panel-glow: rgba(245,158,11,0.08);
+    }
+
+    [data-theme="blackface-1978"] {
+      --wood-dark: #1C120C;
+      --wood-light: #2D1B12;
+      --faceplate: linear-gradient(180deg, #18181B 0%, #27272A 50%, #09090B 100%);
+      --faceplate-border: #3F3F46;
+      --faceplate-text: #F4F4F5;
+      --vu-bg: #1C1917;
+      --vu-needle: #F59E0B;
+      --tape-color: #451A03;
+      --led-amber: #F59E0B;
+      --led-red: #EF4444;
+      --meter-green: #10B981;
+      --meter-yellow: #F59E0B;
+      --meter-red: #EF4444;
+
+      --aluminum: repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 3px), linear-gradient(180deg, #18181B 0%, #27272A 50%, #0B0B0D 100%);
+      --aluminum-border: #3F3F46;
+      --display: #050505;
+      --backlight: rgba(245,158,11,0.28);
+      --led-dim: #27272A;
+      --led-cyan: #67E8F9;
+      --knob-face: #111113;
+      --knob-ring: #2A2A30;
+      --knob-ind: #F59E0B;
+      --switch-on-bg: rgba(217,119,6,0.4);
+      --switch-on-thumb: #F59E0B;
+      --switch-off-bg: #1C1C1F;
+      --track-bg: rgba(0,0,0,0.42);
+      --panel-glow: rgba(220,38,38,0.06);
+    }
+
+    [data-theme="japanese-silver"] {
+      --wood-dark: #2B1D0C;
+      --wood-light: #4A3317;
+      --faceplate: linear-gradient(180deg, #E2E8F0 0%, #F8FAFC 50%, #CBD5E1 100%);
+      --faceplate-border: #94A3B8;
+      --faceplate-text: #0F172A;
+      --vu-bg: #F0FDF4;
+      --vu-needle: #0284C7;
+      --tape-color: #78350F;
+      --led-amber: #06B6D4;
+      --led-red: #E11D48;
+      --meter-green: #06B6D4;
+      --meter-yellow: #F59E0B;
+      --meter-red: #E11D48;
+
+      --aluminum: repeating-linear-gradient(90deg, rgba(255,255,255,0.35) 0px, rgba(255,255,255,0.35) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 4px), linear-gradient(180deg, #E2E8F0 0%, #F8FAFC 50%, #C7D2DE 100%);
+      --aluminum-border: #94A3B8;
+      --display: #03211C;
+      --backlight: rgba(6,182,212,0.3);
+      --led-dim: #CBD5E1;
+      --led-cyan: #06B6D4;
+      --knob-face: #E6EDF5;
+      --knob-ring: #9FB0C4;
+      --knob-ind: #0284C7;
+      --switch-on-bg: rgba(6,182,212,0.35);
+      --switch-on-thumb: #06B6D4;
+      --switch-off-bg: #E2E8F0;
+      --track-bg: rgba(15,23,42,0.08);
+      --panel-glow: rgba(6,182,212,0.08);
+    }
+
+    [data-theme="teak-sunset"] {
+      --wood-dark: #451A03;
+      --wood-light: #78350F;
+      --faceplate: linear-gradient(180deg, #FEF3C7 0%, #FDE68A 50%, #D97706 100%);
+      --faceplate-border: #B45309;
+      --faceplate-text: #451A03;
+      --vu-bg: #FFFBEB;
+      --vu-needle: #B91C1C;
+      --tape-color: #451A03;
+      --led-amber: #D97706;
+      --led-red: #DC2626;
+      --meter-green: #16A34A;
+      --meter-yellow: #CA8A04;
+      --meter-red: #DC2626;
+
+      --aluminum: repeating-linear-gradient(90deg, rgba(255,255,255,0.25) 0px, rgba(255,255,255,0.25) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 4px), linear-gradient(180deg, #FDE68A 0%, #FEF3C7 45%, #D97706 100%);
+      --aluminum-border: #B45309;
+      --display: #1A0E02;
+      --backlight: rgba(217,119,6,0.35);
+      --led-dim: #92400E;
+      --led-cyan: #FBBF24;
+      --knob-face: #431407;
+      --knob-ring: #92400E;
+      --knob-ind: #FDE68A;
+      --switch-on-bg: rgba(217,119,6,0.4);
+      --switch-on-thumb: #D97706;
+      --switch-off-bg: #47260B;
+      --track-bg: rgba(0,0,0,0.16);
+      --panel-glow: rgba(217,119,6,0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: radial-gradient(circle at 50% 50%, var(--wood-light) 0%, var(--wood-dark) 100%);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      transition: background 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    /* Ambient studio dust layer — fixed, behind the console */
+    #bgfx {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+      transition: opacity 0.4s ease;
+    }
+
+    /* FOCUS VISIBLE — keyboard reachability on every control */
+    :focus-visible {
+      outline: 2px solid var(--led-amber);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    input:focus-visible {
+      outline: 2px solid var(--led-amber);
+      outline-offset: 4px;
+    }
+
+    /* Studio Top Nav */
+    header.studio-nav {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 10px 20px;
+      border-radius: 4px;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .studio-brand {
+      font-family: 'Oswald', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.1em;
+      color: var(--led-amber);
+      text-shadow: 0 0 12px var(--backlight);
+    }
+
+    .status-chip {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--led-amber);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 2px;
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.4);
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .theme-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: #000;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: var(--led-amber);
+      color: #000;
+    }
+
+    /* Tape Deck Chassis */
+    .deck-chassis {
+      width: 100%;
+      max-width: 920px;
+      background: var(--faceplate);
+      color: var(--faceplate-text);
+      border: 8px solid var(--wood-dark);
+      border-radius: 6px;
+      padding: 36px 40px 26px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Brushed-metal sweep overlay across the whole chassis */
+    .deck-chassis::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background-image: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 48%, transparent 62%);
+      background-size: 250% 100%;
+      background-position: 100% 0;
+      animation: panelShimmer 9s ease-in-out infinite;
+    }
+
+    /* Chassis section + header hardware */
+    .chassis-section {
+      background: var(--aluminum);
+      border: 2px solid var(--aluminum-border);
+      border-radius: 4px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--aluminum-border);
+      background: var(--track-bg);
+    }
+
+    .section-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: var(--faceplate-text);
+      text-transform: uppercase;
+    }
+
+    .section-screw {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--faceplate-border);
+      border: 1px solid var(--faceplate-text);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.6);
+    }
+
+    /* Tape Transport Area (Reels) */
+    .transport-bay {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(0,0,0,0.15);
+      border: 2px solid var(--faceplate-border);
+      border-radius: 4px;
+      padding: 30px 20px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .tape-path-line {
+      position: absolute;
+      top: 50%;
+      left: 180px;
+      right: 180px;
+      height: 6px;
+      background: var(--tape-color);
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .tape-reel {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--tape-color) 40%, rgba(255,255,255,0.8) 42%, #aaa 70%);
+      border: 4px solid #666;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .tape-reel.spinning {
+      animation: spinReel var(--reel-speed, 2s) linear infinite;
+    }
+
+    .reel-spokes {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reel-spoke {
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      background: rgba(0,0,0,0.3);
+    }
+    .spoke-2 { transform: rotate(60deg); }
+    .spoke-3 { transform: rotate(120deg); }
+
+    .reel-hub {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #333;
+      border: 3px solid #888;
+      z-index: 3;
+    }
+
+    .reel-cap {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      padding: 2px 8px;
+      border-radius: 2px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    /* VU Meters Panel (Master L/R + Odometer Counter) */
+    .vu-meter-deck {
+      display: grid;
+      grid-template-columns: 1fr 1fr 180px;
+      gap: 20px;
+      margin-bottom: 30px;
+      align-items: center;
+    }
+
+    .vu-meter-box {
+      background: var(--vu-bg);
+      border: 3px solid var(--faceplate-border);
+      border-radius: 4px;
+      padding: 14px;
+      height: 120px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .vu-meter-box::before {
+      content: "VU";
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: var(--faceplate-border);
+    }
+
+    .vu-label {
+      position: absolute;
+      bottom: 8px;
+      left: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #333;
+    }
+
+    .vu-arc-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .vu-needle-line {
+      transform-origin: 50% 100%;
+      transition: transform 0.08s ease-out;
+    }
+
+    /* Tape Counter */
+    .tape-counter-box {
+      background: var(--display);
+      color: var(--led-amber);
+      border: 3px solid var(--faceplate-border);
+      border-radius: 4px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: inset 0 0 18px var(--backlight);
+      text-shadow: 0 0 8px var(--backlight);
+    }
+
+    .counter-digits {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .counter-lbl {
+      font-size: 10px;
+      color: #888;
+      margin-top: 4px;
+      letter-spacing: 0.08em;
+    }
+
+    /* =====================================================
+       SECTION — CHANNEL MIXER / TRACK STRIP (8 mini VU bars)
+       ===================================================== */
+    .mixer-section {
+      overflow: hidden;
+    }
+
+    .ally-det { pointer-events: none; }
+
+    .track-strip {
+      display: flex;
+      gap: 6px;
+      padding: 16px 14px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .track-channel {
+      flex: 0 0 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--track-bg);
+      border: 1px solid var(--aluminum-border);
+      border-radius: 3px;
+      padding: 10px 6px 8px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .track-channel:hover {
+      border-color: var(--led-amber);
+    }
+
+    .track-channel.selected {
+      border-color: var(--led-cyan);
+      box-shadow: 0 0 10px var(--backlight);
+    }
+
+    /* Per-track mini VU (vertical LED bar) */
+    .track-vu {
+      position: relative;
+      width: 26px;
+      height: 120px;
+      background: var(--display);
+      border: 1px solid var(--aluminum-border);
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px var(--backlight);
+    }
+
+    .vu-fill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      transform-origin: 50% 100%;
+      transform: scaleY(max(0, var(--h, 0)));
+      background: linear-gradient(180deg, var(--meter-red) 0%, var(--meter-yellow) 42%, var(--meter-green) 78%);
+      box-shadow: 0 0 8px var(--backlight);
+    }
+
+    .vu-scale {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 7px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      pointer-events: none;
+    }
+
+    .track-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--faceplate-text);
+    }
+
+    .track-fader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .track-fader {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 64px;
+      height: 4px;
+      background: #222;
+      border-radius: 2px;
+      outline: none;
+      margin: 6px 0 2px;
+    }
+
+    .track-fader::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 20px;
+      background: var(--faceplate-text);
+      border: 1px solid #fff;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    .track-gain-readout {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--faceplate-text);
+      opacity: 0.75;
+    }
+
+    .track-led-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .track-led {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--led-dim);
+      border: 1px solid rgba(0,0,0,0.4);
+    }
+    .track-led.mute-on   { background: var(--led-red); box-shadow: 0 0 6px var(--led-red); }
+    .track-led.solo-on   { background: var(--led-amber); box-shadow: 0 0 6px var(--led-amber); }
+    .track-led.sel-on    { background: var(--led-cyan); box-shadow: 0 0 6px var(--led-cyan); }
+
+    .track-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mute-btn, .solo-btn {
+      width: 26px;
+      height: 26px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      background: #222;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #111;
+      transition: all 0.1s ease;
+    }
+    .mute-btn:active, .mute-btn.active { background: var(--led-red); color: #fff; box-shadow: 0 0 8px var(--led-red); transform: translateY(1px); }
+    .solo-btn:active, .solo-btn.active { background: var(--led-amber); color: #000; box-shadow: 0 0 8px var(--led-amber); transform: translateY(1px); }
+
+    /* =====================================================
+       SECTION — MASTERING / SOUND SHAPER (4 click-drag knobs)
+       ===================================================== */
+    .knob-grid {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 18px 24px;
+    }
+
+    .knob-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      cursor: ns-resize;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .knob {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.28), transparent 45%),
+        var(--knob-face);
+      border: 3px solid var(--knob-ring);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 1px 2px rgba(255,255,255,0.25);
+    }
+
+    .knob-ind {
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      width: 4px;
+      height: 20px;
+      margin-left: -2px;
+      background: var(--knob-ind);
+      box-shadow: 0 0 6px var(--backlight);
+      transform-origin: 50% 26px;
+      transform: rotate(-135deg);
+      border-radius: 2px;
+    }
+
+    /* sweep arc feedback under each knob */
+    .knob::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 137deg,
+        var(--panel-glow) 137deg,
+        var(--panel-glow) 223deg,
+        transparent 223deg
+      );
+    }
+
+    .knob-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--faceplate-text);
+    }
+
+    .knob-readout {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--faceplate-text);
+      background: var(--display);
+      color: var(--led-amber);
+      text-shadow: 0 0 6px var(--backlight);
+      border: 1px solid var(--aluminum-border);
+      border-radius: 2px;
+      padding: 2px 8px;
+      min-width: 70px;
+      text-align: center;
+    }
+
+    /* =====================================================
+       SECTION — RECORDING SETTINGS (IPS selector + toggles)
+       ===================================================== */
+    .rec-body {
+      display: grid;
+      grid-template-columns: 1.3fr 1.4fr 1fr;
+      gap: 18px;
+      padding: 18px 22px;
+      align-items: start;
+    }
+
+    .rec-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rec-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--faceplate-text);
+      opacity: 0.8;
+    }
+
+    /* IPS speed selector (mechanical keys) */
+    .ips-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ips-btn {
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      background: #333;
+      color: #ddd;
+      border: 2px solid #555;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #111;
+      transition: all 0.1s ease;
+    }
+
+    .ips-btn:hover { background: #444; }
+
+    .ips-btn:active, .ips-btn.active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #111;
+      background: var(--led-amber);
+      color: #000;
+    }
+
+    .led-chain {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding-top: 2px;
+    }
+
+    .chain-led {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--led-dim);
+      border: 1px solid rgba(0,0,0,0.4);
+      transition: all 0.2s ease;
+    }
+    .chain-led.active {
+      background: var(--led-amber);
+      box-shadow: 0 0 8px var(--led-amber);
+    }
+
+    .switch-set {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--track-bg);
+      border: 1px solid var(--aluminum-border);
+      border-radius: 3px;
+      padding: 8px 12px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .sw-track {
+      position: absolute;
+      inset: 0;
+      background: var(--switch-off-bg);
+      border: 1px solid var(--aluminum-border);
+      border-radius: 11px;
+      transition: background 0.2s ease;
+    }
+
+    .sw-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #888;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .sw-led {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--led-dim);
+      border: 1px solid rgba(0,0,0,0.4);
+      transition: all 0.2s ease;
+    }
+    .sw-led.on { background: var(--led-amber); box-shadow: 0 0 8px var(--led-amber); }
+
+    .switch input:checked + .sw-track { background: var(--switch-on-bg); }
+    .switch input:checked + .sw-track .sw-thumb {
+      transform: translateX(24px);
+      background: var(--switch-on-thumb);
+      box-shadow: 0 0 8px var(--switch-on-thumb);
+    }
+
+    .sw-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--faceplate-text);
+    }
+
+    /* Recording status LCD */
+    .rec-screen {
+      width: 100%;
+      background: var(--display);
+      border: 2px solid var(--aluminum-border);
+      border-radius: 3px;
+      padding: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.7;
+      color: var(--led-amber);
+      text-shadow: 0 0 10px var(--backlight);
+      box-shadow: inset 0 0 20px var(--backlight);
+      min-height: 84px;
+    }
+
+    /* Control Console (Transport Buttons & Faders) */
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      background: rgba(0,0,0,0.08);
+      border: 2px solid var(--faceplate-border);
+      padding: 18px 24px;
+      border-radius: 4px;
+      flex-wrap: wrap;
+    }
+
+    .transport-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-mech {
+      padding: 12px 20px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      background: #333;
+      color: #fff;
+      border: 2px solid #555;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #111;
+      transition: all 0.1s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-mech:active, .btn-mech.active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #111;
+      background: var(--led-amber);
+      color: #000;
+    }
+
+    .btn-rec {
+      background: var(--led-red);
+    }
+    .btn-rec.active {
+      background: #FF0000;
+      box-shadow: 0 0 12px #FF0000;
+    }
+
+    /* Faders */
+    .faders-deck {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .fader-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .fader-slider {
+      -webkit-appearance: none;
+      width: 100px;
+      height: 6px;
+      background: #222;
+      border-radius: 2px;
+      outline: none;
+      margin: 8px 0;
+    }
+
+    .fader-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 24px;
+      background: var(--faceplate-text);
+      border: 1px solid #fff;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    .fader-readout {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--led-amber);
+      background: var(--display);
+      border-radius: 2px;
+      padding: 1px 6px;
+      min-width: 36px;
+      text-align: center;
+      text-shadow: 0 0 6px var(--backlight);
+    }
+
+    /* =====================================================
+       SECTION — STEREO OUT FOOTER METER
+       ===================================================== */
+    .stereo-out {
+      width: 100%;
+      max-width: 920px;
+      margin-top: 20px;
+      background: var(--faceplate);
+      border: 6px solid var(--wood-dark);
+      border-radius: 4px;
+      padding: 16px 24px;
+      color: var(--faceplate-text);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .st-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+    }
+
+    .st-meter {
+      position: relative;
+      height: 30px;
+      background: var(--display);
+      border: 2px solid var(--aluminum-border);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: inset 0 0 14px var(--backlight);
+    }
+
+    .st-fill {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      transform-origin: 0 50%;
+      transform: scaleX(clamp(0, var(--w, 0), 1));
+      background: linear-gradient(90deg, var(--meter-green) 0%, var(--meter-yellow) 62%, var(--meter-red) 88%);
+      box-shadow: 0 0 12px var(--backlight);
+    }
+
+    .st-scale {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      inset: 0;
+      padding: 2px 8px;
+      font-size: 8px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.45);
+      pointer-events: none;
+    }
+
+    .st-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .st-meta .lvl {
+      color: var(--led-amber);
+      text-shadow: 0 0 8px var(--backlight);
+    }
+
+    /* =====================================================
+       REDUCED MOTION — kill reel spin, meter bounce, wobble
+       ===================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      #bgfx { opacity: 0.12; }
+      .tape-reel.spinning { animation: none !important; }
+      .vu-needle-line { transition: none !important; }
+      .deck-chassis::after { animation: none !important; }
+      .vu-fill, .st-fill { transition: none !important; }
+    }
+
+    /* =====================================================
+       RESPONSIVE — small screens
+       ===================================================== */
+    @media (max-width: 768px) {
+      body { padding: 14px 8px; }
+      header.studio-nav { justify-content: center; flex-direction: column; gap: 10px; }
+      .deck-chassis { padding: 20px 14px 18px; border-width: 5px; }
+      .transport-bay { flex-direction: column; gap: 20px; }
+      .tape-path-line { display: none; }
+      .tape-reel { width: 120px; height: 120px; }
+      .vu-meter-deck { grid-template-columns: 1fr; }
+      .control-row { flex-direction: column; gap: 18px; align-items: stretch; }
+      .transport-buttons { justify-content: center; }
+      .faders-deck { justify-content: center; }
+      .rec-body { grid-template-columns: 1fr; }
+      .knob-grid { justify-content: center; padding: 16px 10px; }
+      .track-strip { padding: 12px 8px; }
+      .stereo-out { grid-template-columns: 1fr; text-align: center; padding: 12px 14px; }
+      .st-meta { align-items: center; flex-direction: row; justify-content: center; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- JARS ambient galaxy particle field — fixed layer behind the console -->
+  <canvas id="bgfx" aria-hidden="true"></canvas>
+
+  <!-- Top Nav -->
+  <header class="studio-nav">
+    <div class="studio-brand">REVOX // HIGH-FIDELITY B-77 MASTER</div>
+    <span class="status-chip" id="statusChip">ONLINE · 7½ IPS · REC READY</span>
+    <div class="theme-selector" role="group" aria-label="Tape Console Theme Selector">
+      <button class="theme-btn active" onclick="setTheme('vintage-walnut')" data-theme-target="vintage-walnut">01 Walnut Classic</button>
+      <button class="theme-btn" onclick="setTheme('blackface-1978')" data-theme-target="blackface-1978">02 1978 Blackface</button>
+      <button class="theme-btn" onclick="setTheme('japanese-silver')" data-theme-target="japanese-silver">03 Silver Master</button>
+      <button class="theme-btn" onclick="setTheme('teak-sunset')" data-theme-target="teak-sunset">04 Teak Sunset</button>
+    </div>
+  </header>
+
+  <!-- Tape Chassis -->
+  <main class="deck-chassis">
+    <!-- Transport Reel Bay -->
+    <div class="transport-bay" aria-label="Tape transport reels">
+      <div class="tape-path-line"></div>
+
+      <!-- Left Supply Reel -->
+      <div class="tape-reel" id="reelLeft">
+        <div class="reel-spokes">
+          <div class="reel-spoke spoke-1"></div>
+          <div class="reel-spoke spoke-2"></div>
+          <div class="reel-spoke spoke-3"></div>
+        </div>
+        <div class="reel-hub"></div>
+        <span class="reel-cap">SUPPLY</span>
+      </div>
+
+      <!-- Right Take-up Reel -->
+      <div class="tape-reel" id="reelRight">
+        <div class="reel-spokes">
+          <div class="reel-spoke spoke-1"></div>
+          <div class="reel-spoke spoke-2"></div>
+          <div class="reel-spoke spoke-3"></div>
+        </div>
+        <div class="reel-hub"></div>
+        <span class="reel-cap">TAKE-UP</span>
+      </div>
+    </div>
+
+    <!-- Master VU Meters and Odometer Counter -->
+    <div class="vu-meter-deck" aria-label="Master output VU meters">
+      <!-- Channel L Meter -->
+      <div class="vu-meter-box">
+        <svg class="vu-arc-svg" viewBox="0 0 160 80">
+          <path d="M 20,70 A 60,60 0 0,1 140,70" fill="none" stroke="#666" stroke-width="2" />
+          <path d="M 110,32 A 60,60 0 0,1 140,70" fill="none" stroke="var(--meter-red)" stroke-width="4" />
+          <line id="needleL" class="vu-needle-line" x1="80" y1="75" x2="80" y2="15" stroke="var(--vu-needle)" stroke-width="2" />
+        </svg>
+        <div class="vu-label">CHANNEL L (VU)</div>
+      </div>
+
+      <!-- Channel R Meter -->
+      <div class="vu-meter-box">
+        <svg class="vu-arc-svg" viewBox="0 0 160 80">
+          <path d="M 20,70 A 60,60 0 0,1 140,70" fill="none" stroke="#666" stroke-width="2" />
+          <path d="M 110,32 A 60,60 0 0,1 140,70" fill="none" stroke="var(--meter-red)" stroke-width="4" />
+          <line id="needleR" class="vu-needle-line" x1="80" y1="75" x2="80" y2="15" stroke="var(--vu-needle)" stroke-width="2" />
+        </svg>
+        <div class="vu-label">CHANNEL R (VU)</div>
+      </div>
+
+      <!-- Tape Odometer Counter -->
+      <div class="tape-counter-box">
+        <div class="counter-digits" id="tapeCounter">0421</div>
+        <div class="counter-lbl">ODOMETER TAPE INDEX</div>
+      </div>
+    </div>
+
+    <!-- SECTION: Channel Mixer — 8 per-track mini VU strips -->
+    <section class="chassis-section mixer-section" aria-labelledby="mixer-title">
+      <div class="section-header">
+        <span class="section-screw"></span>
+        <h2 class="section-title" id="mixer-title">Control Room // Channel Mixer</h2>
+        <span class="section-screw"></span>
+      </div>
+      <div class="track-strip" id="trackStrip">
+
+        <div class="track-channel" data-track="1" role="group" aria-label="Track 1" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 1</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="7" step="0.5" class="track-fader" aria-label="Track 1 gain">
+            <span class="track-gain-readout">7.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 1">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 1">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="2" role="group" aria-label="Track 2" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 2</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="6" step="0.5" class="track-fader" aria-label="Track 2 gain">
+            <span class="track-gain-readout">6.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 2">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 2">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="3" role="group" aria-label="Track 3" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 3</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="5" step="0.5" class="track-fader" aria-label="Track 3 gain">
+            <span class="track-gain-readout">5.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 3">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 3">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="4" role="group" aria-label="Track 4" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 4</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="8" step="0.5" class="track-fader" aria-label="Track 4 gain">
+            <span class="track-gain-readout">8.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 4">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 4">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="5" role="group" aria-label="Track 5" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 5</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="6" step="0.5" class="track-fader" aria-label="Track 5 gain">
+            <span class="track-gain-readout">6.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 5">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 5">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="6" role="group" aria-label="Track 6" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 6</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="4" step="0.5" class="track-fader" aria-label="Track 6 gain">
+            <span class="track-gain-readout">4.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 6">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 6">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="7" role="group" aria-label="Track 7" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 7</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="7" step="0.5" class="track-fader" aria-label="Track 7 gain">
+            <span class="track-gain-readout">7.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 7">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 7">S</button>
+          </div>
+        </div>
+
+        <div class="track-channel" data-track="8" role="group" aria-label="Track 8" tabindex="0">
+          <div class="track-vu" aria-hidden="true">
+            <div class="vu-fill" style="--h:0"></div>
+            <div class="vu-scale"><span>+5</span><span>0</span><span>-8</span><span>-20</span><span>∞</span></div>
+          </div>
+          <div class="track-name">TRK 8</div>
+          <div class="track-fader-wrap">
+            <input type="range" min="0" max="10" value="5" step="0.5" class="track-fader" aria-label="Track 8 gain">
+            <span class="track-gain-readout">5.0</span>
+          </div>
+          <div class="track-led-row">
+            <span class="track-led mute-led"></span>
+            <span class="track-led solo-led"></span>
+            <span class="track-led sel-led"></span>
+          </div>
+          <div class="track-btns">
+            <button class="mute-btn" aria-pressed="false" title="Mute track 8">M</button>
+            <button class="solo-btn" aria-pressed="false" title="Solo track 8">S</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION: Sound Shaper — 4 click-drag EQ knobs -->
+    <section class="chassis-section" aria-labelledby="shaper-title">
+      <div class="section-header">
+        <span class="section-screw"></span>
+        <h2 class="section-title" id="shaper-title">Mastering // Sound Shaper</h2>
+        <span class="section-screw"></span>
+      </div>
+      <div class="knob-grid">
+
+        <div class="knob-wrap" data-knob="bass" data-range="12" role="slider" tabindex="0" aria-label="Bass, minus 12 to plus 12 decibel" aria-valuemin="-12" aria-valuemax="12" aria-valuenow="0">
+          <div class="knob" aria-hidden="true"><div class="knob-ind"></div></div>
+          <div class="knob-label">BASS</div>
+          <div class="knob-readout">+0.0 dB</div>
+        </div>
+
+        <div class="knob-wrap" data-knob="mid" data-range="9" role="slider" tabindex="0" aria-label="Mid, minus 9 to plus 9 decibel" aria-valuemin="-9" aria-valuemax="9" aria-valuenow="0">
+          <div class="knob" aria-hidden="true"><div class="knob-ind"></div></div>
+          <div class="knob-label">MID</div>
+          <div class="knob-readout">+0.0 dB</div>
+        </div>
+
+        <div class="knob-wrap" data-knob="treb" data-range="12" role="slider" tabindex="0" aria-label="Treble, minus 12 to plus 12 decibel" aria-valuemin="-12" aria-valuemax="12" aria-valuenow="0">
+          <div class="knob" aria-hidden="true"><div class="knob-ind"></div></div>
+          <div class="knob-label">TREBLE</div>
+          <div class="knob-readout">+0.0 dB</div>
+        </div>
+
+        <div class="knob-wrap" data-knob="trim" data-range="6" role="slider" tabindex="0" aria-label="Trim, minus 6 to plus 6 decibel" aria-valuemin="-6" aria-valuemax="6" aria-valuenow="0">
+          <div class="knob" aria-hidden="true"><div class="knob-ind"></div></div>
+          <div class="knob-label">TRIM</div>
+          <div class="knob-readout">+0.0 dB</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION: Recording Settings — IPS selector, bias, EQ toggles -->
+    <section class="chassis-section" aria-labelledby="rec-title">
+      <div class="section-header">
+        <span class="section-screw"></span>
+        <h2 class="section-title" id="rec-title">Recording // Parameter Settings</h2>
+        <span class="section-screw"></span>
+      </div>
+      <div class="rec-body">
+
+        <div class="rec-col ips-col">
+          <span class="rec-label">TAPE SPEED</span>
+          <div class="ips-buttons" role="group" aria-label="Tape speed selector">
+            <button class="ips-btn" data-ips="3.75" aria-pressed="false">3¾ IPS</button>
+            <button class="ips-btn active" data-ips="7.5" aria-pressed="true">7½ IPS</button>
+            <button class="ips-btn" data-ips="15" aria-pressed="false">15 IPS</button>
+          </div>
+          <div class="led-chain" aria-hidden="true">
+            <span class="chain-led"></span>
+            <span class="chain-led active"></span>
+            <span class="chain-led"></span>
+          </div>
+        </div>
+
+        <div class="rec-col">
+          <div class="switch-set">
+            <span class="sw-led" data-swled="bias"></span>
+            <label class="switch">
+              <input type="checkbox" class="sw-input" data-sw="bias" checked aria-label="Record bias">
+              <span class="sw-track"><span class="sw-thumb"></span></span>
+            </label>
+            <span class="sw-label">BIAS</span>
+          </div>
+          <div class="switch-set">
+            <span class="sw-led" data-swled="eq"></span>
+            <label class="switch">
+              <input type="checkbox" class="sw-input" data-sw="eq" checked aria-label="NAB equalization">
+              <span class="sw-track"><span class="sw-thumb"></span></span>
+            </label>
+            <span class="sw-label">NAB EQ</span>
+          </div>
+          <div class="switch-set">
+            <span class="sw-led" data-swled="fstart"></span>
+            <label class="switch">
+              <input type="checkbox" class="sw-input" data-sw="fstart" aria-label="Fader start">
+              <span class="sw-track"><span class="sw-thumb"></span></span>
+            </label>
+            <span class="sw-label">FADER START</span>
+          </div>
+          <div class="switch-set">
+            <span class="sw-led" data-swled="lim"></span>
+            <label class="switch">
+              <input type="checkbox" class="sw-input" data-sw="lim" checked aria-label="Limiter">
+              <span class="sw-track"><span class="sw-thumb"></span></span>
+            </label>
+            <span class="sw-label">LIMITER</span>
+          </div>
+        </div>
+
+        <div class="rec-col">
+          <span class="rec-label">RECORD STATUS</span>
+          <div class="rec-screen" id="recScreen">
+            7½ IPS · 3¾/15 RANGE<br>
+            STD BIAS · NAB EQ<br>
+            REC READY
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Transport Controls + Master Faders -->
+    <div class="control-row">
+      <div class="transport-buttons">
+        <button class="btn-mech" onclick="togglePlay(this)">▶ PLAY</button>
+        <button class="btn-mech" onclick="stopTape()">■ STOP</button>
+        <button class="btn-mech btn-rec" onclick="toggleRec(this)">● REC</button>
+        <button class="btn-mech" onclick="rewindTape()">◀◀ REW</button>
+        <button class="btn-mech" onclick="ffTape()">▶▶ FF</button>
+      </div>
+
+      <div class="faders-deck">
+        <div class="fader-group">
+          <span>INPUT GAIN</span>
+          <input type="range" min="0" max="10" value="7" class="fader-slider" oninput="updateGain(this.value)" aria-label="Input gain">
+          <span class="fader-readout" id="gainReadout">7.0</span>
+        </div>
+        <div class="fader-group">
+          <span>MONITOR VOL</span>
+          <input type="range" min="0" max="10" value="8" class="fader-slider" oninput="document.getElementById('monReadout').textContent=(+this.value).toFixed(1)" aria-label="Monitor volume">
+          <span class="fader-readout" id="monReadout">8.0</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SECTION: Stereo Out Footer Meter -->
+  <footer class="stereo-out" aria-label="Stereo output meter">
+    <span class="st-label">STEREO OUT</span>
+    <div class="st-meter">
+      <span class="st-fill" id="stFill" style="--w:0"></span>
+      <div class="st-scale"><span>-∞</span><span>-20</span><span>-10</span><span>-3</span><span>0</span><span>+3</span></div>
+    </div>
+    <div class="st-meta">
+      <span class="lvl" id="stLvl">–∞ dB</span>
+      <span>MASTER BUS · TAPE & MON</span>
+    </div>
+  </footer>
+
+  <script>
+    let isPlaying = false;
+    let counterVal = 421;
+    let meterInterval = null;
+    let currentTrack = 1;
+    let ips = 7.5;
+    const TPS = { '3.75': 1, '7.5': 2, '15': 4 };
+    const IPS_ORDER = ['3.75', '7.5', '15'];
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const tracks = Array.from({ length: 8 }, () => ({ mute: false, solo: false, gain: 7 }));
+
+    /* ---------- Transport (existing + extended tick) ---------- */
+
+    function meterTick() {
+      counterVal += TPS[ips];
+      document.getElementById('tapeCounter').textContent = String(counterVal).padStart(4, '0');
+
+      if (reducedMotion.matches) {
+        document.getElementById('needleL').style.transform = 'rotate(0deg)';
+        document.getElementById('needleR').style.transform = 'rotate(0deg)';
+      } else {
+        document.getElementById('needleL').style.transform = `rotate(${(Math.random() * 45 - 22).toFixed(1)}deg)`;
+        document.getElementById('needleR').style.transform = `rotate(${(Math.random() * 45 - 20).toFixed(1)}deg)`;
+      }
+
+      animateTrackVUs();
+      animateStereoOut();
+    }
+
+    function togglePlay(btn) {
+      isPlaying = !isPlaying;
+      document.getElementById('reelLeft').classList.toggle('spinning', isPlaying);
+      document.getElementById('reelRight').classList.toggle('spinning', isPlaying);
+      btn.classList.toggle('active', isPlaying);
+      document.getElementById('recScreen').lastChild.textContent = isPlaying ? '\nREC - PLAYING' : '\nREC READY';
+
+      if (isPlaying) {
+        meterInterval = setInterval(meterTick, 120);
+      } else {
+        stopTape();
+      }
+    }
+
+    function stopTape() {
+      isPlaying = false;
+      clearInterval(meterInterval);
+      document.getElementById('reelLeft').classList.remove('spinning');
+      document.getElementById('reelRight').classList.remove('spinning');
+      document.querySelectorAll('.btn-mech').forEach(b => b.classList.remove('active'));
+      document.getElementById('needleL').style.transform = 'rotate(-30deg)';
+      document.getElementById('needleR').style.transform = 'rotate(-30deg)';
+
+      // Freeze all meters (reels stop, needles rest)
+      document.querySelectorAll('#trackStrip .vu-fill').forEach(f => f.style.setProperty('--h', '0'));
+      document.getElementById('stFill').style.setProperty('--w', '0');
+      document.getElementById('stLvl').textContent = '–∞ dB';
+      document.getElementById('recScreen').lastChild.textContent = '\nREC READY';
+    }
+
+    function toggleRec(btn) {
+      btn.classList.toggle('active');
+      const on = btn.classList.contains('active');
+      document.getElementById('recScreen').lastChild.textContent = on ? '\nRECORDING ●' : '\nREC READY';
+    }
+
+    function rewindTape() {
+      counterVal = Math.max(0, counterVal - (50 * TPS[ips]));
+      document.getElementById('tapeCounter').textContent = String(counterVal).padStart(4, '0');
+    }
+
+    function ffTape() {
+      counterVal += 50 * TPS[ips];
+      document.getElementById('tapeCounter').textContent = String(counterVal).padStart(4, '0');
+    }
+
+    function updateGain(val) {
+      document.getElementById('gainReadout').textContent = (+val).toFixed(1);
+    }
+
+    /* ---------- Per-track VU animation (play-integrated) ---------- */
+
+    function animateTrackVUs() {
+      const anySolo = tracks.some(t => t.solo);
+      const channels = document.querySelectorAll('#trackStrip .track-channel');
+      channels.forEach(ch => {
+        const idx = +ch.dataset.track - 1;
+        const t = tracks[idx];
+        const fill = ch.querySelector('.vu-fill');
+        if (!isPlaying || t.mute || (anySolo && !t.solo)) {
+          fill.style.setProperty('--h', 0);
+          return;
+        }
+        const h = reducedMotion.matches ? 30 : 6 + Math.random() * 90;
+        fill.style.setProperty('--h', h + '%');
+      });
+    }
+
+    function animateStereoOut() {
+      const el = document.getElementById('stFill');
+      const lvl = document.getElementById('stLvl');
+      if (!isPlaying) return;
+      if (reducedMotion.matches) {
+        el.style.setProperty('--w', '0.4');
+        lvl.textContent = '0.0 dB';
+      } else {
+        const w = 0.1 + Math.random() * 0.85;
+        el.style.setProperty('--w', w);
+        const db = ((w - 0.5) * 24).toFixed(1);
+        lvl.textContent = (w < 0.12 ? '–∞' : db) + ' dB';
+      }
+    }
+
+    /* ---------- Channel mixer: select, mute, solo, fader ---------- */
+
+    function selectTrack(idx) {
+      currentTrack = idx;
+      document.querySelectorAll('#trackStrip .track-channel').forEach(ch => {
+        const n = +ch.dataset.track;
+        ch.classList.toggle('selected', n === idx);
+        ch.querySelector('.sel-led').classList.toggle('sel-on', n === idx);
+        ch.setAttribute('aria-selected', n === idx ? 'true' : 'false');
+      });
+    }
+
+    function handleMute(ch) {
+      const idx = +ch.dataset.track - 1;
+      const btn = ch.querySelector('.mute-btn');
+      const led = ch.querySelector('.mute-led');
+      tracks[idx].mute = !tracks[idx].mute;
+      btn.classList.toggle('active', tracks[idx].mute);
+      btn.setAttribute('aria-pressed', String(tracks[idx].mute));
+      led.classList.toggle('mute-on', tracks[idx].mute);
+    }
+
+    function handleSolo(ch) {
+      const idx = +ch.dataset.track - 1;
+      const btn = ch.querySelector('.solo-btn');
+      const led = ch.querySelector('.solo-led');
+      tracks[idx].solo = !tracks[idx].solo;
+      btn.classList.toggle('active', tracks[idx].solo);
+      btn.setAttribute('aria-pressed', String(tracks[idx].solo));
+      led.classList.toggle('solo-on', tracks[idx].solo);
+    }
+
+    function initMixer() {
+      document.querySelectorAll('#trackStrip .track-channel').forEach(ch => {
+        ch.addEventListener('click', e => {
+          if (e.target.classList.contains('mute-btn') || e.target.closest('.mute-btn')) { handleMute(ch); return; }
+          if (e.target.classList.contains('solo-btn') || e.target.closest('.solo-btn')) { handleSolo(ch); return; }
+          selectTrack(+ch.dataset.track);
+        });
+        ch.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectTrack(+ch.dataset.track); }
+        });
+        const fader = ch.querySelector('.track-fader');
+        fader.addEventListener('input', () => {
+          const idx = +ch.dataset.track - 1;
+          tracks[idx].gain = +fader.value;
+          ch.querySelector('.track-gain-readout').textContent = (+fader.value).toFixed(1);
+          if (idx === currentTrack) {
+            document.getElementById('stLvl').textContent = (tracks[idx].gain / 10 * 3).toFixed(1) + ' dB';
+          }
+        });
+      });
+      selectTrack(1);
+    }
+
+    /* ---------- EQ knobs: click-to-set + click-drag fine adjust ---------- */
+
+    function initKnobs() {
+      const KNOB_MIN = -135, KNOB_MAX = 135;
+      document.querySelectorAll('.knob-wrap').forEach(el => {
+        const ind = el.querySelector('.knob-ind');
+        const read = el.querySelector('.knob-readout');
+        const range = parseFloat(el.dataset.range || '12');
+        let val = 50; // 0..100
+
+        function render() {
+          const angle = KNOB_MIN + (val / 100) * (KNOB_MAX - KNOB_MIN);
+          ind.style.transform = `rotate(${angle}deg)`;
+          const db = ((val / 100) * 2 - 1) * range;
+          read.textContent = (db >= 0 ? '+' : '') + db.toFixed(1) + ' dB';
+          el.setAttribute('aria-valuenow', db.toFixed(1));
+          const arc = el.querySelector('.knob').querySelector(':scope > .knob-ind');
+          void arc; // keep ref stable (indicator driven by ind above)
+        }
+
+        function angleFromEvent(clientX, clientY) {
+          const r = el.querySelector('.knob').getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          let ang = Math.atan2(clientY - cy, clientX - cx) * 180 / Math.PI - 90; // 12 o'clock = 0
+          if (ang < KNOB_MIN) ang += 360;
+          if (ang > KNOB_MAX) ang -= 360;
+          return Math.min(KNOB_MAX, Math.max(KNOB_MIN, ang));
+        }
+
+        let drag = null;
+
+        el.addEventListener('pointerdown', e => {
+          e.preventDefault();
+          el.setPointerCapture(e.pointerId);
+          const ang = angleFromEvent(e.clientX, e.clientY); // click-to-set
+          val = Math.round(((ang - KNOB_MIN) / (KNOB_MAX - KNOB_MIN)) * 100);
+          drag = { y: e.clientY, v: val };
+          render();
+        });
+
+        el.addEventListener('pointermove', e => {
+          if (!drag) return;
+          val = Math.max(0, Math.min(100, drag.v + (drag.y - e.clientY))); // click-drag
+          render();
+        });
+
+        el.addEventListener('pointerup', () => { drag = null; });
+        el.addEventListener('pointercancel', () => { drag = null; });
+
+        el.addEventListener('keydown', e => {
+          if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+          e.preventDefault();
+          if (e.key === 'Home') val = 0;
+          else if (e.key === 'End') val = 100;
+          else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') val = Math.max(0, val - 5);
+          else val = Math.min(100, val + 5);
+          render();
+        });
+
+        render();
+      });
+    }
+
+    /* ---------- Recording settings: IPS selector + toggle LEDs ---------- */
+
+    function renderRecScreen() {
+      const screen = document.getElementById('recScreen');
+      const bias = document.querySelector('[data-sw="bias"]').checked;
+      const eq = document.querySelector('[data-sw="eq"]').checked;
+      screen.innerHTML = `${ips} IPS · ${baklipsLabel()}<br>${bias ? 'STD' : 'LOW'} BIAS · ${eq ? 'NAB' : 'CCIR'} EQ<br>` +
+        (isPlaying ? 'REC - PLAYING' : 'REC READY');
+    }
+
+    function baklipsLabel() {
+      return ips === '3.75' ? 'NARROW RANGE' : ips === '15' ? 'WIDEBAND' : 'FULL RANGE';
+    }
+
+    function initRecSettings() {
+      const ipb = document.querySelector('.ips-buttons');
+      ipb.addEventListener('click', e => {
+        const btn = e.target.closest('.ips-btn');
+        if (!btn) return;
+        ips = btn.dataset.ips;
+        document.querySelectorAll('.ips-btn').forEach(b => {
+          const on = b === btn;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', String(on));
+        });
+        document.querySelectorAll('.chain-led').forEach((led, i) => {
+          led.classList.toggle('active', i === IPS_ORDER.indexOf(ips));
+        });
+        // reel speed follows tape speed
+        document.getElementById('reelLeft').style.setProperty('--reel-speed', (2 / TPS[ips]) + 's');
+        document.getElementById('reelRight').style.setProperty('--reel-speed', (2 / TPS[ips]) + 's');
+        document.getElementById('statusChip').textContent = 'ONLINE · ' + ips + ' IPS · REC READY';
+        renderRecScreen();
+      });
+
+      document.querySelectorAll('.sw-input').forEach(inp => {
+        inp.addEventListener('change', () => {
+          const led = document.querySelector(`[data-swled="${inp.dataset.sw}"]`);
+          led.classList.toggle('on', inp.checked);
+          renderRecScreen();
+        });
+      });
+    }
+
+    /* ---------- Theme switching (existing + ambient dust re-theme) ---------- */
+
+    function setTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      if (window.bgfxReTheme) window.bgfxReTheme();
+      try { localStorage.setItem('tape-theme', themeName); } catch(e) {}
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === themeName);
+      });
+    }
+
+    /* ---------- Init ---------- */
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = document.documentElement.getAttribute('data-theme') || 'vintage-walnut';
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-target') === savedTheme);
+      });
+      initMixer();
+      initKnobs();
+      initRecSettings();
+      renderRecScreen();
+      stopTape();
+    });
+  </script>
+
+  <script>
+    /* =========================================================
+       AMBIENT: STUDIO DUST + LAMP GLOW (ORIGINAL to this theme)
+       Slow-drifting motes through a warm cone of "stage light",
+       re-colored from the active console palette via CSS props.
+       ========================================================= */
+    (function () {
+      const cv = document.getElementById('bgfx');
+      if (!cv) return;
+      const ctx = cv.getContext('2d');
+      let W = 0, H = 0, DPR = 1;
+      const motes = [];
+      let pal = { light: '#FDE68A', warm: '#F5A524', glow: '#F5A524' };
+
+      function resize() {
+        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth;
+        H = window.innerHeight;
+        cv.width = Math.round(W * DPR);
+        cv.height = Math.round(H * DPR);
+        cv.style.width = W + 'px';
+        cv.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+
+      function readPal() {
+        const s = getComputedStyle(document.documentElement);
+        pal = {
+          light: s.getPropertyValue('--amber').trim() || '#FDE68A',
+          warm: s.getPropertyValue('--knob-ind').trim() || '#F5A524',
+          glow: s.getPropertyValue('--amber').trim() || '#F5A524'
+        };
+      }
+      window.bgfxReTheme = readPal;
+
+      function seed() {
+        motes.length = 0;
+        const n = Math.round(Math.min(85, W / 14));
+        for (let i = 0; i < n; i++) {
+          motes.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: 0.4 + Math.random() * 1.3,
+            vx: (Math.random() - 0.5) * 0.14,
+            vy: -0.06 - Math.random() * 0.18,
+            sway: Math.random() * Math.PI * 2,
+            swayS: 0.002 + Math.random() * 0.006,
+            a: 0.05 + Math.random() * 0.22,
+            depth: 0.2 + Math.random() * 0.8
+          });
+        }
+      }
+
+      const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      function tick(now) {
+        const t = now / 1000;
+        ctx.clearRect(0, 0, W, H);
+
+        if (!REDUCED.matches) {
+          // warm lamp glow pooling at top-center
+          const g = ctx.createRadialGradient(W / 2, -H * 0.12, 10, W / 2, -H * 0.12, H * 0.75);
+          g.addColorStop(0, 'rgba(255,214,140,0.05)');
+          g.addColorStop(1, 'rgba(255,214,140,0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        for (const m of motes) {
+          if (!REDUCED.matches) {
+            m.x += m.vx + Math.sin(t * m.swayS * 100 + m.sway) * 0.12;
+            m.y += m.vy;
+            if (m.y < -6) { m.y = H + 6; m.x = Math.random() * W; }
+            if (m.x < -6) m.x = W + 6;
+            if (m.x > W + 6) m.x = -6;
+          }
+          const col = m.depth > 0.6 ? pal.glow : pal.light;
+          ctx.globalAlpha = m.a * (REDUCED.matches ? 0.5 : 1);
+          ctx.fillStyle = col;
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.r * (m.depth > 0.6 ? 1.3 : 0.8), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(tick);
+      }
+
+      resize();
+      readPal();
+      seed();
+      requestAnimationFrame(tick);
+      window.addEventListener('resize', () => { resize(); seed(); });
+    })();
+  </script>
+</body>
+</html>
