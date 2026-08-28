@@ -1,0 +1,504 @@
+window.STYLES = [
+      // ========== V0: Fusion System ==========
+      {
+        id: 0, title: "Atelier Fusion System",
+        desc: "Fusion 2 UI style jadi hybrid, 12 preset fusion, eksperimental",
+        path: "atelier-fusion-system.html",
+        avoid: "single-style purity, strict design systems, one-direction thinking, predictable layouts.",
+        guide: { key: "Fusion engine menggabungkan 2 style jadi hybrid unik, 12 preset fusion, random fusion generator.", typo: "Tergantung style yang di-fusion — kombinasi 2 typography system.", motion: "Tergantung fusion — kombinasi 2 motion system." },
+        prompt: "Fusion of two UI styles. Buka atelier-fusion-system.html, pilih 2 style, dapatkan hybrid unique UI. 12 preset fusion tersedia. Juga bisa random fusion untuk eksperimen."
+      },
+      // ========== V1: Original 10 ==========
+      {
+        id: 1, title: "Neobrutalism Landing Page",
+        desc: "Border tebal, flat color neon, offset hard-shadow",
+        path: "previews/1-neobrutalism.html",
+        avoid: "border-radius > 8px, gradients, blurred/soft shadows, muted/pastel palettes, perfectly centered-everything symmetry.",
+        guide: { key: "Border hitam tegas tebal (3-4px), bayangan offset keras tanpa blur (hard-shadow), warna kontras/ngejreng polos tanpa gradasi (flat).", typo: "Display chunky (Archivo Black/Unbounded) + label monospace (JetBrains Mono).", motion: "Translasi 2px ke bawah-kanan saat diklik/hover (seolah menekan bayangannya sendiri)." },
+        prompt: "Build a Neobrutalist SaaS landing page using Next.js + Tailwind CSS.\n\nVisual language:\n- Solid 3-4px black borders on every interactive element (buttons, cards, inputs, badges)\n- Hard offset drop-shadows with zero blur: box-shadow: 4px 4px 0px #000 (no blur-radius, ever)\n- Flat, ungradiented colors — 2 loud accent colors max + black/white base (e.g. #FFEB3B, #FF5252, #000, #FFF)\n\nTypography:\n- One heavy grotesque display font for headlines — Archivo Black, Unbounded, or Clash Display at 700-900 weight\n- Headline sizes: clamp(2.5rem, 6vw, 5rem)\n- JetBrains Mono for small labels/captions, plain sans for body text\n\nInteraction:\n- Buttons shift 2px on hover/active (simulating being pressed into their own shadow), not fade/scale\n- Break the grid at least once — one element rotated 2-3deg or intentionally overflowing its container\n\nSections: hero (oversized headline + 1 primary CTA + 1 stat badge), 3-column feature grid (each card a different flat accent color), pricing table with the \"popular\" plan visually thicker-bordered."
+      },
+      {
+        id: 2, title: "Glassmorphism SaaS Dashboard",
+        desc: "Panel transparan backdrop-blur dengan ambient glow latar gelap",
+        path: "previews/2-glassmorphism.html",
+        avoid: "light-mode glassmorphism (reads flat/dated), heavy borders, drop-shadows, oversaturated glass tint.",
+        guide: { key: "Backdrop blur tinggi (blur-xl), lapisan putih transparan tipis (bg-white/5-10) dengan border highlight 1px.", typo: "Font sans modern (Geist/General Sans) dengan opasitas teks bervariasi (90% utama, 50% sekunder).", motion: "Efek gradien bersinar mengikuti posisi pointer pada tepian panel." },
+        prompt: "Build a SaaS analytics dashboard using Next.js + Tailwind CSS with a Glassmorphism aesthetic.\n\nBackground:\n- Dark gradient base (radial gradient #0F172A → #1E1B4B)\n- 2-3 large blurred color blobs behind content for ambient glow (purple #8B5CF6, cyan #22D3EE), blur-3xl, 15-25% opacity\n\nCards/panels:\n- backdrop-blur-xl, bg-white/5 to bg-white/10, border border-white/10 (1px only)\n- rounded-2xl\n- subtle 1px inner top-edge highlight (pseudo-element gradient) to simulate light catching glass\n\nTypography: Geist, General Sans, or Switzer (skip Inter). text-white/90 primary, text-white/50 secondary.\n\nData viz: charts use glow-accent colors as low-opacity fills, not solid fills.\n\nLayout: fixed glass sidebar nav, top row of 4 glass stat cards, main glass-paneled chart area, glass modal/dropdown showing blur-on-blur layering."
+      },
+      {
+        id: 3, title: "Dark Luxury Editorial Portfolio",
+        desc: "Tipografi serif besar, warna metalik, whitespace lega",
+        path: "previews/3-dark-luxury.html",
+        avoid: "rounded-full buttons, bright saturated colors, playful icons, generic 3-card-grid layouts, sans-only typography.",
+        guide: { key: "Latar hitam arang hangat, teks putih gading hangat, garis pembatas tipis beraksen warna logam/emas redup.", typo: "Kombinasi serif kontras tinggi (Fraunces/Playfair Display) dengan sans minimalis (Neue Montreal/Söhne).", motion: "Transisi scroll lembut lambat (fade + geser ke atas 8px) tanpa efek pegas." },
+        prompt: "Build a personal portfolio/brand site using Next.js + Tailwind CSS in a Dark Luxury Editorial style.\n\nPalette: near-black background (#0A0908 or #121212), warm off-white text (#F5F0E8, never pure white), one metallic accent used ONLY for thin dividers/underlines/small icons (muted brass #B8935F or #C9A961).\n\nTypography: High-contrast serif display for headlines — Fraunces or Playfair Display (italic for emphasis), clamp(3rem, 7vw, 6rem). Neue Montreal or Söhne for body/nav.\n\nLayout: asymmetric editorial grid, full-viewport hero, generous whitespace.\n\nMotion: slow fade + 8px upward translate on scroll (400-600ms ease-out, staggered 80-100ms)."
+      },
+      {
+        id: 4, title: "Bento-Grid Modern SaaS Landing",
+        desc: "Tata letak grid modular bento-box bergaya Linear/Vercel",
+        path: "previews/4-bento-grid.html",
+        avoid: "purple-to-pink gradient hero backgrounds, stock illustration people, generic 3-icon-feature-row layouts, drop shadows on cards.",
+        guide: { key: "Komposisi kotak modular bertingkat (Bento-grid) dengan sudut lengkung seragam 12px dan border kelabu tipis.", typo: "Monospace untuk label kecil/versi rilis, Geist/General Sans untuk teks sistem utama.", motion: "Hover mengangkat komponen ke atas 2px dengan transisi cepat 150ms." },
+        prompt: "Build a modern SaaS landing page using Next.js + Tailwind CSS in a Bento-Grid style (Linear/Vercel/Attio aesthetic).\n\nLayout: CSS grid bento section, 5-6 cards with varied spans (one 2x2, two 1x1, one 2x1), grid-cols-4 gap-4, every card rounded-xl (12px).\n\nPalette: ONE neutral base, single accent color (#6366F1 or #10B981) used minimally on CTAs/active states only.\n\nCards: border border-black/10 (light) or border-white/10 (dark), NO drop shadows, subtle bg differentiation only.\n\nTypography: Geist or General Sans, monospace for small labels.\n\nMicro-interaction: cards lift 2px + border brightens on hover (150ms ease). Include one \"alive\" card."
+      },
+      {
+        id: 5, title: "Maximalist / Anti-Design Layout",
+        desc: "Overlap elemen ekstrem, mix font tabrakan, warna jenuh tinggi",
+        path: "previews/5-maximalist.html",
+        avoid: "any symmetric 12-column grid, muted/pastel colors, single consistent font, calm generous whitespace, subtle animations.",
+        guide: { key: "Pemutusan grid simetris, tumpang tindih elemen (overlapping), warna-warna neon jenuh tinggi yang sengaja tabrakan.", typo: "Font display tinggi padat (Bebas Neue/Anton) disandingkan dengan monospace sangat kecil (Space Mono).", motion: "Transisi cepat berenergi tinggi (150ms) dengan akselerasi tajam/efek memantul berlebih." },
+        prompt: "Build a landing page using Next.js + Tailwind CSS in a Maximalist/Anti-Design style.\n\nComposition: overlap at least 3 elements intentionally. Use absolute/rotate/z-index liberally.\n\nTypography: mix 2 unrelated type styles — condensed bold display (Anton, Bebas Neue) + mono (Space Mono).\n\nPalette: 4-5 saturated colors, no neutral base — hot pink #FF1B6B, acid green #B6FF00, electric blue #00C2FF, black, warm orange #FF6B00.\n\nMotion: fast punchy transitions (150-200ms) with overshoot/bounce easing."
+      },
+      {
+        id: 6, title: "GSAP Scroll storytelling",
+        desc: "Transisi penceritaan yang dipin secara horizontal mengikuti gulir",
+        path: "previews/6-gsap-scroll.html",
+        avoid: "scroll-jacking that fights the user, pinning more than 2-3 sections per page, fade-only reveals with no scrub-tied transforms.",
+        guide: { key: "Pengikatan scroll (pinning) menggunakan ScrollTrigger GSAP untuk memicu animasi linear berbasis posisi scroll.", typo: "Teks judul dinamis yang membesar/mengecil dan memudar di setiap langkah penceritaan.", motion: "Gulir vertikal diterjemahkan menjadi pergeseran horizontal barisan komponen." },
+        prompt: "Build a scroll-driven narrative page using Next.js + GSAP with the ScrollTrigger plugin.\n\nCore mechanic: pin at least one full-viewport section — gsap.timeline({ scrollTrigger: { trigger: section, pin: true, scrub: 1, start: \"top top\", end: \"+=200%\" } }).\n\nInclude one horizontal-scroll-within-vertical-scroll moment. Structure as narrative beats (problem → insight → solution → result)."
+      },
+      {
+        id: 7, title: "Lenis Smooth-Scroll Parallax Hero",
+        desc: "Gulir halus bernilai inersia dengan parallax multi-layer berkedalaman",
+        path: "previews/7-lenis-parallax.html",
+        avoid: "using Lenis without syncing to GSAP ScrollTrigger, parallax speed differences under 0.2x, applying smooth-scroll without prefers-reduced-motion.",
+        guide: { key: "Inisialisasi Lenis smooth-scroll yang diselaraskan dengan ticker GSAP ScrollTrigger.", typo: "Teks judul besar dengan penataan kontras berlapis untuk efek visual kedalaman.", motion: "Kecepatan bergeser berbeda (parallax multipliers) pada elemen latar, tengah, dan depan." },
+        prompt: "Build a cinematic hero + about section using Next.js + Lenis (smooth-scroll) + GSAP/Framer Motion for parallax.\n\nInitialize Lenis with duration: 1.2, sync with GSAP ScrollTrigger. Layer 3-4 elements at different scroll-speed multipliers (0.3x, 0.6x, 1x, 1.4x). Use transform: translate3d."
+      },
+      {
+        id: 8, title: "WebGL/Three.js Interactive 3D",
+        desc: "Mesh grafis 3D real-time yang merespons pergerakan kursor",
+        path: "previews/8-webgl-3d.html",
+        avoid: "importing all of three.js unnecessarily, uncapped devicePixelRatio, plain MeshStandardMaterial without distort/transmission.",
+        guide: { key: "Canvas interaktif Three.js dengan shader terdistorsi organik/kristal transparan.", typo: "Sandingkan objek 3D dengan blok teks minimalis bersudut tajam bergaya teknologi tinggi.", motion: "Rotasi konstan halus dipadukan dengan tilt teredam (damped) mengikuti arah kursor." },
+        prompt: "Build a hero section using Next.js + React Three Fiber + @react-three/drei with one interactive 3D object.\n\nIdle loop: subtle rotation. Pointer-reactive: tilt toward cursor with damped interpolation (lerp ~0.05-0.1). Lighting: 1 key directional + soft ambient + Environment preset."
+      },
+      {
+        id: 9, title: "Cursor-Reactive Magnetic",
+        desc: "Tombol dan kartu interaktif dengan efek tarik magnetik fisik",
+        path: "previews/9-magnetic.html",
+        avoid: "applying this to more than a few key elements per page, skipping spring/damping, forgetting a touch-device check.",
+        guide: { key: "Perhitungan jarak kursor pada bounding box komponen untuk menarik posisi elemen mendekatinya.", typo: "Teks label dalam tombol ikut meluncur dengan jarak translasi lebih jauh (lapisan kedalaman).", motion: "Simulasi pegas meredam (spring physics) menggunakan parameter redaman elastis." },
+        prompt: "Build 3 interactive components with Framer Motion \"magnetic\" cursor-attraction.\n\nOn mousemove, calculate cursor offset from center, translate element by offset * 0.3, inner layer by offset * 0.5. Use useMotionValue + useSpring (stiffness ~150, damping ~15). Card variant: radial-gradient spotlight following cursor via CSS custom properties."
+      },
+      {
+        id: 10, title: "Claymorphism / Soft-UI Set",
+        desc: "Lapisan 3D lembut efek clay menggunakan dual-shadow berlawanan",
+        path: "previews/10-claymorphism.html",
+        avoid: "sharp corners anywhere, saturated/dark colors (clay is inherently soft/pastel), single-shadow-only elements.",
+        guide: { key: "Bayangan ganda lembut (dual-shadow); kiri-atas putih terang, kanan-bawah gelap lembut.", typo: "Gaya tulisan membulat manis dengan warna pastel pucat bersaturasi rendah.", motion: "Tukar bayangan timbul menjadi tenggelam (inset shadow) saat tombol aktif ditekan." },
+        prompt: "Build a component set (button, input, toggle, card) in Claymorphism/Soft-UI style.\n\nDual box-shadow: -8px -8px 16px rgba(255,255,255,0.7) top-left and 8px 8px 16px rgba(0,0,0,0.15) bottom-right. Soft pastel base (#E0E5EC). Border-radius 20-28px everywhere. Toggle: inset shadow track + outset knob. Buttons swap to inset on :active."
+      },
+      // ========== V2: 11-20 ==========
+      {
+        id: 11, title: "Y2K Retro-Futurism Landing Page",
+        desc: "Gradien krom mengkilap, pola latar grid piksel, tombol jeli 3D",
+        path: "previews/11-y2k-retro.html",
+        avoid: "flat Material Design cards, muted/pastel colors, serif fonts, excessive border-radius on main containers, generic SaaS illustrations.",
+        guide: { key: "Latar grid piksel tipis, gradien logam krom, tombol 3D mengkilap dengan highlight atas 1px, dekorasi kilatan bintang.", typo: "Kontras ekstrem antara fon piksel digital (VT323) dengan fon sans geometris modern (Outfit).", motion: "Efek menekan jeli (gel press) pada tombol, serta transisi kilau sapuan cahaya (glint sheen sweep)." },
+        prompt: "Build a Y2K Retro-Futurist brand landing page using Next.js + Tailwind CSS.\n\nBackground: fixed grid pattern, chrome gradients on headlines, 3D glossy buttons. Palette: hot pink #FF6BEC, cyber lavender #A78BFA, chrome silver #C0C0C0. Mix pixel font (VT323) with clean sans (Outfit). Marquee, gel press effect, glint animation."
+      },
+      {
+        id: 12, title: "Swiss International Style",
+        desc: "Grid matematis ketat, asimetri terkontrol, tanpa dekorasi",
+        path: "previews/12-swiss-style.html",
+        avoid: "border-radius anywhere, drop shadows, gradients, centered text blocks, decorative icons, card-based layouts, photography with filters.",
+        guide: { key: "Kisi 12-kolom sangat ketat, susunan asimetris terkontrol, ruang kosong dominan, tanpa ornamen.", typo: "Sans-serif tebal rapat (Neue Haas Grotesk/Inter) dengan gaya all-lowercase atau all-uppercase konsisten.", motion: "Elemen meluncur masuk lurus dari bawah (24px translate) tanpa efek memantul." },
+        prompt: "Build a portfolio/cultural institution site in Swiss International Style.\n\nStrict 12-column grid, asymmetric layouts, generous margins. Palette: #FAFAFA, #000000, and signal red #FF0000 for 5% of elements. Helvetica/Inter at -0.02em tracking. Sizes in strict scale (48, 64, 96, 128px). Motion: slide from bottom 24px, 500ms ease-out, staggered 100ms."
+      },
+      {
+        id: 13, title: "Cyberpunk Neon Noir Dashboard",
+        desc: "Panel terminal retro, scanlines, dan grafik kustom neon",
+        path: "previews/13-cyberpunk.html",
+        avoid: "sans-serif fonts anywhere, rounded corners > 4px, light mode, soft shadows, stock photos, pastel colors, conventional card elevations.",
+        guide: { key: "Latar hitam pekat bertekstur noise, hamparan scanlines CRT, panel hologram menyala tipis.", typo: "Monospace murni (JetBrains Mono) dengan efek bayangan cahaya pendaran (text-shadow glow).", motion: "Tombol dengan efek kedipan gangguan listrik (glitch flicker) dan kursor terminal berkedip." },
+        prompt: "Build a cyberpunk analytics dashboard. Near-black #050505 with noise + scanlines. Neon cyan #00F0FF, hot magenta #FF00A0, toxic yellow #CCFF00. All text JetBrains Mono. Fixed sidebar with terminal nav, live clock, holographic borders, glitch hover effects."
+      },
+      {
+        id: 14, title: "Japanese Minimalism / Wabi-Sabi",
+        desc: "Latar kertas washi, tipografi bernapas, ritme zen",
+        path: "previews/14-wabi-sabi.html",
+        avoid: "dense layouts, multiple accent colors, bold/bright CTAs, border-radius on images, cards with shadows, fast/snappy animations, centered symmetry everywhere.",
+        guide: { key: "Latar hangat krem washi, aksen tunggal merah tinta stempel vermillion, ruang bernapas ekstra luas.", typo: "Serif Jepang (Noto Serif) dengan tinggi spasi ganda (leading 2.0), teks vertikal di pinggiran layout.", motion: "Transisi scroll memudar masuk tanpa translasi (konten terasa selalu ada di sana)." },
+        prompt: "Build a Japanese-inspired site in Wabi-Sabi minimalism. Background #F7F5F0, text #1C1917, accent #B91C1C. Noto Serif JP headlines, line-height 2.0 body. Vertical text element. Extreme 20-30vh whitespace. Opacity fade reveals over 800ms, NO translateY. Slow incense drift animation."
+      },
+      {
+        id: 15, title: "Aurora UI / Soft Gradient Morphism",
+        desc: "Blob gradien kabur melayang di atas permukaan panel transparan",
+        path: "previews/15-aurora-ui.html",
+        avoid: "dark mode, heavy borders, drop shadows, sharp corners, neon/oversaturated colors, dense information architecture, generic stock illustrations.",
+        guide: { key: "Latar putih/abu lunak, 3-4 gelembung gradien warna (aurora blobs) melayang lambat di belakang komponen.", typo: "Geometric sans ramah membulat (Plus Jakarta Sans) dengan judul bermasker gradien pelangi.", motion: "Bentuk sirkular gelembung warna meliuk perlahan, mockup panel melayang." },
+        prompt: "Build a SaaS landing page in Aurora UI / Soft Gradient style. Light #FAFAFA base with 3-4 blurred gradient blobs animating slowly. Cards bg-white/40 backdrop-blur-md, rounded-3xl, NO drop shadows. One conic-gradient border card. Plus Jakarta Sans. Gradient text headline. Floating mockup."
+      },
+      {
+        id: 16, title: "Kinetic Typography Hero",
+        desc: "Animasi perubahan berat/lebar fon sistem secara dinamis",
+        path: "previews/16-kinetic-typo.html",
+        avoid: "images/illustrations in hero, multiple lines of headline text, decorative elements competing with type, fonts without variation axes, excessive blur/backdrop effects.",
+        guide: { key: "Tipografi variabel (Variable Font) sebagai arsitektur visual utama tanpa gambar pendukung.", typo: "Anybody/Roboto Flex dengan akses variasi lebar ('wdth') dan ketebalan ('wght') dinamis.", motion: "Animasi sumbu font merespons pergerakan kursor atau gulir secara teredam." },
+        prompt: "Build a kinetic typography hero using a variable font. One headline filling 90vw. Scroll-driven: font-weight 100→900, font-stretch 75%→125%, letter-spacing 0.05em→-0.05em. Full viewport, flex center, no decoration. Split text into individual letter spans."
+      },
+      {
+        id: 17, title: "Neo-Skeuomorphic Control Panel",
+        desc: "Panel dengan visual material realistis (kulit, logam gosok)",
+        path: "previews/17-skeuomorphic.html",
+        avoid: "flat colors without depth, neon accents, glassmorphism blur, sharp 90-degree corners on interactive elements, default HTML checkbox styling.",
+        guide: { key: "Simulasi material berkedalaman fisik (kulit berjahit, brushed metal, plastik doff).", typo: "Label teks menggunakan small-caps dengan kerenggangan spasi terlebar.", motion: "Knob melingkar berputar mengikuti gesekan kursor, tombol berayun masuk saat ditekan." },
+        prompt: "Build a neo-skeuomorphic control panel. Simulate leather (#5D4037), brushed metal (gradient + line overlay), matte plastic. Toggle switches with spring animation. Rotary dial controlled by drag. Consistent lighting from top-left at 45 degrees."
+      },
+      {
+        id: 18, title: "DIY Zine / Scrapbook Card Grid",
+        desc: "Gaya kolase fisik, sobekan kertas, selotip dekoratif",
+        path: "previews/18-diy-zine.html",
+        avoid: "perfect symmetry, consistent fonts across cards, smooth rounded corners on all cards, flat shadows, generic Unsplash photos without treatment.",
+        guide: { key: "Potongan selotip aneka warna (duct/washi tape), tepian robek (torn paper mask), rotasi sudut acak tiap kartu.", typo: "Desain campur aduk (Bebas Neue, typewriter Courier, coretan kuas, serif Times New Roman).", motion: "Hover menghilangkan rotasi kemiringan secara elastis, menebalkan warna selotip." },
+        prompt: "Build a project gallery grid in DIY Zine style. Cards with different rotations, torn paper edges, tape elements. Mismatched typography per card (handwritten, typewriter, condensed, serif). Noise background, halftone filters, stamp marks. Hover lifts card and brightens tape."
+      },
+      {
+        id: 19, title: "Retro CRT Terminal Interface",
+        desc: "Layar monitor fosfor cembung, scanlines, CLI booting",
+        path: "previews/19-crt-terminal.html",
+        avoid: "modern sans-serif fonts, rounded buttons, emoji, gradient backgrounds, card layouts, smooth animations (use step-end only).",
+        guide: { key: "Bingkai monitor tabung cembung, pendaran fosfor hijau (#33FF00), garis pemindai CRT.", typo: "Monospace retro dot-matrix (VT323/Share Tech Mono) dengan efek bayangan berpendar.", motion: "Baris pemuatan (boot sequence), cursor CLI berkedip ketat tanpa easing." },
+        prompt: "Build a retro CRT terminal interface. 4:3 screen, black bg, inset vignette shadow, scanline overlay. Phosphor green #33FF00 glow. VT323 monospace. Boot sequence with 50ms stagger. Blinking block cursor. Screen flash on command enter."
+      },
+      {
+        id: 20, title: "Organic Blob / Fluid Shape Navigation",
+        desc: "Navigasi cairan melar dinamis menggunakan elastic spring",
+        path: "previews/20-fluid-nav.html",
+        avoid: "rectangular boxes, sharp 90-degree corners, linear easing on open/close, standard hamburger-to-X animation without morphing.",
+        guide: { key: "Bentuk kontainer melingkar cair (organic blob) dengan border-radius tidak simetris.", typo: "Tipografi membulat lunak (Nunito/Quicksand) dengan garis bawah bergelombang.", motion: "Pelebaran elastis (elastic out) saat menu mekar dari titik kuncup." },
+        prompt: "Build an organic fluid navigation menu. SVG path or custom border-radius blob shape. Closed: 120x60px blob. Open: morphs to 400x500px with elastic easing. 4-5 links staggering in. Wave SVG hover underline. Floating circles in background. Blobs repel on mouse hover."
+      },
+      // ========== V2 Extras: 21-22 ==========
+      {
+        id: 21, title: "Jars UI - Particle Canvas",
+        desc: "Galaxy background interaktif dengan blackhole gravity, nebula, star trails",
+        path: "previews/21-jars-ui.html",
+        avoid: "heavy opaque boxes, static canvas bounds, standard single-direction particle streams.",
+        guide: { key: "Galaxy background interaktif, blackhole gravity, nebula, star trails.", typo: "Tipografi display bersanding kontras dengan label monospace mini.", motion: "Gaya gravitasi menarik partikel (blackhole physics) dinamis saat layar diklik." },
+        prompt: "Build an interactive galaxy backdrop dashboard using jars-particle-canvas Web Component. Controls: theme dropdown, speed/density/bhstrength/bhradius sliders. Click spawns blackhole pulling particles. Cursor leaves glowing trails."
+      },
+      {
+        id: 22, title: "Theme & Color Showcase Page",
+        desc: "Landing page 5 bagian dengan theme switcher, Y2K buttons, skeuomorphic controls, data metrics",
+        path: "previews/22-landing-showcase.html",
+        avoid: "combining all elements incoherently, hardcoding hex values outside the variables block, single-theme styles, lacking clear layout organization.",
+        guide: { key: "Landing page terorganisasi bersih dengan transisi 5 tema warna.", typo: "Outfit untuk tajuk utama bold, JetBrains Mono untuk label, VT323 digital.", motion: "Rotasi bingkai conic border, kilauan glossy button sheen sweep." },
+        prompt: "Build a 5-section multi-themed landing page. 13 CSS variables per theme (light, dark, orange, sea, rose). Sections: Hero with Y2K glossy buttons, Feature with conic gradient card, Sandbox with skeuomorphic controls, Telemetry with VT323 metrics, Footer with theme switcher."
+      },
+      // ========== V3: Batch 3 — 23-32 ==========
+      {
+        id: 23, title: "Memphis Design Revival",
+        desc: "Geometric bold, dots, zig-zag, primary colors clash",
+        path: "previews/23-memphis-design.html",
+        avoid: "gradients, soft shadows, serif fonts, muted colors, symmetric perfect grids, rounded corners > 12px, stock photos without bold graphic treatment.",
+        guide: { key: "Konfeti geometri tersebar (lingkaran, segitiga, garis zig-zag), pola titik-titik, border tidak seragam tiap kartu.", typo: "Montserrat 800-900 uppercase untuk judul outline, DM Sans untuk body.", motion: "Bentuk geometri berotasi lambat mengikuti scroll, konfeti muncul saat hover kartu." },
+        prompt: "Build a creative agency landing page in Memphis Design style. Scattered geometric confetti elements, dotted patterns, zig-zag clip-path dividers. Strict primary palette: Cyan #00D9FF, Hot Pink #FF006E, Lemon Yellow #FFEA00, Black, White. Headlines with outline text-stroke. Cards with mismatched border treatments. Floating shapes rotate on scroll."
+      },
+      {
+        id: 24, title: "Vaporwave / Synthwave Sunset",
+        desc: "Retro grid, chrome gradient text, neon sunset vibes",
+        path: "previews/24-vaporwave.html",
+        avoid: "rounded buttons, earth tones, soft pastel gradients, sans-serif friendly fonts, white backgrounds, minimal whitespace.",
+        guide: { key: "Latar navy gelap dengan sunset radial, grid perspektif retro, teks gradien krom.", typo: "Orbitron uppercase tracked 0.2em, Rajdhani body, Exo 2 subheads.", motion: "Grid berdenyut pelan, efek aberasi kromatis pada hover album card, glitch flicker acak." },
+        prompt: "Build a synthwave brand site. Dark navy #0B0D17 with sunset radial gradient, 3D perspective grid floor (cyan #00F0FF lines), chrome gradient text (cyan-magenta-orange). Palette: Deep space, Neon Cyan, Hot Magenta, Sunset Orange, Chrome Silver. Greek bust with duotone filter. Scanline overlays. Chromatic aberration hover effects."
+      },
+      {
+        id: 25, title: "Bauhaus Functionalism",
+        desc: "Primary triad, geometric shapes, asymmetric grid",
+        path: "previews/25-bauhaus.html",
+        avoid: "border-radius anywhere, gradients, serif fonts, centered text, soft shadows, organic shapes, more than 3 colors, photographs without geometric cropping.",
+        guide: { key: "Grid 12-kolom terlihat, bentuk geometri dasar (lingkaran, segitiga, persegi) sebagai blok warna solid.", typo: "Futura/Montserrat 700-900, modular scale (48/72/96px), uppercase -0.02em tracking.", motion: "Elemen masuk dari tepi terdekat, bentuk geometri rotate 90deg pada scroll." },
+        prompt: "Build an architecture studio site in Bauhaus style. Strict palette: Red #E63946, Yellow #F1C40F, Blue #0044CC, Black, White. Visible 12-column grid. Geometric shapes as solid color blocks. No centered elements. Project list as horizontal bars with red circle numbers. Elements enter from nearest edge on scroll."
+      },
+      {
+        id: 26, title: "Paper Cut / Layered Depth",
+        desc: "Stacked paper layers, torn edges, polaroid frames",
+        path: "previews/26-paper-cut.html",
+        avoid: "glassmorphism blur, neon colors, dark mode, border-radius > 4px on main layers, gradients, sans-serif-only typography, perfect alignment.",
+        guide: { key: "Efek kertas bertumpuk, hard shadow 4px tanpa blur, rotasi 0.5deg berselang-seling.", typo: "Slab serif (Zilla Slab/Georgia) untuk judul, serif untuk body, cursive (Caveat) untuk kutipan.", motion: "Hover angkat layer 4px dengan shadow lebih tebal. Klik tekan ke dalam tumpukan." },
+        prompt: "Build a storytelling site in Paper Cut style. Stacked paper sections with 0 4px 0px hard shadows, alternating rotation 0.5deg. Paper tones: white, cream, mint, peach, lavender. Torn edges via clip-path. Polaroid image frames. Slab serif headlines, serif body, handwritten cursive accents. Hover lifts layer with thicker shadow."
+      },
+      {
+        id: 27, title: "Sci-Fi HUD / FUI Dashboard",
+        desc: "Tactical wireframe, circular gauges, radar sweeps",
+        path: "previews/27-sci-fi-hud.html",
+        avoid: "solid fill cards, rounded corners > 2px, drop shadows, gradients, sans-serif fonts, neon pink/purple, decorative illustrations.",
+        guide: { key: "Wireframe aesthetic — 1px lines only, no fills, corner bracket borders.", typo: "Share Tech Mono or Rajdhani exclusively, 10px labels, 14px data, 24-32px readouts.", motion: "Radar sweep 4s rotation, slot-machine number refresh, targeting reticle follows mouse." },
+        prompt: "Build a tactical HUD dashboard. Dark #020408, teal #00D4AA, amber #FF9500, red #FF3333. Wireframe containers (no fills). SVG circular gauges, radar scan, corner brackets. Monospaced data readouts. Targeting reticle follows mouse. 3-column layout: data stream, reticle viewport, system logs. Scrolling amber ticker."
+      },
+      {
+        id: 28, title: "Steampunk / Victorian Interface",
+        desc: "Brass gears, leather texture, rivets, parchment",
+        path: "previews/28-steampunk.html",
+        avoid: "neon colors, sans-serif fonts, flat colors without texture, sharp 90-degree corners on main panels, modern minimalism, border-radius > 8px.",
+        guide: { key: "Material realistis: kuningan gradien, kulit jahitan, perkamen, paku keling sudut.", typo: "Cinzel small-caps untuk judul, Cormorant Garamond serif untuk body.", motion: "Gear berotasi 60s penuh, tuas toggle dengan spring, rotary dial mengikuti drag." },
+        prompt: "Build a steampunk settings panel. Brass gradient, leather with stitched border, parchment background, rivets at corners. SVG decorative gears rotating slowly (60s). Rotary dial, toggle lever. Cinzel headings, Cormorant Garamond body. Ornate dividers with flourishes."
+      },
+      {
+        id: 29, title: "Dark Academia Scholarly Site",
+        desc: "Deep brown, emerald, gold, serif, library feel",
+        path: "previews/29-dark-academia.html",
+        avoid: "sans-serif fonts, bright colors, animations beyond fade, cards with shadows, border-radius on images, multiple columns, social media icons.",
+        guide: { key: "Latar coklat hangat #2C1810, aksen emas #C9A961, tekstur perkamen.", typo: "Playfair Display serif untuk judul, Georgia body 17px line-height 1.8, drop caps emas.", motion: "Fade in sangat lambat (1.2s) tanpa pergerakan scroll. Hover link ke warna emas." },
+        prompt: "Build a scholarly blog in Dark Academia style. Deep brown #2C1810, antique gold #C9A961, parchment #F5F0E8. Single column reading (max 680px). Playfair Display headings, Georgia body. Gold drop caps. Ornamental fleuron dividers. 15vw margins. Slow fade-in only, no scroll animations."
+      },
+      {
+        id: 30, title: "Deconstructivist Typography",
+        desc: "Split fragments, broken grid, avant-garde layout",
+        path: "previews/30-deconstructivist.html",
+        avoid: "clean grids, centered symmetry, consistent font usage, polite whitespace, predictable hover effects, rounded corners, soft shadows.",
+        guide: { key: "Grid sengaja rusak, teks terpotong, alignment berbeda tiap baris judul.", typo: "Oswald 100px+ untuk shout words, Times New Roman body, Courier meta.", motion: "Parallax kecepatan berbeda ekstrem, muncul dari arah acak." },
+        prompt: "Build an avant-garde magazine layout in Deconstructivist style. Split headlines with different alignments per line. Images overlap text. Text rotated at extreme angles. Mix 3+ fonts. Clipped containers. Industrial palette with one blood red accent. Parallax at varying speeds. Random-direction entrance."
+      },
+      {
+        id: 31, title: "Lo-Fi / Anime Aesthetic",
+        desc: "Pastel soft, grain texture, rounded, city pop",
+        path: "previews/31-lo-fi-anime.html",
+        avoid: "dark mode, sharp corners, neon colors, heavy shadows, aggressive animations, serif fonts, dense layouts, technical/machine aesthetics.",
+        guide: { key: "Gradien pastel lembut, grain film overlay, semua rounded-3xl minimum.", typo: "Nunito/Quicksand rounded friendly, aksen Jepang (美しい, 夢).", motion: "Equalizer bars animasi, background hue-shift 30s, hover scale(1.1) + glow." },
+        prompt: "Build a lo-fi music player in Anime Aesthetic. Pastel gradient background (pink-blue-lavender) with film grain. Rounded-3xl everywhere. Cassette tape CSS art. Equalizer bars. Floating clouds/stars. Horizontal playlist scroll. Vinyl record with spiral groove. Slow hue-shift animation. Japanese text accents."
+      },
+      {
+        id: 32, title: "Constructivism / Propaganda Poster",
+        desc: "Diagonal composition, red-black-yellow, bold rules",
+        path: "previews/32-constructivism.html",
+        avoid: "rounded corners, soft shadows, pastel colors, serif fonts, centered symmetry, polite spacing, gradients, organic shapes.",
+        guide: { key: "Komposisi diagonal 15-30°, merah #CC0000 dominan, foto klip lingkaran.", typo: "Bebas Neue/Oswald uppercase 4-8rem, body Arial/Helvetica 14px hitam di off-white.", motion: "Elemen slide diagonal, CTA invert merah-kuning, bintang merah rotasi 60s." },
+        prompt: "Build a social cause landing page in Constructivism style. Diagonal composition at 20-30 degrees. Red #CC0000, Black, Yellow #FFD700, Off-white #F5F5F5 only. Bold rules at sharp angles. Photomontage with geometric clipping. Large star motif. Headlines rotated. Elements slide from diagonal directions."
+      },
+      // ========== V4: Batch 4 — 33-42 ==========
+      {
+        id: 33, title: "Art Nouveau / Jugendstil Brand",
+        desc: "Whiplash curves, floral ornaments, moss & gold palette",
+        path: "previews/33-art-nouveau.html",
+        avoid: "straight 90-degree corners on frames, sans-serif fonts, bright saturated colors, grid systems without organic curves, modern minimalism, geometric shapes.",
+        guide: { key: "Garis organik whiplash, motif flora, initial cap emas 5rem, border lengkung.", typo: "Cormorant Garamond serif dengan swash, body Sorts Mill Goudy 17px.", motion: "Elemen floral tumbuh via stroke-dashoffset, gold underline draw from center." },
+        prompt: "Build an artisanal brand site in Art Nouveau style. Organic whiplash borders, floral SVG motifs, decorative initial caps. Palette: moss green #4A6741, antique gold #C9A961, dusty rose #C4A4A4, cream #F5F0E6, deep brown #3E2723. Cormorant Garamond headings, Sorts Mill Goudy body. Hover: gold underline draws from center outward."
+      },
+      {
+        id: 34, title: "Raw Brutalist Web",
+        desc: "Monospace system fonts, exposed grid, zero polish",
+        path: "previews/34-raw-brutalist.html",
+        avoid: "any custom fonts, border-radius, gradients, shadows, animations beyond instant swap, images except pixel-perfect, flexbox centering.",
+        guide: { key: "System monospace murni, border 1px hitam, grid terekspos, zero border-radius.", typo: "Courier/Courier New 14px untuk SEMUA teks, heading bold+larger.", motion: "Hover instant color swap, 0ms transition — no smooth." },
+        prompt: "Build a portfolio in Raw Brutalist Web style. System monospace only. Colors: black, white, blue #0000EE, red, gray. Zero border-radius, shadows, gradients. Tables with visible borders. <hr> dividers. Hover: instant 0ms color swap. Links always underlined."
+      },
+      {
+        id: 35, title: "Miami Vice / Tropical Deco",
+        desc: "Sunset gradients, palm silhouettes, art deco geometry",
+        path: "previews/35-miami-vice.html",
+        avoid: "dark mode only (must have sunset warmth), sharp 90-degree corners on main containers, sans-serif heavy fonts, generic hotel stock photos.",
+        guide: { key: "Sunset gradient coral-teal-navy, palm SVG silhouettes, art deco sunburst.", typo: "Poiret One thin geometric uppercase, letter-spacing 0.25em, Quicksand body.", motion: "Palm sway rotate 6s infinite, card hover coral to gold 400ms." },
+        prompt: "Build a resort booking site in Miami Vice Tropical Deco style. Sunset gradient background (#FF6B9D→#FFA07A→#4ECDC4→#1A3A52). Palm silhouettes, art deco sunburst. Palette: coral, orange, teal, navy, gold. Poiret One headings. Stepped ziggurat borders. Palm sway animation."
+      },
+      {
+        id: 36, title: "Cottagecore / Fairycore Diary",
+        desc: "Soft sage & blush, floral pattern, lace borders",
+        path: "previews/36-cottagecore.html",
+        avoid: "neon/bright colors, sans-serif fonts for headlines, dark mode, geometric sharp borders, dense layouts, modern minimalism.",
+        guide: { key: "Sage #E8F3E8 bg, cream paper cards, lace border, floral corner.", typo: "Cormorant Garamond headline, Caveat handwritten, Literata body 16px line-height 1.9.", motion: "Hover thumbtack rotate 10deg, butterfly float, wavy underline." },
+        prompt: "Build a personal blog in Cottagecore style. Soft sage background, cream paper cards, lace borders, SVG floral motifs. Dusty rose accents, handwritten Caveat font. Torn-bottom clip-path cards with thumbtacks. Wavy underline links. Butterfly float animation on load."
+      },
+      {
+        id: 37, title: "Comic Book / Pop Art Spread",
+        desc: "Panel borders, halftone dots, speech bubbles, bold outlines",
+        path: "previews/37-comic-pop-art.html",
+        avoid: "gradients, soft shadows, serif fonts, muted colors, minimal whitespace (should be dense), rounded corners on all panels.",
+        guide: { key: "Panel grid border 4px hitam, halftone dots, speech bubble CSS tail, speed lines.", typo: "Bangers bold uppercase irregular, Comic Neue body, SFX in starburst.", motion: "Panel flip-in rotateY 90→0deg staggered, SFX jiggle on hover." },
+        prompt: "Build a creative agency site in Comic Book style. Panel grid with thick black borders. Halftone radial-gradient texture. Speed lines, speech bubbles. Palette: red #E63946, blue #0077B6, yellow #FFD60A, black, white. Bangers headlines. Sound effects in starburst shapes."
+      },
+      {
+        id: 38, title: "NASA Technical / Mission Control",
+        desc: "Engineering grid, coral/teal, mission control feel",
+        path: "previews/38-nasa-technical.html",
+        avoid: "rounded corners > 2px, sans-serif non-condensed fonts, gradients, shadows, neon colors, decorative illustrations.",
+        guide: { key: "Engineering grid paper #F5F5F0, callout CAUTION boxes, ruler ticks.", typo: "Roboto Condensed ALL text, 10px labels uppercase tracking-widest.", motion: "Timeline draggable scrubber, slot-machine number roll." },
+        prompt: "Build a mission status dashboard in NASA Technical style. Engineering grid paper bg. Callout boxes with CAUTION labels. Palette: coral #E85D4E, teal #006D77. Roboto Condensed. T-minus timeline with scrubber. Crosshair overlay. Data tables with visible borders."
+      },
+      {
+        id: 39, title: "Psychedelic 60s Poster",
+        desc: "Rainbow gradients, wavy text, paisley, concert vibe",
+        path: "previews/39-psychedelic-60s.html",
+        avoid: "straight lines, sharp corners, muted colors, sans-serif geometric fonts, minimal whitespace, dark mode without rainbow.",
+        guide: { key: "Rainbow conic-gradient slowly rotating, paisley motifs, wavy SVG textPath.", typo: "Shrikhand/Lobster rounded bold, Courier Prime body, rainbow bg-clip-text.", motion: "Bg rotation speed proportional to scroll, wobble skewX oscillate." },
+        prompt: "Build a music festival page in Psychedelic 60s style. Rotating rainbow conic-gradient background. Wavy SVG textPath headlines. Paisley motifs. Palette: full rainbow spectrum. Shrikhand headings, Courier body. Flower power motifs. Wobble animation on hover."
+      },
+      {
+        id: 40, title: "Monochrome Editorial",
+        desc: "Black & white only, high-contrast, fashion lookbook",
+        path: "previews/40-monochrome-editorial.html",
+        avoid: "any color other than black/white, border-radius, shadows, gradients, serif body text, centered symmetry, soft transitions.",
+        guide: { key: "HANYA #000 dan #FFF, zero gray, kontras murni dari shape.", typo: "Didot/Bodoni 4-8rem uppercase, Helvetica Now body 14px.", motion: "Hard cut instant load, clip-path wipe reveal, hover invert filter." },
+        prompt: "Build a fashion lookbook in strict Monochrome style. ONLY black #000 and white #FFF. Zero gray, zero shadows, zero gradients. High-contrast B&W images with filter. Didot headings 4-8rem. Inverted sections. Hover invert(1) on images. Clip-path wipe reveals on scroll."
+      },
+      {
+        id: 41, title: "Sticky Note / Cork Board",
+        desc: "Post-it notes, pushpins, cork texture, Kanban",
+        path: "previews/41-sticky-note-board.html",
+        avoid: "sans-serif fonts for note content, flat colors without texture, perfect alignment, dark mode, glassmorphism, minimalism.",
+        guide: { key: "Cork texture #C4A77D, sticky notes warna post-it, pushpin SVG, string connections.", typo: "Permanent Marker/Caveat handwritten 18px, Courier label 11px.", motion: "Drag lift rotate 0deg scale 1.05, new note peel animation." },
+        prompt: "Build a Kanban dashboard in Cork Board style. Cork texture background. Post-it notes with rotation, pushpin SVGs, string connections. Colors: yellow #FFF740, pink #FF65A3, blue #7AF5F5, green #C7F464, orange #FFA500. Permanent Marker handwritten. 4 lanes: TODO, DOING, DONE, IDEAS."
+      },
+      {
+        id: 42, title: "Gothic Horror / Victorian Macabre",
+        desc: "Dark ornate, blood drip, blackletter, candle-lit",
+        path: "previews/42-gothic-horror.html",
+        avoid: "sans-serif fonts, bright colors, rounded corners, modern minimalism, fast bouncy animations, white backgrounds, clean geometric shapes.",
+        guide: { key: "Dark #0A0A0F, cobweb texture, thorn border, candle flicker, blood drip.", typo: "UnifrakturMaguntia blackletter 3-5rem gold, Cormorant Garamond body 16px.", motion: "Candle flicker random opacity, typewriter 30ms/char, hover blood glow." },
+        prompt: "Build a dark fantasy site in Gothic Victorian style. Dark #0A0A0F with cobweb texture. Thorn/vine ornate borders. Blood drip animation. Candle flicker. Palette: blood red #4A0000, gold #8B7355. UnifrakturMaguntia blackletter headings. Typewriter text reveal. Gold baroque frames."
+      },
+      {
+        id: 43, title: "Architectural Blueprint / Cyano-Draft",
+        desc: "Technical blueprint grid, cyanotype draft, drafting aesthetic",
+        path: "previews/43-architectural-blueprint.html",
+        avoid: "organic shapes, warm photo textures, rounded playful corners, neon glow, decorative illustrations, soft pastel palettes, clutter without grid logic.",
+        guide: { key: "Cyanotype blue #1B3A5C base, white drafting lines, ISO grid paper, dimension ticks, title-block cartouche.", typo: "Space Mono / JetBrains Mono technical labels, Archivo/Inter headings, uppercase tracking-widest.", motion: "Animated dimension lines draw-on, grid parallax 0.04x, blueprint reveal wipe, hover component highlight." },
+        prompt: "Build an architectural blueprint / cyano-draft UI. Cyanotype blue #1B3A5C base with white drafting line work, ISO grid paper background, dimension tick marks and a title-block cartouche. Mono technical labels (Space Mono / JetBrains Mono), uppercase tracking-widest. Animated dimension lines that draw on, grid parallax, blueprint reveal wipe transitions. Components highlight on hover like selected drawing elements."
+      },
+      {
+        id: 44, title: "GEO·METRIC — Abstract Bauhaus System",
+        desc: "Bauhaus geometric abstraction, isometric cubes, vertex morph",
+        path: "previews/44-geo-metric-bauhaus.html",
+        avoid: "organic shapes, arabesque ornament, religious motifs, warm gold palettes, serif scripts, cluttered textures, curved borders.",
+        guide: { key: "Monolith slate #0F172A, cyan #06B6D4, hard offset 4px shadow, dot grid patterns, isometric clip paths.", typo: "Space Grotesk 700 uppercase tracking-tighter headings, Inter 400 body.", motion: "Vertex morph cycle 8 clip-path shapes, geometric parallax 0.03-0.12x speed, click ripple, modal scale 0.9→1." },
+        prompt: "Build a pure abstract geometric interface inspired by Bauhaus and constructivist design. 4 themes: Monolith (slate/indigo), Crystal (white/sky/blue), Jade (emerald/teal), Terra (terracotta/sand). Hard offset shadows 4px 4px 0px, 2px solid borders, isometric cube clip-paths, hexagonal tiling. Space Grotesk uppercase headings. Interactive vertex morph panel cycling 8 geometric shapes. Dot grid backgrounds, 0ms transitions with mechanical press active states."
+      },
+      {
+        id: 45, title: "Sen-Suiga — Zen Ink Wash UI",
+        desc: "Japanese sumi-e brush stroke, enso circle, kakejiku scroll",
+        path: "previews/45-sen-suga-ink-wash.html",
+        avoid: "bright colors, symmetrical layouts, heavy shadows, rounded cards, gradient backgrounds, decorative icons, UI skeletons.",
+        guide: { key: "Warm sumi ink, 5-level ink grading, red seal #C84030, enso circle, brush stroke gradient border, paper noise texture.", typo: "Noto Serif JP 900 headings, Zen Kaku Gothic New 300 body, Yuji Boku hand-painted accent.", motion: "Ensō drift rotation 15s, ink drop splatter animation, kakejiku scroll open/close, stamp seal random animation, tea ceremony steps." },
+        prompt: "Build a Japanese sumi-e ink wash Zen UI. 4 themes: Sumi (dark ink), Washi (light paper), Gindama (silver mist), Kurenai (crimson). 5-level sumi ink grading (#100-#500). Enso circle SVG with offset incomplete ring. Red seal stamp that animates on click. Kakejiku scroll quote with open/close toggle. Ink drop effect on button click. Tea ceremony 3-step interactive guide. Noto Serif JP serif headings. Paper texture SVG noise overlay."
+      },
+      {
+        id: 46, title: "AERO·FLIGHT — Glass Cockpit System",
+        desc: "Next-gen flight deck, real-time PFD instruments, autopilot",
+        path: "previews/46-aero-flight-system.html",
+        avoid: "galaxy/cosmic themes, sci-fi aesthetics, fantasy elements, round gauges without tapes, unrealistic aviation data.",
+        guide: { key: "Glass cockpit #0A0E1A, cyan HUD #00FF88, amber warning #FF6600, SVG artificial horizon, canvas weather radar.", typo: "JetBrains Mono 700 all instruments, Inter 500 UI labels, Space Grotesk 800 display.", motion: "60fps instrument needles at 50ms interval, autopilot mode toggle active state, weather radar sweep, checklist progress bar, altitude counter animation." },
+        prompt: "Build a next-generation glass cockpit flight system. GA-892 CGK→DPS→SYD, FL370, Mach 0.84. Real-time PFD with SVG artificial horizon showing pitch/roll. Airspeed tape color-coded arc, altitude tape with altitude bug. 6 flight instruments all live-animated: altimeter needle, airspeed arc, compass heading, VSI bounce, attitude indicator, turn coordinator. Autopilot panel: HDG/ALT/VS/SPD/NAV/APR/BC/LAND. Canvas weather radar with sweep and precipitation. 9-phase interactive checklist 33 items. COM1/COM2 with frequency swap. 4 themes: Day, Night, Storm, Test."
+      },
+      {
+        id: 47, title: "CloudForge — Industrial Data Center",
+        desc: "Cold metal, frosted glass, server metrics, system event log",
+        path: "previews/47-cloudforge-industrial.html",
+        avoid: "warm colors, organic shapes, rounded everything, playful fonts, animated backgrounds, decorative illustrations.",
+        guide: { key: "Dark #070A0F, cyan #06B6D4, blue #3B82F6, frosted metal panels, grid overlay 40px, scan-line 8s.", typo: "JetBrains Mono 500 labels 0.7rem, Inter 800 headings 2-3.2rem.", motion: "Scan line 8s linear infinite, status pulse 2s, health bar animate on scroll, live UTC clock per 1s, log entries per 4s." },
+        prompt: "Build an industrial data center interface with cold frosted metal aesthetic. Void #070A0F base with cyan #06B6D4 and blue #3B82F6. Server rack unit grid with metric cards. Health bar nodes with IntersectionObserver fill animation. Live system event log with real-time timestamps every 4s. Scan line animation top-to-bottom. Rack hover tooltip with hardware specs. 2 themes: Dark Metal, White Frost. JetBrains Mono for all data/metric text."
+      },
+      {
+        id: 48, title: "Bioluminescent Deep Sea / Abyssal",
+        desc: "Abyssal trench, glowing bioluminescence, deep-sea creature UI",
+        path: "previews/48-bioluminescent-deep-sea.html",
+        avoid: "bright daylight palettes, hard neon without glow falloff, flat 2D depth, warm tropical colors, sharp high-contrast UI skeletons, fast snappy transitions.",
+        guide: { key: "Abyss black #02060C with bioluminescent cyan #3DF5FF, magenta #FF5FD2, glow halos, particle plankton, depth vignette.", typo: "Syne / Space Grotesk display, Inter body, glow text-shadow readouts.", motion: "Slow drifting bioluminescent particles, pulsing glow 4s, depth parallax 0.02-0.1x, creature reveal fade from dark." },
+        prompt: "Build a bioluminescent deep-sea trench interface. Abyss black #02060C base with glowing cyan #3DF5FF and magenta #FF5FD2 bioluminescence, soft glow halos, drifting plankton particles. Depth vignette and slow parallax. Syne display headings with glow text-shadow. Pulsing glow animations, creature reveals fading in from the dark. Ocean-pressure readouts in mono."
+      },
+      {
+        id: 49, title: "8-Bit Pixel RPG Interface",
+        desc: "Retro NES/SNES aesthetic, pixel buttons, stat bars, inventory",
+        path: "previews/49-pixel-8bit-rpg.html",
+        avoid: "anti-aliased fonts, smooth curves, gradients, modern cards, system fonts, rounded corners, subtle shadows, vector icons.",
+        guide: { key: "Dark blue #0F0E1A, gold #E8B840, orange #F0A050, 3px multi-layer pixel border, CRT scanline overlay.", typo: "Press Start 2P 0.45-0.7rem headings, VT323 monospace 1.1rem body.", motion: "Button press squish 0.1s, stat bar fill 0.5s, inventory hover glow 0.2s, typewriter 30-80ms/char randomized, blinking cursor 0.6s." },
+        prompt: "Build an 8-bit pixel art RPG interface inspired by NES/SNES games. 4 palettes: Night, Day, GameBoy, GBC. 16px grid background, CRT scanline overlay toggleable. 3D press button physics (top displacement on active). 4 RPG stat bars (HP/MP/XP/STR) with shimmer fill. 4x2 inventory grid with equip/unequip toggle. NPC dialog box with typewriter effect and blinking cursor. 3 quest log entries expandable. Press Start 2P pixel font primary, VT323 for body."
+      },
+      {
+        id: 50, title: "SOLAR·PUNK — Biophilic Living Architecture",
+        desc: "Solar heliostat arc dial, algae photobioreactors, biosphere metrics, biophilic glasshouse",
+        path: "previews/50-solarpunk-utopia.html",
+        avoid: "dark dystopian cyberpunk aesthetics, rusty metal grime, harsh sharp neon, industrial bleakness, cold void blacks.",
+        guide: { key: "Warm solar cream #FAF9F0, chlorophyll leaf green #15803D, sun amber #F59E0B, biophilic frosted glass cards.", typo: "Outfit 800 headings, Lora serif body, JetBrains Mono 500 metrics.", motion: "Interactive heliostat sun tracker slider (06:00 to 18:00) adjusting daylight solar flux and canopy shading in real time, nutrient bio-mist dispersion simulator, pollen canvas." },
+        prompt: "Build an eco-futuristic living architecture interface in Solarpunk Biophilic style. 4 sustainable palettes: Solar Canopy, Greenhouse Dawn, Biophilic Night, Terracotta Haven. Floating sun pollen particle canvas with directional sunbeam light shafts. Interactive heliostat solar arc dial cycling daylight from dawn 06:00 to dusk 18:00, calculating real-time solar flux (W/m²) and canopy shading (%). Living algae bioreactor and moss insulation flora modules with progress metrics. Biosphere air purity (AQI) and O2 synthesis monitor."
+      },
+      {
+        id: 51, title: "Risograph / Duotone Print Archive",
+        desc: "Tactile zine publisher, misregistration offset, soy ink duotone",
+        path: "previews/51-risograph.html",
+        avoid: "smooth gradients, drop shadows, border-radius > 4px, sans-serif fonts, perfect alignment, more than 3 colors, high-res photography without duotone treatment.",
+        guide: { key: "Paper warm off-white #FDF6E3, fluo orange #FF6B35, teal #006D77, cyan/magenta misregistration offset 2-3px, SVG feTurbulence grain noise 0.12, ink bleed.", typo: "Space Mono 700 uppercase headings clamp(2rem, 6vw, 5rem), Courier Prime 14px body line-height 1.7, captions 10px uppercase tracking-widest.", motion: "Hover roller slip misregistration to 5px, stamp-in jitter -0.5deg to 0.5deg on load, ink smear duplicate slide 4px on button hover." },
+        prompt: "Build an independent publisher / zine archive site in Risograph Print style. 4 theme palettes: Fluo Orange/Teal/Yellow, Hot Pink/Blue/Cream, Acid Lime/Purple, Vermilion/Cobalt. Duotone filter processing, cyan/magenta misregistration offset layers, SVG grain noise overlay. Visible crop marks and color registration circles. Zine issue grid with modal detail. Ink smear button interaction."
+      },
+      {
+        id: 52, title: "Isometric Perspective Grid",
+        desc: "Axonometric 3D SaaS features, diamond floor grid, extruded blocks",
+        path: "previews/52-isometric-grid.html",
+        avoid: "flat horizontal layouts, vertical stacking without rotation, rounded corners on main blocks (keep sharp or 2px max), sans-serif-only without consideration of isometric readability, real photographs without isometric masking.",
+        guide: { key: "Floor #F1F5F9 with diamond 30deg grid lines #CBD5E1, extruded 3D blocks (top/front/right faces), directional 30deg ambient drop shadows, coral CTA #FF6B6B.", typo: "Plus Jakarta Sans 700-800 headings sitting flat on isometric plane, 14px body max-width 40ch, JetBrains Mono labels on side faces.", motion: "Block hover lift translateZ(25px) with shadow lengthening 200ms, click press down, camera orbit left/right tilt adjustment, stage pulse animation." },
+        prompt: "Build a product showcase / SaaS features page in Isometric Perspective style. 4 theme palettes: Pastel Mint, Cyber Matrix, Warm Clay, Blueprint CAD. 3x3 isometric feature blocks using rotateX(60deg) rotateZ(-45deg), extruded depth faces, diamond grid floor. Interactive telemetry inspector, camera orbit tilt controls, and elevated module states."
+      },
+      {
+        id: 53, title: "Scientific Journal / Nature Publication",
+        desc: "Academic two-column layout, figure captions, justified serif, citations",
+        path: "previews/53-scientific-journal.html",
+        avoid: "sans-serif headlines, single-column layout, card-based design, rounded corners, drop shadows, bright colors beyond royal blue, social media icons in color, generic SaaS illustrations.",
+        guide: { key: "Warm paper #FAFAFA, text near-black #1A1A1A, royal blue #2563EB accent for links/figures, 1px rules #D1D5DB, figure boxes 1px border with Fig. 1. captions.", typo: "Source Serif 4 / Merriweather 600 headings 2-3.5rem, justified body text 15.5px line-height 1.75, Inter 11px captions/abstract small caps.", motion: "Figure zoom on hover (scale 1.02) + border darken, inline citation tooltip on hover showing full literature reference, running header section tracking." },
+        prompt: "Build a research publication / data journalism site in Academic Journal style. 4 theme palettes: Nature Standard, Dark Archives, Oxford Classic, Technical Monograph. 55%/40% two-column reading grid, justified body text, figure boxes with Fig 1. italic captions, abstract block, inline citation hover tooltips, and PDF download cover preview."
+      },
+      {
+        id: 54, title: "Wayfinding / Transit Signage System",
+        desc: "Universal transit symbols, high-contrast zone bands, split-flap board",
+        path: "previews/54-transit-signage.html",
+        avoid: "serif fonts, gradients, shadows, border-radius > 4px, decorative illustrations, muted/pastel colors, card elevations, more than 4 functional colors, small body text.",
+        guide: { key: "High contrast WCAG AAA: Blue #0055FF (info), Green #00AA44 (go), Yellow #FFCC00 (warning), Red #DD0000 (stop), thick 8-12px colored zone top borders.", typo: "Inter / Humanist sans 500-900, massive headlines 48-72px, large body text 18-20px line-height 1.4 max-width 45ch, JetBrains Mono ticker.", motion: "Route card hover arrow slide 8px right with tint background shift, split-flap departure board live ticker, 0ms mechanical line filter switches." },
+        prompt: "Build a transit app / airport wayfinding signage interface. 4 theme palettes: Metro White, Dark Tunnel, Tokyo Rail, Airport Spec. Universal geometric iconography, functional color-coded line strips (Lines 1-4), live split-flap departure ticker, and 45°/90° schematic rapid transit interchange map."
+      },
+      {
+        id: 55, title: "Thermal Imaging / Infrared Scientific",
+        desc: "FLIR radiometric heat spectrum, noise scanline, crosshair tracking",
+        path: "previews/55-thermal-imaging.html",
+        avoid: "sans-serif non-mono fonts, rounded corners > 4px, gradients outside thermal spectrum, shadows, light mode, decorative elements, pastel colors, card-based layouts.",
+        guide: { key: "Thermal gradient spectrum: deep blue #000033 → cool #0066CC → neutral #00FF66 → warm #FFCC00 → hot #FF0000 → white-hot #FFFFFF, dark void #080A10, scan noise.", typo: "JetBrains Mono 400-800 technical readout style, tabular-nums data values 24-48px shifting color by temperature, uppercase tracking-widest green labels.", motion: "Mouse-following crosshair with live X/Y and radiometric spot temperature readout, temperature scale vertical meter, thermal surge simulation, PiP camera scan." },
+        prompt: "Build a climate / industrial environmental data dashboard in Thermal Imaging style. 4 radiometric palettes: FLIR Classic, Ironbow, Rainbow High-Contrast, White-Hot. Real-time canvas thermal gradient heat bloom nodes, dynamic crosshair coordinate readout, temperature scale bar, threshold alarm trigger, and PiP optic scan."
+      },
+      {
+        id: 56, title: "Medieval Illuminated Manuscript",
+        desc: "Gold leaf shimmer, intertwining vine borders, ornate drop cap, marginalia",
+        path: "previews/56-medieval-manuscript.html",
+        avoid: "sans-serif fonts, modern geometric shapes, neon colors, border-radius on main container, shadows, minimalism, fast animations.",
+        guide: { key: "Vellum parchment #F4E8D0 with edge aging, gold leaf #D4AF37 with shifting shimmer gradient animation, intertwining green vine #2D5016 SVG borders, marginalia beasts.", typo: "Cinzel 700-900 rubrication, Cormorant Garamond 700 headlines, EB Garamond 18px body line-height 1.85, 4-line ornate illuminated blue/gold drop cap.", motion: "Gold leaf shimmer continuous 6s gradient shift, marginalia hover scale 1.2x with Latin-style tooltip ('Hic draco dormit'), folio chapter page turner." },
+        prompt: "Build an illuminated article reader in Medieval Manuscript style. 4 scriptorium palettes: Vellum Gold, Royal Lapis, Dark Script, Florilegium. Parchment texture with vignette aging, gold leaf shimmer effect, SVG intertwining vine borders, ornate drop cap, humorous marginalia creatures with Latin tooltips, and folio navigation."
+      },
+      {
+        id: 57, title: "Sports Analytics Broadcast",
+        desc: "Lower thirds clip-path, live score bug, comparison stat bars, ticker",
+        path: "previews/57-sports-analytics.html",
+        avoid: "serif fonts, pastel colors, rounded corners > 4px, shadows, light mode, minimal whitespace, slow animations.",
+        guide: { key: "Dark panel #121218, ticker #001F3F, accent yellow #FFCC00, team primary/secondary colors (Red #C8102E vs Blue #0033A0), angled clip-path lower third banner.", typo: "Bebas Neue / Oswald bold uppercase headings 3-6rem, Roboto Condensed 48-72px tabular-nums stats, uppercase tracking-widest labels 12px.", motion: "Simulate Goal event with 300ms screen shake and lower-third banner flash, animated horizontal comparison stat bars, live bottom scrolling news ticker with hover pause." },
+        prompt: "Build a sports analytics broadcast graphics interface. 4 match themes: Red vs Blue, Neon Stadium, Emerald vs Gold, Cyber League. Angled lower-third player spotlight banner, floating match score bug with live timer, comparison possession/shot bars, big stat counter boxes, and real-time timeline event stream."
+      },
+      {
+        id: 58, title: "Op Art / Optical Illusion",
+        desc: "CSS Moiré interference, vibrating complementary borders, afterimage",
+        path: "previews/58-op-art.html",
+        avoid: "soft colors, rounded corners, shadows, gradients, serif fonts, photographic images without pattern overlay, calm/slow animations.",
+        guide: { key: "High contrast complementary pairs: Black #000000 + White #FFFFFF, Red #FF0000 + Cyan #00FFFF, Blue + Yellow, Green + Magenta, pure CSS repeating gradients, moiré rotational offset.", typo: "Inter 900 heavy uppercase headlines with chromatic vibration text-shadow, JetBrains Mono 10px uppercase buttons.", motion: "Dual-layer rotational moiré interference animation 20s, concentric rings kinetic pulse, 5-second stare dot test with instant retinal afterimage white flash." },
+        prompt: "Build an interactive optical illusion gallery in Op Art style inspired by Bridget Riley. 4 complementary color pairs: B&W Monochrome, Red-Cyan Buzz, Blue-Yellow, Green-Magenta. Rotational CSS moiré hero banner, kinetic pulse & checker warp cards, vibrating striped borders, and interactive 5-second retinal afterimage experiment."
+      },
+      {
+        id: 59, title: "Analog Recording Studio / Tape Deck",
+        desc: "Rotating dual tape reels, bouncing analog VU meters, brushed metal, wood",
+        path: "previews/59-analog-tape-deck.html",
+        avoid: "flat colors without texture, neon accents, glassmorphism, sans-serif for labels, rounded buttons (keep rectangular), digital perfection.",
+        guide: { key: "Walnut wood veneer #5C381E to #3A2312, brushed aluminum faceplate gradient, dark brown magnetic tape #5C3218, amber LEDs #F59E0B, vintage VU meter green/red zones.", typo: "Oswald 700 uppercase engraved mechanical button labels, JetBrains Mono 800 odometer tape counter, DIN style tracking-widest labels.", motion: "Play/Stop rotating dual tape reels with spoke animation, real-time bouncing physics needle VU meters, mechanical click active states, tape counter indexing." },
+        prompt: "Build a vintage analog audio mastering console in Tape Deck style. 4 chassis themes: Walnut Classic, 1978 Blackface, Silver Master, Teak Sunset. Dual rotating supply/take-up reels, twin Channel L/R needle VU meters that bounce with audio signal, mechanical transport buttons (Play/Stop/Rec/Rew/FF), input faders, and odometer tape counter."
+      },
+      {
+        id: 60, title: "Folk Art / Naive Primitive",
+        desc: "Hand-drawn wavy borders, earthy mixed paint, naive folklore motifs",
+        path: "previews/60-folk-art.html",
+        avoid: "geometric perfection, gradients, shadows, sans-serif geometric fonts, border-radius consistency, photographic realism, modern minimalism, centered symmetry everywhere.",
+        guide: { key: "Earthy primary palette: Barn Red #B85450, Mustard #D4A017, Forest Green #2D5016, Denim Blue #3D5A80, Cream #F5F5DC, Sepia #3E2723 ink outlines, wavy organic borders.", typo: "Amatic SC 700 display headlines with multi-color letter styling, Patrick Hand 19px handwritten body line-height 1.6.", motion: "Wiggle hover effect on hand-drawn story cards, spinning decorative folk sun with triangular rays, rolling green hill layers, and organic button press bounce." },
+        prompt: "Build a community heritage storytelling site in Folk Art / Naive style. 4 earthy palettes: Nordic Barn, Talavera, Slavic Forest, Night Market. Organic asymmetrical border-radius containers, multi-colored Amatic SC display titles, decorative sun and rolling hill layers, naive animal/cabin story cards, and playful hand-drawn hover interactions."
+      },
+      {
+        id: 61, title: "Prismatic Holographic",
+        desc: "Iridescent foil, spectral gradient, chromatic glass surfaces",
+        path: "previews/61-prismatic-holographic.html",
+        avoid: "flat matte surfaces, single-hue palettes, hard drop shadows, dark-only backgrounds without spectral accents, slow static gradients.",
+        guide: { key: "Deep void #050409 with blurred spectral radial blobs (cyan/violet/magenta), glass panels backdrop-blur 24px saturate 180%, chromatic RGB-split borders.", typo: "Syne 800 display headings, Inter 400-600 body, gradient text-flow animation.", motion: "Breathing holographic background 10s, flowing gradient text 8s, chromatic border glow on hover with translateY lift." },
+        prompt: "Build a prismatic holographic UI in refactored style. Deep space void #050409 base with blurred spectral radial gradients (cyan #00F0FF, violet #B026FF, magenta #FF4DCD, amber #FFB347, mint #6CFF9B) breathing 10s. Glass panels with backdrop-blur(24px) saturate(180%) and SVG noise overlay. Chromatic-split borders using inset white + offset cyan/magenta box-shadows. Gradient-flow headline text (linear-gradient 300% with 8s animation). Syne 800 display font, Inter body. Hover: chromatic glow + translateY(-2px)."
+      }
+    ];
