@@ -64,6 +64,10 @@
     .preset-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;font-size:.7rem;font-weight:600;color:var(--text);transition:.15s;text-align:center}
     .preset-btn:hover{border-color:var(--a1);background:rgba(var(--a1r),.05)}
     .preset-btn .pbc{display:block;font-size:.55rem;color:var(--dim);margin-top:2px;font-family:'JetBrains Mono',monospace}
+    .palette-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
+    .swatch{height:66px;border-radius:8px;position:relative;border:1px solid var(--border);overflow:hidden}
+    .swatch span{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#fff;mix-blend-mode:difference}
+    .palette-css{margin-top:10px;background:#0b0f1c;color:#9fb3c8;font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:12px 14px;border-radius:8px;border:1px solid var(--border);white-space:pre-wrap;line-height:1.5}
     .fusion-footer{text-align:center;padding:24px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--dim)}
     @media(max-width:720px){.preview-panels{grid-template-columns:1fr}.picker-row{flex-direction:column;align-items:center}}
   </style>
@@ -100,7 +104,7 @@
     <div class="sec-head">
       <div><span class="sec-label"><i class="fas fa-cubes"></i> Step 1 · Select Two Styles</span><h2 class="sec-title">Choose A + B</h2></div>
       <div style="display:flex;gap:12px;align-items:center;">
-        <button id="btnRandomize" class="badge copy-btn" style="position:static;background:rgba(var(--a1r),.1);color:var(--a1);border-color:rgba(var(--a1r),.25);cursor:pointer;transition:all 0.2s;" onclick="randomizeFusion()"><i class="fas fa-dice"></i> Surprise Me!</button>
+        <button id="btnRandomize" class="badge copy-btn" style="position:static;background:rgba(var(--a1r),.1);color:var(--a1);border-color:rgba(var(--a1r),.25);cursor:pointer;transition:all 0.2s;" onclick="randomizeFusion()"><i class="fas fa-dice"></i> Randomize Combine</button>
         <span class="badge" id="fusion-count">61 styles</span>
       </div>
     </div>
@@ -155,6 +159,16 @@
       <div><span class="sec-label"><i class="fas fa-star"></i> Preset Fusions</span><h2 class="sec-title">Quick Combinations</h2></div>
     </div>
     <div class="preset-grid" id="presetGrid"></div>
+    <div class="sec-head" style="margin-top:20px">
+      <div><span class="sec-label"><i class="fas fa-palette"></i> Step 5 · Fusion Palette</span><h2 class="sec-title">Random Palette Fusion</h2></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="badge copy-btn" onclick="copyPalette()" style="position:static"><i class="far fa-copy"></i> Copy CSS Vars</button>
+      </div>
+    </div>
+    <div class="palette-row" id="paletteRow"></div>
+    <pre class="palette-css" id="paletteCSS">:root{
+  /* pilih dua gaya untuk generate palet fusion */
+}</pre>
   </section>
 
   <!-- SECTION 5: FOOTER -->
@@ -166,6 +180,7 @@
       <button class="thbtn" onclick="setTheme('sea')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-droplet"></i> Sea</button>
       <button class="thbtn" onclick="setTheme('rose')" style="width:auto;padding:4px 12px;font-size:.6rem;border-radius:9999px;"><i class="fas fa-heart"></i> Rose</button>
     </div>
+    <div style="margin:14px 0 4px"><a href="experiments/spatial-worlds.html" style="color:var(--a1);font-family:'JetBrains Mono',monospace;font-size:.65rem;text-decoration:none;border:1px solid var(--a1);padding:8px 16px;border-radius:9999px;display:inline-block;transition:.2s">✦ Coba Pengalaman: 10 Dunia Spasial (Bonhomme-style) →</a></div>
     ATELIER FUSION SYSTEM // UI PLAYGROUND BETA // 61 STYLES // 2026
   </footer>
 </div>
@@ -341,6 +356,16 @@ Key Characteristics to inject as accents/modifiers:
 - Keep the design highly dynamic, rich, and "WOW" at first glance.`;
 }
 
+function hslToHex(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12;const a=s*Math.min(l,1-l);const f=n=>{const c=l-a*Math.max(-1,Math.min(k(n)-3,9-k(n),1));return Math.round(255*c).toString(16).padStart(2,'0')};return '#'+f(0)+f(8)+f(4);}
+function hexToRgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+function rgbToHex(r){return '#'+r.map(x=>Math.round(Math.max(0,Math.min(255,x))).toString(16).padStart(2,'0')).join('');}
+function blend(c1,c2,t){const a=hexToRgb(c1),b=hexToRgb(c2);return rgbToHex([0,1,2].map(i=>a[i]+(b[i]-a[i])*t));}
+function darken(h,k){const r=hexToRgb(h);return rgbToHex(r.map(v=>v*k));}
+function stylePalette(s){const src=(s.key||'')+' '+(s.title||'');const m=[...src.matchAll(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}\b/g)].map(x=>x[0].toUpperCase());const uniq=[...new Set(m)];if(uniq.length>=3)return uniq.slice(0,6);const h=(s.id*53)%360;return [0,1,2,3,4,5].map(i=>hslToHex((h+i*32)%360,55+(i%2)*25,28+(i%3)*14));}
+function genPalette(a,b,r){const pa=stylePalette(a),pb=stylePalette(b),t=r/100;const pick=(arr,i)=>arr[((i%arr.length)+arr.length)%arr.length];const sw=[0,1,2,3,4,5].map(i=>blend(pick(pa,i),pick(pb,i),t));const bg=darken(blend(pick(pa,0),pick(pb,0),t),0.16);return {sw,bg};}
+function renderPalette(a,b,r){const row=document.getElementById('paletteRow');if(!row||!a||!b)return;const {sw,bg}=genPalette(a,b,r);row.innerHTML=sw.map(c=>`<div class="swatch" style="background:${c}"><span>${c}</span></div>`).join('');document.getElementById('paletteCSS').textContent=`:root{\n  --fusion-bg:${bg};\n  --fusion-1:${sw[0]};\n  --fusion-2:${sw[1]};\n  --fusion-3:${sw[2]};\n  --fusion-4:${sw[3]};\n  --fusion-5:${sw[4]};\n  --fusion-6:${sw[5]};\n}`;}
+window.copyPalette=function(){const t=document.getElementById('paletteCSS').textContent;if(navigator.clipboard)navigator.clipboard.writeText(t);};
+
 function updateFusion(){
   const idA=parseInt(selA.value),idB=parseInt(selB.value);
   const sA=getStyle(idA),sB=getStyle(idB),r=parseInt(rSlider.value);
@@ -354,6 +379,7 @@ function updateFusion(){
   nmBadge.textContent=n;
   fusionBadge.textContent=sA&&sB?'#'+String(sA.id).padStart(2,'0')+' × #'+String(sB.id).padStart(2,'0')+' · '+n:'—';
   fusionPrompt.value=genPrompt(sA,sB,r);
+  renderPalette(sA,sB,r);
 }
 
 function loadPreset(p){selA.value=p.a;selB.value=p.b;updateFusion();}

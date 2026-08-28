@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>10 Dunia Spasial — Bonhomme Tribute · UI Playground</title>
+<style>
+  :root{
+    --bg:#05060a; --ink:#e9edf5; --dim:#7c869c; --line:rgba(233,237,245,.12);
+    --accent:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:'Space Grotesk',Inter,'JetBrains Mono',system-ui,sans-serif;overflow:hidden}
+  #scene{position:fixed;inset:0;z-index:0;display:block}
+  .ui{position:fixed;z-index:5;pointer-events:none}
+  .ui a,.ui button{pointer-events:auto}
+
+  /* cursor */
+  #cursor{position:fixed;width:9px;height:9px;border-radius:50%;background:var(--accent);
+    mix-blend-mode:difference;z-index:99;transform:translate(-50%,-50%);pointer-events:none;
+    transition:width .2s,height .2s;box-shadow:0 0 0 1px rgba(255,255,255,.4)}
+  #cursor.big{width:34px;height:34px}
+
+  /* intro */
+  #intro{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:22px;text-align:center;
+    background:radial-gradient(circle at 50% 40%,rgba(20,24,40,.6),rgba(5,6,10,.96));
+    backdrop-filter:blur(4px);transition:opacity .8s ease}
+  #intro h1{font-size:clamp(28px,6vw,68px);font-weight:800;letter-spacing:-.02em}
+  #intro p{max-width:520px;color:var(--dim);line-height:1.6;font-size:.95rem;padding:0 24px}
+  #enter{margin-top:6px;padding:14px 34px;border-radius:9999px;border:1px solid var(--line);
+    background:transparent;color:var(--ink);font-size:.9rem;letter-spacing:.04em;cursor:pointer;
+    transition:.25s}
+  #enter:hover{background:var(--ink);color:var(--bg)}
+  .credit{position:absolute;bottom:22px;font-family:'JetBrains Mono',monospace;font-size:.6rem;
+    color:var(--dim);letter-spacing:.1em}
+
+  /* hud top-left */
+  #hud{top:22px;left:24px}
+  #hud .num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);
+    letter-spacing:.25em}
+  #hud .nm{font-size:clamp(20px,3vw,34px);font-weight:700;margin-top:2px}
+
+  /* world map top-right */
+  #map{top:22px;right:24px;display:grid;grid-template-columns:repeat(5,30px);gap:7px;
+    pointer-events:auto}
+  #map button{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);
+    background:rgba(255,255,255,.03);color:var(--dim);font-family:'JetBrains Mono',monospace;
+    font-size:.6rem;cursor:pointer;transition:.2s;position:relative}
+  #map button:hover{border-color:var(--accent);color:var(--ink)}
+  #map button.on{background:var(--accent);color:#05060a;border-color:var(--accent)}
+
+  /* content panel bottom-left */
+  #panel{bottom:26px;left:24px;max-width:min(440px,72vw);
+    border-left:2px solid var(--accent);padding:14px 0 14px 18px;
+    transition:opacity .5s ease, transform .5s ease}
+  #panel .v{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.3em;
+    color:var(--accent);text-transform:uppercase}
+  #panel .d{margin-top:8px;color:#cdd4e2;line-height:1.55;font-size:.92rem}
+  #panel.hide{opacity:0;transform:translateY(12px)}
+
+  /* hint bottom-right */
+  #hint{bottom:26px;right:24px;font-family:'JetBrains Mono',monospace;font-size:.6rem;
+    color:var(--dim);text-align:right;line-height:1.8}
+  #hint b{color:var(--ink);font-weight:600}
+  .backlink{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:6;
+    font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim);
+    text-decoration:none;border:1px solid var(--line);padding:8px 16px;border-radius:9999px;
+    transition:.2s}
+  .backlink:hover{color:var(--ink);border-color:var(--accent)}
+  @media(max-width:640px){#map{grid-template-columns:repeat(5,26px);gap:5px}
+    #map button{width:26px;height:26px}#hint{display:none}}
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div id="cursor"></div>
+
+<div id="intro">
+  <h1>10 Dunia Spasial</h1>
+  <p>Satu aplikasi WebGL yang berkelanjutan. Bukan 10 halaman — melainkan 10 dunia yang
+     kau terbang masuki dari dalam dunia yang sama. Scroll, drag, dan klik untuk menjelajah.</p>
+  <button id="enter">Masuki Dunia →</button>
+  <div class="credit">INSPIRASI · BONHOMME 10 ANS × BRUNO SIMON · UI PLAYGROUND BETA</div>
+</div>
+
+<div class="ui" id="hud">
+  <div class="num" id="hudNum"># 01 / 10</div>
+  <div class="nm" id="hudName">RUANG</div>
+</div>
+
+<div class="ui" id="map"></div>
+
+<div class="ui" id="panel">
+  <div class="v" id="pValue">Kemanusiaan</div>
+  <div class="d" id="pDesc">Setiap tamu adalah cerita.</div>
+</div>
+
+<div class="ui" id="hint">
+  <div><b>DRAG</b> memutar kamera</div>
+  <div><b>CLICK</b> dunia &rarr; terbang</div>
+  <div><b>1–9 / 0</b> pilih dunia</div>
+</div>
+
+<a class="backlink" href="../atelier-fusion-system.html">← Kembali ke Fusion Engine</a>
+
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  if(typeof THREE==="undefined"){document.getElementById("intro").innerHTML="<p>Three.js gagal dimuat (perlu koneksi).</p>";return;}
+
+  // ---- 10 WORLDS (Bonhomme 10 values, reinterpreted) ----
+  const WORLDS=[
+    {n:"01",name:"RUANG",sub:"ROOM",value:"Kemanusiaan",accent:0xff6b6b,geo:0,
+     desc:"Setiap tamu adalah sebuah cerita. Kami merancang ruang agar orang merasa dipersilakan, bukan dilayani."},
+    {n:"02",name:"MESIN",sub:"MACHINE",value:"Ketelitian",accent:0x4dabf7,geo:1,
+     desc:"Detail adalah bentuk hormat. Presisi kecil di awal menentukan kepercayaan di akhir."},
+    {n:"03",name:"TAMAN",sub:"GARDEN",value:"Alam",accent:0x51cf66,geo:2,
+     desc:"Kami meminjam dari alam, bukan mengalahkannya. Pertumbuhan lambat adalah desain yang jujur."},
+    {n:"04",name:"ARSIP",sub:"ARCHIVE",value:"Memori",accent:0xffd43b,geo:3,
+     desc:"Masa lalu bukan begunan, melainkan bahan baku. Warisan dibaca ulang, bukan sekadar dipajang."},
+    {n:"05",name:"GERBANG",sub:"PORTAL",value:"Keberanian",accent:0xcc5de8,geo:4,
+     desc:"Masuk ke yang asing membutuhkan nyali. Kami membangun gerbang, bukan pagar."},
+    {n:"06",name:"LAB",sub:"LAB",value:"Rasa Ingin",accent:0x22b8cf,geo:5,
+     desc:"Eksperimen adalah bahasa kami. Gagal dengan cepat, lalu belajar lebih cepat lagi."},
+    {n:"07",name:"STASIUN",sub:"STATION",value:"Koneksi",accent:0xff922b,geo:6,
+     desc:"Orang bertemu, ide berpindah. Kami merancang persimpangan, bukan sekadar tujuan."},
+    {n:"08",name:"KEKOSONGAN",sub:"VOID",value:"Ketenangan",accent:0x868e96,geo:7,
+     desc:"Sunyi adalah fitur. Ruang kosong memberi napas agar yang penting akhirnya terdengar."},
+    {n:"09",name:"KOTA",sub:"CITY",value:"Budaya",accent:0xf783ac,geo:8,
+     desc:"Keragaman adalah kekuatan. Satu dunia, banyak suara yang saling menyapa."},
+    {n:"10",name:"PUNCAK",sub:"FINAL",value:"Visi",accent:0xffe066,geo:9,
+     desc:"Sepuluh nilai, satu arah. Ini bukan akhir, melainkan pandangan ke depan."}
+  ];
+
+  const GEOS=[
+    ()=>new THREE.TorusKnotGeometry(3.2,1.0,140,18),
+    ()=>new THREE.IcosahedronGeometry(4.2,0),
+    ()=>new THREE.OctahedronGeometry(4.4,0),
+    ()=>new THREE.DodecahedronGeometry(4.2,0),
+    ()=>new THREE.TorusGeometry(3.4,1.2,24,80),
+    ()=>new THREE.SphereGeometry(4.0,48,48),
+    ()=>new THREE.BoxGeometry(6,6,6,4,4,4),
+    ()=>new THREE.ConeGeometry(4.2,7,7),
+    ()=>new THREE.CylinderGeometry(3.4,3.4,7,24,3),
+    ()=>new THREE.TetrahedronGeometry(5.2,0)
+  ];
+
+  // ---- SCENE ----
+  const canvas=document.getElementById("scene");
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+
+  const scene=new THREE.Scene();
+  const baseBg=new THREE.Color(0x05060a);
+  scene.background=baseBg.clone();
+  scene.fog=new THREE.FogExp2(0x05060a,0.012);
+
+  const camera=new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,0.1,400);
+  camera.position.set(0,6,30);
+
+  const controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;controls.dampingFactor=0.08;
+  controls.enablePan=false;controls.minDistance=10;controls.maxDistance=120;
+  controls.enabled=false;
+
+  // lights
+  scene.add(new THREE.AmbientLight(0xffffff,0.35));
+  const key=new THREE.DirectionalLight(0xffffff,0.8);key.position.set(20,30,20);scene.add(key);
+  const camLight=new THREE.PointLight(0xffffff,0.6,200);scene.add(camLight);
+
+  // starfield
+  (function(){
+    const g=new THREE.BufferGeometry();const N=1400;const p=new Float32Array(N*3);
+    for(let i=0;i<N*3;i++)p[i]=(Math.random()-0.5)*340;
+    g.setAttribute("position",new THREE.BufferAttribute(p,3));
+    const m=new THREE.PointsMaterial({color:0x9fb3c8,size:0.5,transparent:true,opacity:0.5});
+    scene.add(new THREE.Points(g,m));
+  })();
+
+  // ---- BUILD WORLDS on a fibonacci sphere ----
+  const R=62;
+  function fib(i,total){
+    const phi=Math.acos(1-2*(i+0.5)/total);
+    const theta=Math.PI*(1+Math.sqrt(5))*i;
+    return new THREE.Vector3(
+      R*Math.sin(phi)*Math.cos(theta),
+      R*Math.cos(phi)*0.7,
+      R*Math.sin(phi)*Math.sin(theta)
+    );
+  }
+  const groups=[];
+  const pickables=[];
+  WORLDS.forEach((w,i)=>{
+    const pos=fib(i,WORLDS.length);
+    const grp=new THREE.Group();grp.position.copy(pos);
+    const accent=new THREE.Color(w.accent);
+    const mat=new THREE.MeshStandardMaterial({
+      color:0x0c0f18,metalness:0.35,roughness:0.35,
+      emissive:accent,emissiveIntensity:0.18,flatShading:true
+    });
+    const core=new THREE.Mesh(GEOS[w.geo](),mat);
+    core.userData.world=i;grp.add(core);pickables.push(core);
+    // wireframe shell
+    const shell=new THREE.Mesh(GEOS[w.geo](),
+      new THREE.MeshBasicMaterial({color:accent,wireframe:true,transparent:true,opacity:0.25}));
+    shell.scale.setScalar(1.18);shell.userData.world=i;grp.add(shell);pickables.push(shell);
+    // orbiting satellites
+    const sats=[];
+    const satN=4+ (i%3);
+    for(let s=0;s<satN;s++){
+      const sm=new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.7+Math.random()*0.5,0),
+        new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:0.5,metalness:0.2,roughness:0.5})
+      );
+      const a=Math.random()*Math.PI*2,rad=7+Math.random()*3;
+      sm.userData={a,rad,sp:0.2+Math.random()*0.4,y:(Math.random()-0.5)*8};
+      grp.add(sm);sats.push(sm);
+    }
+    grp.userData={sats,core,accent,base:pos.clone()};
+    // label sprite
+    grp.add(makeLabel(w));
+    scene.add(grp);groups.push(grp);
+  });
+
+  function makeLabel(w){
+    const c=document.createElement("canvas");c.width=512;c.height=128;
+    const x=c.getContext("2d");
+    x.fillStyle="rgba(0,0,0,0)";x.fillRect(0,0,512,128);
+    x.font="700 56px 'Space Grotesk',sans-serif";
+    x.fillStyle="#e9edf5";x.textAlign="center";x.textBaseline="middle";
+    x.fillText("#"+w.n+"  "+w.name,256,64);
+    const tex=new THREE.CanvasTexture(c);
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+    sp.scale.set(20,5,1);sp.position.set(0,9,0);
+    return sp;
+  }
+
+  // ---- STATE MACHINE ----
+  const state={current:0,target:null,transitioning:false};
+  const lookAt=new THREE.Vector3().copy(groups[0].position);
+  controls.target.copy(lookAt);
+
+  function camOffsetFor(i){
+    const p=groups[i].position.clone();
+    return p.clone().add(p.clone().normalize().multiplyScalar(-20)).add(new THREE.Vector3(0,6,0));
+  }
+
+  function travel(i){
+    if(state.transitioning||i===state.current||i<0||i>=WORLDS.length)return;
+    state.transitioning=true;state.target=i;
+    panel.classList.add("hide");
+    const dest=groups[i].position.clone();
+    const camTo=camOffsetFor(i);
+    controls.enabled=false;
+    const tint=new THREE.Color(WORLDS[i].accent).multiplyScalar(0.10);
+    gsap.to(camera.position,{x:camTo.x,y:camTo.y,z:camTo.z,duration:1.7,ease:"power3.inOut"});
+    gsap.to(controls.target,{x:dest.x,y:dest.y,z:dest.z,duration:1.7,ease:"power3.inOut",
+      onUpdate:()=>{}, onComplete:()=>{
+        state.current=i;state.target=null;state.transitioning=false;controls.enabled=true;
+        updateHUD();panel.classList.remove("hide");
+      }});
+    gsap.to(scene.background,{r:tint.r,g:tint.g,b:tint.b,duration:1.7,ease:"power2.inOut"});
+    gsap.to(scene.fog,{density:(i===7?0.02:0.012),duration:1.7});
+    highlightMap();
+  }
+
+  function updateHUD(){
+    const w=WORLDS[state.current];
+    document.getElementById("hudNum").textContent="# "+w.n+" / 10";
+    document.getElementById("hudName").textContent=w.name;
+    document.getElementById("pValue").textContent=w.value;
+    document.getElementById("pDesc").textContent=w.desc;
+    document.documentElement.style.setProperty("--accent","#"+new THREE.Color(w.accent).getHexString());
+  }
+
+  // ---- WORLD MAP UI ----
+  const mapEl=document.getElementById("map");
+  WORLDS.forEach((w,i)=>{
+    const b=document.createElement("button");
+    b.textContent=w.n;b.title=w.name;
+    b.onclick=()=>travel(i);
+    mapEl.appendChild(b);
+  });
+  function highlightMap(){
+    [...mapEl.children].forEach((b,i)=>b.classList.toggle("on",i===state.current));
+  }
+
+  // ---- RAYCAST CLICK ----
+  const ray=new THREE.Raycaster();const mouse=new THREE.Vector2();
+  let downXY=null;
+  renderer.domElement.addEventListener("pointerdown",e=>{downXY=[e.clientX,e.clientY];});
+  renderer.domElement.addEventListener("pointerup",e=>{
+    if(!downXY)return;
+    const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);
+    downXY=null;if(moved>6)return; // was a drag
+    mouse.x=(e.clientX/window.innerWidth)*2-1;
+    mouse.y=-(e.clientY/window.innerHeight)*2+1;
+    ray.setFromCamera(mouse,camera);
+    const hit=ray.intersectObjects(pickables,false)[0];
+    if(hit&&hit.object.userData.world!=null)travel(hit.object.userData.world);
+  });
+
+  // keyboard
+  window.addEventListener("keydown",e=>{
+    if(e.key>="1"&&e.key<="9")travel(parseInt(e.key)-1);
+    else if(e.key==="0")travel(9);
+  });
+
+  // cursor
+  const cur=document.getElementById("cursor");
+  window.addEventListener("pointermove",e=>{
+    cur.style.left=e.clientX+"px";cur.style.top=e.clientY+"px";
+    mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-(e.clientY/window.innerHeight)*2+1;
+    ray.setFromCamera(mouse,camera);
+    cur.classList.toggle("big",ray.intersectObjects(pickables,false).length>0);
+  });
+
+  // ---- RENDER LOOP ----
+  const clock=new THREE.Clock();
+  function tick(){
+    const t=clock.getElapsedTime();
+    groups.forEach((g,i)=>{
+      g.userData.core.rotation.y+=0.0035;g.userData.core.rotation.x+=0.0012;
+      g.userData.sats.forEach(s=>{
+        s.userData.a+=s.userData.sp*0.01;
+        s.position.set(Math.cos(s.userData.a)*s.userData.rad,
+          s.userData.y+Math.sin(t*0.6+s.userData.a)*1.4,
+          Math.sin(s.userData.a)*s.userData.rad);
+        s.rotation.x+=0.02;s.rotation.y+=0.03;
+      });
+    });
+    camLight.position.copy(camera.position);
+    controls.update();
+    renderer.render(scene,camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // ---- INTRO ----
+  const intro=document.getElementById("intro");
+  document.getElementById("enter").onclick=()=>{
+    gsap.to(intro,{opacity:0,duration:0.8,onComplete:()=>intro.style.display="none"});
+    updateHUD();highlightMap();
+    const camTo=camOffsetFor(0);
+    camera.position.copy(camTo.clone().add(new THREE.Vector3(0,30,40)));
+    gsap.to(camera.position,{x:camTo.x,y:camTo.y,z:camTo.z,duration:2.2,ease:"power3.out",
+      onComplete:()=>{controls.enabled=true;}});
+    panel.classList.remove("hide");
+  };
+
+  // resize
+  window.addEventListener("resize",()=>{
+    camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight);
+  });
+
+  const panel=document.getElementById("panel");
+})();
+</script>
+</body>
+</html>
