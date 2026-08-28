@@ -202,16 +202,27 @@
     50% { transform: translateY(8px); opacity: 1; }
   }
 
-  /* Card Stacking Item Container */
+  /* Fixed 3D Cycle / Wheel Stage */
+  .cycle-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    perspective: 1600px;
+    perspective-origin: 50% 44%;
+    pointer-events: none;
+  }
+
   .stack-item {
-    position: sticky;
-    top: 10vh;
-    min-height: 90vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 24px;
-    perspective: 1200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--card-w);
+    height: var(--card-h);
+    margin-left: calc(var(--card-w) / -2);
+    margin-top: calc(var(--card-h) / -2);
+    transform-style: preserve-3d;
+    pointer-events: none;
+    will-change: transform, opacity;
   }
 
   .card-wrap {
@@ -232,6 +243,7 @@
     background: #0a0c13;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
     cursor: pointer;
+    pointer-events: auto;
     transform-origin: center center;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
   }
@@ -520,24 +532,11 @@
   </nav>
 </header>
 
-<!-- Main Gallery Stack -->
-<main id="gallery">
-  
-  <!-- 00. Cover Hero Card -->
-  <section class="hero-wrapper">
-    <div class="hero-cover">
-      <span class="meta-tag" style="margin-bottom: 24px;">BONHOMME SPATIAL ARCHITECTURE</span>
-      <h1>61 STYLES<br/>UNIVERSE</h1>
-      <div class="sub">IMMERSIVE UI PLAYGROUND · BETA</div>
-      <div class="scrollhint">
-        <span>SCROLL TO DISCOVER</span>
-        <span>↓</span>
-      </div>
-    </div>
-  </section>
+<!-- Scroll spacer drives the wheel; cards live in the fixed cycle stage -->
+<main id="gallery"></main>
 
-  <!-- 01..61 Cards dynamically injected by JavaScript -->
-</main>
+<!-- Fixed 3D Cycle / Wheel Stage -->
+<div class="cycle-stage" id="cycleStage"></div>
 
 <!-- Fullscreen Zoom Portal Modal (Bonhomme 10 ans pattern) -->
 <div class="zoom-portal" id="zoomPortal" aria-modal="true" role="dialog">
@@ -567,6 +566,7 @@
   const STYLES = window.STYLES;
   const totalStyles = STYLES.length;
   const gallery = document.getElementById("gallery");
+  const cycleStage = document.getElementById("cycleStage");
   const zoomPortal = document.getElementById("zoomPortal");
   const portalViewport = document.getElementById("portalViewport");
   const portalFrame = document.getElementById("portalFrame");
@@ -625,7 +625,7 @@
       </div>
     `;
 
-    gallery.appendChild(stackItem);
+    cycleStage.appendChild(stackItem);
 
     // Click handler for Zoom-In transition
     const cardStage = stackItem.querySelector(".card-stage");
@@ -635,77 +635,76 @@
     });
   });
 
-  // Scroll-driven depth parallax + iframe recycling.
-  // Sticky stacking keeps every card in the DOM; without recycling, all 61 iframes
-  // stay live and the page gets heavier the further you scroll. We keep only a
-  // ~3-deep window of iframes alive and give sunk-behind cards a deck cascade.
-  const wrapEls = stackItems.map(it => it.querySelector('.card-wrap'));
-  const frameEls = stackItems.map(it => it.querySelector('.prev-frame'));
-  const itemTops = new Array(stackItems.length);
-  const itemH = new Array(stackItems.length);
-  function measureStack() {
-    const sy = window.scrollY || document.documentElement.scrollTop;
-    stackItems.forEach((it, i) => {
-      const r = it.getBoundingClientRect();
-      itemTops[i] = r.top + sy;
-      itemH[i] = it.offsetHeight || r.height;
-    });
-  }
-  measureStack();
+  // ============================================================
+  // 3D CYCLE / WHEEL  (Bonhomme-style vertical carousel)
+  // Each card is positioned by its circular offset from the active index.
+  //   rel = 0  -> front / center (full size, clickable)
+  //   rel > 0  -> rises toward the top, then swings to the BACK
+  //   rel < 0  -> comes up from the BOTTOM
+  // Beyond ~3 it fades out and wraps -> a continuous wheel/cycle.
+  // ============================================================
+  const stackItems = Array.from(document.querySelectorAll(".stack-item"));
+  const N = stackItems.length;
+  const RING = stackItems.map(it => ({
+    wrap: it.querySelector('.card-wrap'),
+    frame: it.querySelector('.prev-frame'),
+    stage: it.querySelector('.card-stage'),
+    accent: it.dataset.accent,
+    id: it.dataset.id
+  }));
+
+  const STEP = 72; // px of scroll per one card step
+  function setSpacer() { gallery.style.height = (N * STEP + window.innerHeight) + "px"; }
+  setSpacer();
 
   let ticking = false;
-  function refreshStack() {
+  function layoutWheel() {
     const sy = window.scrollY || document.documentElement.scrollTop;
-    for (let i = 0; i < stackItems.length; i++) {
-      const prog = (sy - itemTops[i]) / (itemH[i] || 1); // ~0 active, >0 sunk behind, <0 upcoming
-      const wrap = wrapEls[i];
-      if (!wrap) continue;
-      if (prog <= 0.05) {
-        wrap.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
-        wrap.style.opacity = '1';
-      } else {
-        const d = Math.min(prog, 6);
-        const ty = -d * 16;                       // peek upward -> fanned deck
-        const sc = Math.max(1 - d * 0.045, 0.7);  // shrink with depth
-        const op = Math.max(1 - d * 0.14, 0.22);  // fade with depth
-        wrap.style.transform = `translateY(${ty}px) scale(${sc}) rotateX(2deg)`;
-        wrap.style.opacity = op.toString();
+    const pos = sy / STEP;
+    const active = Math.round(pos);
+    for (let i = 0; i < N; i++) {
+      let rel = pos - i;                 // scroll down -> cards move up & to the back
+      rel = ((rel % N) + N) % N;         // circular wrap
+      if (rel > N / 2) rel -= N;         // rel in (-N/2, N/2]
+      const cd = RING[i];
+      const wrap = cd.wrap;
+      if (Math.abs(rel) > 3.2) {
+        wrap.style.opacity = "0";
+        cd.stage.style.pointerEvents = "none";
+        if (cd.frame.getAttribute("src")) cd.frame.removeAttribute("src");
+        continue;
       }
-      // recycle: keep only ~1 ahead .. 3 behind live; drop the rest (the "cycle")
-      const frame = frameEls[i];
-      if (frame) {
-        if (prog > -1.2 && prog < 3.2) {
-          if (!frame.getAttribute('src')) frame.setAttribute('src', frame.dataset.src);
-        } else if (frame.getAttribute('src')) {
-          frame.removeAttribute('src');
-        }
+      const theta = rel * 32;            // degrees around the wheel
+      const rad = theta * Math.PI / 180;
+      const R = 360;
+      const y = -R * Math.sin(rad);      // +rel -> up,  -rel -> down
+      const z = R * Math.cos(rad) - R;   // +rel -> behind,  front sits at z=0
+      const tx = rel * 26;               // sideways perspective shift
+      const sc = 1 - Math.abs(rel) * 0.07;
+      const op = Math.max(1 - Math.abs(rel) * 0.3, 0);
+      wrap.style.transform =
+        `translateX(${tx}px) translateY(${y.toFixed(1)}px) translateZ(${z.toFixed(1)}px) rotateX(${theta.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+      wrap.style.opacity = op.toString();
+      wrap.style.zIndex = String(2000 - Math.round(Math.abs(rel) * 100));
+      cd.stage.style.pointerEvents = (Math.abs(rel) < 0.6) ? "auto" : "none";
+      // recycle: only keep the front few iframes alive
+      if (Math.abs(rel) < 2.4) {
+        if (!cd.frame.getAttribute("src")) cd.frame.setAttribute("src", cd.frame.dataset.src);
+      } else if (cd.frame.getAttribute("src")) {
+        cd.frame.removeAttribute("src");
       }
     }
+    const a = ((active % N) + N) % N;
+    progressPill.textContent = `${String(RING[a].id).padStart(2, '0')} / ${String(totalStyles - 1).padStart(2, '0')}`;
+    document.documentElement.style.setProperty("--accent", RING[a].accent);
+    if (brandSeal) brandSeal.style.backgroundColor = RING[a].accent;
     ticking = false;
   }
-  window.addEventListener('scroll', () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(refreshStack); }
+  window.addEventListener("scroll", () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(layoutWheel); }
   }, { passive: true });
-  window.addEventListener('resize', () => { measureStack(); refreshStack(); });
-  refreshStack();
-
-  // Progress & Seal accent tracker on scroll
-  const stackItems = Array.from(document.querySelectorAll(".stack-item"));
-  const progressObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.dataset.id;
-        const accent = entry.target.dataset.accent;
-        progressPill.textContent = `${String(id).padStart(2, '0')} / ${String(totalStyles - 1).padStart(2, '0')}`;
-        if (accent) {
-          document.documentElement.style.setProperty("--accent", accent);
-          if (brandSeal) brandSeal.style.backgroundColor = accent;
-        }
-      }
-    });
-  }, { rootMargin: "-40% 0px -40% 0px" });
-
-  stackItems.forEach(item => progressObserver.observe(item));
+  window.addEventListener("resize", () => { setSpacer(); layoutWheel(); });
+  layoutWheel();
 
   // ============================================================
   // ZOOM-IN / ZOOM-OUT PORTAL ENGINE (BONHOMME SEAMLESS DIVE)
