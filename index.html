@@ -43,31 +43,22 @@
   .stage{perspective:1300px;width:min(940px,92vw)}
   .meta{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-left:4px}
   .meta .num{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);font-weight:700;letter-spacing:.15em}
-  .meta .tag{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.25em;
-    border:1px solid var(--line);padding:3px 9px;border-radius:9999px}
-  .card{transform:rotateX(7deg);transition:transform .45s cubic-bezier(.16,1,.3,1);
-    border:1px solid var(--line);border-radius:20px;overflow:hidden;
-    box-shadow:0 40px 90px rgba(0,0,0,.55);cursor:pointer;background:#0b0e16}
+  .meta .tag{max-width:62vw;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.25em;
+    border:1px solid var(--line);padding:3px 9px;border-radius:9999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card{height:min(60vh,560px);border-radius:20px;overflow:hidden;border:1px solid var(--line);
+    box-shadow:0 40px 90px rgba(0,0,0,.55);cursor:pointer;background:#0b0e16;position:relative;
+    transform:rotateX(4deg);transition:transform .45s cubic-bezier(.16,1,.3,1)}
   .card:hover{transform:rotateX(0deg) translateY(-8px)}
-  .mock-top{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
-  .mock-top .dot{width:9px;height:9px;border-radius:50%;background:#3a4156}
-  .mock-top .dot:first-child{background:#ff5f57}.mock-top .dot:nth-child(2){background:#febc2e}.mock-top .dot:nth-child(3){background:#28c840}
-  .mock-title{margin-left:10px;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim)}
-  .mock-body{position:relative;padding:40px 36px 46px;min-height:340px;
-    background:linear-gradient(135deg,var(--accent2),var(--accent));overflow:hidden}
-  .mock-body::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 80% 0%,rgba(255,255,255,.18),transparent 60%),linear-gradient(0deg,rgba(4,5,9,.55),rgba(4,5,9,.05))}
-  .mock-nav{position:relative;z-index:2;display:flex;gap:8px;margin-bottom:26px}
-  .mock-nav span{height:9px;width:46px;border-radius:9999px;background:rgba(255,255,255,.5)}
-  .mock-nav span:first-child{width:70px;background:#fff}
-  .mock-hero{position:relative;z-index:2;max-width:560px}
-  .mock-hero h2{font-size:clamp(26px,4.4vw,46px);font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.02}
-  .mock-hero p{margin-top:10px;color:rgba(255,255,255,.82);font-size:.92rem;max-width:440px}
-  .enter{margin-top:22px;pointer-events:auto;cursor:pointer;border:0;background:#fff;color:#0a0c12;
+  .prev{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b0e16}
+  .live-badge{position:absolute;top:12px;right:14px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:.55rem;
+    letter-spacing:.2em;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.25);
+    padding:3px 8px;border-radius:9999px}
+  .frame-overlay{position:absolute;inset:0;z-index:2;cursor:pointer;display:flex;align-items:flex-end;
+    padding:18px 20px;background:linear-gradient(0deg,rgba(4,5,9,.62),transparent 50%)}
+  .enter{pointer-events:auto;cursor:pointer;border:0;background:#fff;color:#0a0c12;
     font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;padding:11px 20px;border-radius:9999px;
     transition:transform .2s,box-shadow .2s}
   .enter:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
-  .mock-cards{position:relative;z-index:2;display:flex;gap:12px;margin-top:30px}
-  .mock-cards i{flex:1;height:74px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);display:block}
 
   .reader{position:fixed;inset:0;z-index:60;background:rgba(3,4,8,.94);display:none}
   .reader.open{display:block}
@@ -154,20 +145,23 @@
     page.innerHTML=
       '<div class="stage">'+
         '<div class="meta"><span class="num">#'+String(s.id).padStart(2,'0')+'</span>'+
-        '<span class="tag">UI Style</span></div>'+
+        '<span class="tag">'+s.title+'</span></div>'+
         '<div class="card" data-path="'+s.path+'">'+
-          '<div class="mock-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span>'+
-          '<span class="mock-title">'+s.title+'</span></div>'+
-          '<div class="mock-body"><nav class="mock-nav"><span></span><span></span><span></span><span></span></nav>'+
-          '<div class="mock-hero"><h2>'+s.title+'</h2><p>'+s.desc+'</p>'+
-          '<button class="enter">Masuk ke UI →</button></div>'+
-          '<div class="mock-cards"><i></i><i></i><i></i></div></div>'+
+          '<iframe class="prev" data-src="'+s.path+'" title="'+s.title+'" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>'+
+          '<span class="live-badge">LIVE PREVIEW</span>'+
+          '<div class="frame-overlay" data-path="'+s.path+'"><button class="enter">Masuk ke UI →</button></div>'+
         '</div>'+
       '</div>';
     gallery.appendChild(page);
-    page.querySelector('.enter').addEventListener('click',(e)=>{e.stopPropagation();openReader(s.path);});
-    page.querySelector('.card').addEventListener('click',()=>openReader(s.path));
+    page.querySelector('.frame-overlay').addEventListener('click',()=>openReader(s.path));
   });
+
+  // lazy-load the REAL preview only as it approaches the viewport
+  const lazyIO=new IntersectionObserver((es)=>{
+    es.forEach(en=>{const fr=en.target.querySelector('.prev');if(!fr)return;
+      if(en.isIntersecting&&!fr.getAttribute('src'))fr.setAttribute('src',fr.dataset.src);});
+  },{rootMargin:'1000px 0px'});
+  gallery.querySelectorAll('.page').forEach(p=>lazyIO.observe(p));
 
   // ---- reader (enter UI) ----
   const reader=document.getElementById('reader'),rframe=document.getElementById('rframe');

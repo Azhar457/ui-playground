@@ -21,7 +21,7 @@ function walk(dir) {
 
 function extractRefs(html) {
   const refs = [];
-  const re = /(?:href|src)="([^"]+)"/g;
+  const re = /(?<!-)(?:href|src)="([^"]+)"/g;
   let m;
   while ((m = re.exec(html))) refs.push(m[1]);
   return refs;
