@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault Command Center — azhar457</title>
+  
+  <!-- Anti-Flash Theme Script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('vault-command-center-theme') || 'cyberpunk';
+        if (t !== 'cyberpunk') {
+          document.documentElement.className = 'theme-' + t;
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <!-- CDNs -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Prism.js for code highlighting -->
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <style>
+    /* Dynamic Theme Mappings */
+    :root {
+      --bg: #080c12;
+      --bg-panel: #0d1117;
+      --bg-card: #111820;
+      --border: #1a2332;
+      --border-hi: #2a3a4e;
+      --text: #c9d1d9;
+      --text-dim: #545d68;
+      --accent: #00ff88;
+      --accent-dim: rgba(0, 255, 136, 0.05);
+      --warn: #ffaa00;
+      --danger: #ff4444;
+      --info: #00e5ff;
+    }
+
+    .theme-galaxy {
+      --bg: #05030e;
+      --bg-panel: #090616;
+      --bg-card: #120e26;
+      --border: #1f193f;
+      --border-hi: #2e265c;
+      --text: #e2e0eb;
+      --text-dim: #736e92;
+      --accent: #bf55ec;
+      --accent-dim: rgba(191, 85, 236, 0.05);
+      --warn: #ffaa00;
+      --danger: #ff4444;
+      --info: #00e5ff;
+    }
+
+    .theme-nature {
+      --bg: #050806;
+      --bg-panel: #0a0f0b;
+      --bg-card: #121813;
+      --border: #1a241c;
+      --border-hi: #2a3b2e;
+      --text: #d8e2dc;
+      --text-dim: #6b7a6e;
+      --accent: #10b981;
+      --accent-dim: rgba(16, 185, 129, 0.05);
+      --warn: #ffaa00;
+      --danger: #ff4444;
+      --info: #00e5ff;
+    }
+
+    .theme-sand {
+      --bg: #0f0c08;
+      --bg-panel: #16120c;
+      --bg-card: #1e1911;
+      --border: #2b2318;
+      --border-hi: #3f3424;
+      --text: #ebdcd0;
+      --text-dim: #8b7c6f;
+      --accent: #f59e0b;
+      --accent-dim: rgba(245, 158, 11, 0.05);
+      --warn: #ffaa00;
+      --danger: #ff4444;
+      --info: #00e5ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Background grid */
+    #bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(var(--accent-dim) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent-dim) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.25;
+      transition: background-image 0.3s;
+    }
+    #scanline {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.1) 2px,
+        rgba(0,0,0,0.1) 4px
+      );
+    }
+    .glow-blob {
+      position: fixed; border-radius: 50%; filter: blur(140px);
+      pointer-events: none; z-index: 0; opacity: 0.12;
+      animation: blobFloat 22s ease-in-out infinite alternate;
+      transition: background 0.3s;
+    }
+    .glow-1 { background: var(--accent); }
+    .glow-2 { background: var(--warn); }
+    .glow-3 { background: var(--info); }
+
+    @keyframes blobFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, -30px) scale(1.15); }
+      100% { transform: translate(-30px, 20px) scale(0.9); }
+    }
+
+    header {
+      height: 52px; background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px; gap: 16px;
+      position: relative; z-index: 20;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--text-dim);
+    }
+    .status-dot.active {
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 4px currentColor; }
+      50% { opacity: 0.4; box-shadow: 0 0 8px currentColor; }
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width: 280px; min-width: 280px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      overflow-y: auto; overflow-x: hidden;
+      position: relative; z-index: 10;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    #sidebar::-webkit-scrollbar { width: 5px; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .tree-folder { border-bottom: 1px solid var(--border); }
+    .tree-folder-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .tree-folder-header:hover { background: rgba(255,255,255,0.03); }
+    .tree-folder-header .chevron {
+      transition: transform 0.2s; font-size: 10px; color: var(--text-dim);
+      width: 14px; text-align: center;
+    }
+    .tree-folder-header.open .chevron { transform: rotate(90deg); }
+    .tree-folder-header .folder-dot {
+      width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0;
+    }
+    .tree-folder-header .fname {
+      font-size: 13px; font-weight: 500; flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tree-folder-header .count {
+      font-size: 11px; color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tree-files {
+      display: none; padding: 2px 0 8px 0;
+      background: rgba(0,0,0,0.15);
+    }
+    .tree-files.show { display: block; }
+    .tree-file {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 14px 5px 38px; font-size: 12px;
+      color: var(--text-dim); cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tree-file:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .tree-file i { font-size: 10px; width: 14px; text-align: center; flex-shrink: 0; }
+    .tree-subfolder { padding-left: 10px; border-left: 1px solid var(--border); margin-left: 20px; }
+
+    /* Graph Canvas */
+    #graph-wrap {
+      flex: 1; position: relative; overflow: hidden;
+      background: transparent;
+      transition: opacity 0.3s;
+    }
+    #graph-canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    #graph-canvas.grabbing { cursor: grabbing; }
+
+    #legend {
+      position: absolute; bottom: 12px; left: 12px;
+      background: rgba(10, 14, 26, 0.85); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      display: flex; flex-wrap: wrap; gap: 8px 14px; z-index: 5;
+      backdrop-filter: blur(8px);
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-dim); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+    /* Zoom badge */
+    #zoom-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(10, 14, 26, 0.85); border: 1px solid var(--border);
+      border-radius: 6px; padding: 5px 12px; z-index: 5;
+      backdrop-filter: blur(8px); font-size: 11px; color: var(--text-dim);
+      display: flex; align-items: center; gap: 8px;
+    }
+    #zoom-badge .mono { color: var(--accent); font-weight: 500; min-width: 38px; text-align: right; }
+    #reset-btn {
+      background: none; border: 1px solid var(--border); color: var(--text-dim);
+      padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 10px;
+      transition: all 0.15s;
+    }
+    #reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    #graph-hint {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; color: var(--text-dim);
+      background: rgba(10, 14, 26, 0.85); border: 1px solid var(--border);
+      padding: 5px 14px; border-radius: 20px; z-index: 5;
+      backdrop-filter: blur(8px); pointer-events: none;
+      animation: hintFade 6s ease-in-out forwards;
+    }
+    @keyframes hintFade {
+      0%, 70% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Detail panel */
+    #detail-panel {
+      width: 0; overflow: hidden;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      transition: width 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s, border-color 0.3s;
+      position: relative; z-index: 10;
+    }
+    #detail-panel.open { width: 320px; }
+    #detail-inner {
+      width: 100%; padding: 20px; overflow-y: auto;
+      height: 100%; scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    #detail-inner::-webkit-scrollbar { width: 5px; }
+    #detail-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .detail-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; cursor: pointer;
+      border: 1px solid; transition: background 0.15s;
+    }
+    .detail-tag:hover { background: rgba(255,255,255,0.05); }
+
+    /* Footer */
+    footer {
+      height: 44px; background: var(--bg-panel);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px; gap: 8px;
+      overflow-x: auto; position: relative; z-index: 20;
+      scrollbar-width: none;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    footer::-webkit-scrollbar { display: none; }
+    .sop-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 4px;
+      border: 1px solid rgba(255,170,0,0.25);
+      background: rgba(255,170,0,0.05);
+      font-size: 12px; color: var(--warn);
+      white-space: nowrap; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+    .sop-chip:hover { background: rgba(255,170,0,0.12); border-color: rgba(255,170,0,0.5); }
+    .sop-chip i { font-size: 10px; }
+    .footer-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+    .footer-stat { font-size: 11px; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; }
+    .footer-stat span { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+
+    /* HUD brackets */
+    .hud-corners { position: relative; }
+    .hud-corners::before, .hud-corners::after {
+      content: ''; position: absolute; width: 8px; height: 8px;
+      border-color: var(--accent); border-style: solid; opacity: 0.4;
+      transition: border-color 0.3s;
+    }
+    .hud-corners::before { top: 0; left: 0; border-width: 1px 0 0 1px; }
+    .hud-corners::after { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
+    /* Markdown Styling */
+    .markdown-preview { color: var(--text); font-family: 'Space Grotesk', sans-serif; line-height: 1.7; }
+    .markdown-preview h1, .markdown-preview h2, .markdown-preview h3, .markdown-preview h4 {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #fff; margin-top: 1.5rem; margin-bottom: 0.75rem;
+    }
+    .markdown-preview h1 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    .markdown-preview h2 { font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
+    .markdown-preview h3 { font-size: 1.05rem; }
+    .markdown-preview p { margin-bottom: 1rem; font-size: 0.9rem; }
+    .markdown-preview a { color: var(--accent); text-decoration: underline; transition: color 0.15s; }
+    .markdown-preview a:hover { color: #fff; }
+    .markdown-preview ul, .markdown-preview ol { margin-bottom: 1rem; padding-left: 1.25rem; font-size: 0.9rem; }
+    .markdown-preview ul { list-style-type: disc; }
+    .markdown-preview ol { list-style-type: decimal; }
+    .markdown-preview code {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: var(--bg); padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid var(--border); color: var(--accent);
+    }
+    .markdown-preview pre { margin-bottom: 1.25rem; border-radius: 6px; overflow-x: auto; border: 1px solid var(--border); }
+    .markdown-preview pre code { display: block; padding: 1rem; background: #090e1a !important; color: #c9d1d9; border: none; font-size: 0.85rem; }
+    .markdown-preview blockquote { border-left: 4px solid var(--border-hi); padding-left: 1rem; margin: 1rem 0; color: var(--text-dim); font-style: italic; }
+    .markdown-preview table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; font-size: 0.85rem; }
+    .markdown-preview th, .markdown-preview td { border: 1px solid var(--border); padding: 0.6rem 0.8rem; }
+    .markdown-preview th { background: var(--bg); color: #fff; }
+
+    /* Vault Cockpit styling */
+    .cockpit-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .cockpit-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(800px circle at var(--x, 0px) var(--y, 0px), rgba(255,255,255,0.06), transparent 40%);
+      pointer-events: none;
+    }
+    .cockpit-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px -10px rgba(0,255,136,0.15);
+      transform: translateY(-2px);
+    }
+    .drop-zone {
+      border: 2px dashed var(--border);
+      transition: all 0.2s;
+    }
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(0, 255, 136, 0.03);
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+
+<!-- Ambient Background Effects -->
+<div id="bg-grid"></div>
+<div id="scanline"></div>
+<div class="glow-blob glow-1" style="width:400px;height:400px;top:-100px;right:-100px;"></div>
+<div class="glow-blob glow-2" style="width:350px;height:350px;bottom:-80px;left:-80px;animation-delay:-7s;"></div>
+<div class="glow-blob glow-3" style="width:300px;height:300px;top:40%;left:30%;animation-delay:-13s;opacity:0.08;"></div>
+
+<!-- ============================================================
+     VAULT COCKPIT (Welcome & Registry Screen)
+     ============================================================ -->
+<div id="vault-cockpit-view" class="flex-1 flex flex-col overflow-y-auto p-6 md:p-12 relative z-10">
+  <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-border">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-cubes text-accent text-3xl"></i>
+        <div>
+          <h1 class="text-2xl font-bold tracking-wider" style="color:#fff;">VAULT COCKPIT</h1>
+          <p class="text-xs text-text-dim mt-0.5">Kelola dan Visualisasikan Obsidian Markdown Vault Anda Secara Lokal</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="mono text-[10px] bg-border px-2.5 py-1 rounded text-text-dim font-bold">V2.0 DYNAMIC</span>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
+      
+      <!-- Left Panel: Register/Add Vault -->
+      <div class="lg:col-span-1 flex flex-col gap-6">
+        <div class="cockpit-card p-6 flex flex-col gap-4">
+          <div class="flex items-center gap-2 font-bold text-accent text-sm uppercase tracking-wider mb-2">
+            <i class="fas fa-plus-circle"></i>
+            <span>Daftarkan Vault Baru</span>
+          </div>
+          <p class="text-xs text-text-dim leading-relaxed">
+            Daftarkan direktori Markdown / Obsidian lokal Anda untuk divisualisasikan dalam bentuk file tree dinamis dan peta graf relasional.
+          </p>
+
+          <!-- Drag and Drop Zone -->
+          <div id="cockpit-drop-zone" class="drop-zone rounded-lg p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer hover:bg-white/5 transition">
+            <i class="fas fa-folder-open text-text-dim text-3xl"></i>
+            <div>
+              <span class="text-xs font-semibold block text-text">Pilih atau Seret Folder</span>
+              <span class="text-[10px] text-text-dim mt-0.5 block">Mendukung file system lokal secara aman</span>
+            </div>
+          </div>
+          
+          <button id="cockpit-add-btn" class="w-full py-2.5 rounded bg-accent/5 border border-accent/25 hover:bg-accent/15 text-accent text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fas fa-search-plus"></i> DAFTARKAN DIREKTORI
+          </button>
+        </div>
+
+        <div class="cockpit-card p-5 text-xs text-text-dim leading-relaxed flex flex-col gap-2.5 bg-opacity-40">
+          <div class="font-bold text-[#fff] flex items-center gap-1.5"><i class="fas fa-user-shield text-info"></i> PRIVASI TOTAL</div>
+          <p>Seluruh file Anda diproses 100% secara lokal di dalam browser Anda. Tidak ada data, teks, atau detail dokumen apa pun yang dikirimkan ke server luar.</p>
+        </div>
+      </div>
+
+      <!-- Right Panel: Registered Vaults Grid -->
+      <div class="lg:col-span-2 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-xs font-bold uppercase tracking-wider text-text-dim">Vault Terdaftar</div>
+          <span class="mono text-xs text-accent" id="cockpit-count-badge">0 Terdaftar</span>
+        </div>
+
+        <div id="vaults-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max flex-1">
+          <!-- Vault cards dynamically injected here -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="vaults-empty" class="hidden flex-1 flex-col items-center justify-center py-20 border border-dashed border-border rounded-xl text-center">
+          <i class="fas fa-folder-tree text-text-dim text-4xl mb-3 opacity-50"></i>
+          <span class="text-xs font-bold text-text-dim">Belum Ada Vault Terdaftar</span>
+          <span class="text-[10px] text-text-dim max-w-xs mt-1 leading-normal">Silakan pilih direktori lokal Anda di sebelah kiri untuk memulai penjelajahan.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VAULT WORKSPACE (Main Dashboard View - Hidden by default)
+     ============================================================ -->
+<div id="vault-workspace-view" class="hidden flex-1 flex flex-col overflow-hidden">
+  <!-- Header -->
+  <header>
+    <button id="back-to-cockpit-btn" class="mono text-xs px-2.5 py-1.5 rounded border border-border bg-bg hover:bg-white/5 text-text-dim hover:text-text flex items-center gap-1.5 transition select-none cursor-pointer">
+      <i class="fas fa-arrow-left"></i> Cockpit
+    </button>
+
+    <button id="sidebar-toggle" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+    
+    <div class="flex items-center gap-2">
+      <div style="color:var(--accent);font-size:14px;" id="header-vault-icon"><i class="fas fa-folder-tree"></i></div>
+      <span class="mono text-sm font-bold tracking-wider" id="header-vault-name" style="color:var(--accent);">VAULT</span>
+    </div>
+
+    <div class="flex-1"></div>
+    
+    <!-- Graph Physics Control Settings Toggle -->
+    <div class="relative mr-2">
+      <button id="settings-toggle-btn" class="mono text-xs px-2.5 py-1.5 rounded border border-border bg-bg hover:bg-white/5 text-text flex items-center gap-1.5 cursor-pointer transition select-none" title="Setelan Graf">
+        <i class="fas fa-cog"></i> <span class="hidden md:inline">Graf</span>
+      </button>
+      
+      <!-- Settings Popover -->
+      <div id="settings-popover" class="hidden absolute right-0 top-full mt-1.5 w-60 rounded border border-border p-4 shadow-2xl z-50 flex flex-col gap-3" style="background-color: var(--bg-panel); backdrop-filter: blur(8px);">
+        <div class="text-xs font-bold uppercase tracking-wider text-[#fff] border-b border-border pb-1.5 flex items-center gap-1"><i class="fas fa-sliders text-accent"></i> Setelan Fisika Graf</div>
+        
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between text-[10px] text-text-dim">
+            <span>Jarak Relasi (Link Distance)</span>
+            <span class="mono font-bold text-accent" id="val-link-dist">130</span>
+          </div>
+          <input type="range" id="slider-link-dist" min="50" max="350" value="130" class="accent-emerald-500 h-1 rounded bg-bg">
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between text-[10px] text-text-dim">
+            <span>Daya Tolak (Repulsion)</span>
+            <span class="mono font-bold text-accent" id="val-repulsion">4000</span>
+          </div>
+          <input type="range" id="slider-repulsion" min="1000" max="15000" value="4000" step="500" class="accent-emerald-500 h-1 rounded bg-bg">
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between text-[10px] text-text-dim">
+            <span>Gravitasi Centering</span>
+            <span class="mono font-bold text-accent" id="val-gravity">0.0012</span>
+          </div>
+          <input type="range" id="slider-gravity" min="0.0001" max="0.005" value="0.0012" step="0.0001" class="accent-emerald-500 h-1 rounded bg-bg">
+        </div>
+
+        <button id="reset-physics-btn" class="w-full text-center py-1 rounded bg-white/5 border border-border hover:bg-white/10 text-[10px] font-bold text-text cursor-pointer transition mt-1">
+          Atur Ulang Fisika
+        </button>
+      </div>
+    </div>
+
+    <!-- Theme Selector -->
+    <div class="relative mr-2" id="theme-selector-wrap">
+      <button id="theme-select-btn" class="mono text-xs px-2.5 py-1.5 rounded border border-border bg-bg hover:bg-white/5 text-text flex items-center gap-1.5 cursor-pointer transition select-none">
+        <i class="fas fa-palette"></i> Tema: <span id="current-theme-name" class="font-bold" style="color:var(--accent);">Cyberpunk</span> <i class="fas fa-chevron-down text-[10px]"></i>
+      </button>
+      <div id="theme-dropdown" class="hidden absolute right-0 top-full mt-1.5 w-44 rounded border border-border bg-opacity-95 shadow-2xl py-1 z-50 transition" style="background-color: var(--bg-panel); backdrop-filter: blur(8px);">
+        <button class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 text-text cursor-pointer transition" onclick="setTheme('cyberpunk')">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#00ff88]"></span> Cyberpunk
+        </button>
+        <button class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 text-text cursor-pointer transition" onclick="setTheme('galaxy')">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#bf55ec]"></span> Galaxy
+        </button>
+        <button class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 text-text cursor-pointer transition" onclick="setTheme('nature')">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Nature
+        </button>
+        <button class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 text-text cursor-pointer transition" onclick="setTheme('sand')">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span> Sand
+        </button>
+      </div>
+    </div>
+
+    <div class="relative ml-2">
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color:var(--text-dim);"></i>
+      <input type="text" id="search-input" placeholder="Cari notes..." aria-label="Cari notes">
+    </div>
+    <div class="flex items-center gap-2 ml-2">
+      <div class="status-dot active" style="color:var(--accent);background:var(--accent);"></div>
+      <span class="mono text-[10px] uppercase font-semibold" style="color:var(--text-dim);" id="connection-status">DILAYANI</span>
+    </div>
+    <div class="mono text-xs hidden sm:block" style="color:var(--text-dim);">
+      <span style="color:var(--accent);" id="total-count">0</span> notes
+    </div>
+  </header>
+
+  <!-- Main Workspace Area -->
+  <div class="flex flex-1 overflow-hidden" style="position:relative;z-index:5;">
+    <!-- Left sidebar: File tree -->
+    <aside id="sidebar" role="navigation" aria-label="File tree">
+      <div id="file-tree"></div>
+    </aside>
+
+    <!-- Center: Knowledge graph -->
+    <div id="graph-wrap" class="flex-1 h-full w-full">
+      <canvas id="graph-canvas"></canvas>
+          <div id="graph-hint"><i class="fas fa-magnifying-glass-plus" style="margin-right:4px"></i> Scroll untuk zoom, drag untuk geser, klik node untuk detail</div>
+          <div id="legend"></div>
+          <div id="zoom-badge">
+            <button id="reset-btn" aria-label="Reset tampilan"><i class="fas fa-compress"></i> Reset</button>
+            <span class="mono" id="zoom-val">0.65x</span>
+          </div>
+    </div>
+
+    <!-- Right: Detail panel -->
+    <aside id="detail-panel" role="complementary" aria-label="Detail panel">
+      <div id="detail-inner"></div>
+    </aside>
+  </div>
+
+  <!-- Bottom bar: SOPs + Stats -->
+  <footer role="contentinfo" class="flex-shrink-0">
+    <div id="sop-chips" class="flex items-center gap-2"></div>
+    <div class="footer-sep"></div>
+    <div class="footer-stat"><i class="fas fa-circle-nodes" style="margin-right:4px"></i><span id="node-count">0</span> nodes</div>
+  <div class="footer-stat"><i class="fas fa-folder-tree" style="margin-right:3px"></i><span id="cat-count">0</span> folder</div>
+    <div class="footer-stat"><i class="fas fa-link" style="margin-right:4px;"></i><span id="edges-count">0</span> relasi</div>
+    <div class="footer-stat"><i class="fas fa-clock" style="margin-right:4px;"></i><span class="mono" id="timestamp"></span></div>
+  </footer>
+</div>
+
+<input type="file" id="vault-folder-input" webkitdirectory directory class="hidden">
+
+<script>
+// ============================================================
+// INDEXEDDB VAULT REGISTRY SERVICE
+// ============================================================
+const dbName = 'VaultCommandCenterDB';
+const storeName = 'vaults';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName, 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(storeName)) {
+        db.createObjectStore(storeName, { keyPath: 'id' });
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function saveVault(vault) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    store.put(vault);
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+async function getVaults() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readonly');
+    const store = transaction.objectStore(storeName);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function deleteVaultFromDB(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    store.delete(id);
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+// ============================================================
+// GLOBAL STATE & PHYSICS CONFIG
+// ============================================================
+const fileHandles = new Map();
+let directoryHandle = null;
+let currentVaultId = null;
+
+// Dynamic categories color map (auto-populated based on root subfolders)
+let folderColors = {};
+
+const nameMap = {
+  'cyberpunk': 'Cyberpunk',
+  'galaxy': 'Galaxy',
+  'nature': 'Nature',
+  'sand': 'Sand'
+};
+
+// Physics engine settings (Dynamic & Adjustable)
+let physicsSettings = {
+  linkDistance: (()=>{try{return parseFloat(localStorage.getItem('vcc_linkDist'))||130}catch(e){return 130}})(),
+  repulsion: (()=>{try{return parseFloat(localStorage.getItem('vcc_repulsion'))||4000}catch(e){return 4000}})(),
+  gravity: (()=>{try{return parseFloat(localStorage.getItem('vcc_gravity'))||0.0012}catch(e){return 0.0012}})()
+};
+
+// State variables (radial cluster engine — active ones in engine section)
+let hovered = null, selected = null, draggedNode = null;
+let simTicks = 0;
+
+// Dynamic Graph State
+let nodes = []; // kept for compatibility (folder-level nodes now in catNodes)
+let vaultEdges = [];
+let vaultFileTree = {}; // Hierarchical filesystem structure
+
+// Radial cluster graph state
+let catNodes = [];       // category-level nodes
+let allFileNodes = [];   // file dots
+let needsLayout = false;
+
+// Canvas DOM
+const canvas = document.getElementById('graph-canvas');
+const ctx = canvas.getContext('2d');
+const searchInput = document.getElementById('search-input');
+const themeBtn = document.getElementById('theme-select-btn');
+const themeDropdown = document.getElementById('theme-dropdown');
+
+// ============================================================
+// DYNAMIC FILE SCANNER & PARSER (Recursive traversal)
+// ============================================================
+
+async function scanDirectoryRecursive(dirHandle, pathParts = []) {
+  const relativeKeyPrefix = pathParts.join('/');
+  
+  for await (const entry of dirHandle.values()) {
+    const currentParts = [...pathParts, entry.name];
+    const relKey = currentParts.join('/').toLowerCase();
+    
+    if (entry.kind === 'file') {
+      fileHandles.set(relKey, entry);
+      
+      // Register into hierarchical file tree
+      let leaf = vaultFileTree;
+      for (let i = 0; i < currentParts.length - 1; i++) {
+        const p = currentParts[i];
+        if (!leaf[p]) leaf[p] = { __kind: 'directory', children: {} };
+        leaf = leaf[p].children;
+      }
+      leaf[entry.name] = { __kind: 'file', relKey: relKey, name: entry.name };
+    } 
+    else if (entry.kind === 'directory') {
+      await scanDirectoryRecursive(entry, currentParts);
+    }
+  }
+}
+
+// Build auto-coloring for first level root subfolders
+function generateFolderColors() {
+  folderColors = {};
+  const rootFolders = Object.keys(vaultFileTree).filter(k => {
+    return vaultFileTree[k] && vaultFileTree[k].__kind === 'directory';
+  });
+  
+  rootFolders.forEach((folderName, index) => {
+    // Distribute HSL colors evenly on the wheel
+    const hue = (index * 360) / Math.max(1, rootFolders.length);
+    folderColors[folderName.toLowerCase()] = `hsl(${hue}, 80%, 65%)`;
+  });
+}
+
+function getNodeColorByPath(relKey) {
+  const parts = relKey.split('/');
+  if (parts.length > 1) {
+    const rootSub = parts[0].toLowerCase();
+    if (folderColors[rootSub]) return folderColors[rootSub];
+  }
+  return '#8899aa'; // default neutral
+}
+
+// Build dynamic nodes and extract wikilinks for edges in the background
+// ── Radial Cluster: catNodes + allFileNodes, no force simulation ──
+async function processVaultDataAndBuildGraph() {
+  catNodes = [];
+  allFileNodes = [];
+  vaultEdges = [];
+
+  // 1. Group .md files by root folder
+  const folderMap = new Map();
+  generateFolderColors();
+
+  for (const [key, handle] of fileHandles.entries()) {
+    if (!key.endsWith('.md')) continue;
+    const parts = key.split('/');
+    const rootFolder = parts.length > 1 ? parts[0] : '_root';
+    if (!folderMap.has(rootFolder)) {
+      const color = folderColors[rootFolder.toLowerCase()] || '#8899aa';
+      folderMap.set(rootFolder, { files: [], color, fileKeys: [] });
+    }
+    const entry = folderMap.get(rootFolder);
+    const filename = parts[parts.length - 1];
+    entry.files.push(filename.replace(/\.md$/, ''));
+    entry.fileKeys.push(key);
+  }
+
+  // 2. Create category nodes + file dot children
+  for (const [folderName, data] of folderMap) {
+    const catNode = {
+      id: folderName, type: 'category',
+      name: folderName, fullName: folderName,
+      color: data.color, count: data.files.length,
+      fileKeys: data.fileKeys,
+      radius: Math.max(10, Math.sqrt(data.files.length) * 5),
+      linksCount: 0,
+      x: 0, y: 0, baseAngle: 0,
+      _children: []
+    };
+    catNodes.push(catNode);
+
+    // Create file dots
+    data.fileKeys.forEach((fk, i) => {
+      const fname = fk.split('/').pop().replace(/\.md$/, '');
+      const isIndex = fname === '_index';
+      const fn = {
+        id: folderName + '::' + fk,
+        type: 'file',
+        parentId: folderName,
+        color: data.color,
+        _label: fname,
+        _isIndex: isIndex,
+        _ox: 0, _oy: 0,
+        x: 0, y: 0,
+        radius: 2,
+        _fp: Math.random() * Math.PI * 2,
+        _fa: 0.3 + Math.random() * 0.8,
+        _fs: 0.25 + Math.random() * 0.3
+      };
+      catNode._children.push(fn);
+      allFileNodes.push(fn);
+    });
+  }
+
+  // 3. Update DOM stats
+  const totalMd = allFileNodes.length;
+  document.getElementById('total-count').textContent = totalMd;
+  document.getElementById('cat-count').textContent = catNodes.length;
+  document.getElementById('node-count').textContent = catNodes.length + allFileNodes.length;
+  document.getElementById('edges-count').textContent = '0';
+
+  // 4. Build name → folder & name → fileId lookup for wikilink resolution
+  const nameToFolder = new Map();
+  const nameToFileId = new Map();
+  for (const cat of catNodes) {
+    for (const fk of cat.fileKeys) {
+      const fname = fk.split('/').pop().replace(/\.md$/, '').toLowerCase();
+      nameToFolder.set(fname, cat.id);
+      nameToFileId.set(fname, cat.id + '::' + fk);
+    }
+  }
+
+  // 5. Initial layout + index
+  needsLayout = true;
+  computeLayout();
+  rebuildEdgeIndex();
+  buildLegend();
+
+  // 6. Background: scan wikilinks → create file-to-file edges
+  const edgeSet = new Set();
+  const pendingEdges = [];
+
+  asyncQueueProcess(
+    Array.from(fileHandles.keys()).filter(k => k.endsWith('.md')),
+    async (key) => {
+      try {
+        const text = await getFileContentFromHandle(key);
+        const wikilinkRegex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
+        let match;
+        const links = new Set();
+        while ((match = wikilinkRegex.exec(text)) !== null) {
+          let target = match[1].trim().toLowerCase();
+          if (target.endsWith('.md')) target = target.slice(0, -3);
+          links.add(target);
+        }
+        const sourceFolder = key.split('/')[0] || '_root';
+        const sourceFileId = sourceFolder + '::' + key;
+        
+        links.forEach(targetName => {
+          const targetFileId = nameToFileId.get(targetName);
+          if (targetFileId && targetFileId !== sourceFileId) {
+            const edgeKey = sourceFileId + '→' + targetFileId;
+            const revEdgeKey = targetFileId + '→' + sourceFileId;
+            if (!edgeSet.has(edgeKey) && !edgeSet.has(revEdgeKey)) {
+              edgeSet.add(edgeKey);
+              pendingEdges.push({ from: sourceFileId, to: targetFileId, label: '' });
+              
+              const srcCat = catNodes.find(n => n.id === sourceFolder);
+              const targetFolder = targetFileId.split('::')[0];
+              const tgtCat = catNodes.find(n => n.id === targetFolder);
+              if (srcCat) srcCat.linksCount++;
+              if (tgtCat) tgtCat.linksCount++;
+            }
+          }
+        });
+      } catch(e) { console.error(`Scan: ${key}`, e); }
+    },
+    () => {
+      vaultEdges = pendingEdges;
+      document.getElementById('edges-count').textContent = vaultEdges.length;
+      rebuildEdgeIndex();
+      buildLegend();
+    }
+  );
+}
+
+// Simple non-blocking queue processing helper to prevent UI lag
+function asyncQueueProcess(items, processCallback, onComplete) {
+  let index = 0;
+  async function processNextBatch() {
+    const startTime = performance.now();
+    while (index < items.length && (performance.now() - startTime) < 8) {
+      await processCallback(items[index]);
+      index++;
+    }
+    if (index < items.length) {
+      requestAnimationFrame(processNextBatch);
+    } else {
+      buildLegend();
+      if (onComplete) onComplete();
+    }
+  }
+  requestAnimationFrame(processNextBatch);
+}
+
+// ============================================================
+// DYNAMIC TREE UI BUILDER
+// ============================================================
+
+function buildTreeUI() {
+  const container = document.getElementById('file-tree');
+  container.innerHTML = '';
+
+  // Separate directories and root files
+  const folders = [];
+  const rootFiles = [];
+
+  for (const [name, entry] of Object.entries(vaultFileTree)) {
+    if (entry.__kind === 'directory') {
+      folders.push({ name, ...entry });
+    } else {
+      rootFiles.push({ name, ...entry });
+    }
+  }
+
+  // Sort alphabetically
+  folders.sort((a, b) => a.name.localeCompare(b.name));
+  rootFiles.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Render Folders
+  folders.forEach(folder => {
+    const fNode = buildFolderNode(folder.name, folder.children, 0);
+    if (fNode) container.appendChild(fNode);
+  });
+
+  // Render Root files
+  rootFiles.filter(f => isMdFile(f.name)).forEach(file => {
+    const fNode = buildFileNode(file.name, file.relKey, 0);
+    container.appendChild(fNode);
+  });
+
+  // Update stats counters
+  const total = catNodes.length + allFileNodes.length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('cat-count').textContent = folders.length;
+}
+
+function buildFolderNode(name, children, depth) {
+  const folder = document.createElement('div');
+  folder.className = 'tree-folder';
+
+  const folderColor = folderColors[name.toLowerCase()] || 'var(--text-dim)';
+
+  // Calculate file counts inside this subfolder recursively
+  let count = 0;
+  function recurseCount(c) {
+    for (const entry of Object.values(c)) {
+      if (entry.__kind === 'file') {
+        if (entry.name.endsWith('.md')) count++;
+      } else {
+        recurseCount(entry.children);
+      }
+    }
+  }
+  recurseCount(children);
+
+  const header = document.createElement('div');
+  header.className = 'tree-folder-header';
+  header.style.paddingLeft = `${14 + depth * 8}px`;
+  header.innerHTML = `
+    <span class="chevron"><i class="fas fa-chevron-right"></i></span>
+    <span class="folder-dot" style="background:${folderColor};"></span>
+    <span class="fname">${name}</span>
+    <span class="count">${count}</span>
+  `;
+  folder.appendChild(header);
+
+  const filesDiv = document.createElement('div');
+  filesDiv.className = 'tree-files';
+
+  // Recursive folders and files
+  const subfolders = [];
+  const files = [];
+  for (const [k, entry] of Object.entries(children)) {
+    if (entry.__kind === 'directory') {
+      subfolders.push({ name: k, ...entry });
+    } else {
+      files.push({ name: k, ...entry });
+    }
+  }
+  subfolders.sort((a,b) => a.name.localeCompare(b.name));
+  files.sort((a,b) => a.name.localeCompare(b.name));
+
+  // Render child subfolders
+  subfolders.forEach(sub => {
+    const childNode = buildFolderNode(sub.name, sub.children, depth + 1);
+    if (childNode) filesDiv.appendChild(childNode);
+  });
+
+  // Render child files
+  files.filter(f => isMdFile(f.name)).forEach(f => {
+    filesDiv.appendChild(buildFileNode(f.name, f.relKey, depth + 1));
+  });
+
+  // Skip rendering folder if it has no children shown
+  if (!filesDiv.children.length) return null;
+
+  folder.appendChild(filesDiv);
+
+  header.addEventListener('click', (e) => {
+    e.stopPropagation();
+    header.classList.toggle('open');
+    filesDiv.classList.toggle('show');
+  });
+
+  return folder;
+}
+
+function buildFileNode(name, relKey, depth) {
+  const file = document.createElement('div');
+  file.className = 'tree-file';
+  file.style.paddingLeft = `${30 + depth * 8}px`;
+  file.dataset.filename = name.toLowerCase();
+
+  const isMd = name.endsWith('.md');
+  const isImage = name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.gif') || name.endsWith('.svg');
+  
+  let icon = 'fa-file';
+  let iconColor = 'var(--text-dim)';
+  
+  if (isMd) {
+    icon = 'fa-file-lines';
+    iconColor = 'var(--text)';
+  } else if (isImage) {
+    icon = 'fa-file-image';
+    iconColor = 'var(--warn)';
+  }
+
+  file.innerHTML = `<i class="fas ${icon}" style="color:${iconColor};"></i><span>${name}</span>`;
+  
+  file.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectFileByPath(relKey, name);
+  });
+  
+  return file;
+}
+
+// Render Legend dynamically based on discovered root folders
+function buildLegend() {
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  
+  const rootFolders = Object.keys(vaultFileTree).filter(k => {
+    return vaultFileTree[k] && vaultFileTree[k].__kind === 'directory';
+  });
+
+  rootFolders.slice(0, 8).forEach(folderName => {
+    const color = folderColors[folderName.toLowerCase()] || '#8899aa';
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<span class="legend-dot" style="background:${color};"></span>${capitalize(folderName)}`;
+    legend.appendChild(item);
+  });
+}
+
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ============================================================
+// COCKPIT VIEW & VAULT LIST RENDERER
+// ============================================================
+
+async function refreshCockpit() {
+  const list = await getVaults();
+  const grid = document.getElementById('vaults-grid');
+  const empty = document.getElementById('vaults-empty');
+  
+  document.getElementById('cockpit-count-badge').textContent = `${list.length} Terdaftar`;
+  
+  if (list.length === 0) {
+    grid.classList.add('hidden');
+    empty.classList.remove('hidden');
+    return;
+  }
+  
+  grid.classList.remove('hidden');
+  empty.classList.add('hidden');
+  grid.innerHTML = '';
+  
+  list.forEach(vault => {
+    const card = document.createElement('div');
+    card.className = 'cockpit-card p-5 flex flex-col justify-between min-h-[140px]';
+    
+    // Calculate last accessed timestamp string
+    const accessedStr = vault.lastAccessed ? getRelativeTimeString(vault.lastAccessed) : 'Baru ditambahkan';
+    const totalFiles = vault.notesCount || 0;
+    
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-folder text-accent text-2xl opacity-75"></i>
+          <div>
+            <h3 class="text-sm font-bold text-white tracking-wide">${vault.name}</h3>
+            <span class="text-[10px] text-text-dim block mt-0.5">${vault.type === 'file-system' ? 'Akses Disk Langsung' : 'Fallback File Upload'}</span>
+          </div>
+        </div>
+        <button class="delete-btn text-text-dim hover:text-danger text-xs p-1 cursor-pointer transition" title="Hapus registrasi">
+          <i class="fas fa-trash-can"></i>
+        </button>
+      </div>
+
+      <div class="text-[10px] text-text-dim flex justify-between mt-3 font-semibold">
+        <span>Catatan: <strong class="text-text font-bold">${totalFiles}</strong></span>
+        <span>Akses: <strong class="text-text font-bold">${accessedStr}</strong></span>
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <button class="open-btn flex-1 py-1.5 rounded text-[11px] font-bold bg-accent/10 border border-accent/20 hover:bg-accent/20 text-accent transition cursor-pointer text-center">
+          <i class="fas fa-play mr-1 text-[9px]"></i> BUKA WORKSPACE
+        </button>
+      </div>
+    `;
+
+    // Event listeners
+    card.querySelector('.delete-btn').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (confirm(`Hapus pendaftaran Vault "${vault.name}" dari panel Cockpit?`)) {
+        await deleteVaultFromDB(vault.id);
+        refreshCockpit();
+      }
+    });
+
+    card.querySelector('.open-btn').addEventListener('click', () => {
+      loadVaultWorkspace(vault);
+    });
+
+    // Hover spotlight effect
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--x', `${x}px`);
+      card.style.setProperty('--y', `${y}px`);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function getRelativeTimeString(ts) {
+  const diffMs = Date.now() - ts;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+  
+  if (diffSec < 60) return 'Baru saja';
+  if (diffMin < 60) return `${diffMin} menit lalu`;
+  if (diffHour < 24) return `${diffHour} jam lalu`;
+  return `${diffDay} hari lalu`;
+}
+
+// Load selected Vault into workspace
+async function loadVaultWorkspace(vault) {
+  try {
+    fileHandles.clear();
+    vaultFileTree = {};
+    
+    if (vault.type === 'file-system') {
+      if (typeof window.showDirectoryPicker !== 'function') {
+        alert(`Browser Anda saat ini tidak mendukung File System Access API (atau Anda membukanya via file://). Silakan pilih kembali folder menggunakan opsi uploader folder.`);
+        document.getElementById('vault-folder-input').click();
+        currentVaultId = vault.id;
+        return;
+      }
+      const handle = vault.handle;
+      // Request permission
+      const opt = { mode: 'read' };
+      if (await handle.queryPermission(opt) !== 'granted') {
+        if (await handle.requestPermission(opt) !== 'granted') {
+          throw new Error('Izin pembacaan ditolak oleh pengguna.');
+        }
+      }
+      
+      directoryHandle = handle;
+      await scanDirectoryRecursive(directoryHandle);
+    } 
+    else {
+      // folder-input type: load files from IndexedDB!
+      if (vault.filesData && vault.filesData.length > 0) {
+        for (const f of vault.filesData) {
+          fileHandles.set(f.relKey, f.content);
+          
+          // Rebuild tree
+          const parts = f.relKey.split('/');
+          let leaf = vaultFileTree;
+          for (let j = 0; j < parts.length - 1; j++) {
+            const p = parts[j];
+            if (!leaf[p]) leaf[p] = { __kind: 'directory', children: {} };
+            leaf = leaf[p].children;
+          }
+          leaf[f.name] = { __kind: 'file', relKey: f.relKey, name: f.name };
+        }
+      } else {
+        currentVaultId = vault.id;
+        const input = document.getElementById('vault-folder-input');
+        input.value = '';
+        input.click();
+        return;
+      }
+    }
+
+    currentVaultId = vault.id;
+    
+    // Update access timestamp
+    vault.lastAccessed = Date.now();
+    await saveVault(vault);
+    
+    launchWorkspaceView(vault.name);
+  } catch(e) {
+    alert(`Gagal memuat Vault: ${e.message}`);
+  }
+}
+
+async function launchWorkspaceView(vaultName) {
+  // Generate colors & build UI
+  generateFolderColors();
+  await processVaultDataAndBuildGraph();
+  buildTreeUI();
+  
+  // Update header text
+  document.getElementById('header-vault-name').textContent = vaultName.toUpperCase();
+
+  // Switch view
+  document.getElementById('vault-cockpit-view').classList.add('hidden');
+  document.getElementById('vault-workspace-view').classList.remove('hidden');
+  
+  resizeCanvas();
+  needsLayout = true;
+  showWelcomeDetail();
+  
+  // Reset date/time
+  const now = new Date();
+  document.getElementById('timestamp').textContent =
+    now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) + ' ' +
+    now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+}
+
+// Connect new local directory picker
+async function registerNewVaultDirectory() {
+  if (typeof window.showDirectoryPicker === 'function') {
+    try {
+      const handle = await window.showDirectoryPicker({ mode: 'read' });
+      
+      // Check if already registered
+      const existing = await getVaults();
+      if (existing.some(v => v.id === handle.name)) {
+        alert(`Vault "${handle.name}" sudah terdaftar.`);
+        return;
+      }
+      
+      const vault = {
+        id: handle.name,
+        name: handle.name,
+        type: 'file-system',
+        handle: handle,
+        addedAt: Date.now(),
+        lastAccessed: Date.now(),
+        notesCount: 0
+      };
+      
+      await saveVault(vault);
+      await refreshCockpit();
+      
+      // Ask to open
+      if (confirm(`Vault "${handle.name}" berhasil terdaftar! Buka sekarang?`)) {
+        loadVaultWorkspace(vault);
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.name !== 'AbortError') {
+        alert('Gagal mendaftarkan direktori: ' + err.message);
+      }
+    }
+  } else {
+    // Silent fallback to standard folder picker input
+    document.getElementById('vault-folder-input').click();
+  }
+}
+
+// ============================================================
+// MARKDOWN ENGINE & WIKILINKS NAVIGATION
+// ============================================================
+
+async function getFileContentFromHandle(relKey) {
+  const handle = fileHandles.get(relKey);
+  if (!handle) throw new Error(`File dengan path "${relKey}" tidak diindeks.`);
+  
+  if (typeof handle === 'string') {
+    return handle;
+  }
+  if (handle instanceof File) {
+    return await handle.text();
+  } else if (typeof handle.getFile === 'function') {
+    const file = await handle.getFile();
+    return await file.text();
+  } else {
+    throw new Error("Format file handle tidak valid.");
+  }
+}
+
+async function selectFileByPath(relKey, filename) {
+  if (relKey && relKey.includes('::')) {
+    relKey = relKey.split('::')[1];
+  }
+  const panel = document.getElementById('detail-panel');
+  const inner = document.getElementById('detail-inner');
+  
+  panel.classList.add('open');
+  panel.style.width = '640px';
+  document.getElementById('graph-wrap').style.opacity = '0.3';
+
+  // Highlight and focus graph node if matches path
+  const targetNode = allFileNodes.find(n => n.id.endsWith('::' + relKey));
+  if (targetNode) {
+    selected = targetNode;
+    focusOnNode(targetNode);
+  } else {
+    selected = catNodes.find(n => n.id === relKey?.split('/')[0]) || null;
+    if (selected) focusOnNode(selected);
+  }
+
+  inner.innerHTML = `
+    <div class="flex items-center justify-between mb-4 pb-2 border-b border-border">
+      <button onclick="deselectFile()" class="mono text-xs px-2.5 py-1 rounded bg-bg hover:bg-white/5 border border-border text-text-dim hover:text-text cursor-pointer flex items-center gap-1 transition">
+        <i class="fas fa-chevron-left text-[9px]"></i> Tutup Preview
+      </button>
+      <div class="flex items-center gap-2">
+        <span class="mono text-xs text-text-dim select-all">${filename}</span>
+        <button onclick="copyFileContent()" class="text-text-dim hover:text-text p-1.5 hover:bg-white/5 rounded text-xs cursor-pointer transition" title="Salin berkas">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div id="markdown-container" class="markdown-preview select-text pr-2">
+      <div class="flex flex-col items-center justify-center py-20 text-text-muted">
+        <i class="fas fa-circle-notch fa-spin text-2xl mb-2 text-accent"></i>
+        <span class="text-xs">Memuat dokumen...</span>
+      </div>
+    </div>
+  `;
+
+  try {
+    let content = "";
+    
+    // Read from registered local handle
+    if (fileHandles.has(relKey)) {
+      content = await getFileContentFromHandle(relKey);
+    } else {
+      throw new Error(`File dengan path ${relKey} tidak diindeks.`);
+    }
+
+    window.currentFileContent = content;
+    renderMarkdownContent(content);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('markdown-container').innerHTML = `
+      <div class="p-4 border border-danger/30 bg-danger/5 rounded text-danger text-xs leading-normal">
+        <div class="flex items-center gap-2 font-bold mb-2 text-sm">
+          <i class="fas fa-triangle-exclamation"></i>
+          <span>Gagal Memuat Dokumen</span>
+        </div>
+        <p class="mb-3">Dokumen tidak dapat dibaca dari disk.</p>
+        <div class="bg-bg p-2.5 rounded mono text-xs text-[#ff4444] border border-border select-text mb-3">
+          Error: ${err.message}
+        </div>
+      </div>
+    `;
+  }
+}
+
+function deselectFile() {
+  const panel = document.getElementById('detail-panel');
+  panel.style.width = '320px';
+  document.getElementById('graph-wrap').style.opacity = '1';
+  if (selected && selected.type === 'category') {
+    selectCategory(selected.id);
+  } else if (selected && selected.parentId) {
+    selectCategory(selected.parentId);
+  } else {
+    deselectNode();
+  }
+}
+
+function copyFileContent() {
+  if (window.currentFileContent) {
+    navigator.clipboard.writeText(window.currentFileContent);
+    alert('Konten dokumen disalin ke clipboard!');
+  }
+}
+
+function renderMarkdownContent(markdown) {
+  const container = document.getElementById('markdown-container');
+  if (!markdown) {
+    container.innerHTML = `<em class="text-text-dim text-xs">Berkas ini kosong.</em>`;
+    return;
+  }
+  
+  let html = marked.parse(markdown);
+  html = parseObsidianCallouts(html);
+  html = parseWikilinks(html);
+  
+  container.innerHTML = html;
+  Prism.highlightAllUnder(container);
+}
+
+// Custom Obsidian Callouts parser
+function parseObsidianCallouts(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  
+  const blockquotes = div.querySelectorAll('blockquote');
+  blockquotes.forEach(bq => {
+    const text = bq.innerHTML;
+    const match = text.match(/^\s*<p>\s*\[!([a-zA-Z\-]+)\]\s*(.*?)(?:<br>|<\/p>)/i);
+    if (match) {
+      const type = match[1].toLowerCase();
+      const title = match[2] || type.charAt(0).toUpperCase() + type.slice(1);
+      
+      let borderClass = 'border-l-4 p-3.5 my-4 rounded-r ';
+      let icon = 'fa-info-circle';
+      
+      switch(type) {
+        case 'tip':
+          borderClass += 'border-[#00ff88] bg-[#00ff88]/5';
+          icon = 'fa-lightbulb text-[#00ff88]';
+          break;
+        case 'note':
+        case 'info':
+          borderClass += 'border-[#00e5ff] bg-[#00e5ff]/5';
+          icon = 'fa-info-circle text-[#00e5ff]';
+          break;
+        case 'warning':
+        case 'important':
+          borderClass += 'border-[#ffaa00] bg-[#ffaa00]/5';
+          icon = 'fa-triangle-exclamation text-[#ffaa00]';
+          break;
+        case 'danger':
+        case 'caution':
+          borderClass += 'border-[#ff4444] bg-[#ff4444]/5';
+          icon = 'fa-circle-exclamation text-[#ff4444]';
+          break;
+        default:
+          borderClass += 'border-gray-500 bg-gray-500/5';
+          icon = 'fa-info-circle text-gray-400';
+      }
+      
+      const restContent = text.replace(/^\s*<p>\s*\[!&amp;lt;!--/i, '').replace(/^\s*<p>\s*\[![a-zA-Z\-]+\]\s*(.*?)(?:<br>|<\/p>)/i, '<p>');
+      
+      bq.outerHTML = `
+        <div class="${borderClass} shadow-md text-xs relative">
+          <div class="flex items-center gap-1.5 font-bold mb-1.5 uppercase tracking-wider">
+            <i class="fas ${icon}"></i>
+            <span>${title}</span>
+          </div>
+          <div class="leading-relaxed text-text-dim">${restContent}</div>
+        </div>
+      `;
+    }
+  });
+  
+  return div.innerHTML;
+}
+
+// Custom Wikilinks parser
+function parseWikilinks(html) {
+  return html.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, target, text) => {
+    const displayText = text || target;
+    const cleanTarget = target.trim().replace(/['"\\]/g, '\\$&');
+    return `<a href="javascript:void(0)" onclick="window.navigateToNote('${cleanTarget}'); return false;" class="hover:underline font-medium" style="color:var(--accent);"><i class="fas fa-link text-[9px] mr-1 opacity-70"></i>${displayText}</a>`;
+  });
+}
+
+// Wikilinks dynamic router
+window.navigateToNote = function(targetName) {
+  let cleanName = targetName.trim().toLowerCase();
+  if (cleanName.endsWith('.md')) cleanName = cleanName.slice(0, -3);
+  
+  // Search file dots for matching name
+  const targetNode = allFileNodes.find(n => n._label.toLowerCase() === cleanName);
+  if (targetNode) {
+    selectFileByPath(targetNode.id, targetNode._label + '.md');
+  } else {
+    alert(`Catatan "${targetName}" tidak ditemukan di vault.`);
+  }
+};
+
+// Overview detail
+function showWelcomeDetail() {
+  const inner = document.getElementById('detail-inner');
+  inner.innerHTML = `
+    <div class="flex flex-col gap-4 select-none">
+      <div class="flex items-center gap-3">
+        <div style="color:var(--accent);font-size:18px;"><i class="fas fa-shield-halved"></i></div>
+        <h2 class="text-base font-bold" style="color:#fff;">Workspace Info</h2>
+      </div>
+      <p class="text-xs text-text-dim leading-relaxed">
+        Selamat datang di pusat komando pengetahuan personal Anda. Dasbor ini memetakan hubungan antar catatan di dalam Vault Anda secara dinamis.
+      </p>
+      
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider mb-2 text-text-dim">Panduan Navigasi</h3>
+        <ul class="text-[11px] text-text-dim space-y-1 list-disc pl-4 leading-normal">
+          <li><strong>Klik node</strong> untuk melihat detail relasi dokumen.</li>
+          <li><strong>Drag node</strong> untuk mengatur tata letak secara dinamis.</li>
+          <li><strong>Scroll canvas</strong> untuk melakukan zoom in/out.</li>
+          <li><strong>Klik berkas</strong> di sidebar untuk melihat isi dokumen.</li>
+        </ul>
+      </div>
+
+      <div class="border-t border-border pt-3 mt-2 flex flex-col gap-1.5 text-[10px] text-text-dim">
+        <div class="flex justify-between"><span>Lokasi File Terindeks:</span><span class="text-accent mono font-bold">${fileHandles.size} files</span></div>
+        <div class="flex justify-between"><span>Simpul Kategori (Root):</span><span class="text-accent mono font-bold">${Object.keys(vaultFileTree).length} folders</span></div>
+        <div class="flex justify-between"><span>Relasi Penghubung:</span><span class="text-accent mono font-bold">${vaultEdges.length} links</span></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// RADIAL CLUSTER GRAPH ENGINE — O(n) layout, no physics, LOD render
+// ============================================================
+
+// Pre-computed adjacency
+let edgeNodeMap = new Map();
+let adjacenySet = new Map();
+
+function rebuildEdgeIndex() {
+  edgeNodeMap = new Map();
+  catNodes.forEach(n => edgeNodeMap.set(n.id, n));
+  allFileNodes.forEach(n => edgeNodeMap.set(n.id, n));
+
+  adjacenySet = new Map();
+  for (const e of vaultEdges) {
+    if (!adjacenySet.has(e.from)) adjacenySet.set(e.from, new Set());
+    if (!adjacenySet.has(e.to)) adjacenySet.set(e.to, new Set());
+    adjacenySet.get(e.from).add(e.to);
+    adjacenySet.get(e.to).add(e.from);
+  }
+}
+
+// ── Layout O(n): radial cluster ──
+function computeLayout() {
+  if (canvas.width < 100) return;
+  const mainR = Math.max(200, Math.min(380, Math.min(canvas.width, canvas.height) * 0.38));
+  const N = catNodes.length;
+
+  catNodes.forEach((cat, i) => {
+    const a = (i / N) * Math.PI * 2 - Math.PI / 2;
+    cat._lx = mainR * Math.cos(a);
+    cat._ly = mainR * Math.sin(a);
+    cat.baseAngle = a;
+    if (cat.x === undefined) {
+      cat.x = cat._lx;
+      cat.y = cat._ly;
+    }
+  });
+
+  // Position file dots in fanning rings around parent
+  catNodes.forEach(cat => {
+    const kids = cat._children || [];
+    if (!kids.length) return;
+    const total = kids.length;
+    
+    let baseR = Math.max(25, cat.radius + 8);
+    const ringGap = 20;
+    
+    let remaining = total;
+    let ringIndex = 0;
+    let currentRingRadius = baseR;
+    let dotsPlaced = 0;
+    
+    while (remaining > 0) {
+      const arcWidth = Math.PI * 1.15; // 207 degrees fan pointing outwards
+      const arcLength = arcWidth * currentRingRadius;
+      let ringCapacity = Math.floor(arcLength / 14);
+      if (ringCapacity < 5) ringCapacity = 5;
+      
+      const countInRing = Math.min(ringCapacity, remaining);
+      
+      for (let i = 0; i < countInRing; i++) {
+        const fn = kids[dotsPlaced + i];
+        
+        let angle = cat.baseAngle;
+        if (countInRing > 1) {
+          const offset = (i - (countInRing - 1) / 2) * (arcWidth / (countInRing - 1));
+          angle += offset;
+        }
+        
+        angle += ringIndex * 0.05; // organic spiral offset
+        
+        fn._dx = currentRingRadius * Math.cos(angle);
+        fn._dy = currentRingRadius * Math.sin(angle);
+        fn._ox = cat.x + fn._dx;
+        fn._oy = cat.y + fn._dy;
+        
+        if (fn.x === undefined) {
+          fn.x = fn._ox;
+          fn.y = fn._oy;
+        }
+        
+        fn.radius = total > 150 ? 1.0 : (total > 50 ? 1.4 : 2.0);
+      }
+      
+      dotsPlaced += countInRing;
+      remaining -= countInRing;
+      currentRingRadius += ringGap;
+      ringIndex++;
+    }
+  });
+}
+
+// ── Camera ──
+let zoom = 0.65, camX = 0, camY = 0;
+let tZoom = 0.65, tCamX = 0, tCamY = 0;
+let isAnimating = false;
+
+function worldToScreen(wx, wy) { return { x: wx * zoom + camX, y: wy * zoom + camY }; }
+function screenToWorld(sx, sy) { return { x: (sx - camX) / zoom, y: (sy - camY) / zoom }; }
+
+function resetView() {
+  tZoom = 0.65; tCamX = canvas.width / 2; tCamY = canvas.height / 2;
+  isAnimating = true; deselectNode();
+}
+
+function focusOnNode(node) {
+  tZoom = node.type === 'category' ? 1.8 : 2.2;
+  tCamX = canvas.width / 2 - node.x * tZoom;
+  tCamY = canvas.height / 2 - node.y * tZoom;
+  isAnimating = true;
+}
+
+// ── LOD render ──
+let radarPulse = 0;
+
+function colorWithOpacity(color, opacity) {
+  if (!color) return `rgba(255,255,255,${opacity})`;
+  const c = String(color).trim();
+  if (c.startsWith('hsl')) {
+    if (c.startsWith('hsla')) return c.replace(/,\s*[\d\.]+\)$/, `, ${opacity})`);
+    return c.replace('hsl(', 'hsla(').replace(')', `, ${opacity})`);
+  }
+  if (c.startsWith('#')) {
+    const r = parseInt(c.slice(1, 3), 16) || 0;
+    const g = parseInt(c.slice(3, 5), 16) || 0;
+    const b = parseInt(c.slice(5, 7), 16) || 0;
+    return `rgba(${r},${g},${b},${opacity})`;
+  }
+  return c;
+}
+const hexToRgba = colorWithOpacity;
+
+function inView(n, bounds) {
+  return n.x >= bounds.minX && n.x <= bounds.maxX && n.y >= bounds.minY && n.y <= bounds.maxY;
+}
+
+function render(timestamp) {
+  const time = (timestamp || 0) * 0.001;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Smooth camera
+  if (isAnimating) {
+    camX += (tCamX - camX) * 0.08;
+    camY += (tCamY - camY) * 0.08;
+    zoom += (tZoom - zoom) * 0.08;
+    if (Math.abs(camX - tCamX) < 0.3 && Math.abs(camY - tCamY) < 0.3 && Math.abs(zoom - tZoom) < 0.001) {
+      camX = tCamX; camY = tCamY; zoom = tZoom; isAnimating = false;
+    }
+  }
+
+  document.getElementById('zoom-val').textContent = zoom.toFixed(2) + 'x';
+
+  const showFiles = zoom > 0.85;
+  const showFileLabels = zoom > 1.8;
+  const M = 60 / zoom;
+  const bounds = { minX: -camX / zoom - M, maxX: (canvas.width - camX) / zoom + M, minY: -camY / zoom - M, maxY: (canvas.height - camY) / zoom + M };
+
+  ctx.save();
+  ctx.translate(camX, camY);
+  ctx.scale(zoom, zoom);
+
+  // Physics simulation for Category Nodes (spring attraction to layout target)
+  catNodes.forEach(cat => {
+    if (draggedNode === cat) return;
+    if (cat._lx === undefined) { cat._lx = cat.x; cat._ly = cat.y; }
+    const dx = cat._lx - cat.x;
+    const dy = cat._ly - cat.y;
+    if (!cat.vx) cat.vx = 0;
+    if (!cat.vy) cat.vy = 0;
+    cat.vx += dx * 0.08;
+    cat.vy += dy * 0.08;
+    cat.vx *= 0.72;
+    cat.vy *= 0.72;
+    cat.x += cat.vx;
+    cat.y += cat.vy;
+  });
+
+  // Float + spring physics for File Nodes
+  allFileNodes.forEach(fn => {
+    const parent = edgeNodeMap.get(fn.parentId);
+    if (parent) {
+      fn._ox = parent.x + (fn._dx || 0);
+      fn._oy = parent.y + (fn._dy || 0);
+    }
+    if (draggedNode === fn) return;
+    
+    // Float targets around anchor _ox, _oy
+    const targetX = fn._ox + Math.sin(time * fn._fs + fn._fp) * fn._fa;
+    const targetY = fn._oy + Math.cos(time * fn._fs + fn._fp) * fn._fa;
+    
+    const dx = targetX - fn.x;
+    const dy = targetY - fn.y;
+    if (!fn.vx) fn.vx = 0;
+    if (!fn.vy) fn.vy = 0;
+    fn.vx += dx * 0.08;
+    fn.vy += dy * 0.08;
+    fn.vx *= 0.72;
+    fn.vy *= 0.72;
+    fn.x += fn.vx;
+    fn.y += fn.vy;
+  });
+
+  // ── Edges ──
+  const hovId = hovered ? hovered.id : null;
+  const selId = selected ? selected.id : null;
+
+  vaultEdges.forEach(e => {
+    const a = edgeNodeMap.get(e.from);
+    const b = edgeNodeMap.get(e.to);
+    if (!a || !b) return;
+    const isHi = hovId === e.from || hovId === e.to ||
+                 (hovered && hovered.type === 'category' && (e.from.startsWith(hovId + '::') || e.to.startsWith(hovId + '::')));
+    const isSel = selId === e.from || selId === e.to ||
+                  (selected && selected.type === 'category' && (e.from.startsWith(selId + '::') || e.to.startsWith(selId + '::')));
+    if (!isHi && !isSel && !showFiles) {
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 0.6; ctx.stroke();
+      return;
+    }
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+    const nx = -dy / len, ny = dx / len;
+    const off = len * 0.12;
+    const cx = mx + nx * off, cy = my + ny * off;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cx, cy, b.x, b.y);
+    ctx.strokeStyle = isHi || isSel ? hexToRgba('#00ff88', 0.35) : 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = isHi || isSel ? 1.5 : 0.7; ctx.stroke();
+  });
+
+  // ── File nodes (LOD) ──
+  if (showFiles) {
+    const hovPid = hovered && hovered.type === 'category' ? hovered.id : null;
+    const selPid = selected && selected.type === 'category' ? selected.id : null;
+    allFileNodes.forEach(fn => {
+      if (!inView(fn, bounds)) return;
+      const dimmed = hovPid && fn.parentId !== hovPid;
+      ctx.globalAlpha = dimmed ? 0.1 : (fn.parentId === hovPid || fn.parentId === selPid ? 1 : 0.55);
+      const r = Math.max(0.8, fn.radius);
+      ctx.beginPath(); ctx.arc(fn.x, fn.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = hexToRgba(fn.color, fn._isIndex ? 0.5 : 0.65);
+      ctx.fill();
+      const isParentActive = (hovPid && fn.parentId === hovPid) || (selPid && fn.parentId === selPid);
+      const isFileActive = hovered === fn || selected === fn;
+      if (showFileLabels && (isParentActive || isFileActive)) {
+        ctx.font = '400 7.5px "JetBrains Mono"';
+        ctx.fillStyle = hexToRgba(fn.color, 0.95);
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(fn._label, fn.x + r + 3, fn.y);
+      }
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  // ── Category nodes ──
+  catNodes.forEach(cat => {
+    if (!inView(cat, bounds)) return;
+    const isHov = hovered === cat;
+    const isSel = selected === cat;
+    const isConn = hovered && hovered.type === 'category' && adjacenySet.get(hovered.id)?.has(cat.id);
+    const dimmed = hovered && hovered.type === 'category' && !isHov && !isConn;
+    const r = Math.max(4, cat.radius);
+
+    if (isSel) {
+      ctx.beginPath(); ctx.arc(cat.x, cat.y, r + 7 + Math.sin(time * 3) * 2.5, 0, Math.PI * 2);
+      ctx.strokeStyle = hexToRgba(cat.color, 0.2); ctx.lineWidth = 1.2; ctx.stroke();
+    }
+    if (isHov || isSel) {
+      const g = ctx.createRadialGradient(cat.x, cat.y, r * 0.4, cat.x, cat.y, r + 12);
+      g.addColorStop(0, hexToRgba(cat.color, 0.18));
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(cat.x, cat.y, r + 12, 0, Math.PI * 2);
+      ctx.fillStyle = g; ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(cat.x, cat.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = hexToRgba(cat.color, dimmed ? 0.1 : (isHov || isSel ? 0.87 : 0.47));
+    ctx.fill();
+    ctx.strokeStyle = hexToRgba(cat.color, dimmed ? 0.05 : (isHov || isSel ? 0.7 : 0.2));
+    ctx.lineWidth = isHov || isSel ? 2 : 1; ctx.stroke();
+
+    if (!dimmed) {
+      ctx.beginPath(); ctx.arc(cat.x, cat.y, Math.max(1.5, r * 0.25), 0, Math.PI * 2);
+      ctx.fillStyle = hexToRgba(cat.color, isHov || isSel ? 1 : 0.6); ctx.fill();
+    }
+    if (!dimmed || isSel) {
+      ctx.font = `${isHov || isSel ? '600' : '400'} ${isHov || isSel ? 11 : 10}px "Space Grotesk"`;
+      ctx.fillStyle = dimmed ? 'rgba(255,255,255,0.12)' : (isHov || isSel ? '#fff' : 'rgba(255,255,255,0.65)');
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(cat.name, cat.x, cat.y + r + 5);
+      if (isHov || isSel) {
+        ctx.font = '500 8px "JetBrains Mono"';
+        ctx.fillStyle = hexToRgba(cat.color, 0.75);
+        ctx.fillText(cat.count + ' notes', cat.x, cat.y + r + 19);
+      }
+    }
+  });
+
+  ctx.restore();
+}
+
+// ── Interaction ──
+let isPanning = false, lMX = 0, lMY = 0;
+
+function hitTest(sx, sy) {
+  const w = screenToWorld(sx, sy);
+  for (let i = catNodes.length - 1; i >= 0; i--) {
+    const n = catNodes[i];
+    const dx = w.x - n.x, dy = w.y - n.y;
+    const hr = Math.max(n.radius + 4 / zoom, 14 / zoom);
+    if (dx * dx + dy * dy <= hr * hr) return { node: n, type: 'category' };
+  }
+  if (zoom > 0.85) {
+    for (let i = allFileNodes.length - 1; i >= 0; i--) {
+      const n = allFileNodes[i];
+      const dx = w.x - n.x, dy = w.y - n.y;
+      const hr = Math.max(n.radius + 3 / zoom, 8 / zoom);
+      if (dx * dx + dy * dy <= hr * hr) return { node: n, type: 'file' };
+    }
+  }
+  return null;
+}
+
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  if (draggedNode) {
+    const w = screenToWorld(mx, my);
+    draggedNode.x = w.x;
+    draggedNode.y = w.y;
+    draggedNode.vx = 0;
+    draggedNode.vy = 0;
+    return;
+  }
+  if (isPanning) { camX += mx - lMX; camY += my - lMY; tCamX = camX; tCamY = camY; lMX = mx; lMY = my; return; }
+  const hit = hitTest(mx, my);
+  hovered = hit ? hit.node : null;
+  canvas.style.cursor = hit ? 'pointer' : 'grab';
+});
+
+canvas.addEventListener('mousedown', e => {
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const hit = hitTest(mx, my);
+  if (hit) {
+    draggedNode = hit.node;
+    draggedNode.vx = 0;
+    draggedNode.vy = 0;
+  } else {
+    isPanning = true; lMX = mx; lMY = my; canvas.classList.add('grabbing');
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  if (draggedNode) {
+    draggedNode = null;
+  } else if (!isPanning) {
+    const r = canvas.getBoundingClientRect();
+    const hit = hitTest(e.clientX - r.left, e.clientY - r.top);
+    if (hit) {
+      if (hit.type === 'category') selectCategory(hit.node.id);
+      else selectFileNode(hit.node);
+    }
+  }
+  isPanning = false; canvas.classList.remove('grabbing');
+});
+
+canvas.addEventListener('mouseleave', () => { hovered = null; draggedNode = null; isPanning = false; canvas.classList.remove('grabbing'); });
+
+canvas.addEventListener('dblclick', e => {
+  const r = canvas.getBoundingClientRect();
+  const hit = hitTest(e.clientX - r.left, e.clientY - r.top);
+  if (hit) {
+    focusOnNode(hit.node);
+    if (hit.type === 'category') selectCategory(hit.node.id);
+    else selectFileNode(hit.node);
+  }
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const w = screenToWorld(mx, my);
+  const f = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+  const nz = Math.max(0.25, Math.min(5, zoom * f));
+  camX = mx - w.x * nz; camY = my - w.y * nz;
+  zoom = nz; tZoom = zoom; tCamX = camX; tCamY = camY;
+}, { passive: false });
+
+// Touch
+let ltd = 0;
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    const mx = t.clientX - r.left, my = t.clientY - r.top;
+    const hit = hitTest(mx, my);
+    if (hit) {
+      draggedNode = hit.node;
+      draggedNode.vx = 0;
+      draggedNode.vy = 0;
+    } else {
+      isPanning = true; lMX = mx; lMY = my;
+    }
+  } else if (e.touches.length === 2) {
+    isPanning = false;
+    draggedNode = null;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    ltd = Math.sqrt(dx * dx + dy * dy);
+  }
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (draggedNode && e.touches.length === 1) {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    const mx = t.clientX - r.left, my = t.clientY - r.top;
+    const w = screenToWorld(mx, my);
+    draggedNode.x = w.x;
+    draggedNode.y = w.y;
+  } else if (e.touches.length === 1 && isPanning) {
+    const t = e.touches[0], r = canvas.getBoundingClientRect();
+    const mx = t.clientX - r.left, my = t.clientY - r.top;
+    camX += mx - lMX; camY += my - lMY; tCamX = camX; tCamY = camY; lMX = mx; lMY = my;
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const d = Math.sqrt(dx * dx + dy * dy);
+    if (ltd > 0) {
+      const s = d / ltd;
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const r = canvas.getBoundingClientRect();
+      const sx = cx - r.left, sy = cy - r.top;
+      const w = screenToWorld(sx, sy);
+      const nz = Math.max(0.25, Math.min(5, zoom * s));
+      camX = sx - w.x * nz; camY = sy - w.y * nz;
+      zoom = nz; tZoom = zoom; tCamX = camX; tCamY = camY;
+    }
+    ltd = d;
+  }
+}, { passive: false });
+canvas.addEventListener('touchend', e => {
+  if (e.touches.length === 0) {
+    if (draggedNode) {
+      draggedNode = null;
+    } else if (!isPanning && ltd === 0) {
+      const t = e.changedTouches[0], r = canvas.getBoundingClientRect();
+      const hit = hitTest(t.clientX - r.left, t.clientY - r.top);
+      if (hit) {
+        if (hit.type === 'category') selectCategory(hit.node.id);
+        else selectFileNode(hit.node);
+      }
+    }
+    isPanning = false; ltd = 0;
+  }
+});
+
+// ── Detail panels ──
+function selectCategory(catId) {
+  const cat = edgeNodeMap.get(catId);
+  if (!cat || cat.type !== 'category') return;
+  selected = cat;
+  const panel = document.getElementById('detail-panel');
+  const inner = document.getElementById('detail-inner');
+  panel.classList.add('open');
+  const connected = adjacenySet.get(catId) || new Set();
+  let html = `<div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><div style="width:12px;height:12px;border-radius:3px;background:${cat.color}"></div><h2 class="text-base font-bold" style="color:#fff">${cat.fullName}</h2></div><button onclick="deselectNode()" style="color:var(--text-dim);background:none;border:none;cursor:pointer;padding:4px 8px" aria-label="Tutup"><i class="fas fa-xmark"></i></button></div>
+  <div class="flex gap-3 mb-5"><div class="hud-corners flex-1" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:11px;text-align:center"><div class="mono text-xl font-bold" style="color:${cat.color}">${cat.count}</div><div class="text-xs mt-1" style="color:var(--text-dim)">notes</div></div><div class="hud-corners flex-1" style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:11px;text-align:center"><div class="mono text-xl font-bold" style="color:${cat.color}">${connected.size}</div><div class="text-xs mt-1" style="color:var(--text-dim)">koneksi</div></div></div>`;
+  // File list
+  const kids = cat._children || [];
+  if (kids.length) {
+    html += `<div class="mb-5"><h3 class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:var(--text-dim)">File (${kids.length})</h3>`;
+    kids.slice(0, 15).forEach(fn => {
+      html += `<div class="flex items-center gap-2 py-1 text-xs" onclick="selectFileNodeById('${fn.id.replace(/'/g, "\\'")}')" style="color:var(--text);cursor:pointer"><i class="fas fa-file-lines" style="color:${fn.color};opacity:.5;font-size:9px;width:12px"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fn._label}</span></div>`;
+    });
+    if (kids.length > 15) html += `<div class="text-xs mt-1" style="color:var(--text-dim)">+${kids.length - 15} lainnya</div>`;
+    html += `</div>`;
+  }
+  // Connected
+  if (connected.size) {
+    html += `<div><h3 class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:var(--text-dim)">Terhubung</h3><div class="flex flex-wrap gap-2">`;
+    connected.forEach(otherId => {
+      const other = edgeNodeMap.get(otherId);
+      if (!other) return;
+      html += `<span class="detail-tag" style="color:${other.color};border-color:${hexToRgba(other.color, 0.2)}" onclick="selectCategory('${other.id}')"><span style="display:inline-block;width:6px;height:6px;border-radius:2px;background:${other.color};margin-right:4px"></span>${other.name}</span>`;
+    });
+    html += `</div></div>`;
+  }
+  inner.innerHTML = html;
+  highlightSidebar(catId);
+}
+
+window.selectFileNodeById = function(id) {
+  const node = allFileNodes.find(n => n.id === id);
+  if (node) selectFileNode(node);
+};
+
+function selectFileNode(fn) {
+  if (!fn) return;
+  selected = fn;
+  const parent = edgeNodeMap.get(fn.parentId);
+  const panel = document.getElementById('detail-panel');
+  const inner = document.getElementById('detail-inner');
+  panel.classList.add('open');
+  let html = `<div class="flex items-center justify-between mb-4"><h2 class="text-sm font-bold" style="color:#fff">${fn._label}.md</h2><button onclick="deselectNode()" style="color:var(--text-dim);background:none;border:none;cursor:pointer;padding:4px 8px" aria-label="Tutup"><i class="fas fa-xmark"></i></button></div>`;
+  if (parent) {
+    html += `<div class="mb-4"><div class="text-xs mb-1" style="color:var(--text-dim)">Kategori</div><span class="detail-tag" style="color:${parent.color};border-color:${hexToRgba(parent.color, 0.2)};font-size:11px" onclick="selectCategory('${parent.id}')"><span style="display:inline-block;width:6px;height:6px;border-radius:2px;background:${parent.color};margin-right:4px"></span>${parent.fullName}</span></div>`;
+  }
+  
+  // Extract relative path key
+  const relKey = fn.id.includes('::') ? fn.id.split('::')[1] : fn.id;
+  html += `<div class="mt-4 flex flex-col gap-2">
+    <button onclick="selectFileByPath('${relKey.replace(/'/g, "\\'")}', '${fn._label.replace(/'/g, "\\'")}.md')" style="background:var(--bg-card);border:1px solid var(--border);color:var(--accent);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:12px;transition:border-color .15s;font-weight:bold" class="hover:border-accent">
+      <i class="fas fa-book-open" style="margin-right:6px"></i>Baca Dokumen
+    </button>
+    <button onclick="selectCategory('${fn.parentId}')" style="background:var(--bg-card);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:12px;transition:border-color .15s">
+      <i class="fas fa-arrow-left" style="margin-right:6px;color:${fn.color}"></i>Lihat semua ${parent?.name || ''}
+    </button>
+  </div>`;
+  inner.innerHTML = html;
+}
+
+function deselectNode() {
+  selected = null;
+  document.getElementById('detail-panel').classList.remove('open');
+  clearSidebarHL();
+}
+
+// ── Reset observer ──
+document.getElementById('reset-btn').addEventListener('click', resetView);
+
+// Sidebar highlight helpers
+function highlightSidebar(catId) {
+  clearSidebarHL();
+  const folder = document.querySelector(`.tree-folder-header .fname`);
+  // Open matching folder in tree
+  document.querySelectorAll('.tree-folder-header').forEach(h => {
+    if (h.querySelector('.fname').textContent.toLowerCase() === catId.toLowerCase()) {
+      h.classList.add('open');
+      h.nextElementSibling?.classList.add('show');
+      h.style.background = 'rgba(0,255,136,0.05)';
+      h.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+}
+function clearSidebarHL() {
+  document.querySelectorAll('.tree-folder-header').forEach(h => { h.style.background = ''; });
+}
+
+// ── Loop ──
+let loopStarted = false;
+function loop(ts) {
+  if (!loopStarted) {
+    resizeCanvas();
+    if (canvas.width > 100) {
+      computeLayout();
+      camX = canvas.width / 2; camY = canvas.height / 2;
+      tCamX = camX; tCamY = camY;
+      loopStarted = true;
+    }
+  }
+  if (needsLayout) {
+    computeLayout();
+    needsLayout = false;
+  }
+  render(ts);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ── Resize ──
+const ro = new ResizeObserver(() => { resizeCanvas(); needsLayout = true; });
+ro.observe(document.getElementById('graph-wrap'));
+
+function resizeCanvas() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  canvas.width = r.width; canvas.height = r.height;
+}
+window.addEventListener('resize', () => { 
+  resizeCanvas(); 
+  needsLayout = true;
+});
+
+// Settings cog controls popover
+document.getElementById('settings-toggle-btn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('settings-popover').classList.toggle('hidden');
+});
+document.addEventListener('click', () => {
+  document.getElementById('settings-popover').classList.add('hidden');
+});
+document.getElementById('settings-popover').addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
+// Sliders physics listeners
+const linkSlider = document.getElementById('slider-link-dist');
+const repulsionSlider = document.getElementById('slider-repulsion');
+const gravitySlider = document.getElementById('slider-gravity');
+
+function saveSlider(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
+// Set initial slider positions from persisted values
+linkSlider.value = physicsSettings.linkDistance;
+repulsionSlider.value = physicsSettings.repulsion;
+gravitySlider.value = physicsSettings.gravity;
+document.getElementById('val-link-dist').textContent = physicsSettings.linkDistance;
+document.getElementById('val-repulsion').textContent = physicsSettings.repulsion;
+document.getElementById('val-gravity').textContent = physicsSettings.gravity;
+
+// Physics sliders removed — radial cluster doesn't use force simulation
+// (variables kept to prevent ReferenceError if settings panel is still in DOM)
+linkSlider.addEventListener('input', () => { document.getElementById('val-link-dist').textContent = linkSlider.value; });
+repulsionSlider.addEventListener('input', () => { document.getElementById('val-repulsion').textContent = repulsionSlider.value; });
+gravitySlider.addEventListener('input', () => { document.getElementById('val-gravity').textContent = gravitySlider.value; });
+document.getElementById('reset-physics-btn').addEventListener('click', () => {
+  linkSlider.value = 130; repulsionSlider.value = 4000; gravitySlider.value = 0.0012;
+  document.getElementById('val-link-dist').textContent = '130';
+  document.getElementById('val-repulsion').textContent = '4000';
+  document.getElementById('val-gravity').textContent = '0.0012';
+});
+
+// Search functionality
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) {
+    document.querySelectorAll('.tree-file').forEach(f => f.style.display = '');
+    document.querySelectorAll('.tree-folder').forEach(f => f.style.display = '');
+    hovered = null;
+    return;
+  }
+
+  // Filter tree
+  document.querySelectorAll('.tree-file').forEach(file => {
+    const filename = file.textContent.toLowerCase();
+    file.style.display = filename.includes(q) ? '' : 'none';
+  });
+
+  const matchNode = catNodes.find(n => n.name.toLowerCase().includes(q) || n.fullName.toLowerCase().includes(q));
+  hovered = matchNode || null;
+});
+
+// Themes dropdown toggler
+themeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  themeDropdown.classList.toggle('hidden');
+});
+document.addEventListener('click', () => {
+  themeDropdown.classList.add('hidden');
+});
+
+window.setTheme = function(themeName) {
+  const root = document.documentElement;
+  root.classList.remove('theme-cyberpunk', 'theme-galaxy', 'theme-nature', 'theme-sand');
+  if (themeName !== 'cyberpunk') {
+    root.classList.add('theme-' + themeName);
+  }
+  
+  localStorage.setItem('vault-command-center-theme', themeName);
+  document.getElementById('current-theme-name').textContent = nameMap[themeName] || 'Cyberpunk';
+  
+  window.dispatchEvent(new CustomEvent('theme-changed', { detail: themeName }));
+};
+
+// Local storage binder
+const activeTheme = localStorage.getItem('vault-command-center-theme') || 'cyberpunk';
+setTheme(activeTheme);
+
+// ============================================================
+// VAULT REFRESH PERSISTENCE
+// ============================================================
+// Saves which vault workspace is active so refresh picks it back up
+const ACTIVE_VAULT_KEY = 'vcc_active_vault_id';
+
+function persistActiveVault(id) {
+  try { localStorage.setItem(ACTIVE_VAULT_KEY, id); } catch(e) {}
+}
+
+function getPersistedActiveVault() {
+  try { return localStorage.getItem(ACTIVE_VAULT_KEY); } catch(e) { return null; }
+}
+
+function clearPersistedActiveVault() {
+  try { localStorage.removeItem(ACTIVE_VAULT_KEY); } catch(e) {}
+}
+
+// On load: try re-opening last workspace
+(async function tryRestoreVault() {
+  const lastId = getPersistedActiveVault();
+  if (!lastId) return;
+  const vaults = await getVaults();
+  const last = vaults.find(v => v.id === lastId);
+  if (last && (last.type === 'file-system' || (last.type === 'folder-input' && last.filesData))) {
+    try { await loadVaultWorkspace(last); } catch(e) {
+      console.warn('Could not auto-restore vault:', e);
+      clearPersistedActiveVault();
+    }
+  } else if (last) {
+    clearPersistedActiveVault();
+    document.getElementById('vault-cockpit-view').classList.remove('hidden');
+    console.log('Vault needs reconnection — click to re-upload folder');
+  }
+})();
+
+// Save active vault ID after successful load
+const origLaunch = launchWorkspaceView;
+launchWorkspaceView = async function(vaultName) {
+  if (currentVaultId) persistActiveVault(currentVaultId);
+  return origLaunch.apply(this, arguments);
+};
+
+// Clear on back to cockpit
+document.getElementById('back-to-cockpit-btn').addEventListener('click', () => {
+  clearPersistedActiveVault();
+  document.getElementById('vault-workspace-view').classList.add('hidden');
+  document.getElementById('vault-cockpit-view').classList.remove('hidden');
+  refreshCockpit();
+});
+
+const IGNORE_EXT = ['.png','.jpg','.jpeg','.gif','.svg','.ico','.webp','.bmp','.sh','.bash','.zsh','.base','.exe','.bin','.pdf','.zip','.tar','.gz','.7z','.rar','.db','.sqlite','.css','.js','.py','.json','.xml','.yml','.yaml'];
+function isMdFile(name) { return !IGNORE_EXT.some(e => name.toLowerCase().endsWith(e)); }
+
+// Sidebar Drawer Mobile
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Cockpit buttons & drops
+document.getElementById('cockpit-add-btn').addEventListener('click', registerNewVaultDirectory);
+
+const dropZone = document.getElementById('cockpit-drop-zone');
+dropZone.addEventListener('click', () => {
+  document.getElementById('vault-folder-input').click();
+});
+
+// Drag and drop events
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('dragover');
+});
+dropZone.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  alert('Mohon gunakan tombol pendaftaran berkas untuk mendaftarkan folder lokal.');
+});
+
+// Folder Input change handler (webkitdirectory fallback)
+const folderInput = document.getElementById('vault-folder-input');
+folderInput.addEventListener('change', async (e) => {
+  const files = e.target.files;
+  if (!files || files.length === 0) return;
+  
+  fileHandles.clear();
+  vaultFileTree = {};
+  
+  let folderName = "Local Vault";
+  const firstPath = files[0].webkitRelativePath;
+  if (firstPath) {
+    folderName = firstPath.split('/')[0];
+  }
+  
+  // Show import progress overlay
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.id = 'import-loading-overlay';
+  loadingOverlay.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,17,23,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:sans-serif;border-radius:0;";
+  loadingOverlay.innerHTML = `
+    <i class="fas fa-circle-notch fa-spin" style="font-size:32px;color:var(--accent);margin-bottom:15px;"></i>
+    <div style="font-size:14px;font-weight:bold;" id="import-progress-text">Membaca berkas vault...</div>
+  `;
+  document.body.appendChild(loadingOverlay);
+
+  const fileArray = Array.from(files);
+  const contentResults = await Promise.all(fileArray.map(async (file) => {
+    try {
+      const text = await file.text();
+      return { file, text };
+    } catch (err) {
+      console.warn("Failed to read file", file.name, err);
+      return { file, text: "" };
+    }
+  }));
+  
+  loadingOverlay.remove();
+  
+  const filesData = [];
+  
+  for (const { file, text } of contentResults) {
+    const parts = file.webkitRelativePath.split('/');
+    parts.shift(); // remove folderName
+    const relKey = parts.join('/').toLowerCase();
+    
+    fileHandles.set(relKey, text);
+    filesData.push({ relKey, name: file.name, content: text });
+    
+    // Register into hierarchical file tree
+    let leaf = vaultFileTree;
+    for (let j = 0; j < parts.length - 1; j++) {
+      const p = parts[j];
+      if (!leaf[p]) leaf[p] = { __kind: 'directory', children: {} };
+      leaf = leaf[p].children;
+    }
+    leaf[file.name] = { __kind: 'file', relKey: relKey, name: file.name };
+  }
+
+  // Register in local registry as fallback type with filesData
+  const vault = {
+    id: folderName,
+    name: folderName,
+    type: 'folder-input',
+    addedAt: Date.now(),
+    lastAccessed: Date.now(),
+    notesCount: files.length,
+    filesData: filesData
+  };
+  await saveVault(vault);
+  
+  launchWorkspaceView(folderName);
+});
+
+// Old canvas mouse/touch handlers removed — radial cluster engine has its own
+
+// Old duplicate handlers removed — radial cluster engine has its own
+// ponytail: kept initPositions + resizeCanvas stubs for compatibility
+function initPositions() { zoom = 0.65; camX = 0; camY = 0; }
+
+// Initial cockpit setup
+refreshCockpit();
+
+</script>
+</body>
+</html>

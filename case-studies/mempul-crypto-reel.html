@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEMPUL - This Day in Crypto Reel</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0A0F1E;
+      --bg-panel: #111A2B;
+      --accent-lime: #A8E815;
+      --text-white: #E8ECF1;
+      --text-gray: #8B93A7;
+      --border-color: #1E293B;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ambient background grid + floating canvas */
+    #ambient-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* Header Nav */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(10, 15, 30, 0.8);
+      backdrop-filter: blur(12px);
+      opacity: 0; /* Animated by GSAP */
+    }
+
+    .brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand span {
+      color: var(--accent-lime);
+    }
+
+    /* Main Container / Home Section */
+    .section-home {
+      flex: 1;
+      display: flex;
+      position: relative;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    /* Left Sidebar: Controls & Copy */
+    .controls-panel {
+      width: 420px;
+      border-right: 1px solid var(--border-color);
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(17, 26, 43, 0.4);
+      backdrop-filter: blur(8px);
+      overflow-y: auto;
+    }
+
+    /* Elements targetable by GSAP */
+    .gsap-fade-in {
+      opacity: 0;
+    }
+
+    .meta-content h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+
+    .meta-content h1 span {
+      color: var(--accent-lime);
+    }
+
+    .meta-content p {
+      color: var(--text-gray);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .spec-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .spec-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .spec-label {
+      color: var(--text-gray);
+    }
+
+    .spec-value {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-lime);
+      font-weight: bold;
+    }
+
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-lime);
+      color: var(--bg-dark);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 25px rgba(168, 232, 21, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-white);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-gray);
+    }
+
+    .audio-toggle-btn {
+      color: var(--text-white);
+      background: transparent;
+      border: 1px solid var(--border-color);
+    }
+
+    .audio-toggle-btn.active {
+      color: var(--accent-lime);
+      border-color: var(--accent-lime);
+      background: rgba(168, 232, 21, 0.05);
+    }
+
+    /* Right Side: Showcase Viewport with 3D Perspective */
+    .showcase-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 2rem;
+      perspective: 1200px; /* Essential for GSAP 3D rotations */
+    }
+
+    /* Phone Frame Container */
+    .phone-mockup {
+      width: 340px;
+      height: 600px;
+      border-radius: 40px;
+      border: 12px solid #1e293b;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+      background: var(--bg-dark);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform-style: preserve-3d;
+      opacity: 0; /* Animated by GSAP */
+    }
+
+    /* Screen Viewport (Inside Phone Frame) */
+    .screen-viewport {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Ambient Mempool Pixels in viewport */
+    .mempul-pixels-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Dot Grid overlay inside screen */
+    .screen-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(168, 232, 21, 0.05) 1px, transparent 1px);
+      background-size: 16px 16px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Active Content Layer */
+    .screen-content {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Top Brand Indicator */
+    .screen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0.8;
+    }
+
+    .screen-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .screen-brand span {
+      color: var(--accent-lime);
+    }
+
+    .screen-brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-gray);
+    }
+
+    /* Middle Scene Host */
+    .scene-host {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 100%;
+    }
+
+    /* Footer / Progress Bar */
+    .screen-footer {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--accent-lime);
+      transition: width 0.05s linear;
+    }
+
+    /* Cinematic Frame Scenes */
+    .scene {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .scene.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Specific Frame Styles */
+    .scene-hook {
+      align-items: flex-start;
+    }
+
+    .headline-large {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text-white);
+      margin-bottom: 0.5rem;
+    }
+
+    .headline-large span {
+      color: var(--accent-lime);
+    }
+
+    .accent-bar {
+      width: 40px;
+      height: 3px;
+      background: var(--accent-lime);
+      margin: 0.75rem 0;
+    }
+
+    .date-flipper {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.85rem;
+      color: var(--accent-lime);
+      font-weight: bold;
+      background: var(--bg-panel);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    /* Scene 2: news bubbles */
+    .bubble-container {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .news-bubble {
+      position: absolute;
+      background: rgba(255, 123, 114, 0.08);
+      border: 1px solid rgba(255, 123, 114, 0.2);
+      color: #ff7b72;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.5s ease;
+      opacity: 0;
+      transform: scale(0.85);
+    }
+
+    .news-bubble.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Chart Canvas Frame */
+    .chart-container {
+      width: 100%;
+      height: 140px;
+      position: relative;
+      margin-top: 1rem;
+    }
+
+    .chart-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Scene 3: Investment Counter */
+    .investment-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .box-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .box-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--accent-lime);
+    }
+
+    .box-percent {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #3fb950;
+      background: rgba(63, 185, 80, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+
+    /* Scene 5: Outro Brand */
+    .outro-scene {
+      align-items: center;
+      text-align: center;
+    }
+
+    .outro-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      color: var(--text-white);
+      margin-bottom: 0.5rem;
+    }
+
+    .outro-tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent-lime);
+      letter-spacing: 0.5px;
+      margin-top: 0.5rem;
+    }
+
+    /* Playback overlay */
+    .playback-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 30, 0.85);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .playback-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .play-circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--accent-lime);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-dark);
+      font-size: 1.5rem;
+      box-shadow: 0 0 30px rgba(168, 232, 21, 0.4);
+      margin-bottom: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    .playback-overlay:hover .play-circle {
+      transform: scale(1.1);
+    }
+
+    .playback-overlay span {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-white);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Matrix/Mempool background -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <header id="page-header">
+    <div class="brand">
+      <i class="fas fa-layer-group"></i> MEMPUL <span>STUDIO</span>
+    </div>
+    <div style="font-size:0.85rem;color:var(--text-gray)">
+      <i class="fas fa-video mr-1"></i> Interactive Reel Preview
+    </div>
+  </header>
+
+  <main class="section-home">
+    <!-- Left Column: Specs & Control Panel -->
+    <section class="controls-panel">
+      <div class="meta-content">
+        <h1 class="gsap-fade-in">This Day in <span>Crypto</span></h1>
+        <p class="gsap-fade-in">Preview interaktif untuk template video vertikal (9:16) saluran MEMPUL. Dilengkapi sintesis audio bleeps/synthwave beat waktu-nyata via Web Audio API.</p>
+        
+        <div class="spec-box gsap-fade-in">
+          <div class="spec-item">
+            <span class="spec-label">Channel</span>
+            <span class="spec-value">MEMPUL</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Format</span>
+            <span class="spec-value">9:16 (Shorts/Reels)</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Duration</span>
+            <span class="spec-value">25.0s</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Brand Palette</span>
+            <span class="spec-value">Ink Navy & Acid Lime</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-group gsap-fade-in">
+        <button class="btn btn-secondary audio-toggle-btn active" id="audio-toggle">
+          <i class="fas fa-volume-high"></i> Sound FX: ON
+        </button>
+        <button class="btn btn-primary" id="play-trigger">
+          <i class="fas fa-rotate-left"></i> Replay Reel Animation
+        </button>
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Phone Viewport -->
+    <section class="showcase-area">
+      <div class="phone-mockup" id="device-mockup">
+        
+        <!-- Screen Viewport -->
+        <div class="screen-viewport">
+          
+          <!-- Floating background transaction pixels inside screen -->
+          <canvas class="mempul-pixels-canvas" id="screen-pixels"></canvas>
+          <div class="screen-grid"></div>
+
+          <!-- Playback Cover Overlay -->
+          <div class="playback-overlay" id="play-overlay">
+            <div class="play-circle">
+              <i class="fas fa-play"></i>
+            </div>
+            <span>MUTAR VIDEO PREVIEW</span>
+          </div>
+
+          <!-- Active Content Layer -->
+          <div class="screen-content">
+            
+            <!-- Screen Header -->
+            <div class="screen-header">
+              <div class="screen-brand">MEMPUL<span>.</span></div>
+              <div class="screen-brand-tag">confirmed //</div>
+            </div>
+
+            <!-- Scene Host (Cycles between frames) -->
+            <div class="scene-host">
+              
+              <!-- Scene 1: Date Hook -->
+              <div class="scene scene-hook" id="scene-1">
+                <div class="headline-large">THIS EXACT<br><span>DAY.</span></div>
+                <div class="headline-large" style="font-size:1.15rem;color:var(--text-gray)">FIVE YEARS AGO...</div>
+                <div class="accent-bar"></div>
+                <div class="date-flipper" id="date-flipper">JUL 16, 2026</div>
+              </div>
+
+              <!-- Scene 2: Bitcoin closed -->
+              <div class="scene" id="scene-2">
+                <div class="headline-large" style="font-size:1.45rem">BITCOIN WAS<br><span>$31,384.</span></div>
+                
+                <!-- Headline bubbles container -->
+                <div class="bubble-container">
+                  <div class="news-bubble" style="top:20px;left:10px" id="b1">"BITCOIN IS A BUBBLE!"</div>
+                  <div class="news-bubble" style="top:75px;right:10px" id="b2">"CRYPTO CRASHING"</div>
+                  <div class="news-bubble" style="top:115px;left:20px" id="b3">"THE END OF BTC"</div>
+                </div>
+
+                <div class="headline-large" style="font-size:0.8rem;color:var(--text-gray);line-height:1.4">While global media outlets declared it completely dead...</div>
+              </div>
+
+              <!-- Scene 3: Investment Growing -->
+              <div class="scene" id="scene-3">
+                <div class="headline-large" style="font-size:1.4rem;margin-bottom:1rem">YOUR <span>$100</span> COIN...</div>
+                <div class="investment-box">
+                  <span class="box-label">Valuation Today</span>
+                  <div class="box-value" id="investment-counter">$100</div>
+                  <span class="box-percent" id="investment-percent">+0%</span>
+                </div>
+              </div>
+
+              <!-- Scene 4: The Twist -->
+              <div class="scene" id="scene-4">
+                <div class="headline-large" style="font-size:1.9rem;margin-bottom:0.75rem">DOUBLED.</div>
+                <div class="headline-large" style="font-size:1.1rem;color:var(--accent-lime);margin-bottom:1rem">Sounds boring?</div>
+                <div class="headline-large" style="font-size:0.85rem;color:var(--text-gray);line-height:1.6;font-family:'JetBrains Mono',monospace;">
+                  That's <span style="color:var(--accent-lime)">+15% a year</span> through two brutal bear markets, panic sells, and exchange collapses.
+                </div>
+                
+                <div class="chart-container">
+                  <canvas class="chart-canvas" id="chart-canvas-scene4"></canvas>
+                </div>
+              </div>
+
+              <!-- Scene 5: Punch Ending -->
+              <div class="scene" id="scene-5">
+                <div class="headline-large" style="font-size:1.6rem;line-height:1.3;margin-bottom:1.5rem">
+                  TIME IN THE<br><span>MARKET</span><br>BEATS TIMING<br>THE MARKET.
+                </div>
+                <div class="accent-bar" style="width:60px"></div>
+                <div class="headline-large" style="font-size:0.85rem;color:var(--text-gray);line-height:1.5">
+                  Stop trying to catch the bottoms. Accumulate.
+                </div>
+              </div>
+
+              <!-- Scene 6: Outro -->
+              <div class="scene outro-scene" id="scene-6">
+                <div class="outro-title">MEMPUL</div>
+                <div class="accent-bar" style="margin:0.5rem auto"></div>
+                <div class="outro-tagline">we see it before it confirms</div>
+              </div>
+
+            </div>
+
+            <!-- Screen Footer -->
+            <div class="screen-footer">
+              <div class="progress-bar-wrap">
+                <div class="progress-fill" id="timeline-progress"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text-gray);font-family:'JetBrains Mono',monospace;">
+                <span id="video-timer">00:00</span>
+                <span>25.0s</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ============================================================
+    // GSAP HERO ENTRANCE & FLOAT TIMELINE (HOME SECTION)
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set initial state for animated items to avoid layout flash
+      gsap.set('#page-header', { y: -50, opacity: 0 });
+      gsap.set('.gsap-fade-in', { x: -30, opacity: 0 });
+      gsap.set('#device-mockup', { 
+        y: 80, 
+        scale: 0.92, 
+        rotationY: 20, 
+        rotationX: 8, 
+        opacity: 0 
+      });
+
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 1.2 } });
+
+      // Run home section landing page entrance animations
+      tl.to('#page-header', { y: 0, opacity: 1, duration: 0.8 })
+        .to('.gsap-fade-in', { 
+          x: 0, 
+          opacity: 1, 
+          stagger: 0.15,
+          duration: 1
+        }, '-=0.4')
+        .to('#device-mockup', { 
+          y: 0, 
+          scale: 1, 
+          rotationY: 0, 
+          rotationX: 0, 
+          opacity: 1, 
+          duration: 1.6,
+          ease: 'back.out(1.15)'
+        }, '-=0.9')
+        .then(() => {
+          // Idle floating 3D animation for the device mockup
+          gsap.to('#device-mockup', {
+            y: '-=10',
+            rotationY: 1.5,
+            rotationX: 1.0,
+            duration: 3.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+          });
+        });
+    });
+
+    // ============================================================
+    // WEB AUDIO SYNTHESIZER
+    // ============================================================
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playSound(type) {
+      if (!audioEnabled) return;
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'tick') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.06);
+      } 
+      else if (type === 'swoosh') {
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(400, now);
+        filter.frequency.exponentialRampToValueAtTime(1500, now + 0.25);
+
+        const bufferSize = audioCtx.sampleRate * 0.3;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        noise.start(now);
+        noise.stop(now + 0.3);
+      } 
+      else if (type === 'grow') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(440, now + 0.8);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.85);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.9);
+      }
+      else if (type === 'ending') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(90, now);
+        osc.frequency.linearRampToValueAtTime(45, now + 1.2);
+        
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(300, now);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 1.6);
+      }
+    }
+
+    // Toggle Sound Button
+    const audioBtn = document.getElementById('audio-toggle');
+    audioBtn.addEventListener('click', () => {
+      audioEnabled = !audioEnabled;
+      if (audioEnabled) {
+        audioBtn.classList.add('active');
+        audioBtn.innerHTML = '<i class="fas fa-volume-high"></i> Sound FX: ON';
+        initAudio();
+      } else {
+        audioBtn.classList.remove('active');
+        audioBtn.innerHTML = '<i class="fas fa-volume-xmark"></i> Sound FX: OFF';
+      }
+    });
+
+    // ============================================================
+    // DYNAMIC AMBIENT TRANSACTIONS CANVAS
+    // ============================================================
+    function initMatrixBg(canvasId, density) {
+      const cv = document.getElementById(canvasId);
+      const ct = cv.getContext('2d');
+      let w = cv.width = cv.parentElement.clientWidth;
+      let h = cv.height = cv.parentElement.clientHeight;
+
+      window.addEventListener('resize', () => {
+        if (!cv.parentElement) return;
+        w = cv.width = cv.parentElement.clientWidth;
+        h = cv.height = cv.parentElement.clientHeight;
+      });
+
+      const blocks = [];
+      const count = density;
+
+      for (let i = 0; i < count; i++) {
+        blocks.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          size: Math.random() * 4 + 1.5,
+          speed: Math.random() * 0.75 + 0.25,
+          alpha: Math.random() * 0.3 + 0.05
+        });
+      }
+
+      function draw() {
+        ct.clearRect(0, 0, w, h);
+        ct.fillStyle = '#A8E815';
+        for (let i = 0; i < count; i++) {
+          const b = blocks[i];
+          ct.globalAlpha = b.alpha;
+          ct.fillRect(b.x, b.y, b.size, b.size);
+          b.y += b.speed;
+          if (b.y > h) {
+            b.y = -10;
+            b.x = Math.random() * w;
+          }
+        }
+        ct.globalAlpha = 1.0;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    initMatrixBg('ambient-canvas', 120);
+    initMatrixBg('screen-pixels', 35);
+
+    // ============================================================
+    // REEL TIMELINE SCENE MANAGER
+    // ============================================================
+    const duration = 25000; // 25s
+    let startTime = null;
+    let animId = null;
+    let isPlaying = false;
+
+    // DOM references
+    const playOverlay = document.getElementById('play-overlay');
+    const timelineProgress = document.getElementById('timeline-progress');
+    const videoTimer = document.getElementById('video-timer');
+    const playTrigger = document.getElementById('play-trigger');
+
+    const scenes = [
+      { id: 'scene-1', start: 0, end: 4200 },
+      { id: 'scene-2', start: 4200, end: 9500 },
+      { id: 'scene-3', start: 9500, end: 14500 },
+      { id: 'scene-4', start: 14500, end: 20000 },
+      { id: 'scene-5', start: 20000, end: 23200 },
+      { id: 'scene-6', start: 23200, end: 25000 }
+    ];
+
+    // Trigger state changes per frame
+    let triggeredStates = {
+      s1_flip: false,
+      s2_b1: false, s2_b2: false, s2_b3: false,
+      s3_grow: false,
+      s4_chart: false,
+      s5_hit: false,
+      s6_outro: false
+    };
+
+    function resetReelState() {
+      scenes.forEach(s => document.getElementById(s.id).classList.remove('active'));
+      document.getElementById('date-flipper').textContent = 'JUL 16, 2026';
+      document.getElementById('b1').classList.remove('active');
+      document.getElementById('b2').classList.remove('active');
+      document.getElementById('b3').classList.remove('active');
+      document.getElementById('investment-counter').textContent = '$100';
+      document.getElementById('investment-percent').textContent = '+0%';
+
+      triggeredStates = {
+        s1_flip: false,
+        s2_b1: false, s2_b2: false, s2_b3: false,
+        s3_grow: false,
+        s4_chart: false,
+        s5_hit: false,
+        s6_outro: false
+      };
+    }
+
+    function updateReel(elapsed) {
+      const percent = Math.min(100, (elapsed / duration) * 100);
+      timelineProgress.style.width = `${percent}%`;
+      
+      const seconds = (elapsed / 1000).toFixed(1);
+      videoTimer.textContent = `00:${seconds.padStart(4, '0')}`;
+
+      scenes.forEach(scene => {
+        const el = document.getElementById(scene.id);
+        if (elapsed >= scene.start && elapsed < scene.end) {
+          if (!el.classList.contains('active')) {
+            scenes.forEach(s => {
+              if (s.id !== scene.id) document.getElementById(s.id).classList.remove('active');
+            });
+            el.classList.add('active');
+          }
+        }
+      });
+      
+      // Scene 1 Action: Date rolling backwards
+      if (elapsed >= 1000 && elapsed < 3200) {
+        const progress = (elapsed - 1000) / 2200;
+        const yearsToFlip = Math.floor(progress * 5);
+        const targetYear = 2026 - yearsToFlip;
+        const flipper = document.getElementById('date-flipper');
+        
+        const nextText = `JUL 16, ${targetYear}`;
+        if (flipper.textContent !== nextText) {
+          flipper.textContent = nextText;
+          playSound('tick');
+        }
+      }
+
+      // Scene 2 Action: News headlines swooshing in
+      if (elapsed >= 5000 && !triggeredStates.s2_b1) {
+        document.getElementById('b1').classList.add('active');
+        playSound('swoosh');
+        triggeredStates.s2_b1 = true;
+      }
+      if (elapsed >= 6200 && !triggeredStates.s2_b2) {
+        document.getElementById('b2').classList.add('active');
+        playSound('swoosh');
+        triggeredStates.s2_b2 = true;
+      }
+      if (elapsed >= 7400 && !triggeredStates.s2_b3) {
+        document.getElementById('b3').classList.add('active');
+        playSound('swoosh');
+        triggeredStates.s2_b3 = true;
+      }
+
+      // Scene 3 Action: Growing counter easing
+      if (elapsed >= 10200 && elapsed <= 13000) {
+        if (!triggeredStates.s3_grow) {
+          playSound('grow');
+          triggeredStates.s3_grow = true;
+        }
+        const progress = Math.min(1.0, (elapsed - 10200) / 2400);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const val = Math.floor(100 + ease * 105);
+        const pct = Math.floor(ease * 106);
+        
+        document.getElementById('investment-counter').textContent = `$${val}`;
+        document.getElementById('investment-percent').textContent = `+${pct}%`;
+      }
+
+      // Scene 4 Action: Drawing line chart
+      if (elapsed >= 14800 && elapsed <= 19000) {
+        const canvas4 = document.getElementById('chart-canvas-scene4');
+        const c4 = canvas4.getContext('2d');
+        const cw = canvas4.width = canvas4.parentElement.clientWidth;
+        const ch = canvas4.height = canvas4.parentElement.clientHeight;
+
+        const progress = Math.min(1.0, (elapsed - 14800) / 3800);
+        c4.clearRect(0, 0, cw, ch);
+        
+        // Draw grid
+        c4.strokeStyle = '#1E293B';
+        c4.lineWidth = 1;
+        c4.beginPath();
+        for (let i = 20; i < ch; i += 25) {
+          c4.moveTo(0, i); c4.lineTo(cw, i);
+        }
+        c4.stroke();
+
+        // Draw lime trend line
+        c4.strokeStyle = '#A8E815';
+        c4.lineWidth = 3;
+        c4.shadowColor = '#A8E815';
+        c4.shadowBlur = 8;
+        c4.beginPath();
+
+        const points = [];
+        const count = 40;
+        for (let i = 0; i < count; i++) {
+          const px = (i / (count - 1)) * cw;
+          const baseNoise = Math.sin(i * 0.4) * 15 + Math.cos(i * 0.15) * 8;
+          const upTrend = (i / (count - 1)) * 40;
+          const crash = i > 12 && i < 28 ? -25 : 0;
+          const py = ch - 30 - (baseNoise + upTrend + crash);
+          points.push({ x: px, y: py });
+        }
+
+        const activeLimit = Math.floor(progress * points.length);
+        if (activeLimit > 0) {
+          c4.moveTo(points[0].x, points[0].y);
+          for (let i = 1; i < activeLimit; i++) {
+            c4.lineTo(points[i].x, points[i].y);
+          }
+          c4.stroke();
+          
+          c4.shadowBlur = 12;
+          c4.fillStyle = '#A8E815';
+          c4.beginPath();
+          c4.arc(points[activeLimit - 1].x, points[activeLimit - 1].y, 4, 0, Math.PI * 2);
+          c4.fill();
+        }
+        c4.shadowBlur = 0;
+      }
+
+      // Scene 5 Action: Cinematic Hit
+      if (elapsed >= 20000 && !triggeredStates.s5_hit) {
+        playSound('ending');
+        triggeredStates.s5_hit = true;
+      }
+
+      // Outro Action
+      if (elapsed >= 23200 && !triggeredStates.s6_outro) {
+        playSound('tick');
+        triggeredStates.s6_outro = true;
+      }
+    }
+
+    function tick(timestamp) {
+      if (!isPlaying) return;
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+
+      if (elapsed >= duration) {
+        isPlaying = false;
+        playOverlay.classList.remove('hidden');
+        resetReelState();
+        return;
+      }
+
+      updateReel(elapsed);
+      animId = requestAnimationFrame(tick);
+    }
+
+    function startPlayback() {
+      if (isPlaying) {
+        cancelAnimationFrame(animId);
+      }
+      isPlaying = true;
+      startTime = null;
+      resetReelState();
+      playOverlay.classList.add('hidden');
+      initAudio();
+      animId = requestAnimationFrame(tick);
+    }
+
+    // Bind triggers
+    playOverlay.addEventListener('click', startPlayback);
+    playTrigger.addEventListener('click', startPlayback);
+
+  </script>
+</body>
+</html>
