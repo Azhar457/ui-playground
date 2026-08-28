@@ -142,66 +142,6 @@
     padding-bottom: 15vh;
   }
 
-  /* Hero Section / Cover Card */
-  .hero-wrapper {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 24px;
-    position: relative;
-  }
-
-  .hero-cover {
-    width: var(--card-w);
-    height: var(--card-h);
-    background: radial-gradient(circle at 50% 40%, rgba(20, 24, 40, 0.7), rgba(5, 6, 10, 0.98));
-    border: 1px solid var(--line);
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px;
-    position: relative;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
-  }
-
-  .hero-cover h1 {
-    font-size: clamp(40px, 8vw, 92px);
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-  }
-
-  .hero-cover .sub {
-    margin-top: 18px;
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-  }
-
-  .hero-cover .scrollhint {
-    margin-top: 48px;
-    color: var(--dim);
-    font-size: 0.75rem;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.15em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: bob 2s ease-in-out infinite;
-  }
-
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); opacity: 0.6; }
-    50% { transform: translateY(8px); opacity: 1; }
-  }
-
   /* Fixed 3D Cycle / Wheel Stage */
   .cycle-stage {
     position: fixed;
@@ -674,14 +614,14 @@
         if (cd.frame.getAttribute("src")) cd.frame.removeAttribute("src");
         continue;
       }
-      const theta = rel * 32;            // degrees around the wheel
+      const theta = rel * 40;            // degrees around the wheel (more spacing)
       const rad = theta * Math.PI / 180;
-      const R = 360;
+      const R = 500;                     // wheel radius (cards sit further apart)
       const y = -R * Math.sin(rad);      // +rel -> up,  -rel -> down
       const z = R * Math.cos(rad) - R;   // +rel -> behind,  front sits at z=0
-      const tx = rel * 26;               // sideways perspective shift
-      const sc = 1 - Math.abs(rel) * 0.07;
-      const op = Math.max(1 - Math.abs(rel) * 0.3, 0);
+      const tx = rel * 20;               // gentle sideways perspective shift
+      const sc = 1 - Math.abs(rel) * 0.1;
+      const op = (Math.abs(rel) <= 2.4) ? 1 : Math.max(0, 1 - (Math.abs(rel) - 2.4) / 0.8);
       wrap.style.transform =
         `translateX(${tx}px) translateY(${y.toFixed(1)}px) translateZ(${z.toFixed(1)}px) rotateX(${theta.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
       wrap.style.opacity = op.toString();
