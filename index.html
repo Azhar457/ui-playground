@@ -2,218 +2,898 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>UI Playground Beta — 61 Styles Universe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+
 <style>
-  :root{
-    --bg:#06070c; --ink:#eef1f7; --dim:#8a93a8; --line:rgba(238,241,247,.12);
-    --accent:#6c8cff;
+  :root {
+    --bg: #06070c;
+    --ink: #eef1f7;
+    --dim: #8a93a8;
+    --line: rgba(238, 241, 247, 0.12);
+    --line-strong: rgba(238, 241, 247, 0.25);
+    --accent: #6c8cff;
+    --accent2: #1e2850;
+    --card-w: min(960px, 90vw);
+    --card-h: min(62vh, 600px);
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-snap-type:y mandatory}
-  body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;
-    overflow-x:hidden}
-  body.locked{overflow:hidden}
-  #bg{position:fixed;inset:0;z-index:0;display:block}
-  .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;
-    align-items:center;padding:14px 22px;background:linear-gradient(#06070c,#06070c00);
-    backdrop-filter:blur(4px);pointer-events:none}
-  .topbar a,.topbar .brand{pointer-events:auto}
-  .brand{font-weight:800;letter-spacing:-.02em;font-size:1rem;display:flex;align-items:center;gap:8px}
-  .brand .seal{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);transition:background .4s}
-  .nav a{color:var(--dim);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:.72rem;
-    margin-left:14px;transition:color .2s}
-  .nav a:hover{color:var(--ink)}
-  .nav .count{color:var(--accent);border:1px solid var(--accent);border-radius:9999px;padding:3px 10px}
 
-  #gallery{position:relative;z-index:10}
-  .page{height:100vh;scroll-snap-align:start;display:flex;align-items:center;justify-content:center;
-    padding:84px 24px 64px;position:relative}
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-  /* hero */
-  .hero .stage{text-align:center}
-  .hero h1{font-size:clamp(38px,9vw,108px);font-weight:800;letter-spacing:-.03em;line-height:.95}
-  .hero .sub{margin-top:14px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.2em}
-  .scrollhint{margin-top:34px;color:var(--dim);font-size:.72rem;font-family:'JetBrains Mono',monospace;
-    animation:bob 1.8s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(8px);opacity:1}}
+  html {
+    scroll-behavior: smooth;
+  }
 
-  .stage{perspective:1300px;width:min(940px,92vw)}
-  .meta{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-left:4px}
-  .meta .num{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);font-weight:700;letter-spacing:.15em}
-  .meta .tag{max-width:62vw;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.25em;
-    border:1px solid var(--line);padding:3px 9px;border-radius:9999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .card{height:min(60vh,560px);border-radius:20px;overflow:hidden;border:1px solid var(--line);
-    box-shadow:0 40px 90px rgba(0,0,0,.55);cursor:pointer;background:#0b0e16;position:relative;
-    transform:rotateX(4deg);transition:transform .45s cubic-bezier(.16,1,.3,1)}
-  .card:hover{transform:rotateX(0deg) translateY(-8px)}
-  .prev{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b0e16}
-  .live-badge{position:absolute;top:12px;right:14px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:.55rem;
-    letter-spacing:.2em;color:#fff;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.25);
-    padding:3px 8px;border-radius:9999px}
-  .frame-overlay{position:absolute;inset:0;z-index:2;cursor:pointer;display:flex;align-items:flex-end;
-    padding:18px 20px;background:linear-gradient(0deg,rgba(4,5,9,.62),transparent 50%)}
-  .enter{pointer-events:auto;cursor:pointer;border:0;background:#fff;color:#0a0c12;
-    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem;padding:11px 20px;border-radius:9999px;
-    transition:transform .2s,box-shadow .2s}
-  .enter:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-  .reader{position:fixed;inset:0;z-index:60;background:rgba(3,4,8,.94);display:none}
-  .reader.open{display:block}
-  .reader iframe{width:100%;height:100%;border:0;background:#fff}
-  .reader .x{position:absolute;top:16px;right:18px;z-index:2;width:44px;height:44px;border-radius:50%;
-    border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);color:#fff;font-size:1.1rem;cursor:pointer}
-  .reader .x:hover{background:#fff;color:#000}
-  .reader .hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:2;color:#fff;
-    font-family:'JetBrains Mono',monospace;font-size:.62rem;opacity:.7;pointer-events:none}
+  body.locked {
+    overflow: hidden;
+  }
 
-  .progress{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;
-    font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim);letter-spacing:.15em;pointer-events:none}
-  @media(max-width:640px){.mock-body{padding:28px 22px}.mock-cards i:nth-child(3){display:none}}
+  /* Fixed WebGL Ambient Background */
+  #bg {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Fixed Topbar Navigation */
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(180deg, rgba(6, 7, 12, 0.95) 0%, rgba(6, 7, 12, 0) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+
+  .topbar a, .topbar .brand {
+    pointer-events: auto;
+  }
+
+  .brand {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 1rem;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand .seal {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nav a {
+    color: var(--dim);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    transition: color 0.25s ease;
+  }
+
+  .nav a:hover {
+    color: var(--ink);
+  }
+
+  .nav .count {
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 9999px;
+    padding: 4px 12px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+  }
+
+  .nav .count:hover {
+    background: var(--accent);
+    color: #06070c;
+  }
+
+  /* ============================================================
+     BONHOMME CARD STACK LAYOUT
+     ============================================================ */
+  #gallery {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    padding-bottom: 15vh;
+  }
+
+  /* Hero Section / Cover Card */
+  .hero-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    position: relative;
+  }
+
+  .hero-cover {
+    width: var(--card-w);
+    height: var(--card-h);
+    background: radial-gradient(circle at 50% 40%, rgba(20, 24, 40, 0.7), rgba(5, 6, 10, 0.98));
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+  }
+
+  .hero-cover h1 {
+    font-size: clamp(40px, 8vw, 92px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .hero-cover .sub {
+    margin-top: 18px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .hero-cover .scrollhint {
+    margin-top: 48px;
+    color: var(--dim);
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+
+  /* Card Stacking Item Container */
+  .stack-item {
+    position: sticky;
+    top: 10vh;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 24px;
+    perspective: 1200px;
+  }
+
+  .card-wrap {
+    width: var(--card-w);
+    height: var(--card-h);
+    position: relative;
+    will-change: transform;
+    transform-style: preserve-3d;
+  }
+
+  .card-stage {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #0a0c13;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+    transform-origin: center center;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .card-stage:hover {
+    transform: translateY(-8px) scale(1.015);
+    border-color: var(--accent);
+    box-shadow: 0 45px 110px rgba(0, 0, 0, 0.85), 0 0 40px rgba(108, 140, 255, 0.18);
+  }
+
+  /* Card Header HUD */
+  .card-hud-top {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .meta-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    background: rgba(6, 7, 12, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+  }
+
+  .meta-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    background: rgba(6, 7, 12, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+  }
+
+  /* Iframe Live Viewport */
+  .prev-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #06070c;
+    pointer-events: none;
+    filter: brightness(0.92) contrast(1.02);
+    transition: filter 0.3s ease;
+  }
+
+  .card-stage:hover .prev-frame {
+    filter: brightness(1.0) contrast(1.0);
+  }
+
+  /* Bottom Enter Banner */
+  .card-overlay-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 22px;
+    background: linear-gradient(0deg, rgba(6, 7, 12, 0.95) 0%, rgba(6, 7, 12, 0.5) 60%, transparent 100%);
+    z-index: 6;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+
+  .card-desc-box {
+    max-width: 60%;
+  }
+
+  .card-style-title {
+    font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-style-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    color: var(--dim);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .enter-pill {
+    pointer-events: auto;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    border: 1px solid var(--line-strong);
+    background: var(--ink);
+    color: #06070c;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-stage:hover .enter-pill {
+    background: var(--accent);
+    color: #06070c;
+    border-color: var(--accent);
+    transform: scale(1.05);
+    box-shadow: 0 0 24px rgba(108, 140, 255, 0.5);
+  }
+
+  /* ============================================================
+     SEAMLESS FULLSCREEN ZOOM-IN PORTAL READER (BONHOMME STYLE)
+     ============================================================ */
+  .zoom-portal {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    background: rgba(3, 4, 8, 0.98);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .zoom-portal.active {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .portal-viewport {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #06070c;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.95);
+    transform-origin: center center;
+    will-change: transform, border-radius, width, height, top, left;
+  }
+
+  .portal-viewport iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #06070c;
+  }
+
+  /* Floating Bottom Close Button (Bonhomme 10 ans pattern: media_1787918498056.png) */
+  .portal-close-bar {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(50px);
+    z-index: 110;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  }
+
+  .zoom-portal.active .portal-close-bar {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .btn-portal-close {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(10, 12, 18, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-family: 'Space Grotesk', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .btn-portal-close:hover {
+    background: #ffffff;
+    color: #06070c;
+    transform: scale(1.12);
+    border-color: #ffffff;
+    box-shadow: 0 0 35px rgba(255, 255, 255, 0.5);
+  }
+
+  .portal-esc-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  /* Fixed Bottom-Center Progress Pill */
+  .progress-pill {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--dim);
+    background: rgba(6, 7, 12, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 6px 18px;
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .zoom-portal.active ~ .progress-pill {
+    opacity: 0;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --card-w: 94vw;
+      --card-h: 68vh;
+    }
+    .topbar { padding: 12px 16px; }
+    .nav { gap: 8px; }
+    .nav a:not(.count) { display: none; }
+    .card-desc-box { max-width: 100%; }
+    .card-overlay-bottom { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .enter-pill { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
 
-<div class="topbar">
-  <a class="brand" href="index.html"><span class="seal"></span> UI&nbsp;Playground</a>
+<!-- WebGL Ambient Starfield & Polyhedra -->
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<!-- Topbar Navigation -->
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <span class="seal" id="brandSeal"></span>
+    <span>UI Playground</span>
+  </a>
   <nav class="nav">
     <a href="showcase.html">Showcase</a>
-    <a href="case-studies/index.html">Case&nbsp;Studies</a>
+    <a href="case-studies/index.html">Case Studies</a>
     <a href="component/index.html">Components</a>
     <a href="atelier-fusion-system.html">Fusion</a>
-    <a href="experiments/spatial-worlds.html">10&nbsp;Worlds</a>
+    <a href="experiments/spatial-worlds.html">10 Worlds</a>
     <a class="count" href="#gallery">61 STYLES</a>
   </nav>
-</div>
+</header>
 
+<!-- Main Gallery Stack -->
 <main id="gallery">
-  <section class="page hero">
-    <div class="stage">
-      <h1>61 Styles<br/>Universe</h1>
+  
+  <!-- 00. Cover Hero Card -->
+  <section class="hero-wrapper">
+    <div class="hero-cover">
+      <span class="meta-tag" style="margin-bottom: 24px;">BONHOMME SPATIAL ARCHITECTURE</span>
+      <h1>61 STYLES<br/>UNIVERSE</h1>
       <div class="sub">IMMERSIVE UI PLAYGROUND · BETA</div>
-      <div class="scrollhint">SCROLL TO FLIP ↓ &nbsp; CLICK TO ENTER &nbsp; ESC TO EXIT</div>
+      <div class="scrollhint">
+        <span>SCROLL TO DISCOVER</span>
+        <span>↓</span>
+      </div>
     </div>
   </section>
-  <!-- style pages injected by JS -->
+
+  <!-- 01..61 Cards dynamically injected by JavaScript -->
 </main>
 
-<div class="reader" id="reader">
-  <button class="x" id="readerX" aria-label="Close">✕</button>
-  <iframe id="rframe" title="UI preview" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
-  <div class="hint">Tekan X / ESC untuk kembali ke galeri</div>
+<!-- Fullscreen Zoom Portal Modal (Bonhomme 10 ans pattern) -->
+<div class="zoom-portal" id="zoomPortal" aria-modal="true" role="dialog">
+  <div class="portal-viewport" id="portalViewport">
+    <iframe id="portalFrame" title="Interactive UI Universe Viewport" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+  </div>
+  <div class="portal-close-bar">
+    <button class="btn-portal-close" id="btnPortalClose" aria-label="Tutup dan kembali ke galeri">✕</button>
+    <span class="portal-esc-hint">TEKAN X / ESC UNTUK KEMBALI</span>
+  </div>
 </div>
 
-<div class="progress" id="progress">01 / 61</div>
+<!-- Bottom Progress Tracker -->
+<div class="progress-pill" id="progressPill">00 / 61</div>
 
-<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<!-- Data source & Logic -->
 <script src="data/styles.js"></script>
 <script>
-(function(){
+(function() {
   "use strict";
-  if(typeof STYLES==="undefined"){console.error("STYLES missing");return;}
 
-  // ---- color helpers ----
-  function hslToHex(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12;const a=s*Math.min(l,1-l);
-    const f=n=>{const c=l-a*Math.max(-1,Math.min(k(n)-3,9-k(n),1));return Math.round(255*c).toString(16).padStart(2,'0')};
-    return '#'+f(0)+f(8)+f(4);}
-  function hexToRgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');
-    return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
-  function rgbToHex(r){return '#'+r.map(x=>Math.round(Math.max(0,Math.min(255,x))).toString(16).padStart(2,'0')).join('');}
-  function shade(hex,k){const r=hexToRgb(hex);return rgbToHex(r.map(v=>v*(1+k)));}
-  function themeAccent(s){
-    const src=(s.guide&&s.guide.key||'')+' '+(s.title||'');
-    const m=src.match(/#[0-9a-fA-F]{6}/i);
-    if(m)return m[0].toUpperCase();
-    const h=(s.id*47)%360;
-    return hslToHex(h,70,58);
+  if (typeof window.STYLES === "undefined") {
+    console.error("Critical: window.STYLES is not defined. Ensure data/styles.js is loaded.");
+    return;
   }
 
-  // ---- build gallery ----
-  const gallery=document.getElementById('gallery');
-  const total=STYLES.length;
-  STYLES.forEach((s)=>{
-    const accent=themeAccent(s);
-    const accent2=shade(accent,-0.55);
-    const page=document.createElement('section');
-    page.className='page';
-    page.style.setProperty('--accent',accent);
-    page.style.setProperty('--accent2',accent2);
-    page.dataset.idx=String(s.id);
-    page.innerHTML=
-      '<div class="stage">'+
-        '<div class="meta"><span class="num">#'+String(s.id).padStart(2,'0')+'</span>'+
-        '<span class="tag">'+s.title+'</span></div>'+
-        '<div class="card" data-path="'+s.path+'">'+
-          '<iframe class="prev" data-src="'+s.path+'" title="'+s.title+'" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>'+
-          '<span class="live-badge">LIVE PREVIEW</span>'+
-          '<div class="frame-overlay" data-path="'+s.path+'"><button class="enter">Masuk ke UI →</button></div>'+
-        '</div>'+
-      '</div>';
-    gallery.appendChild(page);
-    page.querySelector('.frame-overlay').addEventListener('click',()=>openReader(s.path));
+  const STYLES = window.STYLES;
+  const totalStyles = STYLES.length;
+  const gallery = document.getElementById("gallery");
+  const zoomPortal = document.getElementById("zoomPortal");
+  const portalViewport = document.getElementById("portalViewport");
+  const portalFrame = document.getElementById("portalFrame");
+  const btnPortalClose = document.getElementById("btnPortalClose");
+  const progressPill = document.getElementById("progressPill");
+  const brandSeal = document.getElementById("brandSeal");
+
+  // Color utilities
+  function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n => {
+      const c = l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+      return Math.round(255 * c).toString(16).padStart(2, '0');
+    };
+    return '#' + f(0) + f(8) + f(4);
+  }
+
+  function themeAccent(s) {
+    const src = (s.guide && s.guide.key || '') + ' ' + (s.title || '');
+    const m = src.match(/#[0-9a-fA-F]{6}/i);
+    if (m) return m[0].toUpperCase();
+    const h = (s.id * 47) % 360;
+    return hslToHex(h, 72, 60);
+  }
+
+  // Build the Bonhomme Stacked Cards
+  STYLES.forEach((s, idx) => {
+    const accent = themeAccent(s);
+    const stackItem = document.createElement("section");
+    stackItem.className = "stack-item";
+    stackItem.dataset.id = String(s.id);
+    stackItem.dataset.path = s.path;
+    stackItem.dataset.accent = accent;
+
+    stackItem.innerHTML = `
+      <div class="card-wrap">
+      <div class="card-stage" data-path="${s.path}" data-title="${s.title}" style="--accent: ${accent};">
+        <div class="card-hud-top">
+          <span class="meta-num">#${String(s.id).padStart(2, '0')}</span>
+          <span class="meta-tag">${s.title}</span>
+        </div>
+        <iframe class="prev-frame" data-src="${s.path}" title="${s.title}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+        <div class="card-overlay-bottom">
+          <div class="card-desc-box">
+            <h3 class="card-style-title">${s.title}</h3>
+            <p class="card-style-desc">${s.desc || s.title}</p>
+          </div>
+          <button class="enter-pill" data-path="${s.path}">
+            <span>Masuk ke Dunia</span>
+            <span>↗</span>
+          </button>
+        </div>
+      </div>
+      </div>
+    `;
+
+    gallery.appendChild(stackItem);
+
+    // Click handler for Zoom-In transition
+    const cardStage = stackItem.querySelector(".card-stage");
+    cardStage.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openZoomPortal(cardStage, s.path, accent);
+    });
   });
 
-  // lazy-load the REAL preview only as it approaches the viewport
-  const lazyIO=new IntersectionObserver((es)=>{
-    es.forEach(en=>{const fr=en.target.querySelector('.prev');if(!fr)return;
-      if(en.isIntersecting&&!fr.getAttribute('src'))fr.setAttribute('src',fr.dataset.src);});
-  },{rootMargin:'1000px 0px'});
-  gallery.querySelectorAll('.page').forEach(p=>lazyIO.observe(p));
+  // Scroll-driven depth parallax + iframe recycling.
+  // Sticky stacking keeps every card in the DOM; without recycling, all 61 iframes
+  // stay live and the page gets heavier the further you scroll. We keep only a
+  // ~3-deep window of iframes alive and give sunk-behind cards a deck cascade.
+  const wrapEls = stackItems.map(it => it.querySelector('.card-wrap'));
+  const frameEls = stackItems.map(it => it.querySelector('.prev-frame'));
+  const itemTops = new Array(stackItems.length);
+  const itemH = new Array(stackItems.length);
+  function measureStack() {
+    const sy = window.scrollY || document.documentElement.scrollTop;
+    stackItems.forEach((it, i) => {
+      const r = it.getBoundingClientRect();
+      itemTops[i] = r.top + sy;
+      itemH[i] = it.offsetHeight || r.height;
+    });
+  }
+  measureStack();
 
-  // ---- reader (enter UI) ----
-  const reader=document.getElementById('reader'),rframe=document.getElementById('rframe');
-  function openReader(path){rframe.src=path;reader.classList.add('open');document.body.classList.add('locked');}
-  function closeReader(){reader.classList.remove('open');rframe.src='';document.body.classList.remove('locked');}
-  document.getElementById('readerX').addEventListener('click',closeReader);
-  reader.addEventListener('click',(e)=>{if(e.target===reader)closeReader();});
-  window.addEventListener('keydown',(e)=>{if(reader.classList.contains('open')&&(e.key==='Escape'||e.key==='x'||e.key==='X'))closeReader();});
+  let ticking = false;
+  function refreshStack() {
+    const sy = window.scrollY || document.documentElement.scrollTop;
+    for (let i = 0; i < stackItems.length; i++) {
+      const prog = (sy - itemTops[i]) / (itemH[i] || 1); // ~0 active, >0 sunk behind, <0 upcoming
+      const wrap = wrapEls[i];
+      if (!wrap) continue;
+      if (prog <= 0.05) {
+        wrap.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+        wrap.style.opacity = '1';
+      } else {
+        const d = Math.min(prog, 6);
+        const ty = -d * 16;                       // peek upward -> fanned deck
+        const sc = Math.max(1 - d * 0.045, 0.7);  // shrink with depth
+        const op = Math.max(1 - d * 0.14, 0.22);  // fade with depth
+        wrap.style.transform = `translateY(${ty}px) scale(${sc}) rotateX(2deg)`;
+        wrap.style.opacity = op.toString();
+      }
+      // recycle: keep only ~1 ahead .. 3 behind live; drop the rest (the "cycle")
+      const frame = frameEls[i];
+      if (frame) {
+        if (prog > -1.2 && prog < 3.2) {
+          if (!frame.getAttribute('src')) frame.setAttribute('src', frame.dataset.src);
+        } else if (frame.getAttribute('src')) {
+          frame.removeAttribute('src');
+        }
+      }
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(refreshStack); }
+  }, { passive: true });
+  window.addEventListener('resize', () => { measureStack(); refreshStack(); });
+  refreshStack();
 
-  // ---- progress + accent sync ----
-  const progress=document.getElementById('progress');
-  const pages=[...gallery.querySelectorAll('.page')];
-  const io=new IntersectionObserver((es)=>{
-    es.forEach(en=>{
-      if(en.isIntersecting){
-        const id=en.target.dataset.idx||'';
-        progress.textContent=(id?String(id).padStart(2,'0'):'00')+' / '+String(total-1).padStart(2,'0');
-        const a=getComputedStyle(en.target).getPropertyValue('--accent').trim();
-        if(a)document.documentElement.style.setProperty('--accent',a);
+  // Progress & Seal accent tracker on scroll
+  const stackItems = Array.from(document.querySelectorAll(".stack-item"));
+  const progressObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.dataset.id;
+        const accent = entry.target.dataset.accent;
+        progressPill.textContent = `${String(id).padStart(2, '0')} / ${String(totalStyles - 1).padStart(2, '0')}`;
+        if (accent) {
+          document.documentElement.style.setProperty("--accent", accent);
+          if (brandSeal) brandSeal.style.backgroundColor = accent;
+        }
       }
     });
-  },{rootMargin:'-45% 0px -45% 0px'});
-  pages.forEach(p=>io.observe(p));
+  }, { rootMargin: "-40% 0px -40% 0px" });
 
-  // ---- WebGL ambient background ----
-  if(typeof THREE!=="undefined"){
-    try{
-      const cv=document.getElementById('bg');
-      const rnd=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
-      rnd.setPixelRatio(Math.min(devicePixelRatio,2));rnd.setSize(innerWidth,innerHeight);
-      const sc=new THREE.Scene();
-      const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,300);cam.position.z=60;
-      const grp=new THREE.Group();sc.add(grp);
-      // particles
-      const N=900,pn=new Float32Array(N*3);
-      for(let i=0;i<N*3;i++)pn[i]=(Math.random()-0.5)*180;
-      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pn,3));
-      grp.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0x9fb3c8,size:0.5,transparent:true,opacity:.5})));
-      // floating wireframes
-      const cols=[0x6c8cff,0xff6b6b,0x51cf66,0xcc5de8,0xffd43b];
-      for(let i=0;i<7;i++){
-        const m=new THREE.Mesh(new THREE.IcosahedronGeometry(4+Math.random()*4,0),
-          new THREE.MeshBasicMaterial({color:cols[i%cols.length],wireframe:true,transparent:true,opacity:.18}));
-        m.position.set((Math.random()-0.5)*120,(Math.random()-0.5)*80,(Math.random()-0.5)*60-20);
-        m.userData={sx:(Math.random()-.5)*.003,sy:(Math.random()-.5)*.003};grp.add(m);
+  stackItems.forEach(item => progressObserver.observe(item));
+
+  // ============================================================
+  // ZOOM-IN / ZOOM-OUT PORTAL ENGINE (BONHOMME SEAMLESS DIVE)
+  // ============================================================
+  let activeCardStage = null;
+  let isPortalOpen = false;
+
+  function openZoomPortal(cardEl, path, accent) {
+    if (isPortalOpen) return;
+    isPortalOpen = true;
+    activeCardStage = cardEl;
+
+    // 1. Capture origin coordinates
+    const rect = cardEl.getBoundingClientRect();
+    const startX = rect.left;
+    const startY = rect.top;
+    const startW = rect.width;
+    const startH = rect.height;
+
+    // 2. Set portal active and set initial frame bounds
+    zoomPortal.classList.add("active");
+    document.body.classList.add("locked");
+    portalFrame.src = path;
+
+    // 3. Coordinate GSAP Zoom-In Expansion from exact card bounds to 100vw x 100vh
+    gsap.set(zoomPortal, { opacity: 1 });
+    gsap.fromTo(portalViewport, 
+      {
+        position: "fixed",
+        top: startY,
+        left: startX,
+        width: startW,
+        height: startH,
+        borderRadius: "20px",
+        scale: 1.0,
+        boxShadow: "0 40px 100px rgba(0, 0, 0, 0.9)"
+      },
+      {
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        borderRadius: "0px",
+        scale: 1.0,
+        duration: 0.65,
+        ease: "power3.inOut"
       }
-      addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rnd.setSize(innerWidth,innerHeight);});
-      addEventListener('scroll',()=>{grp.rotation.y=scrollY*0.0002;});
-      (function loop(){grp.children.forEach(c=>{if(c.userData.sx){c.rotation.x+=c.userData.sx;c.rotation.y+=c.userData.sy;}});
-        grp.rotation.x=Math.sin(performance.now()*0.0001)*0.1;rnd.render(sc,cam);requestAnimationFrame(loop);})();
-    }catch(e){console.warn("bg webgl skipped",e);}
+    );
   }
+
+  function closeZoomPortal() {
+    if (!isPortalOpen) return;
+
+    if (activeCardStage) {
+      const rect = activeCardStage.getBoundingClientRect();
+      const endX = rect.left;
+      const endY = rect.top;
+      const endW = rect.width;
+      const endH = rect.height;
+
+      gsap.to(portalViewport, {
+        top: endY,
+        left: endX,
+        width: endW,
+        height: endH,
+        borderRadius: "20px",
+        duration: 0.55,
+        ease: "power3.inOut",
+        onComplete: () => {
+          zoomPortal.classList.remove("active");
+          document.body.classList.remove("locked");
+          portalFrame.src = "";
+          isPortalOpen = false;
+          activeCardStage = null;
+        }
+      });
+
+      gsap.to(zoomPortal, {
+        opacity: 0,
+        duration: 0.45,
+        delay: 0.1
+      });
+    } else {
+      zoomPortal.classList.remove("active");
+      document.body.classList.remove("locked");
+      portalFrame.src = "";
+      isPortalOpen = false;
+    }
+  }
+
+  btnPortalClose.addEventListener("click", closeZoomPortal);
+  zoomPortal.addEventListener("click", (e) => {
+    if (e.target === zoomPortal) closeZoomPortal();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (isPortalOpen && (e.key === "Escape" || e.key === "x" || e.key === "X")) {
+      closeZoomPortal();
+    }
+  });
+
+  // ============================================================
+  // THREE.JS AMBIENT BACKGROUND SCENE
+  // ============================================================
+  if (typeof THREE !== "undefined") {
+    try {
+      const canvas = document.getElementById("bg");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 400);
+      camera.position.z = 65;
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      // Starfield particles
+      const particleCount = 1200;
+      const posArr = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount * 3; i++) {
+        posArr[i] = (Math.random() - 0.5) * 220;
+      }
+      const particleGeo = new THREE.BufferGeometry();
+      particleGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+      const particleMat = new THREE.PointsMaterial({
+        color: 0x8a93a8,
+        size: 0.6,
+        transparent: true,
+        opacity: 0.45
+      });
+      group.add(new THREE.Points(particleGeo, particleMat));
+
+      // Floating geometric polyhedra
+      const colors = [0x6c8cff, 0xff6b6b, 0x51cf66, 0xcc5de8, 0xffd43b];
+      for (let i = 0; i < 9; i++) {
+        const polyGeo = i % 2 === 0 
+          ? new THREE.IcosahedronGeometry(3 + Math.random() * 4, 0)
+          : new THREE.OctahedronGeometry(3 + Math.random() * 3, 0);
+        
+        const polyMat = new THREE.MeshBasicMaterial({
+          color: colors[i % colors.length],
+          wireframe: true,
+          transparent: true,
+          opacity: 0.15
+        });
+        const mesh = new THREE.Mesh(polyGeo, polyMat);
+        mesh.position.set(
+          (Math.random() - 0.5) * 140,
+          (Math.random() - 0.5) * 100,
+          (Math.random() - 0.5) * 80 - 20
+        );
+        mesh.userData = {
+          rx: (Math.random() - 0.5) * 0.004,
+          ry: (Math.random() - 0.5) * 0.004
+        };
+        group.add(mesh);
+      }
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }, { passive: true });
+
+      window.addEventListener("scroll", () => {
+        group.rotation.y = window.scrollY * 0.0003;
+      }, { passive: true });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        group.children.forEach(child => {
+          if (child.userData && child.userData.rx) {
+            child.rotation.x += child.userData.rx;
+            child.rotation.y += child.userData.ry;
+          }
+        });
+        group.rotation.x = Math.sin(performance.now() * 0.0002) * 0.08;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+    } catch (err) {
+      console.warn("WebGL background initialization error:", err);
+    }
+  }
+
 })();
 </script>
 </body>
