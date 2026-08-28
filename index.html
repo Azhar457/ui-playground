@@ -494,6 +494,7 @@
 
 <!-- Data source & Logic -->
 <script src="data/styles.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script>
 (function() {
   "use strict";
@@ -535,7 +536,7 @@
   }
 
   // Build the Bonhomme Stacked Cards
-  STYLES.forEach((s, idx) => {
+  STYLES.filter(s => s.id !== 0).forEach((s, idx) => {
     const accent = themeAccent(s);
     const stackItem = document.createElement("section");
     stackItem.className = "stack-item";
@@ -576,12 +577,12 @@
   });
 
   // ============================================================
-  // 3D CYCLE / WHEEL  (Bonhomme-style vertical carousel)
-  // Each card is positioned by its circular offset from the active index.
-  //   rel = 0  -> front / center (full size, clickable)
-  //   rel > 0  -> rises toward the top, then swings to the BACK
-  //   rel < 0  -> comes up from the BOTTOM
-  // Beyond ~3 it fades out and wraps -> a continuous wheel/cycle.
+  // CYCLE / WHEEL  (max 2 UIs on screen)
+  //   rel = 0  -> ACTIVE : enlarged, centered, clickable
+  //   rel > 0  -> OUTGOING: shrinks and drops DOWN toward the bottom
+  //   rel < 0  -> INCOMING: rises from the bottom and enlarges
+  // Only the active card + one neighbour are visible at once (max 2).
+  // Elastic "tarik-menarik" via a lerped position; Lenis smooths the wheel.
   // ============================================================
   const stackItems = Array.from(document.querySelectorAll(".stack-item"));
   const N = stackItems.length;
@@ -592,59 +593,77 @@
     accent: it.dataset.accent,
     id: it.dataset.id
   }));
+  const maxId = RING.reduce((m, c) => Math.max(m, +c.id), 0);
 
-  const STEP = 72; // px of scroll per one card step
+  const STEP = 90; // px of scroll per one card step (deliberate pace)
   function setSpacer() { gallery.style.height = (N * STEP + window.innerHeight) + "px"; }
   setSpacer();
 
-  let ticking = false;
-  function layoutWheel() {
-    const sy = window.scrollY || document.documentElement.scrollTop;
-    const pos = sy / STEP;
+  function layoutWheel(pos) {
     const active = Math.round(pos);
     for (let i = 0; i < N; i++) {
-      let rel = pos - i;                 // scroll down -> cards move up & to the back
-      rel = ((rel % N) + N) % N;         // circular wrap
-      if (rel > N / 2) rel -= N;         // rel in (-N/2, N/2]
+      let rel = pos - i;
+      rel = ((rel % N) + N) % N;           // circular wrap
+      if (rel > N / 2) rel -= N;           // rel in (-N/2, N/2]
       const cd = RING[i];
       const wrap = cd.wrap;
-      if (Math.abs(rel) > 3.2) {
+      const a = Math.abs(rel);
+      if (a > 1.6) {                        // hide everything beyond the active pair
         wrap.style.opacity = "0";
         cd.stage.style.pointerEvents = "none";
         if (cd.frame.getAttribute("src")) cd.frame.removeAttribute("src");
         continue;
       }
-      const theta = rel * 40;            // degrees around the wheel (more spacing)
-      const rad = theta * Math.PI / 180;
-      const R = 500;                     // wheel radius (cards sit further apart)
-      const y = -R * Math.sin(rad);      // +rel -> up,  -rel -> down
-      const z = R * Math.cos(rad) - R;   // +rel -> behind,  front sits at z=0
-      const tx = rel * 20;               // gentle sideways perspective shift
-      const sc = 1 - Math.abs(rel) * 0.1;
-      const op = (Math.abs(rel) <= 2.4) ? 1 : Math.max(0, 1 - (Math.abs(rel) - 2.4) / 0.8);
+      let y, sc;
+      if (rel >= 0) {                        // outgoing: shrink + drop down
+        y = rel * 130;
+        sc = 1.06 - rel * 0.26;
+      } else {                               // incoming: rise from bottom, enlarge
+        const k = -rel;
+        y = k * 240;
+        sc = 1.06 - k * 0.26;
+      }
+      const tx = rel * 16;                   // sideways parallax shift
+      const op = Math.max(0, 1 - a * 0.95);
       wrap.style.transform =
-        `translateX(${tx}px) translateY(${y.toFixed(1)}px) translateZ(${z.toFixed(1)}px) rotateX(${theta.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+        `translateX(${tx}px) translateY(${y.toFixed(1)}px) scale(${sc.toFixed(3)}) rotateX(${(rel * 6).toFixed(2)}deg)`;
       wrap.style.opacity = op.toString();
-      wrap.style.zIndex = String(2000 - Math.round(Math.abs(rel) * 100));
-      cd.stage.style.pointerEvents = (Math.abs(rel) < 0.6) ? "auto" : "none";
-      // recycle: only keep the front few iframes alive
-      if (Math.abs(rel) < 2.4) {
+      wrap.style.zIndex = String(2000 - Math.round(a * 100));
+      cd.stage.style.pointerEvents = (a < 0.45) ? "auto" : "none";
+      if (a < 1.6) {
         if (!cd.frame.getAttribute("src")) cd.frame.setAttribute("src", cd.frame.dataset.src);
       } else if (cd.frame.getAttribute("src")) {
         cd.frame.removeAttribute("src");
       }
     }
-    const a = ((active % N) + N) % N;
-    progressPill.textContent = `${String(RING[a].id).padStart(2, '0')} / ${String(totalStyles - 1).padStart(2, '0')}`;
-    document.documentElement.style.setProperty("--accent", RING[a].accent);
-    if (brandSeal) brandSeal.style.backgroundColor = RING[a].accent;
-    ticking = false;
+    const aIdx = ((active % N) + N) % N;
+    progressPill.textContent = `${String(RING[aIdx].id).padStart(2, '0')} / ${String(maxId).padStart(2, '0')}`;
+    document.documentElement.style.setProperty("--accent", RING[aIdx].accent);
+    if (brandSeal) brandSeal.style.backgroundColor = RING[aIdx].accent;
   }
-  window.addEventListener("scroll", () => {
-    if (!ticking) { ticking = true; requestAnimationFrame(layoutWheel); }
-  }, { passive: true });
-  window.addEventListener("resize", () => { setSpacer(); layoutWheel(); });
-  layoutWheel();
+
+  // --- Elastic smooth scroll: Lenis (if present) + lerped wheel position ---
+  let targetPos = 0, renderedPos = 0;
+  function readTarget() {
+    const sy = window.scrollY || document.documentElement.scrollTop;
+    targetPos = sy / STEP;
+  }
+  window.addEventListener("scroll", readTarget, { passive: true });
+  readTarget();
+
+  let lenis = null;
+  if (window.Lenis) {
+    try { lenis = new Lenis({ lerp: 0.12, smoothWheel: true, wheelMultiplier: 1 }); } catch (e) { lenis = null; }
+  }
+  function frame(t) {
+    if (lenis) lenis.raf(t);
+    renderedPos += (targetPos - renderedPos) * 0.14;   // "tarik-menarik" easing
+    if (Math.abs(targetPos - renderedPos) < 0.0008) renderedPos = targetPos;
+    layoutWheel(renderedPos);
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener("resize", () => { setSpacer(); readTarget(); });
+  requestAnimationFrame(frame);
 
   // ============================================================
   // ZOOM-IN / ZOOM-OUT PORTAL ENGINE (BONHOMME SEAMLESS DIVE)
