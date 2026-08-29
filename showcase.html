@@ -387,6 +387,237 @@
 
     .theme-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
     .theme-btn.active { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+
+    /* In-Page Live Demo Modal */
+    .live-demo-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 16px;
+    }
+
+    .live-demo-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .live-demo-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 5, 10, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .live-demo-window {
+      position: relative;
+      width: 100%;
+      max-width: 1400px;
+      height: 92vh;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+      transform: scale(0.96) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .live-demo-modal.active .live-demo-window {
+      transform: scale(1) translateY(0);
+    }
+
+    .live-demo-header {
+      height: 56px;
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .live-demo-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .live-demo-id-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.12);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .live-demo-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .live-demo-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .live-demo-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 9999px;
+    }
+
+    .live-demo-nav-btn {
+      background: transparent;
+      border: 0;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .live-demo-nav-btn:hover {
+      background: var(--surface-alt);
+      color: var(--accent);
+    }
+
+    .live-demo-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .live-demo-action-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .live-demo-btn-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .live-demo-btn-link:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .live-demo-esc-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .live-demo-esc-badge:hover {
+      color: #ffffff;
+      background: var(--surface-alt);
+    }
+
+    .live-demo-esc-badge kbd {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.62rem;
+    }
+
+    .live-demo-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .live-demo-close-btn:hover {
+      background: #dc2626;
+      color: #ffffff;
+      border-color: #dc2626;
+    }
+
+    .live-demo-frame-wrap {
+      flex: 1;
+      width: 100%;
+      height: calc(100% - 56px);
+      background: #000000;
+      position: relative;
+    }
+
+    .live-demo-frame-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -526,7 +757,10 @@
 
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
       <div class="catalog-filters">
-        <button class="filter-btn active" data-filter="all" onclick="filterCatalog('all')">All Styles</button>
+        <button class="filter-btn active" data-filter="all" onclick="filterCatalog('all')">All Library (82)</button>
+        <button class="filter-btn" data-filter="styles" onclick="filterCatalog('styles')">61 UI Styles</button>
+        <button class="filter-btn" data-filter="components" onclick="filterCatalog('components')">Components (14)</button>
+        <button class="filter-btn" data-filter="case-studies" onclick="filterCatalog('case-studies')">Case Studies (7)</button>
         <button class="filter-btn" data-filter="minimalist" onclick="filterCatalog('minimalist')">Minimalist</button>
         <button class="filter-btn" data-filter="retro" onclick="filterCatalog('retro')">Retro / CRT</button>
         <button class="filter-btn" data-filter="experimental" onclick="filterCatalog('experimental')">Experimental</button>
@@ -534,7 +768,7 @@
 
       <div class="search-box-wrap">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" class="search-input" id="search-input" placeholder="Search styles..." oninput="searchCatalog()">
+        <input type="text" class="search-input" id="search-input" placeholder="Search 82 styles, components, studies..." oninput="searchCatalog()">
       </div>
     </div>
 
@@ -543,8 +777,46 @@
     </div>
   </section>
 
+  <!-- In-Page Floating Live Demo Portal Modal -->
+  <div id="liveDemoModal" class="live-demo-modal" aria-hidden="true" role="dialog">
+    <div class="live-demo-backdrop" onclick="closeLiveDemoModal()"></div>
+    <div class="live-demo-window">
+      <div class="live-demo-header">
+        <div class="live-demo-title-group">
+          <span class="live-demo-id-badge" id="modalStyleId">STYLE #01</span>
+          <h3 class="live-demo-title" id="modalStyleTitle">Neobrutalism UI</h3>
+          <span class="live-demo-tag" id="modalStyleTag">EXPERIMENTAL</span>
+        </div>
+        
+        <div class="live-demo-nav-group">
+          <button class="live-demo-nav-btn" id="btnModalPrev" onclick="navigateLiveDemo(-1)" title="Sebelumnya (←)">
+            <i class="fa-solid fa-chevron-left"></i> Prev
+          </button>
+          <span class="live-demo-counter" id="modalCounter">1 / 61</span>
+          <button class="live-demo-nav-btn" id="btnModalNext" onclick="navigateLiveDemo(1)" title="Selanjutnya (→)">
+            Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="live-demo-action-group">
+          <a id="modalExternalLink" href="#" target="_blank" class="live-demo-btn-link" title="Buka di Tab Baru">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Tab Baru
+          </a>
+          <button class="live-demo-esc-badge" onclick="closeLiveDemoModal()">
+            TUTUP <kbd>ESC</kbd>
+          </button>
+          <button class="live-demo-close-btn" onclick="closeLiveDemoModal()" aria-label="Tutup Preview">✕</button>
+        </div>
+      </div>
+
+      <div class="live-demo-frame-wrap">
+        <iframe id="liveDemoIframe" title="Live Style Preview" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+      </div>
+    </div>
+  </div>
+
   <!-- FEATURED EXPERIMENT -->
-  <section id="experiment" style="margin:48px 0">
+  <section id="experiment" style="margin:48px auto">
     <a class="exp-band" href="experiments/spatial-worlds.html" style="display:flex;align-items:center;justify-content:space-between;gap:20px;text-decoration:none;color:var(--ink,#eef1f7);border:1px solid var(--line,rgba(255,255,255,.12));border-radius:18px;padding:26px 30px;background:linear-gradient(120deg,rgba(108,140,255,.14),rgba(204,93,232,.12));transition:.25s">
       <div>
         <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:#9fb3c8">✦ Featured Experiment</span>
@@ -649,45 +921,161 @@
       { id: 58, tag: "retro", title: "Op Art Optical Illusion", desc: "CSS Moiré interference, vibrating complementary borders, afterimage.", prompt: "Build an interactive optical illusion gallery in Op Art style inspired by Bridget Riley. 4 complementary color pairs: B&W Monochrome, Red-Cyan Buzz, Blue-Yellow, Green-Magenta. Rotational CSS moiré hero banner, kinetic pulse & checker warp cards.", path: "previews/58-op-art.html" },
       { id: 59, tag: "retro", title: "Analog Tape Deck Studio", desc: "Rotating dual tape reels, bouncing analog VU meters, brushed metal, wood.", prompt: "Build a vintage analog audio mastering console in Tape Deck style. 4 chassis themes: Walnut Classic, 1978 Blackface, Silver Master, Teak Sunset. Dual rotating supply/take-up reels, twin Channel L/R needle VU meters that bounce with audio signal.", path: "previews/59-analog-tape-deck.html" },
       { id: 60, tag: "retro", title: "Folk Art Naive Storytelling", desc: "Hand-drawn wavy borders, earthy mixed paint, naive folklore motifs.", prompt: "Build a community heritage storytelling site in Folk Art / Naive style. 4 earthy palettes: Nordic Barn, Talavera, Slavic Forest, Night Market. Organic asymmetrical border-radius containers, multi-colored Amatic SC display titles, decorative sun and rolling hill layers.", path: "previews/60-folk-art.html" },
-      { id: 61, tag: "experimental", title: "Prismatic Holographic", desc: "Iridescent foil, spectral gradient, chromatic glass surfaces, refactored aesthetic.", prompt: "Build a prismatic holographic UI. Deep void base with blurred spectral radial gradients breathing 10s. Glass panels backdrop-blur saturate with noise overlay. Chromatic RGB-split borders, gradient-flow headline text. Syne display + Inter body.", path: "previews/61-prismatic-holographic.html" }
+      { id: 61, tag: "experimental", type: "style", title: "Prismatic Holographic", desc: "Iridescent foil, spectral gradient, chromatic glass surfaces, refactored aesthetic.", prompt: "Build a prismatic holographic UI. Deep void base with blurred spectral radial gradients breathing 10s. Glass panels backdrop-blur saturate with noise overlay. Chromatic RGB-split borders, gradient-flow headline text. Syne display + Inter body.", path: "previews/61-prismatic-holographic.html" },
+
+      // INTERACTIVE COMPONENTS
+      { id: "C01", tag: "components", type: "component", title: "3D Coverflow Carousel", desc: "Cover flow 3D dengan rotasi perspektif dan refleksi galeri.", prompt: "Build a 3D Coverflow carousel using perspective and 3D card layout.", path: "component/3d_coverflow_carousel.html" },
+      { id: "C02", tag: "components", type: "component", title: "Cylindrical Tunnel Marquee", desc: "Marquee dalam terowongan silinder melingkar illusi 3D.", prompt: "Build a cylindrical tunnel 3D rotating marquee carousel.", path: "component/cylindrical-tunnel-marquee.html" },
+      { id: "C03", tag: "components", type: "component", title: "Diagonal Marquee Carousel", desc: "Karousel marquee diagonal dengan kecepatan berkala.", prompt: "Build a diagonal running marquee cards carousel.", path: "component/diagonal-marquee-carousel.html" },
+      { id: "C04", tag: "components", type: "component", title: "Gravity Card Physics", desc: "Kartu dengan simulasi gravitasi & tumbukan partikel interaktif.", prompt: "Build interactive physics collision cards with canvas gravity.", path: "component/gravity_card_physics.html" },
+      { id: "C05", tag: "components", type: "component", title: "Holographic Card Deck", desc: "Deck kartu dengan efek holo refraktif mengikuti kursor.", prompt: "Build holographic cards with prismatic foil shine and tilt.", path: "component/holographic_card_deck.html" },
+      { id: "C06", tag: "components", type: "component", title: "Kinetic Typography Scramble", desc: "Teks teracak decoding otomatis interaktif dengan hover.", prompt: "Build a kinetic text decoding scramble animation widget.", path: "component/kinetic_typography_scramble.html" },
+      { id: "C07", tag: "components", type: "component", title: "Magnetic UI System", desc: "Tombol & cursor bermagnet dengan tarikan elastis spring.", prompt: "Build a magnetic UI button and cursor attraction system.", path: "component/magnetic_ui_system.html" },
+      { id: "C08", tag: "components", type: "component", title: "Mosaic Morph Grid", desc: "Grid mosaik dinamis yang bertransformasi posisi.", prompt: "Build a morphing mosaic responsive grid with smooth layout shifts.", path: "component/mosaic-morph-grid.html" },
+      { id: "C09", tag: "components", type: "component", title: "Parallax Depth Marquee", desc: "Marquee parallax berlapis dengan kedalaman visual.", prompt: "Build a multi-layer depth parallax marquee ticker.", path: "component/parallax_depth_marquee.html" },
+      { id: "C10", tag: "components", type: "component", title: "Physics Spring Accordion", desc: "Accordion elastis dengan fisika pegas dinamis.", prompt: "Build a spring physics elastic expandable accordion.", path: "component/physics_spring_accordion.html" },
+      { id: "C11", tag: "components", type: "component", title: "Scroll Abyss", desc: "Efek kedalaman jurang saat scrolling dengan partikel.", prompt: "Build a scroll-driven deep abyss 3D tunnel reveal.", path: "component/scroll-abyss.html" },
+      { id: "C12", tag: "components", type: "component", title: "Scroll Storytelling 5 Sections", desc: "Storytelling multi-seksi dengan transisi pinned frame.", prompt: "Build a 5-section narrative pin scroll storytelling experience.", path: "component/scroll-storytelling-5-sections.html" },
+      { id: "C13", tag: "components", type: "component", title: "Spherical Globe Marquee", desc: "Marquee melingkar pada bola 3D berputar.", prompt: "Build a 3D spherical rotating globe marquee in Three.js.", path: "component/spherical_globe_marquee.html" },
+      { id: "C14", tag: "components", type: "component", title: "Wave Sine Marquee", desc: "Teks bergerak mengikuti kurva gelombang sinus cair.", prompt: "Build an undulating sine wave kinetic typography marquee.", path: "component/wave-sine-marquee.html" },
+
+      // KIMI CASE STUDIES
+      { id: "CS01", tag: "case-studies", type: "case-study", title: "LEO·LIVE 3D Satellite Tracker", desc: "Pelacakan satelit LEO 3D real-time dengan SGP4 orbital propagator.", prompt: "Build a 3D Earth satellite orbit tracker with Three.js and Keplerian mechanics.", path: "case-studies/leo-live.html" },
+      { id: "CS02", tag: "case-studies", type: "case-study", title: "Cyberpunk Megapolis", desc: "Kota masa depan cyberpunk dengan neon hologram dan audio interaktif.", prompt: "Build a Cyberpunk futuristic Megapolis interface with scanlines and audio.", path: "case-studies/cyberpunk-megapolis.html" },
+      { id: "CS03", tag: "case-studies", type: "case-study", title: "Mempool Crypto Reel", desc: "Visualisasi transaksi blockchain real-time bergaya arcade cassette.", prompt: "Build a Mempool cryptocurrency live block visualizer.", path: "case-studies/mempul-crypto-reel.html" },
+      { id: "CS04", tag: "case-studies", type: "case-study", title: "Silk Atlas Trade Map", desc: "Peta rute sutra interaktif dengan navigasi spasial kuno.", prompt: "Build an ancient Silk Road interactive trade map visualizer.", path: "case-studies/silk-atlas.html" },
+      { id: "CS05", tag: "case-studies", type: "case-study", title: "Story Game RPG Engine", desc: "Game RPG teks interaktif dengan pilihan bercabang dan inventori.", prompt: "Build an interactive choice RPG narrative engine.", path: "case-studies/story-game.html" },
+      { id: "CS06", tag: "case-studies", type: "case-study", title: "Global Threat Cyber Globe", desc: "Globe 3D pemantau serangan siber global real-time.", prompt: "Build a real-time cyber attack threat monitor with 3D Earth arcs.", path: "case-studies/threat-globe.html" },
+      { id: "CS07", tag: "case-studies", type: "case-study", title: "Vault Command Center", desc: "Pusat komando keamanan futuristik dengan pemantauan multi-kamera.", prompt: "Build a tactical vault surveillance and telemetry command center.", path: "case-studies/vault-command-center.html" }
     ];
 
     let currentFilter = 'all';
+    let currentFilteredList = [];
+    let currentModalIdx = 0;
 
     function populateCatalog() {
       const grid = document.getElementById('catalog-grid');
       grid.innerHTML = '';
-      const query = document.getElementById('search-input').value.toLowerCase();
-      const filtered = stylesData.filter(s => {
-        const matchesFilter = currentFilter === 'all' || s.tag === currentFilter;
-        const matchesSearch = s.title.toLowerCase().includes(query) || s.desc.toLowerCase().includes(query);
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      
+      currentFilteredList = stylesData.filter(s => {
+        let matchesFilter = false;
+        if (currentFilter === 'all') matchesFilter = true;
+        else if (currentFilter === 'styles') matchesFilter = typeof s.id === 'number';
+        else if (currentFilter === 'components') matchesFilter = s.tag === 'components';
+        else if (currentFilter === 'case-studies') matchesFilter = s.tag === 'case-studies';
+        else matchesFilter = s.tag === currentFilter;
+
+        const matchesSearch = s.title.toLowerCase().includes(query) || 
+                              s.desc.toLowerCase().includes(query) || 
+                              String(s.id).toLowerCase().includes(query);
         return matchesFilter && matchesSearch;
       });
 
-      filtered.forEach(style => {
+      currentFilteredList.forEach((style, idx) => {
         const card = document.createElement('div');
         card.className = 'catalog-card';
+        card.style.cursor = 'pointer';
+        
+        const idLabel = typeof style.id === 'number' 
+          ? `STYLE #${String(style.id).padStart(2, '0')}`
+          : style.id;
+
         card.innerHTML = `
-          <div class="card-top">
+          <div class="card-top" onclick="openLiveDemoByIndex(${idx})">
             <div class="card-meta">
-              <span class="card-id">STYLE #${String(style.id).padStart(2, '0')}</span>
+              <span class="card-id">${idLabel}</span>
               <span class="card-badge">${style.tag}</span>
             </div>
             <h3 class="card-title">${style.title}</h3>
             <p class="card-desc">${style.desc}</p>
           </div>
           <div class="card-actions">
-            <button class="card-btn primary" onclick="copyPrompt('${style.prompt.replace(/'/g, "\\'")}', this)">
-              <i class="fa-solid fa-copy"></i> Copy Prompt
+            <button class="card-btn primary" onclick="event.stopPropagation(); openLiveDemoByIndex(${idx})">
+              <i class="fa-solid fa-play"></i> Live Demo
             </button>
-            <a href="${style.path}" target="_blank" class="card-btn secondary">
-              <i class="fa-solid fa-up-right-from-square"></i> Demo
-            </a>
+            <button class="card-btn secondary" onclick="event.stopPropagation(); copyPrompt('${style.prompt.replace(/'/g, "\\'")}', this)">
+              <i class="fa-solid fa-copy"></i> Copy
+            </button>
           </div>
         `;
         grid.appendChild(card);
       });
     }
+
+    // ============================================================
+    // IN-PAGE LIVE DEMO MODAL CONTROLLER
+    // ============================================================
+    const liveDemoModal = document.getElementById('liveDemoModal');
+    const liveDemoIframe = document.getElementById('liveDemoIframe');
+    const modalStyleId = document.getElementById('modalStyleId');
+    const modalStyleTitle = document.getElementById('modalStyleTitle');
+    const modalStyleTag = document.getElementById('modalStyleTag');
+    const modalCounter = document.getElementById('modalCounter');
+    const modalExternalLink = document.getElementById('modalExternalLink');
+    let isLiveModalOpen = false;
+
+    window.openLiveDemoByIndex = function(idx) {
+      if (idx < 0 || idx >= currentFilteredList.length) return;
+      currentModalIdx = idx;
+      const item = currentFilteredList[idx];
+
+      const idLabel = typeof item.id === 'number' ? `STYLE #${String(item.id).padStart(2, '0')}` : item.id;
+      modalStyleId.textContent = idLabel;
+      modalStyleTitle.textContent = item.title;
+      modalStyleTag.textContent = item.tag.toUpperCase();
+      modalCounter.textContent = `${idx + 1} / ${currentFilteredList.length}`;
+      modalExternalLink.href = item.path;
+      
+      liveDemoIframe.src = item.path;
+      liveDemoModal.classList.add('active');
+      liveDemoModal.setAttribute('aria-hidden', 'false');
+      isLiveModalOpen = true;
+
+      // Attach keydown listener inside iframe
+      liveDemoIframe.onload = function() {
+        try {
+          if (liveDemoIframe.contentWindow) {
+            liveDemoIframe.contentWindow.addEventListener('keydown', handleModalKeydown);
+          }
+          if (liveDemoIframe.contentDocument) {
+            liveDemoIframe.contentDocument.addEventListener('keydown', handleModalKeydown);
+          }
+        } catch(e) {}
+      };
+    };
+
+    window.navigateLiveDemo = function(dir) {
+      if (!isLiveModalOpen || currentFilteredList.length === 0) return;
+      let nextIdx = currentModalIdx + dir;
+      if (nextIdx < 0) nextIdx = currentFilteredList.length - 1;
+      if (nextIdx >= currentFilteredList.length) nextIdx = 0;
+      openLiveDemoByIndex(nextIdx);
+    };
+
+    window.closeLiveDemoModal = function() {
+      if (!isLiveModalOpen) return;
+      liveDemoModal.classList.remove('active');
+      liveDemoModal.setAttribute('aria-hidden', 'true');
+      liveDemoIframe.src = '';
+      isLiveModalOpen = false;
+    };
+
+    function handleModalKeydown(e) {
+      if (!isLiveModalOpen) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLiveDemoModal();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        navigateLiveDemo(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        navigateLiveDemo(-1);
+      }
+    }
+
+    window.addEventListener('keydown', handleModalKeydown);
 
     window.filterCatalog = function(category) {
       currentFilter = category;
@@ -695,9 +1083,9 @@
         btn.classList.toggle('active', btn.getAttribute('data-filter') === category);
       });
       populateCatalog();
-    }
+    };
 
-    window.searchCatalog = function() { populateCatalog(); }
+    window.searchCatalog = function() { populateCatalog(); };
 
     window.copyPrompt = function(promptText, button) {
       navigator.clipboard.writeText(promptText).then(() => {
@@ -705,13 +1093,15 @@
         button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
         button.style.background = 'var(--success)';
         button.style.borderColor = 'var(--success)';
+        button.style.color = '#ffffff';
         setTimeout(() => {
           button.innerHTML = original;
           button.style.background = '';
           button.style.borderColor = '';
+          button.style.color = '';
         }, 1500);
       });
-    }
+    };
 
     const suitabilityTexts = {
       light: { status: "LOW CONTRAST (GLARE)", desc: "Kurang cocok. Pendaran neon border kurang terlihat kontras di latar belakang putih terang." },
@@ -739,7 +1129,7 @@
           badge.style.background = isBad ? "rgba(220,38,38,0.08)" : "rgba(22,163,74,0.08)";
         }
       }
-    }
+    };
 
     function initTheme() {
       const saved = localStorage.getItem('playground-showcase-theme');
@@ -773,7 +1163,7 @@
         root.style.setProperty('--rotate-speed-btn', '10s');
         root.style.setProperty('--rotate-speed-badge', '8s');
       }
-    }
+    };
 
     document.addEventListener('DOMContentLoaded', () => { initTheme(); populateCatalog(); });
   </script>
