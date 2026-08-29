@@ -1,45 +1,1247 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LEO·LIVE — Satellite Trajectory Visualization</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>LEO·LIVE — 3D Low Earth Orbit Satellite Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
 <style>
-:root{--bg:#03040a;--surface:#0f172a;--text:#f0f4ff;--text-muted:#94a3b8;--primary:#6366f1;--accent:#06b6d4;--border:rgba(255,255,255,0.08)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:2rem;text-align:center}
-h1{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:700;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-p{color:var(--text-muted);max-width:500px;line-height:1.6;font-size:.9rem}
-.info{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:500px;text-align:left;line-height:1.8;font-size:.85rem}
-.info strong{color:var(--accent)}
-a{color:var(--primary);text-decoration:none}
-a:hover{color:var(--accent)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.5rem;border-radius:100px;background:var(--primary);color:#fff;font-weight:600;font-size:.85rem;transition:all .3s}
-.btn:hover{box-shadow:0 4px 20px rgba(99,102,241,0.3);transform:translateY(-2px);color:#fff}
-.back{position:fixed;top:1rem;left:1rem;padding:.5rem 1rem;border-radius:8px;border:1px solid var(--border);color:var(--text-muted);text-decoration:none;font-size:.8rem;transition:all .3s}
-.back:hover{border-color:var(--primary);color:var(--text)}
+  :root {
+    --bg: #03050a;
+    --surface: rgba(10, 15, 26, 0.84);
+    --surface-solid: #0c1220;
+    --surface-hover: rgba(22, 32, 54, 0.9);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-bright: rgba(6, 182, 212, 0.45);
+    --text: #f0f4ff;
+    --dim: #8ba0bd;
+    --primary: #6366f1;
+    --accent: #06b6d4;
+    --accent-glow: rgba(6, 182, 212, 0.45);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+
+  /* 3D WebGL Canvas */
+  #webgl-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+  }
+
+  /* Top Navigation & Mission Control Bar */
+  .top-hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(180deg, rgba(3, 5, 10, 0.95) 0%, rgba(3, 5, 10, 0) 100%);
+    pointer-events: none;
+  }
+
+  .top-left, .top-right, .top-center {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    pointer-events: auto;
+  }
+
+  .back-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--dim);
+    text-decoration: none;
+    background: rgba(10, 15, 26, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+  }
+
+  .back-link:hover {
+    color: #ffffff;
+    border-color: var(--accent);
+    background: var(--surface-hover);
+  }
+
+  .mission-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .live-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 12px var(--success);
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .mission-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .mission-title span {
+    color: var(--accent);
+  }
+
+  .badge-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid var(--border-bright);
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Time Control Simulation Pill */
+  .time-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10, 15, 26, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    padding: 5px 8px;
+    border-radius: 9999px;
+  }
+
+  .time-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--dim);
+    background: transparent;
+    border: 0;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .time-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .time-btn.active {
+    background: var(--accent);
+    color: #03050a;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .utc-clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.08em;
+    padding-left: 8px;
+  }
+
+  /* Main Floating HUD Panels */
+  .hud-panel {
+    position: fixed;
+    z-index: 30;
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    pointer-events: auto;
+  }
+
+  /* Left Satellite Manifest Panel */
+  #catalog-panel {
+    top: 80px;
+    left: 24px;
+    bottom: 24px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-input {
+    width: 100%;
+    background: rgba(4, 7, 14, 0.75);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px 8px 34px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.25s ease;
+  }
+
+  .search-input:focus {
+    border-color: var(--accent);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: var(--dim);
+  }
+
+  /* Category Filter Chips */
+  .category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .cat-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--dim);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .cat-chip:hover {
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .cat-chip.active {
+    background: var(--accent);
+    color: #03050a;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  /* Satellite List */
+  .sat-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
+  }
+
+  .sat-list::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .sat-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+
+  .sat-item {
+    background: rgba(12, 18, 32, 0.75);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sat-item:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-bright);
+    transform: translateX(4px);
+  }
+
+  .sat-item.active {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+  }
+
+  .sat-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sat-item-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .sat-item-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--dim);
+  }
+
+  .sat-dot-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* Right Live Telemetry Dashboard Panel */
+  #telemetry-panel {
+    top: 80px;
+    right: 24px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sat-hero-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .sat-active-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .sat-agency {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .telemetry-box {
+    background: rgba(6, 10, 18, 0.75);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .telem-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .telem-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .telem-unit {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  /* Camera Mode Selector Toolbar */
+  .camera-modes {
+    display: flex;
+    gap: 6px;
+    background: rgba(6, 10, 18, 0.75);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .cam-btn {
+    flex: 1;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--dim);
+    background: transparent;
+    border: 0;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .cam-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .cam-btn.active {
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+  }
+
+  /* Bottom Ground Track & Orbit Status Bar */
+  .bottom-status-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(10, 15, 26, 0.88);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    padding: 10px 24px;
+    border-radius: 9999px;
+    pointer-events: auto;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .status-item .label {
+    color: var(--dim);
+  }
+
+  .status-item .val {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  @media (max-width: 1024px) {
+    #catalog-panel { width: 260px; }
+    #telemetry-panel { width: 300px; }
+  }
+
+  @media (max-width: 768px) {
+    #catalog-panel { display: none; }
+    #telemetry-panel { left: 16px; right: 16px; width: auto; bottom: 80px; top: auto; }
+    .bottom-status-bar { display: none; }
+  }
 </style>
 </head>
 <body>
-<a href="index.html" class="back">← Case Studies</a>
-<h1>LEO·LIVE Satellite Tracker</h1>
-<p>React + shadcn/ui + satellite.js — visualisasi orbit satelit real-time dengan TLE data, globe 3D, dan kontrol simulasi waktu.</p>
-<div class="info">
-<strong>TECH:</strong> React 19 · TypeScript · Vite · Tailwind v4 · shadcn/ui · satellite.js · Three.js-based GlobeEngine<br><br>
-<strong>FEATURES:</strong><br>
-• Real-time TLE propagation via satellite.js<br>
-• 3D globe with WebGL2 (auto-detect fallback)<br>
-• 30+ satellite group layers<br>
-• Orbital path + ground track rendering<br>
-• Time simulation (fast-forward/rewind)<br>
-• Search, filter, detail panel telemetry<br>
-• Deep link via URL param (?sat=XXXXX)
+
+<!-- 3D Three.js Visualizer Canvas -->
+<canvas id="webgl-canvas"></canvas>
+
+<!-- Top Navigation & Mission HUD -->
+<header class="top-hud">
+  <div class="top-left">
+    <a href="index.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Case Studies</span>
+    </a>
+    <div class="mission-brand">
+      <span class="live-dot"></span>
+      <h1 class="mission-title">LEO·<span>LIVE</span></h1>
+      <span class="badge-tag">SGP4 LEO CONSTELLATION</span>
+    </div>
+  </div>
+
+  <div class="top-center">
+    <div class="time-controls">
+      <button class="time-btn active" data-speed="1">1X</button>
+      <button class="time-btn" data-speed="10">10X</button>
+      <button class="time-btn" data-speed="60">60X</button>
+      <button class="time-btn" data-speed="300">300X</button>
+      <span class="utc-clock" id="utcClock">UTC 00:00:00</span>
+    </div>
+  </div>
+
+  <div class="top-right">
+    <button class="back-link" id="btnResetView" title="Reset Camera View">
+      <i class="fa-solid fa-crosshairs"></i>
+      <span>Center Earth</span>
+    </button>
+  </div>
+</header>
+
+<!-- Left Satellite Manifest / Selection Panel -->
+<aside class="hud-panel" id="catalog-panel">
+  <div class="panel-header">
+    <h2 class="panel-title">
+      <i class="fa-solid fa-satellite" style="color:var(--accent)"></i>
+      <span>LEO Satellites</span>
+    </h2>
+    <span class="badge-tag" id="satCountBadge">26 ACTIVE</span>
+  </div>
+
+  <div class="search-wrap">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" class="search-input" id="satSearch" placeholder="Cari satelit atau NORAD ID..." />
+  </div>
+
+  <div class="category-chips">
+    <button class="cat-chip active" data-cat="all">ALL</button>
+    <button class="cat-chip" data-cat="station">STATIONS</button>
+    <button class="cat-chip" data-cat="science">SCIENCE</button>
+    <button class="cat-chip" data-cat="starlink">STARLINK</button>
+    <button class="cat-chip" data-cat="weather">EARTH OBS</button>
+    <button class="cat-chip" data-cat="radar">RADAR / COMMS</button>
+  </div>
+
+  <div class="sat-list" id="satListContainer">
+    <!-- Populated dynamically via JS -->
+  </div>
+</aside>
+
+<!-- Right Live Telemetry Dashboard Panel -->
+<aside class="hud-panel" id="telemetry-panel">
+  <div class="sat-hero-row">
+    <div>
+      <div class="sat-agency" id="satAgency">NASA / INTERNATIONAL</div>
+      <h2 class="sat-active-name" id="satName">ISS (ZARYA)</h2>
+    </div>
+    <span class="badge-tag" id="satNoradBadge">NORAD 25544</span>
+  </div>
+
+  <div class="camera-modes">
+    <button class="cam-btn active" data-cam="free">
+      <i class="fa-solid fa-globe"></i> Orbit Cam
+    </button>
+    <button class="cam-btn" data-cam="follow">
+      <i class="fa-solid fa-video"></i> Chase Cam
+    </button>
+    <button class="cam-btn" data-cam="nadir">
+      <i class="fa-solid fa-arrows-down-to-line"></i> Nadir Cam
+    </button>
+  </div>
+
+  <div class="telemetry-grid">
+    <div class="telemetry-box">
+      <span class="telem-label">Latitude</span>
+      <span class="telem-val" id="valLat">--<span class="telem-unit">°</span></span>
+    </div>
+    <div class="telemetry-box">
+      <span class="telem-label">Longitude</span>
+      <span class="telem-val" id="valLon">--<span class="telem-unit">°</span></span>
+    </div>
+    <div class="telemetry-box">
+      <span class="telem-label">Altitude</span>
+      <span class="telem-val" id="valAlt">-- <span class="telem-unit">km</span></span>
+    </div>
+    <div class="telemetry-box">
+      <span class="telem-label">Orbital Velocity</span>
+      <span class="telem-val" id="valSpeed">-- <span class="telem-unit">km/s</span></span>
+    </div>
+    <div class="telemetry-box">
+      <span class="telem-label">Inclination</span>
+      <span class="telem-val" id="valInc">--<span class="telem-unit">°</span></span>
+    </div>
+    <div class="telemetry-box">
+      <span class="telem-label">Orbital Period</span>
+      <span class="telem-val" id="valPeriod">-- <span class="telem-unit">min</span></span>
+    </div>
+  </div>
+
+  <div class="telemetry-box" style="margin-top:2px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span class="telem-label">Illumination State</span>
+      <span id="valSunState" style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:700; color:var(--success)">SUNLIT</span>
+    </div>
+    <div style="margin-top:6px; height:4px; border-radius:999px; background:rgba(255,255,255,0.08); overflow:hidden;">
+      <div id="sunProgressBar" style="width:75%; height:100%; background:linear-gradient(90deg, var(--accent), var(--success)); border-radius:999px;"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- Bottom Ground Track HUD -->
+<div class="bottom-status-bar">
+  <div class="status-item">
+    <span class="label">LEO REGION:</span>
+    <span class="val" style="color:var(--accent)">350 km – 850 km</span>
+  </div>
+  <div class="status-item">
+    <span class="label">PROPAGATION:</span>
+    <span class="val">KEPLERIAN / SGP4</span>
+  </div>
+  <div class="status-item">
+    <span class="label">SUB-SOLAR POINT:</span>
+    <span class="val" id="subSolarCoord">23.4°N, 45.2°E</span>
+  </div>
 </div>
-<p style="font-size:.8rem;opacity:.6;">
-React app — butuh <code>npm run build</code> untuk live demo.<br>
-Source di folder project Kimi asli.
-</p>
-<a href="#" onclick="alert('Build project dulu: cd app && npm install && npm run build')" class="btn"><i class="fa-solid fa-satellite"></i> Load Visualizer</a>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<!-- ============================================================
+     3D THREE.JS SCI-FI GLOBE & PURE LEO SATELLITE ENGINE
+     ============================================================ -->
+<script>
+(function() {
+  "use strict";
+
+  // ============================================================
+  // PURE LEO SATELLITE CATALOG (ALTITUDE 350 KM - 850 KM ONLY)
+  // All orbits hug the Earth closely and authentically!
+  // ============================================================
+  const SATELLITE_CATALOG = [
+    // Space Stations (~400 km - 420 km)
+    { id: "25544", name: "ISS (ZARYA)", cat: "station", agency: "NASA / ROSCOSMOS", color: "#00f0ff", a: 6790, e: 0.0006, inc: 51.64, raan: 145.2, argp: 85.3, m0: 210.5, n: 15.54 },
+    { id: "48274", name: "CSS (TIANGONG)", cat: "station", agency: "CNSA (CHINA)", color: "#ff4757", a: 6760, e: 0.0004, inc: 41.47, raan: 320.1, argp: 45.2, m0: 110.0, n: 15.65 },
+    { id: "52220", name: "AXIOM AX-1", cat: "station", agency: "AXIOM / SPACEX", color: "#2ed573", a: 6792, e: 0.0005, inc: 51.64, raan: 210.0, argp: 90.0, m0: 50.0, n: 15.53 },
+
+    // Science & Telescopes (~500 km - 600 km)
+    { id: "20580", name: "HST (HUBBLE)", cat: "science", agency: "NASA / ESA", color: "#a855f7", a: 6910, e: 0.0003, inc: 28.47, raan: 215.8, argp: 120.4, m0: 305.2, n: 15.12 },
+    { id: "33053", name: "FERMI GAMMA-RAY", cat: "science", agency: "NASA", color: "#c084fc", a: 6920, e: 0.0011, inc: 25.58, raan: 112.4, argp: 95.1, m0: 84.6, n: 15.09 },
+    { id: "44874", name: "CHEOPS EXOPLANET", cat: "science", agency: "ESA", color: "#e879f9", a: 7080, e: 0.0008, inc: 98.22, raan: 65.4, argp: 180.2, m0: 240.1, n: 14.58 },
+    { id: "28485", name: "SWIFT GAMMA EXPLORER", cat: "science", agency: "NASA / ASI", color: "#d946ef", a: 6940, e: 0.0010, inc: 20.55, raan: 305.0, argp: 60.0, m0: 175.0, n: 15.03 },
+
+    // Starlink & OneWeb Mega-Constellations (~530 km - 580 km)
+    { id: "44713", name: "STARLINK-1007", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.05, raan: 45.2, argp: 90.0, m0: 15.4, n: 15.10 },
+    { id: "44720", name: "STARLINK-1014", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.05, raan: 105.2, argp: 90.0, m0: 75.4, n: 15.10 },
+    { id: "45050", name: "STARLINK-1130", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.05, raan: 165.2, argp: 90.0, m0: 135.4, n: 15.10 },
+    { id: "51090", name: "STARLINK-3012", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.22, raan: 225.2, argp: 90.0, m0: 195.4, n: 15.10 },
+    { id: "53820", name: "STARLINK-4120", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.22, raan: 285.2, argp: 90.0, m0: 255.4, n: 15.10 },
+    { id: "55010", name: "STARLINK-5014", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.22, raan: 345.2, argp: 90.0, m0: 315.4, n: 15.10 },
+    { id: "45131", name: "ONEWEB-0012", cat: "starlink", agency: "ONEWEB", color: "#60a5fa", a: 7170, e: 0.0012, inc: 87.40, raan: 80.5, argp: 40.0, m0: 120.0, n: 14.30 },
+    { id: "47970", name: "ONEWEB-0045", cat: "starlink", agency: "ONEWEB", color: "#60a5fa", a: 7170, e: 0.0012, inc: 87.40, raan: 260.5, argp: 40.0, m0: 300.0, n: 14.30 },
+
+    // Weather & Earth Observation (~680 km - 820 km)
+    { id: "33591", name: "NOAA-19", cat: "weather", agency: "NOAA / NASA", color: "#10b981", a: 7210, e: 0.0014, inc: 98.70, raan: 210.4, argp: 270.0, m0: 140.0, n: 14.18 },
+    { id: "43013", name: "NOAA-20 (JPSS-1)", cat: "weather", agency: "NOAA / NASA", color: "#34d399", a: 7200, e: 0.0002, inc: 98.74, raan: 140.2, argp: 180.0, m0: 50.0, n: 14.20 },
+    { id: "25994", name: "TERRA (EOS AM-1)", cat: "weather", agency: "NASA", color: "#4ade80", a: 7080, e: 0.0001, inc: 98.20, raan: 310.5, argp: 90.0, m0: 220.0, n: 14.57 },
+    { id: "27424", name: "AQUA (EOS PM-1)", cat: "weather", agency: "NASA", color: "#2dd4bf", a: 7080, e: 0.0001, inc: 98.20, raan: 130.5, argp: 90.0, m0: 40.0, n: 14.57 },
+    { id: "37849", name: "SUOMI NPP", cat: "weather", agency: "NASA / NOAA", color: "#22c55e", a: 7200, e: 0.0001, inc: 98.70, raan: 30.0, argp: 60.0, m0: 180.0, n: 14.20 },
+    { id: "40697", name: "SENTINEL-2A", cat: "weather", agency: "ESA COPERNICUS", color: "#14b8a6", a: 7160, e: 0.0001, inc: 98.62, raan: 95.0, argp: 110.0, m0: 310.0, n: 14.31 },
+    { id: "46984", name: "SENTINEL-6 MICHAEL", cat: "weather", agency: "ESA / NASA / EUMETSAT", color: "#06b6d4", a: 7700, e: 0.0008, inc: 66.04, raan: 175.0, argp: 45.0, m0: 90.0, n: 12.80 },
+    { id: "39084", name: "LANDSAT-8", cat: "weather", agency: "USGS / NASA", color: "#84cc16", a: 7080, e: 0.0001, inc: 98.20, raan: 250.0, argp: 210.0, m0: 15.0, n: 14.57 },
+    { id: "54754", name: "SWOT OCEAN RADAR", cat: "weather", agency: "NASA / CNES", color: "#0ea5e9", a: 7260, e: 0.0005, inc: 77.60, raan: 120.0, argp: 30.0, m0: 200.0, n: 14.05 },
+
+    // Radar & Comms (~500 km - 780 km)
+    { id: "42955", name: "IRIDIUM-NEXT 128", cat: "radar", agency: "IRIDIUM COMM", color: "#f59e0b", a: 7150, e: 0.0002, inc: 86.40, raan: 15.0, argp: 90.0, m0: 180.0, n: 14.35 },
+    { id: "43075", name: "IRIDIUM-NEXT 134", cat: "radar", agency: "IRIDIUM COMM", color: "#f59e0b", a: 7150, e: 0.0002, inc: 86.40, raan: 195.0, argp: 90.0, m0: 0.0, n: 14.35 },
+    { id: "31598", name: "TERRASAR-X RADAR", cat: "radar", agency: "DLR (GERMANY)", color: "#fb923c", a: 6880, e: 0.0002, inc: 97.44, raan: 280.0, argp: 60.0, m0: 330.0, n: 15.19 }
+  ];
+
+  const EARTH_RADIUS_KM = 6371;
+  const SCENE_EARTH_RADIUS = 25; // 3D units
+
+  // ============================================================
+  // ORBITAL MECHANICS PROPAGATOR
+  // ============================================================
+  function solveKepler(M, e) {
+    let E = M;
+    for (let i = 0; i < 10; i++) {
+      const dE = (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+      E -= dE;
+      if (Math.abs(dE) < 1e-6) break;
+    }
+    return E;
+  }
+
+  function getSatellitePosition(sat, simTimeSeconds) {
+    const nRadPerSec = (sat.n * 2 * Math.PI) / 86400;
+    const M = ((sat.m0 * Math.PI / 180) + nRadPerSec * simTimeSeconds) % (2 * Math.PI);
+    const E = solveKepler(M, sat.e);
+
+    const sinNu = (Math.sqrt(1 - sat.e * sat.e) * Math.sin(E)) / (1 - sat.e * Math.cos(E));
+    const cosNu = (Math.cos(E) - sat.e) / (1 - sat.e * Math.cos(E));
+    const nu = Math.atan2(sinNu, cosNu);
+
+    const rKm = sat.a * (1 - sat.e * Math.cos(E));
+    const altitudeKm = rKm - EARTH_RADIUS_KM;
+
+    const GM = 398600.4418;
+    const velocityKmS = Math.sqrt(GM * (2 / rKm - 1 / sat.a));
+
+    const P = nu + (sat.argp * Math.PI / 180);
+    const xOrb = rKm * Math.cos(P);
+    const yOrb = rKm * Math.sin(P);
+
+    const incRad = sat.inc * Math.PI / 180;
+    const raanRad = sat.raan * Math.PI / 180;
+
+    const xEci = xOrb * Math.cos(raanRad) - yOrb * Math.cos(incRad) * Math.sin(raanRad);
+    const yEci = xOrb * Math.sin(raanRad) + yOrb * Math.cos(incRad) * Math.cos(raanRad);
+    const zEci = yOrb * Math.sin(incRad);
+
+    const earthRotationRadPerSec = (2 * Math.PI) / 86164.1;
+    const gmst = (earthRotationRadPerSec * simTimeSeconds) % (2 * Math.PI);
+
+    const xEcef = xEci * Math.cos(gmst) + yEci * Math.sin(gmst);
+    const yEcef = -xEci * Math.sin(gmst) + yEci * Math.cos(gmst);
+    const zEcef = zEci;
+
+    const latDeg = Math.asin(zEcef / rKm) * (180 / Math.PI);
+    const lonDeg = Math.atan2(yEcef, xEcef) * (180 / Math.PI);
+
+    const scaleFactor = SCENE_EARTH_RADIUS / EARTH_RADIUS_KM;
+    const pos3D = new THREE.Vector3(xEci * scaleFactor, zEci * scaleFactor, -yEci * scaleFactor);
+
+    const periodMin = (86400 / sat.n) / 60;
+
+    return {
+      pos3D,
+      latDeg,
+      lonDeg,
+      altitudeKm,
+      velocityKmS,
+      periodMin,
+      rKm
+    };
+  }
+
+  // ============================================================
+  // THREE.JS SCENE SETUP
+  // ============================================================
+  const canvas = document.getElementById("webgl-canvas");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 3000);
+  camera.position.set(0, 32, 68);
+
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 28;
+  controls.maxDistance = 500;
+  controls.rotateSpeed = 0.8;
+
+  // Starfield
+  const starCount = 5000;
+  const starPos = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount * 3; i += 3) {
+    const r = 600 + Math.random() * 500;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((Math.random() * 2) - 1);
+    starPos[i] = r * Math.sin(phi) * Math.cos(theta);
+    starPos[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+    starPos[i + 2] = r * Math.cos(phi);
+  }
+  const starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+  const starMat = new THREE.PointsMaterial({ color: 0xc8d6e5, size: 1.2, transparent: true, opacity: 0.75 });
+  scene.add(new THREE.Points(starGeo, starMat));
+
+  // Distant subtle Moon
+  const moonGroup = new THREE.Group();
+  const moonGeo = new THREE.SphereGeometry(4.5, 24, 24);
+  const moonMat = new THREE.MeshStandardMaterial({ color: 0x95a5a6, roughness: 0.9 });
+  const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+  moonGroup.add(moonMesh);
+  moonGroup.position.set(-180, 45, -120);
+  scene.add(moonGroup);
+
+  // Distant Directional Sunlight
+  const SUN_POSITION = new THREE.Vector3(300, 80, 200);
+  const sunLight = new THREE.DirectionalLight(0xffffff, 2.2);
+  sunLight.position.copy(SUN_POSITION);
+  scene.add(sunLight);
+
+  const spaceAmbience = new THREE.AmbientLight(0x18263e, 0.85);
+  scene.add(spaceAmbience);
+
+  // ============================================================
+  // CLEAN SCI-FI PROCEDURAL EARTH (DARK TECH AESTHETIC)
+  // ============================================================
+  function createProceduralEarthTexture() {
+    const w = 2048, h = 1024;
+    const tc = document.createElement("canvas");
+    tc.width = w; tc.height = h;
+    const ctx = tc.getContext("2d");
+
+    // Deep Dark Navy Ocean
+    const oceanGrad = ctx.createLinearGradient(0, 0, 0, h);
+    oceanGrad.addColorStop(0, "#081d30");
+    oceanGrad.addColorStop(0.5, "#0b2640");
+    oceanGrad.addColorStop(1, "#081d30");
+    ctx.fillStyle = oceanGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle Forest Green & Charcoal Continents
+    ctx.fillStyle = "#1e3d2b";
+    ctx.strokeStyle = "#2e6345";
+    ctx.lineWidth = 2;
+
+    // Eurasia & Africa
+    ctx.beginPath();
+    ctx.ellipse(w * 0.58, h * 0.35, w * 0.22, h * 0.18, 0, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(w * 0.54, h * 0.62, w * 0.12, h * 0.22, 0.2, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    // Americas
+    ctx.beginPath();
+    ctx.ellipse(w * 0.24, h * 0.32, w * 0.14, h * 0.16, -0.2, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(w * 0.30, h * 0.68, w * 0.09, h * 0.20, 0.3, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    // Australia & Antarctica
+    ctx.beginPath();
+    ctx.ellipse(w * 0.82, h * 0.72, w * 0.08, h * 0.09, 0, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = "#dfe6e9";
+    ctx.fillRect(0, h * 0.92, w, h * 0.08);
+
+    // Lat/Long Coordinate Grid
+    ctx.strokeStyle = "rgba(6, 182, 212, 0.18)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += w / 12) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (let y = 0; y < h; y += h / 6) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    // Equator Line
+    ctx.strokeStyle = "rgba(99, 102, 241, 0.45)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+
+    return new THREE.CanvasTexture(tc);
+  }
+
+  const earthTexture = createProceduralEarthTexture();
+  const earthGeo = new THREE.SphereGeometry(SCENE_EARTH_RADIUS, 64, 64);
+  const earthMat = new THREE.MeshStandardMaterial({
+    map: earthTexture,
+    roughness: 0.65,
+    metalness: 0.2
+  });
+  const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+  scene.add(earthMesh);
+
+  // Atmospheric Glow Layer (Fresnel Halo)
+  const atmoGeo = new THREE.SphereGeometry(SCENE_EARTH_RADIUS * 1.035, 48, 48);
+  const atmoMat = new THREE.MeshBasicMaterial({
+    color: 0x06b6d4,
+    transparent: true,
+    opacity: 0.16,
+    side: THREE.BackSide
+  });
+  const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+  scene.add(atmoMesh);
+
+  // ============================================================
+  // SATELLITE 3D OBJECTS & ORBIT CURVES REGISTRY
+  // ============================================================
+  const satelliteObjects = new Map();
+  let selectedSatId = SATELLITE_CATALOG[0].id;
+  let activeCameraMode = "free";
+  let simTimeMultiplier = 1;
+  let simTimeSeconds = Date.now() / 1000;
+
+  function createOrbitPath(sat) {
+    const points = [];
+    const segments = 128;
+    for (let i = 0; i <= segments; i++) {
+      const t = (i / segments) * (86400 / sat.n);
+      const res = getSatellitePosition(sat, t);
+      points.push(res.pos3D);
+    }
+    const orbitGeo = new THREE.BufferGeometry().setFromPoints(points);
+    const orbitMat = new THREE.LineBasicMaterial({
+      color: new THREE.Color(sat.color),
+      transparent: true,
+      opacity: sat.id === selectedSatId ? 0.95 : 0.24,
+      linewidth: 1
+    });
+    return new THREE.Line(orbitGeo, orbitMat);
+  }
+
+  function createSatelliteMesh(sat) {
+    const group = new THREE.Group();
+
+    // Core body
+    const bodyGeo = new THREE.BoxGeometry(0.65, 0.65, 0.65);
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: 0xe0e7ff,
+      metalness: 0.85,
+      roughness: 0.2
+    });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    group.add(body);
+
+    // Solar array wings
+    const wingGeo = new THREE.BoxGeometry(2.0, 0.05, 0.45);
+    const wingMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(sat.color),
+      emissive: new THREE.Color(sat.color),
+      emissiveIntensity: 0.35,
+      metalness: 0.9,
+      roughness: 0.1
+    });
+    const wings = new THREE.Mesh(wingGeo, wingMat);
+    group.add(wings);
+
+    // Beacon
+    const beaconGeo = new THREE.SphereGeometry(0.3, 16, 16);
+    const beaconMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(sat.color),
+      transparent: true,
+      opacity: 0.95
+    });
+    const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+    group.add(beacon);
+
+    group.userData = { satId: sat.id };
+    return group;
+  }
+
+  // Initialize all satellites in 3D scene
+  SATELLITE_CATALOG.forEach(sat => {
+    const satMesh = createSatelliteMesh(sat);
+    const orbitLine = createOrbitPath(sat);
+
+    scene.add(satMesh);
+    scene.add(orbitLine);
+
+    satelliteObjects.set(sat.id, {
+      sat,
+      mesh: satMesh,
+      orbitLine
+    });
+  });
+
+  // ============================================================
+  // UI MANIFEST & FILTER LOGIC
+  // ============================================================
+  const satListContainer = document.getElementById("satListContainer");
+  const satSearch = document.getElementById("satSearch");
+  let currentCategory = "all";
+
+  function renderSatelliteList() {
+    satListContainer.innerHTML = "";
+    const query = satSearch.value.toLowerCase().trim();
+
+    const filtered = SATELLITE_CATALOG.filter(sat => {
+      const matchCat = currentCategory === "all" || sat.cat === currentCategory;
+      const matchQuery = sat.name.toLowerCase().includes(query) || sat.id.includes(query) || sat.agency.toLowerCase().includes(query);
+      return matchCat && matchQuery;
+    });
+
+    document.getElementById("satCountBadge").textContent = `${filtered.length} ACTIVE`;
+
+    filtered.forEach(sat => {
+      const item = document.createElement("div");
+      item.className = "sat-item" + (sat.id === selectedSatId ? " active" : "");
+      item.dataset.id = sat.id;
+
+      item.innerHTML = `
+        <div class="sat-item-info">
+          <span class="sat-item-name">${sat.name}</span>
+          <span class="sat-item-meta">NORAD ${sat.id} · ${sat.agency.split("/")[0].trim()}</span>
+        </div>
+        <div class="sat-dot-indicator" style="background:${sat.color}; box-shadow:0 0 10px ${sat.color}"></div>
+      `;
+
+      item.addEventListener("click", () => selectSatellite(sat.id, true));
+      satListContainer.appendChild(item);
+    });
+  }
+
+  function selectSatellite(satId, animateCamera = true) {
+    selectedSatId = satId;
+    const data = satelliteObjects.get(satId);
+    if (!data) return;
+
+    document.querySelectorAll(".sat-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.id === satId);
+    });
+
+    satelliteObjects.forEach((obj, id) => {
+      obj.orbitLine.material.opacity = id === satId ? 0.95 : 0.2;
+    });
+
+    document.getElementById("satAgency").textContent = data.sat.agency;
+    document.getElementById("satName").textContent = data.sat.name;
+    document.getElementById("satNoradBadge").textContent = `NORAD ${data.sat.id}`;
+
+    if (animateCamera && activeCameraMode === "free") {
+      const currentPos = data.mesh.position;
+      const targetCamPos = currentPos.clone().multiplyScalar(1.55);
+      gsap.to(camera.position, {
+        x: targetCamPos.x,
+        y: targetCamPos.y + 6,
+        z: targetCamPos.z + 10,
+        duration: 1.2,
+        ease: "power2.inOut"
+      });
+      gsap.to(controls.target, {
+        x: currentPos.x,
+        y: currentPos.y,
+        z: currentPos.z,
+        duration: 1.2,
+        ease: "power2.inOut"
+      });
+    }
+  }
+
+  // Category filter clicks
+  document.querySelectorAll(".cat-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      currentCategory = chip.dataset.cat;
+      renderSatelliteList();
+    });
+  });
+
+  satSearch.addEventListener("input", renderSatelliteList);
+
+  // Time Multiplier Controls
+  document.querySelectorAll(".time-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      simTimeMultiplier = Number(btn.dataset.speed) || 1;
+    });
+  });
+
+  // Camera Mode Controls
+  document.querySelectorAll(".cam-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".cam-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeCameraMode = btn.dataset.cam;
+
+      if (activeCameraMode === "free") {
+        controls.enabled = true;
+        gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 0.8 });
+      }
+    });
+  });
+
+  // Reset Center Earth View
+  document.getElementById("btnResetView").addEventListener("click", () => {
+    activeCameraMode = "free";
+    document.querySelectorAll(".cam-btn").forEach(b => b.classList.toggle("active", b.dataset.cam === "free"));
+    controls.enabled = true;
+    gsap.to(camera.position, { x: 0, y: 32, z: 68, duration: 1.0, ease: "power2.inOut" });
+    gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.0, ease: "power2.inOut" });
+  });
+
+  // Raycasting
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  window.addEventListener("click", (e) => {
+    if (e.target.closest(".hud-panel") || e.target.closest(".top-hud") || e.target.closest(".bottom-status-bar")) return;
+
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const meshes = Array.from(satelliteObjects.values()).map(o => o.mesh);
+    const hits = raycaster.intersectObjects(meshes, true);
+
+    if (hits.length > 0) {
+      let topObj = hits[0].object;
+      while (topObj.parent && !topObj.userData.satId) {
+        topObj = topObj.parent;
+      }
+      if (topObj.userData && topObj.userData.satId) {
+        selectSatellite(topObj.userData.satId, true);
+      }
+    }
+  });
+
+  // Responsive Resize
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // ============================================================
+  // ANIMATION LOOP & LIVE TELEMETRY UPDATE
+  // ============================================================
+  let lastFrameTime = performance.now();
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const now = performance.now();
+    const dt = (now - lastFrameTime) / 1000;
+    lastFrameTime = now;
+
+    // Advance simulation time
+    simTimeSeconds += dt * simTimeMultiplier;
+
+    // Earth Axial Rotation (Sidereal day ~ 86164.1 s)
+    earthMesh.rotation.y = (simTimeSeconds * (2 * Math.PI / 86164.1)) % (2 * Math.PI);
+
+    // Subtle moon drift
+    moonGroup.rotation.y += 0.0004;
+
+    // Update all satellite positions
+    satelliteObjects.forEach(({ sat, mesh }) => {
+      const posData = getSatellitePosition(sat, simTimeSeconds);
+      mesh.position.copy(posData.pos3D);
+
+      // Point solar panels towards Sun
+      mesh.lookAt(SUN_POSITION);
+
+      // If active selected satellite, update live HUD telemetry
+      if (sat.id === selectedSatId) {
+        const latStr = Math.abs(posData.latDeg).toFixed(2) + (posData.latDeg >= 0 ? "° N" : "° S");
+        const lonStr = Math.abs(posData.lonDeg).toFixed(2) + (posData.lonDeg >= 0 ? "° E" : "° W");
+        
+        document.getElementById("valLat").innerHTML = `${latStr}`;
+        document.getElementById("valLon").innerHTML = `${lonStr}`;
+        document.getElementById("valAlt").innerHTML = `${posData.altitudeKm.toFixed(1)} <span class="telem-unit">km</span>`;
+        document.getElementById("valSpeed").innerHTML = `${posData.velocityKmS.toFixed(2)} <span class="telem-unit">km/s</span>`;
+        document.getElementById("valInc").innerHTML = `${sat.inc.toFixed(2)}<span class="telem-unit">°</span>`;
+        document.getElementById("valPeriod").innerHTML = `${posData.periodMin.toFixed(1)} <span class="telem-unit">min</span>`;
+
+        // Sun / Eclipse State Calculation
+        const toSun = SUN_POSITION.clone().normalize();
+        const satNorm = posData.pos3D.clone().normalize();
+        const dotSun = satNorm.dot(toSun);
+        const isSunlit = dotSun > -0.2;
+
+        const valSunState = document.getElementById("valSunState");
+        const sunBar = document.getElementById("sunProgressBar");
+        if (isSunlit) {
+          valSunState.textContent = "DIRECT SUNLIGHT";
+          valSunState.style.color = "var(--success)";
+          sunBar.style.width = "90%";
+          sunBar.style.background = "linear-gradient(90deg, var(--accent), var(--success))";
+        } else {
+          valSunState.textContent = "EARTH ECLIPSE SHADOW";
+          valSunState.style.color = "var(--warning)";
+          sunBar.style.width = "25%";
+          sunBar.style.background = "var(--warning)";
+        }
+
+        // Camera Follow Modes
+        if (activeCameraMode === "follow") {
+          controls.enabled = false;
+          const chaseOffset = posData.pos3D.clone().normalize().multiplyScalar(posData.pos3D.length() + 7);
+          camera.position.lerp(chaseOffset, 0.08);
+          camera.lookAt(posData.pos3D);
+        } else if (activeCameraMode === "nadir") {
+          controls.enabled = false;
+          const nadirPos = posData.pos3D.clone().multiplyScalar(1.22);
+          camera.position.lerp(nadirPos, 0.08);
+          camera.lookAt(0, 0, 0);
+        }
+      }
+    });
+
+    // Update UTC Clock
+    const simDate = new Date(simTimeSeconds * 1000);
+    document.getElementById("utcClock").textContent = `UTC ${simDate.toISOString().substring(11, 19)}`;
+
+    if (activeCameraMode === "free") {
+      controls.update();
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  // Initial render
+  renderSatelliteList();
+  selectSatellite(selectedSatId, false);
+  animate();
+
+})();
+</script>
 </body>
 </html>
