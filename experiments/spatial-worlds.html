@@ -3,87 +3,125 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>10 Dunia Spasial — Bonhomme Tribute · UI Playground</title>
+<title>10 Dunia Spasial — Bonhomme & Stellarium Starfield · UI Playground</title>
 <style>
-  :root{
-    --bg:#05060a; --ink:#e9edf5; --dim:#7c869c; --line:rgba(233,237,245,.12);
-    --accent:#ff6b6b;
+  :root {
+    --bg: #03050a;
+    --ink: #e9edf5;
+    --dim: #7c869c;
+    --line: rgba(233, 237, 245, 0.12);
+    --accent: #ff6b6b;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;background:var(--bg);color:var(--ink);
-    font-family:'Space Grotesk',Inter,'JetBrains Mono',system-ui,sans-serif;overflow:hidden}
-  #scene{position:fixed;inset:0;z-index:0;display:block}
-  .ui{position:fixed;z-index:5;pointer-events:none}
-  .ui a,.ui button{pointer-events:auto}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', Inter, 'JetBrains Mono', system-ui, sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  #scene { position: fixed; inset: 0; z-index: 0; display: block; }
+  .ui { position: fixed; z-index: 5; pointer-events: none; }
+  .ui a, .ui button { pointer-events: auto; }
 
   /* cursor */
-  #cursor{position:fixed;width:9px;height:9px;border-radius:50%;background:var(--accent);
-    mix-blend-mode:difference;z-index:99;transform:translate(-50%,-50%);pointer-events:none;
-    transition:width .2s,height .2s;box-shadow:0 0 0 1px rgba(255,255,255,.4)}
-  #cursor.big{width:34px;height:34px}
+  #cursor {
+    position: fixed; width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+    mix-blend-mode: difference; z-index: 99; transform: translate(-50%, -50%); pointer-events: none;
+    transition: width 0.2s, height 0.2s, background 0.3s; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+  }
+  #cursor.big { width: 38px; height: 38px; }
 
   /* intro */
-  #intro{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:22px;text-align:center;
-    background:radial-gradient(circle at 50% 40%,rgba(20,24,40,.6),rgba(5,6,10,.96));
-    backdrop-filter:blur(4px);transition:opacity .8s ease}
-  #intro h1{font-size:clamp(28px,6vw,68px);font-weight:800;letter-spacing:-.02em}
-  #intro p{max-width:520px;color:var(--dim);line-height:1.6;font-size:.95rem;padding:0 24px}
-  #enter{margin-top:6px;padding:14px 34px;border-radius:9999px;border:1px solid var(--line);
-    background:transparent;color:var(--ink);font-size:.9rem;letter-spacing:.04em;cursor:pointer;
-    transition:.25s}
-  #enter:hover{background:var(--ink);color:var(--bg)}
-  .credit{position:absolute;bottom:22px;font-family:'JetBrains Mono',monospace;font-size:.6rem;
-    color:var(--dim);letter-spacing:.1em}
+  #intro {
+    position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 22px; text-align: center;
+    background: radial-gradient(circle at 50% 40%, rgba(10, 14, 24, 0.9), rgba(3, 5, 10, 0.98));
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: opacity 0.8s ease;
+  }
+  #intro h1 { font-size: clamp(32px, 6.5vw, 76px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.0; }
+  #intro p { max-width: 580px; color: var(--dim); line-height: 1.65; font-size: 0.98rem; padding: 0 24px; }
+  #enter {
+    margin-top: 8px; padding: 14px 42px; border-radius: 9999px; border: 1px solid var(--line);
+    background: var(--ink); color: #03050a; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.05em;
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #enter:hover { background: var(--accent); color: #03050a; transform: scale(1.05); box-shadow: 0 0 35px rgba(255, 107, 107, 0.5); }
+  .credit { position: absolute; bottom: 24px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--dim); letter-spacing: 0.14em; }
 
   /* hud top-left */
-  #hud{top:22px;left:24px}
-  #hud .num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);
-    letter-spacing:.25em}
-  #hud .nm{font-size:clamp(20px,3vw,34px);font-weight:700;margin-top:2px}
+  #hud { top: 24px; left: 28px; }
+  #hud .num { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.25em; font-weight: 700; }
+  #hud .nm { font-size: clamp(22px, 3.2vw, 36px); font-weight: 800; margin-top: 2px; letter-spacing: -0.01em; }
 
   /* world map top-right */
-  #map{top:22px;right:24px;display:grid;grid-template-columns:repeat(5,30px);gap:7px;
-    pointer-events:auto}
-  #map button{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);
-    background:rgba(255,255,255,.03);color:var(--dim);font-family:'JetBrains Mono',monospace;
-    font-size:.6rem;cursor:pointer;transition:.2s;position:relative}
-  #map button:hover{border-color:var(--accent);color:var(--ink)}
-  #map button.on{background:var(--accent);color:#05060a;border-color:var(--accent)}
+  #map {
+    top: 24px; right: 28px; display: grid; grid-template-columns: repeat(5, 32px); gap: 8px;
+    pointer-events: auto;
+  }
+  #map button {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.04); color: var(--dim); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; font-weight: 600; cursor: pointer; transition: all 0.25s ease; position: relative;
+  }
+  #map button:hover { border-color: var(--accent); color: var(--ink); transform: translateY(-2px); }
+  #map button.on { background: var(--accent); color: #03050a; border-color: var(--accent); font-weight: 800; box-shadow: 0 0 18px var(--accent); }
 
   /* content panel bottom-left */
-  #panel{bottom:26px;left:24px;max-width:min(440px,72vw);
-    border-left:2px solid var(--accent);padding:14px 0 14px 18px;
-    transition:opacity .5s ease, transform .5s ease}
-  #panel .v{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.3em;
-    color:var(--accent);text-transform:uppercase}
-  #panel .d{margin-top:8px;color:#cdd4e2;line-height:1.55;font-size:.92rem}
-  #panel.hide{opacity:0;transform:translateY(12px)}
+  #panel {
+    bottom: 28px; left: 28px; max-width: min(480px, 78vw);
+    border-left: 2px solid var(--accent); padding: 16px 0 16px 22px;
+    background: linear-gradient(90deg, rgba(3, 5, 10, 0.92) 0%, transparent 100%);
+    backdrop-filter: blur(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #panel .v { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase; font-weight: 700; }
+  #panel .d { margin-top: 8px; color: #cdd4e2; line-height: 1.6; font-size: 0.95rem; }
+  #panel.hide { opacity: 0; transform: translateY(16px); }
 
   /* hint bottom-right */
-  #hint{bottom:26px;right:24px;font-family:'JetBrains Mono',monospace;font-size:.6rem;
-    color:var(--dim);text-align:right;line-height:1.8}
-  #hint b{color:var(--ink);font-weight:600}
-  .backlink{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:6;
-    font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim);
-    text-decoration:none;border:1px solid var(--line);padding:8px 16px;border-radius:9999px;
-    transition:.2s}
-  .backlink:hover{color:var(--ink);border-color:var(--accent)}
-  @media(max-width:640px){#map{grid-template-columns:repeat(5,26px);gap:5px}
-    #map button{width:26px;height:26px}#hint{display:none}}
+  #hint { bottom: 28px; right: 28px; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--dim); text-align: right; line-height: 1.85; }
+  #hint b { color: var(--ink); font-weight: 600; }
+
+  #lockPrompt { bottom: 88px; left: 50%; transform: translateX(-50%); text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--ink);
+    background: rgba(3,5,10,.72); border: 1px solid var(--accent); border-radius: 9999px;
+    padding: 11px 24px; letter-spacing: .08em; display: none; }
+  #lockPrompt b { color: var(--accent); font-weight: 700; }
+
+  #crosshair { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; display: none; }
+  #crosshair::before, #crosshair::after { content: ""; position: absolute; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  #crosshair::before { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
+  #crosshair::after { top: 50%; left: 0; height: 2px; width: 100%; transform: translateY(-50%); }
+
+  .backlink {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 6;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--dim);
+    text-decoration: none; border: 1px solid var(--line); padding: 9px 20px; border-radius: 9999px;
+    background: rgba(3, 5, 10, 0.85); backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+  }
+  .backlink:hover { color: var(--ink); border-color: var(--accent); transform: translateX(-50%) translateY(-2px); }
+
+  @media(max-width: 640px) {
+    #map { grid-template-columns: repeat(5, 28px); gap: 6px; }
+    #map button { width: 28px; height: 28px; }
+    #hint { display: none; }
+    #panel { max-width: 88vw; }
+  }
 </style>
 </head>
 <body>
 <canvas id="scene"></canvas>
-
 <div id="cursor"></div>
 
 <div id="intro">
   <h1>10 Dunia Spasial</h1>
-  <p>Satu aplikasi WebGL yang berkelanjutan. Bukan 10 halaman — melainkan 10 dunia yang
-     kau terbang masuki dari dalam dunia yang sama. Scroll, drag, dan klik untuk menjelajah.</p>
-  <button id="enter">Masuki Dunia →</button>
-  <div class="credit">INSPIRASI · BONHOMME 10 ANS × BRUNO SIMON · UI PLAYGROUND BETA</div>
+  <p>Kemudikan pesawat bintangmu melintasi 10 stasiun Aero di keheningan kosmos. Terbang bebas dengan WASD + mouse, atau gunakan autopilot 1–9.</p>
+  <button id="enter">Terbangkan Pesawatmu →</button>
+  <div class="credit">STELLARIUM CRYSTAL STARFIELD · AERO 3D & BONHOMME ARCHITECTURE</div>
 </div>
 
 <div class="ui" id="hud">
@@ -99,269 +137,1078 @@
 </div>
 
 <div class="ui" id="hint">
-  <div><b>DRAG</b> memutar kamera</div>
-  <div><b>CLICK</b> dunia &rarr; terbang</div>
-  <div><b>1–9 / 0</b> pilih dunia</div>
+  <div><b>W / S</b> terbang maju / mundur</div>
+  <div><b>A / D</b> strafe kiri / kanan</div>
+  <div><b>MOUSE</b> arahkan · klik untuk kunci</div>
+  <div><b>SPACE / C</b> naik / turun</div>
+  <div><b>SCROLL</b> dolly · <b>SHIFT+SCROLL</b> pan</div>
+  <div><b>1–9 / 0</b> autopilot ke dunia</div>
 </div>
 
-<a class="backlink" href="../atelier-fusion-system.html">← Kembali ke Fusion Engine</a>
+<div class="ui" id="lockPrompt">KLIK UNTUK MENGEMUDIKAN · <b>ESC</b> LEPAS</div>
+<div class="ui" id="crosshair"></div>
+
+<a class="backlink" href="../index.html">← Kembali ke UI Playground</a>
 
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Embedded Base64 Data Bundle for Zero-CORS Local Loading -->
+<script src="assets/aero_bundle.js"></script>
+
 <script>
-(function(){
+(function() {
   "use strict";
-  if(typeof THREE==="undefined"){document.getElementById("intro").innerHTML="<p>Three.js gagal dimuat (perlu koneksi).</p>";return;}
 
-  // ---- 10 WORLDS (Bonhomme 10 values, reinterpreted) ----
-  const WORLDS=[
-    {n:"01",name:"RUANG",sub:"ROOM",value:"Kemanusiaan",accent:0xff6b6b,geo:0,
-     desc:"Setiap tamu adalah sebuah cerita. Kami merancang ruang agar orang merasa dipersilakan, bukan dilayani."},
-    {n:"02",name:"MESIN",sub:"MACHINE",value:"Ketelitian",accent:0x4dabf7,geo:1,
-     desc:"Detail adalah bentuk hormat. Presisi kecil di awal menentukan kepercayaan di akhir."},
-    {n:"03",name:"TAMAN",sub:"GARDEN",value:"Alam",accent:0x51cf66,geo:2,
-     desc:"Kami meminjam dari alam, bukan mengalahkannya. Pertumbuhan lambat adalah desain yang jujur."},
-    {n:"04",name:"ARSIP",sub:"ARCHIVE",value:"Memori",accent:0xffd43b,geo:3,
-     desc:"Masa lalu bukan begunan, melainkan bahan baku. Warisan dibaca ulang, bukan sekadar dipajang."},
-    {n:"05",name:"GERBANG",sub:"PORTAL",value:"Keberanian",accent:0xcc5de8,geo:4,
-     desc:"Masuk ke yang asing membutuhkan nyali. Kami membangun gerbang, bukan pagar."},
-    {n:"06",name:"LAB",sub:"LAB",value:"Rasa Ingin",accent:0x22b8cf,geo:5,
-     desc:"Eksperimen adalah bahasa kami. Gagal dengan cepat, lalu belajar lebih cepat lagi."},
-    {n:"07",name:"STASIUN",sub:"STATION",value:"Koneksi",accent:0xff922b,geo:6,
-     desc:"Orang bertemu, ide berpindah. Kami merancang persimpangan, bukan sekadar tujuan."},
-    {n:"08",name:"KEKOSONGAN",sub:"VOID",value:"Ketenangan",accent:0x868e96,geo:7,
-     desc:"Sunyi adalah fitur. Ruang kosong memberi napas agar yang penting akhirnya terdengar."},
-    {n:"09",name:"KOTA",sub:"CITY",value:"Budaya",accent:0xf783ac,geo:8,
-     desc:"Keragaman adalah kekuatan. Satu dunia, banyak suara yang saling menyapa."},
-    {n:"10",name:"PUNCAK",sub:"FINAL",value:"Visi",accent:0xffe066,geo:9,
-     desc:"Sepuluh nilai, satu arah. Ini bukan akhir, melainkan pandangan ke depan."}
+  if (typeof THREE === "undefined") {
+    document.getElementById("intro").innerHTML = "<p>Three.js gagal dimuat.</p>";
+    return;
+  }
+
+  // ============================================================
+  // 10 WORLDS METADATA
+  // ============================================================
+  const WORLDS = [
+    { n: "01", name: "RUANG", sub: "ROOM", value: "Kemanusiaan", accent: 0xff6b6b,
+      desc: "Setiap tamu adalah sebuah cerita. Gerbang heksagonal spasial dengan mercusuar pendaratan ramah bagi setiap penjelajah semesta." },
+    { n: "02", name: "MESIN", sub: "MACHINE", value: "Ketelitian", accent: 0x4dabf7,
+      desc: "Presisi giroskopik stasiun aero. Cincin mekanikal berputar dalam harmoni kecepatan tinggi untuk stabilitas gravitasi." },
+    { n: "03", name: "TAMAN", sub: "GARDEN", value: "Alam", accent: 0x51cf66,
+      desc: "Pulau biosfer melayang (*Aero Floating Island*) dengan kanopi pohon rimbun dan aliran energi alami yang bernapas." },
+    { n: "04", name: "ARSIP", sub: "ARCHIVE", value: "Memori", accent: 0xffd43b,
+      desc: "Platform modul arsip di atas dataran kristal (*Terrain Base*). Pilar data warisan yang terus dipelajari untuk masa depan." },
+    { n: "05", name: "GERBANG", sub: "PORTAL", value: "Keberanian", accent: 0xcc5de8,
+      desc: "Gerbang stasiun cincin berfrekuensi tinggi (*Stargate Ring*). Menembus batas ruang dan waktu tanpa rasa takut." },
+    { n: "06", name: "LAB", sub: "LAB", value: "Rasa Ingin", accent: 0x22b8cf,
+      desc: "Reaktor laboratorium sains orbital (*Aero Station 01*). Pusat riset fisika kuantum dan sintesis materi baru." },
+    { n: "07", name: "STASIUN", sub: "STATION", value: "Koneksi", accent: 0xff922b,
+      desc: "Dermaga transit antariksa (*Aero Airship Docking Station*). Kapal udara berlabuh di atas rel energi magnetik." },
+    { n: "08", name: "KEKOSONGAN", sub: "VOID", value: "Ketenangan", accent: 0xa6b0bf,
+      desc: "Singularitas lubang hitam yang dibatasi oleh cincin orbit penahan gravitasi. Keheningan mutlak sumber segala penciptaan." },
+    { n: "09", name: "KOTA", sub: "CITY", value: "Budaya", accent: 0xf783ac,
+      desc: "Metropolis Aero heksagonal dengan menara penerangan jalan dan gedung bertingkat. Pusat kebudayaan dan inovasi kolektif." },
+    { n: "10", name: "PUNCAK", sub: "FINAL", value: "Visi", accent: 0xffe066,
+      desc: "Menara puncak zenith semesta (*Apex Station Spire*). Mercusuar utama yang menembakkan pilar cahaya ke seluruh penjuru galaksi." }
   ];
 
-  const GEOS=[
-    ()=>new THREE.TorusKnotGeometry(3.2,1.0,140,18),
-    ()=>new THREE.IcosahedronGeometry(4.2,0),
-    ()=>new THREE.OctahedronGeometry(4.4,0),
-    ()=>new THREE.DodecahedronGeometry(4.2,0),
-    ()=>new THREE.TorusGeometry(3.4,1.2,24,80),
-    ()=>new THREE.SphereGeometry(4.0,48,48),
-    ()=>new THREE.BoxGeometry(6,6,6,4,4,4),
-    ()=>new THREE.ConeGeometry(4.2,7,7),
-    ()=>new THREE.CylinderGeometry(3.4,3.4,7,24,3),
-    ()=>new THREE.TetrahedronGeometry(5.2,0)
+  // ============================================================
+  // GLTF LOADER WITH AUTO-FIT NORMALIZATION
+  // ============================================================
+  const gltfLoader = new THREE.GLTFLoader();
+  const AERO_PATH = "assets/aero/";
+
+  function fitModel(object, targetSize) {
+    const box = new THREE.Box3().setFromObject(object);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    if (maxDim > 0) {
+      const scale = targetSize / maxDim;
+      object.scale.setScalar(scale);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      object.position.x -= center.x * scale;
+      object.position.y -= box.min.y * scale;
+      object.position.z -= center.z * scale;
+    }
+  }
+
+  function loadGLB(filename, targetSize, callback) {
+    const uri = (window.AERO_BUNDLE && window.AERO_BUNDLE[filename]) 
+      ? window.AERO_BUNDLE[filename] 
+      : (AERO_PATH + filename);
+
+    gltfLoader.load(uri, (gltf) => {
+      const sceneModel = gltf.scene;
+      fitModel(sceneModel, targetSize);
+      callback(sceneModel);
+    }, undefined, (err) => {
+      console.warn("GLB Load warning for " + filename + ":", err);
+    });
+  }
+
+  // ============================================================
+  // 10 AERO GLB MICRO-DIORAMA BUILDERS
+  // ============================================================
+  const DIORAMA_BUILDERS = [
+    // 01 — RUANG: Aero Door + Lampost + Hexagon Base
+    function buildRoom(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+
+      loadGLB("Aero_Door_01_GLB.glb", 7.5, (door) => {
+        door.position.set(0, -1.0, 0);
+        door.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(door);
+      });
+
+      loadGLB("Aero_Lampost_01_GLB.glb", 4.2, (lamp) => {
+        lamp.position.set(3.6, -1.0, 1.2);
+        lamp.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(lamp);
+      });
+
+      loadGLB("Aero_Ground_Hexagon_Art_GLB.glb", 8.5, (ground) => {
+        ground.position.set(0, -1.8, 0);
+        ground.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(ground);
+      });
+
+      return g;
+    },
+
+    // 02 — MESIN: Aero Yellow Ring + Station Ring Kinetic Gyroscope
+    function buildMachine(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+      const ringPivot1 = new THREE.Group(); g.add(ringPivot1);
+      const ringPivot2 = new THREE.Group(); g.add(ringPivot2);
+
+      loadGLB("Aero_Station_Ring_Art_GLB.glb", 8.2, (r1) => {
+        r1.position.set(0, 0, 0);
+        r1.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        ringPivot1.add(r1);
+      });
+
+      loadGLB("Aero_Station_YellowRing_Art_GLB.glb", 6.2, (r2) => {
+        r2.position.set(0, 0, 0);
+        r2.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        ringPivot2.add(r2);
+      });
+
+      g.userData.anim = (t) => {
+        ringPivot1.rotation.x = t * 0.5; ringPivot1.rotation.y = t * 0.35;
+        ringPivot2.rotation.y = -t * 0.7; ringPivot2.rotation.z = t * 0.45;
+      };
+      return g;
+    },
+
+    // 03 — TAMAN: Floating Island + Tree 01
+    function buildGarden(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+
+      loadGLB("Floating_Island_01_Art_GLB.glb", 8.5, (island) => {
+        island.position.set(0, -2.2, 0);
+        island.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(island);
+      });
+
+      loadGLB("Tree_01_Art_GLB.glb", 5.4, (tree) => {
+        tree.position.set(0, 0.4, 0);
+        tree.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(tree);
+      });
+
+      g.userData.anim = (t) => {
+        g.rotation.y = t * 0.15;
+      };
+      return g;
+    },
+
+    // 04 — ARSIP: Terrain Art + Mini Platform
+    function buildArchive(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+
+      loadGLB("Terrain_Art_GLB.glb", 8.8, (terrain) => {
+        terrain.position.set(0, -2.4, 0);
+        terrain.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(terrain);
+      });
+
+      loadGLB("Aero_Station_Mini_Platform_Art_GLB.glb", 5.2, (plat) => {
+        plat.position.set(0, 0.2, 0);
+        plat.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(plat);
+      });
+
+      g.userData.anim = (t) => {
+        g.rotation.y = -t * 0.12;
+      };
+      return g;
+    },
+
+    // 05 — GERBANG: Aero Station Pink Ring + Stargate Portal
+    function buildPortal(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+
+      loadGLB("Aero_Station_PinkRing_Art_GLB.glb", 8.4, (pinkRing) => {
+        pinkRing.position.set(0, 0, 0);
+        pinkRing.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(pinkRing);
+      });
+
+      const diskMat = new THREE.MeshBasicMaterial({ color: accentCol, wireframe: true, transparent: true, opacity: 0.55, side: THREE.DoubleSide });
+      const disk = new THREE.Mesh(new THREE.RingGeometry(0.5, 3.8, 32), diskMat);
+      disk.userData = { world: worldIdx, isCore: true };
+      g.add(disk); pickList.push(disk);
+
+      g.userData.anim = (t) => {
+        disk.rotation.z = t * 0.8;
+      };
+      return g;
+    },
+
+    // 06 — LAB: Aero Station 01 Orbital Science Hub
+    function buildLab(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+
+      loadGLB("Aero_Station_01_Art_GLB.glb", 8.2, (station) => {
+        station.position.set(0, -1.8, 0);
+        station.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(station);
+      });
+
+      g.userData.anim = (t) => {
+        g.rotation.y = t * 0.22;
+      };
+      return g;
+    },
+
+    // 07 — STASIUN: Aero Airship + Path 01 Docking Rail
+    function buildStation(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+      const shipPivot = new THREE.Group(); g.add(shipPivot);
+
+      loadGLB("Aero_Airship_01_GLB.glb", 6.8, (ship) => {
+        ship.position.set(0, 1.2, 0);
+        ship.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        shipPivot.add(ship);
+      });
+
+      loadGLB("Path_01_Art_GLB.glb", 8.4, (pathMesh) => {
+        pathMesh.position.set(0, -2.0, 0);
+        pathMesh.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(pathMesh);
+      });
+
+      g.userData.anim = (t) => {
+        shipPivot.position.y = 1.2 + Math.sin(t * 1.4) * 0.45;
+        shipPivot.rotation.y = Math.sin(t * 0.6) * 0.18;
+      };
+      return g;
+    },
+
+    // 08 — VOID: Dark Singularity + Station Ring Orbit
+    function buildVoid(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+      const blackHoleMat = new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 1.0, roughness: 0.0 });
+      const blackHole = new THREE.Mesh(new THREE.SphereGeometry(2.6, 36, 36), blackHoleMat);
+      blackHole.userData = { world: worldIdx, isCore: true };
+      g.add(blackHole); pickList.push(blackHole);
+
+      const ringPivot = new THREE.Group(); g.add(ringPivot);
+
+      loadGLB("Aero_Station_Ring_Art_GLB.glb", 7.8, (ring) => {
+        ring.position.set(0, 0, 0);
+        ring.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        ringPivot.add(ring);
+      });
+
+      g.userData.anim = (t) => {
+        ringPivot.rotation.x = Math.PI / 3;
+        ringPivot.rotation.z = t * 0.4;
+        blackHole.rotation.y = t * 0.2;
+      };
+      return g;
+    },
+
+    // 09 — KOTA: Ground Hexagons 02 + Lampost
+    function buildCity(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+
+      loadGLB("Aero_Ground_Hexagons_02_Art_GLB.glb", 8.8, (hexGround) => {
+        hexGround.position.set(0, -2.2, 0);
+        hexGround.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(hexGround);
+      });
+
+      loadGLB("Aero_Lampost_01_GLB.glb", 3.8, (lamp) => {
+        lamp.position.set(2.4, -0.6, 1.8);
+        lamp.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(lamp);
+      });
+
+      g.userData.anim = (t) => {
+        g.rotation.y = t * 0.18;
+      };
+      return g;
+    },
+
+    // 10 — PUNCAK: Station 01 + Light Beacon at Zenith
+    function buildApex(accentCol, pickList, worldIdx) {
+      const g = new THREE.Group();
+      const beamMat = new THREE.MeshBasicMaterial({ color: accentCol, transparent: true, opacity: 0.65 });
+
+      const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 46, 8), beamMat);
+      beam.position.y = 23; beam.userData = { world: worldIdx, isCore: true };
+      g.add(beam); pickList.push(beam);
+
+      loadGLB("Aero_Station_01_Art_GLB.glb", 8.8, (station) => {
+        station.position.set(0, -1.0, 0);
+        station.traverse(child => {
+          if (child.isMesh) {
+            child.userData.world = worldIdx;
+            pickList.push(child);
+          }
+        });
+        g.add(station);
+      });
+
+      g.userData.anim = (t) => {
+        g.rotation.y = t * 0.25;
+      };
+      return g;
+    }
   ];
 
-  // ---- SCENE ----
-  const canvas=document.getElementById("scene");
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setSize(window.innerWidth,window.innerHeight);
+  // ============================================================
+  // SCENE INITIALIZATION & VIBRANT PBR LIGHTING RIG
+  // ============================================================
+  const canvas = document.getElementById("scene");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.35;
 
-  const scene=new THREE.Scene();
-  const baseBg=new THREE.Color(0x05060a);
-  scene.background=baseBg.clone();
-  scene.fog=new THREE.FogExp2(0x05060a,0.012);
+  const scene = new THREE.Scene();
+  const baseBg = new THREE.Color(0x03050a);
+  scene.background = baseBg.clone();
+  scene.fog = new THREE.FogExp2(0x03050a, 0.003); // Very subtle fog so stars remain ultra-sharp
 
-  const camera=new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,0.1,400);
-  camera.position.set(0,6,30);
+  // ============================================================
+  // PROCEDURAL CYBERPUNK SKY DOME  (ported from cyberpunk-megapolis)
+  // Sphere pinned to the far plane -> always renders as the backdrop
+  // (a "skyplane") behind every GLB world. Neon night: magenta sun-glow
+  // + cyan moon-glow + twinkling shader stars.
+  // ============================================================
+  const skyUniforms = {
+    uSunDir:   { value: new THREE.Vector3(-0.55, 0.16, -0.6).normalize() },
+    uZenith:   { value: new THREE.Color(0x05060c) },
+    uHorizon:  { value: new THREE.Color(0x2e1238) },
+    uGround:   { value: new THREE.Color(0x04050b) },
+    uSunColor: { value: new THREE.Color(0xff4fd8) },
+    uSunSize:  { value: 0.02 },
+    uSunGlow:  { value: 220.0 },
+    uHalo:     { value: 0.9 },
+    uSunDisk:  { value: 1.2 },
+    uTime:     { value: 0.0 },
+    uCloudCover: { value: 0.5 },
+    uCloudCol: { value: new THREE.Color(0x241433) },
+    uCloudLit: { value: 0.3 },
+    uCloudAlpha: { value: 0.0 },
+    uCloudScale: { value: 0.85 },
+    uWind:     { value: new THREE.Vector2(0.012, 0.005) },
+    uStars:    { value: 1.0 },
+    uMoon:     { value: 1.0 },
+    uMoonDir:  { value: new THREE.Vector3(0.6, 0.22, 0.6).normalize() },
+    uMoonCol:  { value: new THREE.Color(0x55ffff) },
+    uMoonSize: { value: 0.03 },
+  };
+  const skyDome = new THREE.Mesh(
+    new THREE.SphereGeometry(100, 32, 16),
+    new THREE.ShaderMaterial({
+      uniforms: skyUniforms,
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false,
+      vertexShader: `
+        varying vec3 vDir;
+        void main() {
+          vDir = normalize(position);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          gl_Position.z = gl_Position.w;   // pin to far plane — dome follows camera
+        }`,
+      fragmentShader: `
+        varying vec3 vDir;
+        uniform vec3 uSunDir, uZenith, uHorizon, uGround, uSunColor;
+        uniform float uSunSize, uSunGlow, uHalo, uSunDisk;
+        uniform float uTime, uCloudCover, uCloudLit, uCloudAlpha, uCloudScale;
+        uniform vec3 uCloudCol;
+        uniform vec2 uWind;
+        uniform float uStars, uMoon, uMoonSize;
+        uniform vec3 uMoonDir, uMoonCol;
 
-  const controls=new THREE.OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true;controls.dampingFactor=0.08;
-  controls.enablePan=false;controls.minDistance=10;controls.maxDistance=120;
-  controls.enabled=false;
+        float hash(vec2 p){ p = fract(p*vec2(123.34, 345.45)); p += dot(p, p+34.345); return fract(p.x*p.y); }
+        float vnoise(vec2 p){
+          vec2 i = floor(p), f = fract(p);
+          vec2 u = f*f*(3.0-2.0*f);
+          return mix(mix(hash(i+vec2(0.,0.)), hash(i+vec2(1.,0.)), u.x),
+                     mix(hash(i+vec2(0.,1.)), hash(i+vec2(1.,1.)), u.x), u.y);
+        }
+        float fbm(vec2 p){
+          float v = 0.0, a = 0.55;
+          for(int i=0;i<5;i++){ v += a*vnoise(p); p = p*2.03 + 7.1; a *= 0.5; }
+          return v;
+        }
+        float hash3(vec3 p){ p = fract(p*0.3183099 + 0.1); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
 
-  // lights
-  scene.add(new THREE.AmbientLight(0xffffff,0.35));
-  const key=new THREE.DirectionalLight(0xffffff,0.8);key.position.set(20,30,20);scene.add(key);
-  const camLight=new THREE.PointLight(0xffffff,0.6,200);scene.add(camLight);
+        void main() {
+          vec3 v = normalize(vDir);
+          float h = v.y;
+          float sky = pow(clamp(h, 0.0, 1.0), 0.45);
+          vec3 col = mix(uHorizon, uZenith, sky);
+          col = mix(uGround, col, smoothstep(-0.22, 0.04, h));
 
-  // starfield
-  (function(){
-    const g=new THREE.BufferGeometry();const N=1400;const p=new Float32Array(N*3);
-    for(let i=0;i<N*3;i++)p[i]=(Math.random()-0.5)*340;
-    g.setAttribute("position",new THREE.BufferAttribute(p,3));
-    const m=new THREE.PointsMaterial({color:0x9fb3c8,size:0.5,transparent:true,opacity:0.5});
-    scene.add(new THREE.Points(g,m));
+          float d = max(dot(v, uSunDir), 0.0);
+          col += uSunColor * pow(d, uSunGlow) * uHalo;
+          float ang = acos(d);
+          float disk = 1.0 - smoothstep(uSunSize * 0.85, uSunSize, ang);
+          col += uSunColor * disk * uSunDisk;
+
+          if (uStars > 0.001 && h > 0.0) {
+            vec3 ip = floor(v * 260.0);
+            float sh = hash3(ip);
+            float star = smoothstep(0.9965, 1.0, sh);
+            star *= 0.75 + 0.25 * sin(uTime * 2.5 + sh * 90.0);
+            star *= smoothstep(0.0, 0.35, h);
+            col += vec3(star) * uStars;
+          }
+
+          if (uMoon > 0.001) {
+            float md = max(dot(v, uMoonDir), 0.0);
+            float mang = acos(md);
+            float mdisk = 1.0 - smoothstep(uMoonSize * 0.92, uMoonSize, mang);
+            float mott = fbm(v.xy * 6.0 + 11.0);
+            col += uMoonCol * (0.72 + 0.28 * mott) * mdisk * 2.6 * uMoon;
+            col += uMoonCol * pow(md, 400.0) * 0.6 * uMoon;
+          }
+
+          if (uCloudAlpha > 0.001) {
+            float proj = h + 0.18;
+            vec2 cuv = v.xz / max(proj, 0.035) * uCloudScale + uWind * uTime;
+            float n1 = fbm(cuv);
+            float n2 = fbm(cuv * 2.13 + 19.7 - uWind * uTime * 0.6);
+            float cd = smoothstep(uCloudCover, uCloudCover + 0.28, n1);
+            cd = max(cd, smoothstep(uCloudCover + 0.12, uCloudCover + 0.42, n2) * 0.85);
+            cd *= smoothstep(0.015, 0.22, h);
+            float sunFace = pow(max(dot(normalize(vec3(v.x, 0.3, v.z)), uSunDir), 0.0), 3.0);
+            vec3 cc = mix(uCloudCol, uSunColor, clamp(sunFace * uCloudLit, 0.0, 1.0));
+            cc *= 0.85 + 0.15 * n2;
+            col = mix(col, cc, clamp(cd * uCloudAlpha, 0.0, 1.0));
+          }
+
+          gl_FragColor = vec4(col, 1.0);
+        }`,
+    })
+  );
+  skyDome.frustumCulled = false;
+  skyDome.renderOrder = -1;
+  scene.add(skyDome);
+
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 900);
+  camera.position.set(0, 10, 42);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.enablePan = false;
+  controls.minDistance = 12;
+  controls.maxDistance = 160;
+  controls.enabled = false;
+
+  // Ultra-Clear Three-Point Lighting for 3D GLB Models
+  scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+
+  const hemiLight = new THREE.HemisphereLight(0xdde8ff, 0x111624, 0.8);
+  scene.add(hemiLight);
+
+  const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.2);
+  keyLight.position.set(45, 60, 45);
+  scene.add(keyLight);
+
+  const fillLight = new THREE.DirectionalLight(0x99bbff, 1.4);
+  fillLight.position.set(-45, -25, -25);
+  scene.add(fillLight);
+
+  const camLight = new THREE.PointLight(0xffffff, 1.4, 300);
+  scene.add(camLight);
+
+  // ============================================================
+  // CRISP PIN-POINT STELLARIUM STARFIELDS (ZERO BLUR NOISE)
+  // ============================================================
+  // Helper to generate a crisp circular glowing star particle texture
+  function makeStarTexture() {
+    const c = document.createElement("canvas");
+    c.width = 64; c.height = 64;
+    const ctx = c.getContext("2d");
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
+    grad.addColorStop(0.2, "rgba(220, 235, 255, 0.85)");
+    grad.addColorStop(0.5, "rgba(160, 195, 255, 0.3)");
+    grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  }
+
+  const starTexture = makeStarTexture();
+
+  // Layer 1: Dense Deep Space Starfield (6,000 Crisp Pin-Point Stars)
+  (function buildDeepStarfield() {
+    const starCount = 6000;
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = u * 2.0 * Math.PI;
+      const phi = Math.acos(2.0 * v - 1.0);
+      const r = 340 + Math.random() * 80;
+
+      starPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      starPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      starPos[i * 3 + 2] = r * Math.cos(phi);
+
+      const t = Math.random();
+      if (t < 0.6) {
+        starColors[i * 3] = 0.85; starColors[i * 3 + 1] = 0.92; starColors[i * 3 + 2] = 1.0; // Cool Diamond Blue
+      } else if (t < 0.85) {
+        starColors[i * 3] = 1.0; starColors[i * 3 + 1] = 0.96; starColors[i * 3 + 2] = 0.78; // Warm Golden Yellow
+      } else {
+        starColors[i * 3] = 1.0; starColors[i * 3 + 1] = 0.70; starColors[i * 3 + 2] = 0.65; // Amber Red
+      }
+    }
+
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+    starGeo.setAttribute("color", new THREE.BufferAttribute(starColors, 3));
+
+    const starMat = new THREE.PointsMaterial({
+      size: 1.4,
+      map: starTexture,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    scene.add(new THREE.Points(starGeo, starMat));
   })();
 
-  // ---- BUILD WORLDS on a fibonacci sphere ----
-  const R=62;
-  function fib(i,total){
-    const phi=Math.acos(1-2*(i+0.5)/total);
-    const theta=Math.PI*(1+Math.sqrt(5))*i;
+  // Layer 2: Bright Foreground Constellation Stars (800 Stars)
+  let brightStarPoints = null;
+  (function buildBrightStars() {
+    const count = 800;
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+
+    for (let i = 0; i < count; i++) {
+      const u = Math.random();
+      const v = Math.random();
+      const theta = u * 2.0 * Math.PI;
+      const phi = Math.acos(2.0 * v - 1.0);
+      const r = 260 + Math.random() * 60;
+
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
+
+      colors[i * 3] = 0.95;
+      colors[i * 3 + 1] = 0.98;
+      colors[i * 3 + 2] = 1.0;
+    }
+
+    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+    const mat = new THREE.PointsMaterial({
+      size: 2.6,
+      map: starTexture,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.95,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    brightStarPoints = new THREE.Points(geo, mat);
+    scene.add(brightStarPoints);
+  })();
+
+  // ============================================================
+  // CELESTIAL POSITIONING: PUNCAK AT ZENITH (+Y) & EQUATORIAL SPIRAL
+  // ============================================================
+  const R = 64;
+  
+  function getCustomWorldPos(index, total) {
+    if (index === total - 1) {
+      return new THREE.Vector3(0, R * 0.94, 0);
+    }
+    if (index === 0) {
+      return new THREE.Vector3(0, 2, R * 0.90);
+    }
+    const angle = ((index - 1) / (total - 2)) * Math.PI * 2;
+    const yOffset = Math.sin((index / total) * Math.PI) * 24 - 10;
+    const radius = Math.sqrt(Math.max(100, R * R - yOffset * yOffset));
     return new THREE.Vector3(
-      R*Math.sin(phi)*Math.cos(theta),
-      R*Math.cos(phi)*0.7,
-      R*Math.sin(phi)*Math.sin(theta)
+      Math.cos(angle) * radius * 0.95,
+      yOffset,
+      Math.sin(angle) * radius * 0.95
     );
   }
-  const groups=[];
-  const pickables=[];
-  WORLDS.forEach((w,i)=>{
-    const pos=fib(i,WORLDS.length);
-    const grp=new THREE.Group();grp.position.copy(pos);
-    const accent=new THREE.Color(w.accent);
-    const mat=new THREE.MeshStandardMaterial({
-      color:0x0c0f18,metalness:0.35,roughness:0.35,
-      emissive:accent,emissiveIntensity:0.18,flatShading:true
-    });
-    const core=new THREE.Mesh(GEOS[w.geo](),mat);
-    core.userData.world=i;grp.add(core);pickables.push(core);
-    // wireframe shell
-    const shell=new THREE.Mesh(GEOS[w.geo](),
-      new THREE.MeshBasicMaterial({color:accent,wireframe:true,transparent:true,opacity:0.25}));
-    shell.scale.setScalar(1.18);shell.userData.world=i;grp.add(shell);pickables.push(shell);
-    // orbiting satellites
-    const sats=[];
-    const satN=4+ (i%3);
-    for(let s=0;s<satN;s++){
-      const sm=new THREE.Mesh(
-        new THREE.IcosahedronGeometry(0.7+Math.random()*0.5,0),
-        new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:0.5,metalness:0.2,roughness:0.5})
+
+  const groups = [];
+  const pickables = [];
+  const worldPositions = [];
+
+  WORLDS.forEach((w, i) => {
+    const pos = getCustomWorldPos(i, WORLDS.length);
+    worldPositions.push(pos);
+
+    const grp = new THREE.Group();
+    grp.position.copy(pos);
+
+    const accentCol = new THREE.Color(w.accent);
+
+    // Build unique Aero GLB diorama
+    const diorama = DIORAMA_BUILDERS[i](accentCol, pickables, i);
+    grp.add(diorama);
+
+    // Orbiting Satellites
+    const sats = [];
+    const satCount = 4 + (i % 3);
+    for (let s = 0; s < satCount; s++) {
+      const sm = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.75 + Math.random() * 0.4, 0),
+        new THREE.MeshStandardMaterial({
+          color: accentCol,
+          emissive: accentCol,
+          emissiveIntensity: 0.85,
+          metalness: 0.2,
+          roughness: 0.3
+        })
       );
-      const a=Math.random()*Math.PI*2,rad=7+Math.random()*3;
-      sm.userData={a,rad,sp:0.2+Math.random()*0.4,y:(Math.random()-0.5)*8};
-      grp.add(sm);sats.push(sm);
+      const a = Math.random() * Math.PI * 2;
+      const rad = 8.5 + Math.random() * 3.5;
+      sm.userData = { a, rad, sp: 0.25 + Math.random() * 0.45, y: (Math.random() - 0.5) * 8 };
+      grp.add(sm);
+      sats.push(sm);
     }
-    grp.userData={sats,core,accent,base:pos.clone()};
-    // label sprite
+
+    grp.userData = { sats, diorama, accent: accentCol, base: pos.clone() };
+
+    // Label Sprite
     grp.add(makeLabel(w));
-    scene.add(grp);groups.push(grp);
+    scene.add(grp);
+    groups.push(grp);
   });
 
-  function makeLabel(w){
-    const c=document.createElement("canvas");c.width=512;c.height=128;
-    const x=c.getContext("2d");
-    x.fillStyle="rgba(0,0,0,0)";x.fillRect(0,0,512,128);
-    x.font="700 56px 'Space Grotesk',sans-serif";
-    x.fillStyle="#e9edf5";x.textAlign="center";x.textBaseline="middle";
-    x.fillText("#"+w.n+"  "+w.name,256,64);
-    const tex=new THREE.CanvasTexture(c);
-    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
-    sp.scale.set(20,5,1);sp.position.set(0,9,0);
+  // ============================================================
+  // STELLARIUM CONSTELLATION LINES IN 3D SPACE
+  // ============================================================
+  (function buildConstellationLines() {
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0x688eb8,
+      transparent: true,
+      opacity: 0.45
+    });
+    const lineGeo = new THREE.BufferGeometry();
+    const linePoints = [];
+
+    for (let i = 0; i < worldPositions.length - 1; i++) {
+      linePoints.push(worldPositions[i].x, worldPositions[i].y, worldPositions[i].z);
+      const nextIdx = (i === worldPositions.length - 2) ? 0 : i + 1;
+      linePoints.push(worldPositions[nextIdx].x, worldPositions[nextIdx].y, worldPositions[nextIdx].z);
+
+      // Connect each world to PUNCAK at apex
+      linePoints.push(worldPositions[i].x, worldPositions[i].y, worldPositions[i].z);
+      const apexPos = worldPositions[worldPositions.length - 1];
+      linePoints.push(apexPos.x, apexPos.y, apexPos.z);
+    }
+
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
+    const constellationLines = new THREE.LineSegments(lineGeo, lineMat);
+    scene.add(constellationLines);
+  })();
+
+  function makeLabel(w) {
+    const c = document.createElement("canvas");
+    c.width = 512; c.height = 128;
+    const x = c.getContext("2d");
+    x.fillStyle = "rgba(0,0,0,0)";
+    x.fillRect(0, 0, 512, 128);
+    x.font = "800 52px 'Space Grotesk', sans-serif";
+    x.fillStyle = "#e9edf5";
+    x.textAlign = "center";
+    x.textBaseline = "middle";
+    x.fillText("#" + w.n + "  " + w.name, 256, 64);
+    const tex = new THREE.CanvasTexture(c);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+    sp.scale.set(22, 5.5, 1);
+    sp.position.set(0, 11.5, 0);
     return sp;
   }
 
-  // ---- STATE MACHINE ----
-  const state={current:0,target:null,transitioning:false};
-  const lookAt=new THREE.Vector3().copy(groups[0].position);
+  // ============================================================
+  // CAMERA WARP & SPATIAL STATE MACHINE
+  // ============================================================
+  const state = { current: 0, target: null, transitioning: false };
+  const lookAt = new THREE.Vector3().copy(groups[0].position);
   controls.target.copy(lookAt);
 
-  function camOffsetFor(i){
-    const p=groups[i].position.clone();
-    return p.clone().add(p.clone().normalize().multiplyScalar(-20)).add(new THREE.Vector3(0,6,0));
+  function camOffsetFor(i) {
+    const p = groups[i].position.clone();
+    if (i === WORLDS.length - 1) {
+      return new THREE.Vector3(0, p.y + 8, p.z + 24);
+    }
+    return p.clone().add(p.clone().normalize().multiplyScalar(-22)).add(new THREE.Vector3(0, 6, 0));
   }
 
-  function travel(i){
-    if(state.transitioning||i===state.current||i<0||i>=WORLDS.length)return;
-    state.transitioning=true;state.target=i;
+  function travel(i) {
+    if (state.transitioning || i === state.current || i < 0 || i >= WORLDS.length) return;
+    state.transitioning = true;
+    state.target = i;
     panel.classList.add("hide");
-    const dest=groups[i].position.clone();
-    const camTo=camOffsetFor(i);
-    controls.enabled=false;
-    const tint=new THREE.Color(WORLDS[i].accent).multiplyScalar(0.10);
-    gsap.to(camera.position,{x:camTo.x,y:camTo.y,z:camTo.z,duration:1.7,ease:"power3.inOut"});
-    gsap.to(controls.target,{x:dest.x,y:dest.y,z:dest.z,duration:1.7,ease:"power3.inOut",
-      onUpdate:()=>{}, onComplete:()=>{
-        state.current=i;state.target=null;state.transitioning=false;controls.enabled=true;
-        updateHUD();panel.classList.remove("hide");
-      }});
-    gsap.to(scene.background,{r:tint.r,g:tint.g,b:tint.b,duration:1.7,ease:"power2.inOut"});
-    gsap.to(scene.fog,{density:(i===7?0.02:0.012),duration:1.7});
+
+    const dest = groups[i].position.clone();
+    const camTo = camOffsetFor(i);
+    controls.enabled = false;
+
+    const tint = new THREE.Color(WORLDS[i].accent).multiplyScalar(0.05);
+
+    gsap.to(camera.position, {
+      x: camTo.x, y: camTo.y, z: camTo.z,
+      duration: 1.8,
+      ease: "power3.inOut"
+    });
+
+    gsap.to(controls.target, {
+      x: dest.x, y: dest.y, z: dest.z,
+      duration: 1.8,
+      ease: "power3.inOut",
+      onComplete: () => {
+        state.current = i;
+        state.target = null;
+        state.transitioning = false;
+        controls.enabled = true;
+        updateHUD();
+        panel.classList.remove("hide");
+      }
+    });
+
+    gsap.to(scene.background, { r: tint.r, g: tint.g, b: tint.b, duration: 1.8, ease: "power2.inOut" });
     highlightMap();
   }
 
-  function updateHUD(){
-    const w=WORLDS[state.current];
-    document.getElementById("hudNum").textContent="# "+w.n+" / 10";
-    document.getElementById("hudName").textContent=w.name;
-    document.getElementById("pValue").textContent=w.value;
-    document.getElementById("pDesc").textContent=w.desc;
-    document.documentElement.style.setProperty("--accent","#"+new THREE.Color(w.accent).getHexString());
+  function updateHUD() {
+    const w = WORLDS[state.current];
+    document.getElementById("hudNum").textContent = "# " + w.n + " / 10";
+    document.getElementById("hudName").textContent = w.name;
+    document.getElementById("pValue").textContent = w.value;
+    document.getElementById("pDesc").textContent = w.desc;
+    document.documentElement.style.setProperty("--accent", "#" + new THREE.Color(w.accent).getHexString());
   }
 
-  // ---- WORLD MAP UI ----
-  const mapEl=document.getElementById("map");
-  WORLDS.forEach((w,i)=>{
-    const b=document.createElement("button");
-    b.textContent=w.n;b.title=w.name;
-    b.onclick=()=>travel(i);
+  // World map buttons
+  const mapEl = document.getElementById("map");
+  WORLDS.forEach((w, i) => {
+    const b = document.createElement("button");
+    b.textContent = w.n;
+    b.title = w.name;
+    b.onclick = () => flightMode ? flyTo(i) : travel(i);
     mapEl.appendChild(b);
   });
-  function highlightMap(){
-    [...mapEl.children].forEach((b,i)=>b.classList.toggle("on",i===state.current));
+
+  function highlightMap() {
+    Array.from(mapEl.children).forEach((b, i) => b.classList.toggle("on", i === state.current));
   }
 
-  // ---- RAYCAST CLICK ----
-  const ray=new THREE.Raycaster();const mouse=new THREE.Vector2();
-  let downXY=null;
-  renderer.domElement.addEventListener("pointerdown",e=>{downXY=[e.clientX,e.clientY];});
-  renderer.domElement.addEventListener("pointerup",e=>{
-    if(!downXY)return;
-    const moved=Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1]);
-    downXY=null;if(moved>6)return; // was a drag
-    mouse.x=(e.clientX/window.innerWidth)*2-1;
-    mouse.y=-(e.clientY/window.innerHeight)*2+1;
-    ray.setFromCamera(mouse,camera);
-    const hit=ray.intersectObjects(pickables,false)[0];
-    if(hit&&hit.object.userData.world!=null)travel(hit.object.userData.world);
+  // Raycasting Click to Travel
+  const ray = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  let downXY = null;
+
+  renderer.domElement.addEventListener("pointerdown", e => { downXY = [e.clientX, e.clientY]; });
+  renderer.domElement.addEventListener("pointerup", e => {
+    if (!downXY) return;
+    const moved = Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]);
+    downXY = null;
+    if (moved > 6) return;
+    if (flightMode) {
+      if (locked) { mouse.x = 0; mouse.y = 0; }
+      else { mouse.x = (e.clientX / window.innerWidth) * 2 - 1; mouse.y = -(e.clientY / window.innerHeight) * 2 + 1; }
+    } else {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    }
+    ray.setFromCamera(mouse, camera);
+    const hit = ray.intersectObjects(pickables, true)[0];
+    if (hit && hit.object.userData.world != null) {
+      flightMode ? flyTo(hit.object.userData.world) : travel(hit.object.userData.world);
+    }
   });
 
-  // keyboard
-  window.addEventListener("keydown",e=>{
-    if(e.key>="1"&&e.key<="9")travel(parseInt(e.key)-1);
-    else if(e.key==="0")travel(9);
+  // Keyboard navigation + flight input
+  window.addEventListener("keydown", e => {
+    keys[e.code] = true;
+    if (flightMode) {
+      if (e.key >= "1" && e.key <= "9") flyTo(parseInt(e.key) - 1);
+      else if (e.key === "0") flyTo(9);
+    } else {
+      if (e.key >= "1" && e.key <= "9") travel(parseInt(e.key) - 1);
+      else if (e.key === "0") travel(9);
+    }
+  });
+  window.addEventListener("keyup", e => { keys[e.code] = false; });
+
+  // Cursor tracking
+  const cur = document.getElementById("cursor");
+  window.addEventListener("pointermove", e => {
+    cur.style.left = e.clientX + "px";
+    cur.style.top = e.clientY + "px";
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    ray.setFromCamera(mouse, camera);
+    cur.classList.toggle("big", ray.intersectObjects(pickables, true).length > 0);
   });
 
-  // cursor
-  const cur=document.getElementById("cursor");
-  window.addEventListener("pointermove",e=>{
-    cur.style.left=e.clientX+"px";cur.style.top=e.clientY+"px";
-    mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-(e.clientY/window.innerHeight)*2+1;
-    ray.setFromCamera(mouse,camera);
-    cur.classList.toggle("big",ray.intersectObjects(pickables,false).length>0);
-  });
+  // ============================================================
+  // FREE-FLY CAMERA (Blender-style viewport navigation)
+  // ============================================================
+  let flightMode = false, locked = false, autopiloting = false;
+  const keys = {};
+  let camYaw = 0, camPitch = 0;
+  const velocity = new THREE.Vector3();
+  const lockPromptEl = document.getElementById("lockPrompt");
+  const crosshairEl = document.getElementById("crosshair");
 
-  // ---- RENDER LOOP ----
-  const clock=new THREE.Clock();
-  function tick(){
-    const t=clock.getElapsedTime();
-    groups.forEach((g,i)=>{
-      g.userData.core.rotation.y+=0.0035;g.userData.core.rotation.x+=0.0012;
-      g.userData.sats.forEach(s=>{
-        s.userData.a+=s.userData.sp*0.01;
-        s.position.set(Math.cos(s.userData.a)*s.userData.rad,
-          s.userData.y+Math.sin(t*0.6+s.userData.a)*1.4,
-          Math.sin(s.userData.a)*s.userData.rad);
-        s.rotation.x+=0.02;s.rotation.y+=0.03;
+  function updateLockPrompt() {
+    if (lockPromptEl) lockPromptEl.style.display = (flightMode && !locked) ? "block" : "none";
+    if (crosshairEl) crosshairEl.style.display = (flightMode && locked) ? "block" : "none";
+  }
+
+  function startFlight() {
+    if (flightMode) return;
+    flightMode = true;
+    const eu = new THREE.Euler().setFromQuaternion(camera.quaternion, "YXZ");
+    camYaw = eu.y; camPitch = eu.x;
+    velocity.set(0, 0, 0);
+    updateLockPrompt();
+  }
+
+  function updateFlight(dt) {
+    if (autopiloting) return;
+    const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+    const accel = new THREE.Vector3();
+    if (keys["KeyW"]) accel.add(fwd);
+    if (keys["KeyS"]) accel.addScaledVector(fwd, -1);
+    if (keys["KeyD"]) accel.add(right);
+    if (keys["KeyA"]) accel.addScaledVector(right, -1);
+    if (keys["Space"]) accel.add(up);
+    if (keys["KeyC"]) accel.addScaledVector(up, -1);
+    const THRUST = 60;
+    velocity.addScaledVector(accel, THRUST * dt);
+    velocity.multiplyScalar(0.92);                 // space drag
+    camera.position.addScaledVector(velocity, dt);
+    camera.quaternion.setFromEuler(new THREE.Euler(camPitch, camYaw, 0, "YXZ"));
+
+    // proximity dock -> update HUD to the nearest world
+    let nearest = -1, nd = Infinity;
+    for (let i = 0; i < groups.length; i++) {
+      const d = camera.position.distanceTo(groups[i].position);
+      if (d < nd) { nd = d; nearest = i; }
+    }
+    if (nd < 30 && nearest !== state.current) { state.current = nearest; updateHUD(); highlightMap(); }
+  }
+
+  function flyTo(i) {
+    if (i < 0 || i >= groups.length) return;
+    if (!flightMode) { travel(i); return; }
+    autopiloting = true;
+    state.current = i; updateHUD(); highlightMap();
+    const dest = groups[i].position.clone().add(new THREE.Vector3(0, 6, 30));
+    gsap.to(camera.position, {
+      x: dest.x, y: dest.y, z: dest.z, duration: 2.2, ease: "power3.inOut",
+      onUpdate: () => { camera.lookAt(groups[i].position); },
+      onComplete: () => {
+        const eu = new THREE.Euler().setFromQuaternion(camera.quaternion, "YXZ");
+        camYaw = eu.y; camPitch = eu.x;
+        autopiloting = false;
+      }
+    });
+  }
+
+  // Pointer lock for mouse-look
+  renderer.domElement.addEventListener("click", () => {
+    if (flightMode && !locked && renderer.domElement.requestPointerLock) renderer.domElement.requestPointerLock();
+  });
+  document.addEventListener("pointerlockchange", () => {
+    locked = (document.pointerLockElement === renderer.domElement);
+    updateLockPrompt();
+  });
+  window.addEventListener("mousemove", e => {
+    if (!locked) return;
+    camYaw -= e.movementX * 0.0022;
+    camPitch -= e.movementY * 0.0022;
+    camPitch = Math.max(-1.5, Math.min(1.5, camPitch));
+  });
+  // Blender-style: wheel = dolly, Shift+wheel = pan
+  renderer.domElement.addEventListener("wheel", e => {
+    if (!flightMode) return;
+    e.preventDefault();
+    const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+    if (e.shiftKey) {
+      camera.position.addScaledVector(right, -e.deltaY * 0.04);
+      camera.position.addScaledVector(up, -e.deltaX * 0.04);
+    } else {
+      camera.position.addScaledVector(fwd, -e.deltaY * 0.06);
+    }
+  }, { passive: false });
+
+  // ============================================================
+  // RENDER LOOP WITH LIVE DIORAMA ANIMATIONS & TWINKLE
+  // ============================================================
+  const clock = new THREE.Clock();
+  let lastT = 0;
+  function tick() {
+    const t = clock.getElapsedTime();
+    const dt = Math.min(0.05, t - lastT) || 0.016;
+    lastT = t;
+    skyUniforms.uTime.value = t;
+
+    // Subtle star twinkle
+    if (brightStarPoints) {
+      brightStarPoints.material.size = 2.4 + Math.sin(t * 2.5) * 0.4;
+    }
+
+    groups.forEach((g, i) => {
+      if (g.userData.diorama && g.userData.diorama.userData.anim) {
+        g.userData.diorama.userData.anim(t);
+      }
+
+      g.userData.sats.forEach(s => {
+        s.userData.a += s.userData.sp * 0.01;
+        s.position.set(
+          Math.cos(s.userData.a) * s.userData.rad,
+          s.userData.y + Math.sin(t * 0.7 + s.userData.a) * 1.5,
+          Math.sin(s.userData.a) * s.userData.rad
+        );
+        s.rotation.x += 0.02;
+        s.rotation.y += 0.03;
       });
     });
+
+    if (flightMode) {
+      updateFlight(dt);
+    } else {
+      controls.update();
+    }
+
     camLight.position.copy(camera.position);
-    controls.update();
-    renderer.render(scene,camera);
+    renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
   tick();
 
-  // ---- INTRO ----
-  const intro=document.getElementById("intro");
-  document.getElementById("enter").onclick=()=>{
-    gsap.to(intro,{opacity:0,duration:0.8,onComplete:()=>intro.style.display="none"});
-    updateHUD();highlightMap();
-    const camTo=camOffsetFor(0);
-    camera.position.copy(camTo.clone().add(new THREE.Vector3(0,30,40)));
-    gsap.to(camera.position,{x:camTo.x,y:camTo.y,z:camTo.z,duration:2.2,ease:"power3.out",
-      onComplete:()=>{controls.enabled=true;}});
+  // Intro Button Trigger
+  const intro = document.getElementById("intro");
+  const panel = document.getElementById("panel");
+
+  document.getElementById("enter").onclick = () => {
+    gsap.to(intro, {
+      opacity: 0,
+      duration: 0.8,
+      onComplete: () => intro.style.display = "none"
+    });
+    updateHUD();
+    highlightMap();
+    startFlight();
     panel.classList.remove("hide");
   };
 
-  // resize
-  window.addEventListener("resize",()=>{
-    camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth,window.innerHeight);
+  // Responsive Resize
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const panel=document.getElementById("panel");
 })();
 </script>
 </body>
