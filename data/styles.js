@@ -536,11 +536,11 @@ window.STYLES = [
       },
       {
         id: 66, title: "ORBIT // BEYOND — Immersive Global Systems & Company Profile",
-        desc: "3D interactive globe with bloom post-processing, edge node telemetry, geodesic network arcs, and sound synthesis",
+        desc: "Interactive 3D Earth simulator with direct raycasting, LEO satellite swarm, animated photon arcs, tactical HUD, and Web Audio synthesis",
         path: "previews/66-orbit-immersive-profile.html",
         avoid: "flat stock photography, generic corporate blues, cluttered carousels, unstyled standard forms, non-interactive static mockups.",
-        guide: { key: "Deep void #03060a base, custom Three.js atmosphere glow shader, 6,000 starfield particles, interactive geodesic city arcs, 4 themes.", typo: "Space Grotesk 700 display headings, Inter body, JetBrains Mono 700 telemetry labels.", motion: "Spherical slerp globe rotation to selected city nodes, pulsing geodesic rings, audio frequency waveforms, dynamic camera depth per section." },
-        prompt: "Build an immersive high-performance company profile and global systems dashboard. 4 planetary themes: Orbit Cyan, Neo Lime, Solar Amber, Supernova Monochrome. Interactive 3D Earth with custom glowing atmosphere shader, procedural fallback texture, geodesic city arc network (Jakarta, Singapore, Dubai, London, New York, Tokyo), interactive telemetry HUD with live time & ping, Web Audio API ambient drone and UI beeps, metric counter animations, and signal radar visualizer."
+        guide: { key: "Deep void #03060a base, custom atmosphere glow shader, 6,000 starfield particles, 42 orbiting satellites, raycasted city pins, 4 themes.", typo: "Space Grotesk 700 display headings, Inter body, JetBrains Mono 700 telemetry labels.", motion: "Raycasted 3D node tooltips, moving data packet photons, slerp camera transitions, mission dock presets, fullscreen tactical HUD focus mode." },
+        prompt: "Build an immersive high-performance company profile and global systems dashboard. 4 planetary themes: Orbit Cyan, Neo Lime, Solar Amber, Supernova Monochrome. Interactive 3D Earth with custom glowing atmosphere shader, procedural fallback texture, 42 orbiting LEO satellites, 48 flowing data packet photons along geodesic arcs, 3D raycasting tooltips on city nodes, interactive mission control dock, fullscreen 3D tactical HUD mode, Web Audio API ambient drone and cascading harmonic beeps."
       }
     ];
 
