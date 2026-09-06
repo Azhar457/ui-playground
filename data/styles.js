@@ -500,5 +500,47 @@ window.STYLES = [
         avoid: "flat matte surfaces, single-hue palettes, hard drop shadows, dark-only backgrounds without spectral accents, slow static gradients.",
         guide: { key: "Deep void #050409 with blurred spectral radial blobs (cyan/violet/magenta), glass panels backdrop-blur 24px saturate 180%, chromatic RGB-split borders.", typo: "Syne 800 display headings, Inter 400-600 body, gradient text-flow animation.", motion: "Breathing holographic background 10s, flowing gradient text 8s, chromatic border glow on hover with translateY lift." },
         prompt: "Build a prismatic holographic UI in refactored style. Deep space void #050409 base with blurred spectral radial gradients (cyan #00F0FF, violet #B026FF, magenta #FF4DCD, amber #FFB347, mint #6CFF9B) breathing 10s. Glass panels with backdrop-blur(24px) saturate(180%) and SVG noise overlay. Chromatic-split borders using inset white + offset cyan/magenta box-shadows. Gradient-flow headline text (linear-gradient 300% with 8s animation). Syne 800 display font, Inter body. Hover: chromatic glow + translateY(-2px)."
+      },
+      // ========== V3: Scientific Instruments 62-65 ==========
+      {
+        id: 62, title: "Neural Synapse — Living Neural Network Interface",
+        desc: "Neural network visualization, particle nodes, firing animations, neuroscience dashboard",
+        path: "previews/62-neural-synapse.html",
+        avoid: "simplified neural diagrams, static network charts, medical stock imagery, light backgrounds, rounded soft UI.",
+        guide: { key: "Dark neural void with glowing synaptic nodes, particle trails along axons, firing pulses as bright flashes, dendrite branching patterns.", typo: "Orbitron 900 display for titles, Space Grotesk body, JetBrains Mono for data readouts and neural signal labels.", motion: "Click-to-fire neuron pulses, synaptic chain reactions, ambient particle drift, EEG waveform scrolling, firing animation with glow burst." },
+        prompt: "Build a neural network visualization dashboard. 4 neural palettes: Synapse Teal, Cortex Violet, Ganglion Amber, Neuropathy Crimson. Canvas particle neural network with clickable firing neurons, signal propagation along axons, EEG waveform visualizer, synaptic weight table, and neuroscience telemetry dashboard."
+      },
+      {
+        id: 63, title: "Parametric Architecture — Procedural Geometry Explorer",
+        desc: "3D procedural architecture, Three.js fractals, Mandelbulb, parametric design",
+        path: "previews/63-parametric-arch.html",
+        avoid: "flat 2D floor plans, generic building renders, CAD wireframes without rendering, light mode, decorative architecture imagery.",
+        guide: { key: "Full-viewport 3D canvas with procedural geometry generation, dark void background, mathematical parameter controls in sidebar.", typo: "Orbitron 700 for section headers, Space Grotesk for UI labels, JetBrains Mono for mathematical formulas and vertex counts.", motion: "Real-time 3D orbit controls, smooth geometry morphing between presets, parameter sliders updating geometry live, FPS counter overlay." },
+        prompt: "Build a 3D procedural architecture explorer using Three.js. 4 palettes: Void, Ember, Arctic, Noir. 7 mathematical generators: Mandelbulb fractal, azimuthal columns, Fibonacci spiral, Voronoi cells, Lissajous curves, Penrose tiling, spherical harmonics. Parameter sliders, preset buttons, export PNG."
+      },
+      {
+        id: 64, title: "Reef Genesis — Procedural Coral Reef Generator",
+        desc: "L-system coral growth, underwater ecosystem, bioluminescent deep sea",
+        path: "previews/64-coral-reef.html",
+        avoid: "stock ocean photography, simplified cartoon corals, bright tropical colors without depth, generic aquarium UI.",
+        guide: { key: "Deep ocean layers from sunlit surface to abyssal dark, bioluminescent glows, organic L-system branching coral growth, caustic light refraction overlays.", typo: "Orbitron for depth zone labels, Space Grotesk body, JetBrains Mono for L-system formulas and growth parameters.", motion: "Real-time coral growth simulation, click-to-seed new coral, swimming fish particles, rising bubble particles, kelp sway animation." },
+        prompt: "Build a procedural coral reef ecosystem generator. 4 ocean palettes: Tropical Shallow, Deep Twilight, Midnight Abyss, Bioluminescent. L-system coral growth with 6 species, fish/kelp/particle systems, depth zone visualization, growth formula display, and real-time simulation canvas."
+      },
+      {
+        id: 65, title: "Quantum Vacuum — Vacuum Fluctuation Simulator",
+        desc: "Virtual particle pairs, Casimir effect, Dirac sea, Heisenberg uncertainty",
+        path: "previews/65-quantum-vacuum.html",
+        avoid: "generic atom diagrams, light backgrounds, simplified Bohr model, stock quantum imagery, flat particle icons.",
+        guide: { key: "Ultra-dark void with glowing particle-antiparticle pairs emerging and annihilating, quantum foam grid distortion, energy field visualization, scientific instrument aesthetic.", typo: "Orbitron 900 for QUANTUM titles, Space Grotesk body, JetBrains Mono for physics formulas and energy readouts.", motion: "Particle pair creation with glow burst, annihilation flash effects, Casimir plate attraction animation, Dirac sea fill visualization, Heisenberg Gaussian probability distributions." },
+        prompt: "Build a quantum vacuum fluctuation simulator. 4 themes: Vacuum Teal, Casimir Gold, Dirac Deep, Event Horizon. Canvas particle-antiparticle pair creation/annihilation, Casimir effect with adjustable plates, Dirac sea fill visualization, Heisenberg uncertainty interactive demo, 4 physics formula blocks, real-time telemetry dashboard, preset configurations."
+      },
+      {
+        id: 66, title: "ORBIT // BEYOND — Immersive Global Systems & Company Profile",
+        desc: "3D interactive globe with bloom post-processing, edge node telemetry, geodesic network arcs, and sound synthesis",
+        path: "previews/66-orbit-immersive-profile.html",
+        avoid: "flat stock photography, generic corporate blues, cluttered carousels, unstyled standard forms, non-interactive static mockups.",
+        guide: { key: "Deep void #03060a base, custom Three.js atmosphere glow shader, 6,000 starfield particles, interactive geodesic city arcs, 4 themes.", typo: "Space Grotesk 700 display headings, Inter body, JetBrains Mono 700 telemetry labels.", motion: "Spherical slerp globe rotation to selected city nodes, pulsing geodesic rings, audio frequency waveforms, dynamic camera depth per section." },
+        prompt: "Build an immersive high-performance company profile and global systems dashboard. 4 planetary themes: Orbit Cyan, Neo Lime, Solar Amber, Supernova Monochrome. Interactive 3D Earth with custom glowing atmosphere shader, procedural fallback texture, geodesic city arc network (Jakarta, Singapore, Dubai, London, New York, Tokyo), interactive telemetry HUD with live time & ping, Web Audio API ambient drone and UI beeps, metric counter animations, and signal radar visualizer."
       }
     ];
+

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>UI Playground Beta — 61 Styles Universe</title>
+<title>UI Playground Beta — 66 Styles Universe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -620,7 +620,7 @@
     <a href="component/index.html">Components</a>
     <a href="atelier-fusion-system.html">Fusion</a>
     <a href="experiments/spatial-worlds.html">10 Worlds</a>
-    <a class="count" href="showcase.html">61 STYLES</a>
+    <a class="count" href="showcase.html">66 STYLES</a>
   </nav>
 </header>
 
@@ -660,7 +660,7 @@
 
 <!-- Bottom Navigation HUD -->
 <div class="bottom-hud">
-  <div class="progress-pill" id="progressPill">01 / 61</div>
+  <div class="progress-pill" id="progressPill">01 / 66</div>
   <div class="wheel-indicator">WHEEL / ARROW TO FLIP ↑↓ (INFINITE LOOP)</div>
 </div>
 
@@ -672,7 +672,7 @@
 
     /* ============================================================
        VIRTUAL WHEEL ENGINE — HOW IT WORKS (documentation pass)
-       - ALL_ENTRIES = cover (index 0) + window.STYLES (1..61). The
+       - ALL_ENTRIES = cover (index 0) + window.STYLES (1..66). The
          wheel cycles these with an INFINITE LOOP via modulo
          (see goToNext / goToPrev / jumpToIndex).
        - Only TWO cards live in the DOM at once: the active card and the
@@ -704,7 +704,7 @@
     {
       id: 0,
       isCover: true,
-      title: "61 STYLES UNIVERSE",
+      title: "66 STYLES UNIVERSE",
       desc: "Bonhomme Spatial Infinite Wheel Engine · UI Playground Beta",
       path: ""
     },
@@ -796,7 +796,7 @@
     if (s.isCover) {
       card.innerHTML = `
         <span class="hud-tag-badge" style="margin-bottom: 20px; font-weight:700;">BONHOMME SPATIAL WHEEL</span>
-        <h1>61 STYLES<br/>UNIVERSE</h1>
+        <h1>66 STYLES<br/>UNIVERSE</h1>
         <div class="sub">IMMERSIVE UI PLAYGROUND · BETA</div>
         <div class="scrollhint">
           <span>SCROLL / WHEEL DOWN TO FLIP</span>
@@ -844,7 +844,7 @@
     const accent = themeAccent(s);
 
     if (s.isCover) {
-      progressPill.textContent = "COVER / 61";
+      progressPill.textContent = "COVER / 66";
       if (leftHud) leftHud.style.opacity = "0";
     } else {
       progressPill.textContent = `${String(s.id).padStart(2, '0')} / ${String(totalEntries - 2).padStart(2, '0')}`;

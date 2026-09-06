@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="vacuum-teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUANTUM·VACUUM — Vacuum Fluctuation Simulator</title>
+
+  <script>!function(){try{var t=localStorage.getItem('qv-theme')||'vacuum-teal';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root, [data-theme="vacuum-teal"] {
+      --qv-bg: #06080d;
+      --qv-bg2: #0a0e18;
+      --qv-surface: rgba(8,16,32,0.75);
+      --qv-surface-hover: rgba(12,24,48,0.9);
+      --qv-text: #c8daf0;
+      --qv-text-dim: #3a5575;
+      --qv-text-bright: #ffffff;
+      --qv-accent: #00e5cc;
+      --qv-accent-rgb: 0,229,204;
+      --qv-secondary: #ff4dcd;
+      --qv-secondary-rgb: 255,77,205;
+      --qv-tertiary: #7c3aed;
+      --qv-tertiary-rgb: 124,58,237;
+      --qv-particle: #00f0ff;
+      --qv-antiparticle: #ff4dcd;
+      --qv-flash: #ffffff;
+      --qv-glow: rgba(0,229,204,0.5);
+      --qv-glow-strong: rgba(0,229,204,0.8);
+      --qv-border: rgba(0,229,204,0.12);
+      --qv-border-strong: rgba(0,229,204,0.3);
+      --qv-casimir: #00e5cc;
+      --qv-plate: rgba(0,229,204,0.15);
+      --qv-veil: rgba(4,6,12,0.55);
+      --qv-gradient-hero: linear-gradient(135deg,rgba(0,229,204,0.06),rgba(124,58,237,0.04),transparent);
+    }
+
+    [data-theme="casimir-gold"] {
+      --qv-bg: #0a0806;
+      --qv-bg2: #141008;
+      --qv-surface: rgba(30,22,8,0.75);
+      --qv-surface-hover: rgba(45,34,12,0.9);
+      --qv-text: #f0e8d0;
+      --qv-text-dim: #7a6a42;
+      --qv-text-bright: #ffffff;
+      --qv-accent: #d4af37;
+      --qv-accent-rgb: 212,175,55;
+      --qv-secondary: #ff8c00;
+      --qv-secondary-rgb: 255,140,0;
+      --qv-tertiary: #8b6914;
+      --qv-tertiary-rgb: 139,105,20;
+      --qv-particle: #d4af37;
+      --qv-antiparticle: #ff8c00;
+      --qv-flash: #fffbe6;
+      --qv-glow: rgba(212,175,55,0.5);
+      --qv-glow-strong: rgba(212,175,55,0.8);
+      --qv-border: rgba(212,175,55,0.12);
+      --qv-border-strong: rgba(212,175,55,0.3);
+      --qv-casimir: #d4af37;
+      --qv-plate: rgba(212,175,55,0.15);
+      --qv-veil: rgba(10,8,4,0.55);
+      --qv-gradient-hero: linear-gradient(135deg,rgba(212,175,55,0.06),rgba(255,140,0,0.04),transparent);
+    }
+
+    [data-theme="dirac-deep"] {
+      --qv-bg: #020204;
+      --qv-bg2: #060610;
+      --qv-surface: rgba(6,6,20,0.75);
+      --qv-surface-hover: rgba(10,10,30,0.9);
+      --qv-text: #d0d0f0;
+      --qv-text-dim: #5050a0;
+      --qv-text-bright: #ffffff;
+      --qv-accent: #00f0ff;
+      --qv-accent-rgb: 0,240,255;
+      --qv-secondary: #b026ff;
+      --qv-secondary-rgb: 176,38,255;
+      --qv-tertiary: #6c3acd;
+      --qv-tertiary-rgb: 108,58,205;
+      --qv-particle: #00f0ff;
+      --qv-antiparticle: #b026ff;
+      --qv-flash: #e0e0ff;
+      --qv-glow: rgba(0,240,255,0.5);
+      --qv-glow-strong: rgba(0,240,255,0.8);
+      --qv-border: rgba(0,240,255,0.12);
+      --qv-border-strong: rgba(0,240,255,0.3);
+      --qv-casimir: #00f0ff;
+      --qv-plate: rgba(0,240,255,0.15);
+      --qv-veil: rgba(2,2,6,0.55);
+      --qv-gradient-hero: linear-gradient(135deg,rgba(0,240,255,0.06),rgba(176,38,255,0.04),transparent);
+    }
+
+    [data-theme="event-horizon"] {
+      --qv-bg: #000000;
+      --qv-bg2: #0a0a0a;
+      --qv-surface: rgba(10,10,10,0.8);
+      --qv-surface-hover: rgba(20,20,20,0.95);
+      --qv-text: #e0e0e0;
+      --qv-text-dim: #606060;
+      --qv-text-bright: #ffffff;
+      --qv-accent: #ff3333;
+      --qv-accent-rgb: 255,51,51;
+      --qv-secondary: #ffffff;
+      --qv-secondary-rgb: 255,255,255;
+      --qv-tertiary: #991111;
+      --qv-tertiary-rgb: 153,17,17;
+      --qv-particle: #ffffff;
+      --qv-antiparticle: #ff3333;
+      --qv-flash: #ffffff;
+      --qv-glow: rgba(255,51,51,0.5);
+      --qv-glow-strong: rgba(255,51,51,0.8);
+      --qv-border: rgba(255,51,51,0.12);
+      --qv-border-strong: rgba(255,51,51,0.3);
+      --qv-casimir: #ff3333;
+      --qv-plate: rgba(255,51,51,0.15);
+      --qv-veil: rgba(0,0,0,0.6);
+      --qv-gradient-hero: linear-gradient(135deg,rgba(255,51,51,0.06),rgba(255,255,255,0.03),transparent);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Space Grotesk',sans-serif;
+      background:var(--qv-bg);
+      color:var(--qv-text);
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background-color 0.5s ease, color 0.5s ease;
+    }
+
+    #vacuum-canvas {
+      position:fixed; top:0; left:0;
+      width:100vw; height:100vh;
+      z-index:0; pointer-events:none;
+    }
+
+    body::before {
+      content:''; position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:1;
+    }
+
+    body::after {
+      content:''; position:fixed; inset:0;
+      background:var(--qv-veil);
+      pointer-events:none; z-index:1;
+    }
+
+    .ambient-layer { position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+    .ambient-orb {
+      position:absolute; border-radius:50%; filter:blur(120px);
+      opacity:0.06; animation:orbFloat 30s ease-in-out infinite alternate;
+    }
+    .ambient-orb:nth-child(1) { width:50vw; height:50vw; background:var(--qv-accent); top:-15%; left:-10%; }
+    .ambient-orb:nth-child(2) { width:40vw; height:40vw; background:var(--qv-secondary); bottom:-10%; right:-10%; animation-delay:-10s; animation-duration:25s; }
+    .ambient-orb:nth-child(3) { width:30vw; height:30vw; background:var(--qv-tertiary); top:50%; left:40%; animation-delay:-20s; animation-duration:35s; opacity:0.03; }
+    @keyframes orbFloat {
+      0%{transform:translate(0,0) scale(1)} 33%{transform:translate(3vw,-2vw) scale(1.1)}
+      66%{transform:translate(-2vw,3vw) scale(0.95)} 100%{transform:translate(4vw,-1vw) scale(1.08)}
+    }
+
+    /* ===== LOADING SCREEN ===== */
+    #loader {
+      position:fixed; inset:0; z-index:10000;
+      background:var(--qv-bg);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      transition:opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #loader.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+    .loader-title {
+      font-family:'Orbitron',sans-serif; font-size:clamp(18px,3vw,28px);
+      font-weight:700; color:var(--qv-accent); letter-spacing:4px; margin-bottom:24px;
+    }
+    .loader-bar { width:240px; height:3px; background:var(--qv-border); border-radius:2px; overflow:hidden; }
+    .loader-fill {
+      height:100%; width:0%; background:linear-gradient(90deg,var(--qv-accent),var(--qv-secondary));
+      border-radius:2px; transition:width 0.3s ease;
+    }
+    .loader-eq {
+      font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--qv-text-dim);
+      margin-top:16px; letter-spacing:1px;
+    }
+    .loader-dots { display:flex; gap:6px; margin-top:12px; }
+    .loader-dots span {
+      width:4px; height:4px; border-radius:50%; background:var(--qv-accent);
+      animation:dotPulse 1.4s ease-in-out infinite;
+    }
+    .loader-dots span:nth-child(2) { animation-delay:0.2s; }
+    .loader-dots span:nth-child(3) { animation-delay:0.4s; }
+    @keyframes dotPulse { 0%,80%,100%{opacity:0.2;transform:scale(0.8)} 40%{opacity:1;transform:scale(1.2)} }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position:fixed; left:0; top:0; bottom:0;
+      width:340px; background:var(--qv-surface);
+      backdrop-filter:blur(24px) saturate(180%);
+      -webkit-backdrop-filter:blur(24px) saturate(180%);
+      border-right:1px solid var(--qv-border);
+      z-index:100; display:flex; flex-direction:column;
+      transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);
+      overflow:hidden;
+    }
+    .sidebar.collapsed { transform:translateX(-340px); }
+    .sidebar-toggle {
+      position:fixed; left:340px; top:16px; z-index:101;
+      width:36px; height:36px; border-radius:0 8px 8px 0;
+      background:var(--qv-surface); border:1px solid var(--qv-border);
+      border-left:none; color:var(--qv-accent); cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; transition:all 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .sidebar.collapsed + .sidebar-toggle { left:0; border-radius:0 8px 8px 0; }
+    .sidebar-header {
+      padding:20px 20px 16px; border-bottom:1px solid var(--qv-border);
+    }
+    .sidebar-brand {
+      display:flex; align-items:center; gap:10px; margin-bottom:12px;
+    }
+    .sidebar-logo {
+      width:32px; height:32px; border-radius:8px;
+      background:linear-gradient(135deg,var(--qv-accent),var(--qv-secondary));
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:800; color:#000; flex-shrink:0;
+    }
+    .sidebar-name {
+      font-family:'Orbitron',sans-serif; font-size:12px; font-weight:700;
+      color:var(--qv-text-bright); letter-spacing:2px;
+    }
+    .sidebar-ver {
+      font-family:'JetBrains Mono',monospace; font-size:9px;
+      color:var(--qv-accent); letter-spacing:1px;
+    }
+    .theme-row {
+      display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .theme-btn {
+      flex:1; min-width:60px; padding:6px 8px; border-radius:6px;
+      border:1px solid var(--qv-border); background:transparent;
+      color:var(--qv-text-dim); font-size:9px; font-family:'JetBrains Mono',monospace;
+      cursor:pointer; text-align:center; transition:all 0.2s;
+      letter-spacing:0.5px; text-transform:uppercase;
+    }
+    .theme-btn:hover { border-color:var(--qv-border-strong); color:var(--qv-text); }
+    .theme-btn.active { border-color:var(--qv-accent); color:var(--qv-accent); background:rgba(var(--qv-accent-rgb),0.08); }
+
+    .sidebar-body { flex:1; overflow-y:auto; padding:12px 16px; }
+    .sidebar-body::-webkit-scrollbar { width:4px; }
+    .sidebar-body::-webkit-scrollbar-thumb { background:var(--qv-accent); border-radius:2px; }
+
+    .ctrl-section { margin-bottom:12px; }
+    .ctrl-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:8px 10px; border-radius:6px; cursor:pointer;
+      color:var(--qv-text-dim); font-size:10px; font-weight:600;
+      text-transform:uppercase; letter-spacing:1.5px; transition:all 0.2s;
+    }
+    .ctrl-header:hover { color:var(--qv-text); background:rgba(var(--qv-accent-rgb),0.05); }
+    .ctrl-header .arrow { transition:transform 0.3s; font-size:8px; }
+    .ctrl-section.collapsed .arrow { transform:rotate(-90deg); }
+    .ctrl-section.collapsed .ctrl-body { display:none; }
+    .ctrl-body { padding:8px 0; }
+    .ctrl-label {
+      display:flex; align-items:center; justify-content:space-between;
+      font-size:11px; color:var(--qv-text-dim); margin-bottom:6px;
+    }
+    .ctrl-val { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--qv-accent); }
+    input[type="range"] {
+      width:100%; height:4px; -webkit-appearance:none; appearance:none;
+      background:var(--qv-border); border-radius:2px; outline:none; margin-bottom:12px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance:none; width:14px; height:14px; border-radius:50%;
+      background:var(--qv-accent); cursor:pointer; border:2px solid var(--qv-bg);
+    }
+    .toggle-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:4px 0; margin-bottom:6px;
+    }
+    .toggle-row label { font-size:11px; color:var(--qv-text-dim); }
+    .toggle {
+      width:32px; height:18px; border-radius:9px;
+      background:var(--qv-border); cursor:pointer; position:relative;
+      transition:background 0.3s; border:none;
+    }
+    .toggle::after {
+      content:''; position:absolute; left:2px; top:2px;
+      width:14px; height:14px; border-radius:50%;
+      background:var(--qv-text-dim); transition:all 0.3s;
+    }
+    .toggle.on { background:var(--qv-accent); }
+    .toggle.on::after { left:16px; background:#fff; }
+
+    .preset-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px; }
+    .preset-btn {
+      padding:8px; border-radius:6px; border:1px solid var(--qv-border);
+      background:transparent; color:var(--qv-text-dim); font-size:10px;
+      font-family:'JetBrains Mono',monospace; cursor:pointer;
+      transition:all 0.2s; text-align:center;
+    }
+    .preset-btn:hover { border-color:var(--qv-accent); color:var(--qv-accent); background:rgba(var(--qv-accent-rgb),0.05); }
+    .preset-btn.active { border-color:var(--qv-accent); color:var(--qv-accent); background:rgba(var(--qv-accent-rgb),0.1); }
+
+    .action-row { display:flex; gap:6px; margin-top:8px; }
+    .action-btn {
+      flex:1; padding:8px; border-radius:6px; border:1px solid var(--qv-border);
+      background:transparent; color:var(--qv-text-dim); font-size:10px;
+      font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.2s;
+    }
+    .action-btn:hover { border-color:var(--qv-accent); color:var(--qv-accent); }
+    .action-btn.primary {
+      background:rgba(var(--qv-accent-rgb),0.12); border-color:var(--qv-accent);
+      color:var(--qv-accent);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .qv-main {
+      margin-left:340px; position:relative; z-index:2;
+      min-height:100vh; transition:margin-left 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .sidebar.collapsed ~ .qv-main { margin-left:0; }
+
+    .section {
+      padding:80px 48px; max-width:1200px; margin:0 auto;
+    }
+    .section-title {
+      font-family:'Orbitron',sans-serif; font-size:clamp(20px,3vw,32px);
+      font-weight:700; color:var(--qv-text-bright); margin-bottom:8px;
+      letter-spacing:2px;
+    }
+    .section-sub {
+      font-size:13px; color:var(--qv-text-dim); margin-bottom:32px;
+      font-family:'JetBrains Mono',monospace; letter-spacing:0.5px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      text-align:center; position:relative; padding:48px;
+      background:var(--qv-gradient-hero);
+    }
+    .hero-content { max-width:800px; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 16px; border-radius:20px;
+      border:1px solid var(--qv-border);
+      font-family:'JetBrains Mono',monospace; font-size:10px;
+      color:var(--qv-accent); letter-spacing:2px; text-transform:uppercase;
+      margin-bottom:24px;
+    }
+    .hero-badge .dot {
+      width:6px; height:6px; border-radius:50%; background:var(--qv-accent);
+      animation:dotPulse 2s ease-in-out infinite;
+    }
+    .hero h1 {
+      font-family:'Orbitron',sans-serif; font-size:clamp(36px,6vw,72px);
+      font-weight:900; line-height:1.05; margin-bottom:16px;
+      background:linear-gradient(135deg,var(--qv-text-bright) 0%,var(--qv-accent) 50%,var(--qv-secondary) 100%);
+      background-size:200% 200%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text; animation:gradShift 6s ease infinite;
+    }
+    @keyframes gradShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    .hero p {
+      font-size:clamp(14px,1.5vw,18px); color:var(--qv-text-dim);
+      max-width:560px; margin:0 auto 32px; line-height:1.7;
+    }
+    .hero-stats {
+      display:flex; gap:32px; justify-content:center; flex-wrap:wrap; margin-bottom:32px;
+    }
+    .hero-stat { text-align:center; }
+    .hero-stat-val {
+      font-family:'Orbitron',sans-serif; font-size:28px; font-weight:700;
+      color:var(--qv-accent); display:block;
+    }
+    .hero-stat-label {
+      font-family:'JetBrains Mono',monospace; font-size:9px;
+      color:var(--qv-text-dim); letter-spacing:1.5px; text-transform:uppercase;
+    }
+    .hero-cta {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:14px 32px; border-radius:8px;
+      background:rgba(var(--qv-accent-rgb),0.12); border:1px solid var(--qv-accent);
+      color:var(--qv-accent); font-size:13px; font-weight:600;
+      cursor:pointer; transition:all 0.3s; text-decoration:none;
+    }
+    .hero-cta:hover {
+      background:rgba(var(--qv-accent-rgb),0.2); transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(var(--qv-accent-rgb),0.2);
+    }
+
+    /* ===== DASHBOARD GRID ===== */
+    .dash-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;
+    }
+    .dash-card {
+      background:var(--qv-surface); border:1px solid var(--qv-border);
+      border-radius:10px; padding:20px; position:relative; overflow:hidden;
+      transition:all 0.3s;
+    }
+    .dash-card:hover {
+      border-color:var(--qv-border-strong);
+      transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(var(--qv-accent-rgb),0.08);
+    }
+    .dash-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,var(--qv-accent),transparent);
+      opacity:0; transition:opacity 0.3s;
+    }
+    .dash-card:hover::before { opacity:1; }
+    .dash-card-icon {
+      font-size:20px; color:var(--qv-accent); margin-bottom:12px;
+    }
+    .dash-card-title {
+      font-size:11px; color:var(--qv-text-dim); text-transform:uppercase;
+      letter-spacing:1.5px; margin-bottom:4px; font-family:'JetBrains Mono',monospace;
+    }
+    .dash-card-val {
+      font-family:'Orbitron',sans-serif; font-size:24px; font-weight:700;
+      color:var(--qv-text-bright);
+    }
+    .dash-card-delta {
+      font-family:'JetBrains Mono',monospace; font-size:10px;
+      margin-top:4px;
+    }
+    .dash-card-delta.up { color:#22c55e; }
+    .dash-card-delta.down { color:#ef4444; }
+    .sparkline { display:flex; gap:2px; align-items:flex-end; height:32px; margin-top:12px; }
+    .spark-bar {
+      flex:1; border-radius:1px; background:rgba(var(--qv-accent-rgb),0.3);
+      min-height:2px; transition:height 0.5s ease;
+    }
+
+    /* ===== CANVAS SECTION ===== */
+    .canvas-wrap {
+      position:relative; border-radius:12px; overflow:hidden;
+      border:1px solid var(--qv-border); background:var(--qv-bg2);
+      margin-bottom:32px;
+    }
+    .canvas-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 20px; border-bottom:1px solid var(--qv-border);
+    }
+    .canvas-title {
+      font-family:'JetBrains Mono',monospace; font-size:11px;
+      color:var(--qv-accent); letter-spacing:1px; text-transform:uppercase;
+    }
+    .canvas-badge {
+      font-family:'JetBrains Mono',monospace; font-size:9px;
+      padding:3px 8px; border-radius:4px;
+      background:rgba(var(--qv-accent-rgb),0.1); color:var(--qv-accent);
+    }
+    #main-canvas {
+      width:100%; height:400px; display:block; cursor:crosshair;
+    }
+    .canvas-overlay {
+      position:absolute; bottom:12px; left:12px; right:12px;
+      display:flex; justify-content:space-between; pointer-events:none;
+    }
+    .canvas-stat {
+      font-family:'JetBrains Mono',monospace; font-size:9px;
+      color:var(--qv-text-dim); letter-spacing:0.5px;
+      background:rgba(0,0,0,0.4); padding:4px 8px; border-radius:4px;
+    }
+
+    /* ===== CASIMIR SECTION ===== */
+    .casimir-demo {
+      display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px;
+    }
+    .casimir-visual {
+      position:relative; border-radius:12px; overflow:hidden;
+      border:1px solid var(--qv-border); background:var(--qv-bg2);
+      height:300px;
+    }
+    #casimir-canvas { width:100%; height:100%; display:block; }
+    .casimir-info {
+      display:flex; flex-direction:column; justify-content:center; gap:16px;
+    }
+    .casimir-formula {
+      font-family:'JetBrains Mono',monospace; font-size:13px;
+      color:var(--qv-accent); padding:16px; border-radius:8px;
+      background:rgba(var(--qv-accent-rgb),0.05); border:1px solid var(--qv-border);
+      text-align:center; line-height:1.8;
+    }
+    .casimir-formula .var { color:var(--qv-secondary); font-style:italic; }
+    .casimir-metric {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-radius:8px;
+      background:var(--qv-surface); border:1px solid var(--qv-border);
+    }
+    .casimir-metric-label {
+      font-size:12px; color:var(--qv-text-dim);
+    }
+    .casimir-metric-val {
+      font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700;
+      color:var(--qv-accent);
+    }
+
+    /* ===== DIRAC SEA ===== */
+    .dirac-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px;
+    }
+    .dirac-visual {
+      border-radius:12px; overflow:hidden;
+      border:1px solid var(--qv-border); background:var(--qv-bg2);
+      height:300px;
+    }
+    #dirac-canvas { width:100%; height:100%; display:block; }
+    .dirac-info { display:flex; flex-direction:column; justify-content:center; gap:12px; }
+    .dirac-desc {
+      font-size:13px; color:var(--qv-text-dim); line-height:1.7;
+    }
+    .dirac-level {
+      display:flex; align-items:center; gap:12px; padding:10px 14px;
+      border-radius:8px; background:var(--qv-surface); border:1px solid var(--qv-border);
+    }
+    .dirac-level-dot {
+      width:10px; height:10px; border-radius:50%; flex-shrink:0;
+    }
+    .dirac-level-text {
+      font-size:11px; color:var(--qv-text-dim); font-family:'JetBrains Mono',monospace;
+    }
+
+    /* ===== HEISENBERG ===== */
+    .heisen-wrap {
+      border-radius:12px; overflow:hidden;
+      border:1px solid var(--qv-border); background:var(--qv-bg2);
+      margin-bottom:32px;
+    }
+    #heisen-canvas { width:100%; height:350px; display:block; }
+    .heisen-controls {
+      display:flex; gap:16px; padding:16px 20px;
+      border-top:1px solid var(--qv-border); flex-wrap:wrap;
+    }
+    .heisen-slider { display:flex; flex-direction:column; gap:4px; flex:1; min-width:150px; }
+    .heisen-slider label {
+      font-size:10px; color:var(--qv-text-dim); text-transform:uppercase;
+      letter-spacing:1px; font-family:'JetBrains Mono',monospace;
+    }
+
+    /* ===== FORMULA BLOCK ===== */
+    .formula-block {
+      padding:20px; border-radius:10px;
+      background:var(--qv-surface); border:1px solid var(--qv-border);
+      margin-bottom:24px;
+    }
+    .formula-title {
+      font-family:'JetBrains Mono',monospace; font-size:10px;
+      color:var(--qv-accent); letter-spacing:1.5px; text-transform:uppercase;
+      margin-bottom:12px;
+    }
+    .formula-eq {
+      font-family:'JetBrains Mono',monospace; font-size:14px;
+      color:var(--qv-text-bright); line-height:1.8; text-align:center;
+    }
+    .formula-eq .hl { color:var(--qv-accent); }
+    .formula-eq .hl2 { color:var(--qv-secondary); }
+
+    /* ===== FOOTER ===== */
+    .qv-footer {
+      padding:40px 48px; border-top:1px solid var(--qv-border);
+      text-align:center;
+    }
+    .footer-brand {
+      font-family:'Orbitron',sans-serif; font-size:14px; font-weight:700;
+      color:var(--qv-accent); letter-spacing:3px; margin-bottom:8px;
+    }
+    .footer-sub {
+      font-size:11px; color:var(--qv-text-dim); font-family:'JetBrains Mono',monospace;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:1024px) {
+      .sidebar { width:280px; transform:translateX(-280px); }
+      .sidebar.open { transform:translateX(0); }
+      .sidebar-toggle { left:0; }
+      .sidebar.open + .sidebar-toggle { left:280px; }
+      .qv-main { margin-left:0 !important; }
+      .dash-grid { grid-template-columns:repeat(2,1fr); }
+      .casimir-demo, .dirac-grid { grid-template-columns:1fr; }
+    }
+    @media(max-width:640px) {
+      .section { padding:48px 20px; }
+      .dash-grid { grid-template-columns:1fr; }
+      .hero { padding:48px 20px; }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--qv-accent); border-radius:3px; }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <div class="loader-title">QUANTUM VACUUM</div>
+    <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
+    <div class="loader-eq" id="loader-eq">E = &hbar;&omega; / 2</div>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <!-- BACKGROUND CANVAS -->
+  <canvas id="vacuum-canvas"></canvas>
+
+  <!-- AMBIENT ORBS -->
+  <div class="ambient-layer">
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">QV</div>
+        <div>
+          <div class="sidebar-name">QUANTUM VACUUM</div>
+          <div class="sidebar-ver">v65.0 — FLUCTUATION ENGINE</div>
+        </div>
+      </div>
+      <div class="theme-row">
+        <button class="theme-btn active" data-theme="vacuum-teal">Teal</button>
+        <button class="theme-btn" data-theme="casimir-gold">Gold</button>
+        <button class="theme-btn" data-theme="dirac-deep">Deep</button>
+        <button class="theme-btn" data-theme="event-horizon">Horizon</button>
+      </div>
+    </div>
+
+    <div class="sidebar-body">
+      <!-- VACUUM PARAMETERS -->
+      <div class="ctrl-section">
+        <div class="ctrl-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span><i class="fas fa-atom"></i> Vacuum Parameters</span><span class="arrow">&#9662;</span>
+        </div>
+        <div class="ctrl-body">
+          <div class="ctrl-label"><span>Particle Density</span><span class="ctrl-val" id="val-density">50</span></div>
+          <input type="range" id="sl-density" min="10" max="100" value="50">
+          <div class="ctrl-label"><span>Pair Creation Rate</span><span class="ctrl-val" id="val-rate">30</span></div>
+          <input type="range" id="sl-rate" min="5" max="80" value="30">
+          <div class="ctrl-label"><span>Vacuum Energy</span><span class="ctrl-val" id="val-energy">40</span></div>
+          <input type="range" id="sl-energy" min="10" max="80" value="40">
+          <div class="ctrl-label"><span>Pair Lifetime (ms)</span><span class="ctrl-val" id="val-lifetime">2000</span></div>
+          <input type="range" id="sl-lifetime" min="500" max="5000" value="2000" step="100">
+        </div>
+      </div>
+
+      <!-- CASIMIR EFFECT -->
+      <div class="ctrl-section">
+        <div class="ctrl-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span><i class="fas fa-arrows-left-right"></i> Casimir Effect</span><span class="arrow">&#9662;</span>
+        </div>
+        <div class="ctrl-body">
+          <div class="ctrl-label"><span>Plate Distance</span><span class="ctrl-val" id="val-plate">60</span></div>
+          <input type="range" id="sl-plate" min="20" max="120" value="60">
+          <div class="ctrl-label"><span>Plate Width</span><span class="ctrl-val" id="val-platew">120</span></div>
+          <input type="range" id="sl-platew" min="60" max="200" value="120">
+        </div>
+      </div>
+
+      <!-- DISPLAY -->
+      <div class="ctrl-section">
+        <div class="ctrl-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span><i class="fas fa-eye"></i> Display</span><span class="arrow">&#9662;</span>
+        </div>
+        <div class="ctrl-body">
+          <div class="toggle-row"><label>Show Antiparticles</label><button class="toggle on" id="tg-anti" onclick="this.classList.toggle('on')"></button></div>
+          <div class="toggle-row"><label>Force Fields</label><button class="toggle on" id="tg-force" onclick="this.classList.toggle('on')"></button></div>
+          <div class="toggle-row"><label>Energy Trails</label><button class="toggle" id="tg-trails" onclick="this.classList.toggle('on')"></button></div>
+          <div class="toggle-row"><label>Annihilation Flashes</label><button class="toggle on" id="tg-flash" onclick="this.classList.toggle('on')"></button></div>
+        </div>
+      </div>
+
+      <!-- PRESETS -->
+      <div class="ctrl-section">
+        <div class="ctrl-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span><i class="fas fa-wand-magic-sparkles"></i> Presets</span><span class="arrow">&#9662;</span>
+        </div>
+        <div class="ctrl-body">
+          <div class="preset-grid">
+            <button class="preset-btn active" data-preset="qed">QED Vacuum</button>
+            <button class="preset-btn" data-preset="casimir">Casimir Cavity</button>
+            <button class="preset-btn" data-preset="hawking">Hawking Rad.</button>
+            <button class="preset-btn" data-preset="bigbang">Big Bang</button>
+          </div>
+          <div class="action-row">
+            <button class="action-btn" id="btn-randomize"><i class="fas fa-shuffle"></i> Random</button>
+            <button class="action-btn" id="btn-reset"><i class="fas fa-rotate-left"></i> Reset</button>
+            <button class="action-btn primary" id="btn-export"><i class="fas fa-download"></i> Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-chevron-left"></i></button>
+
+  <!-- MAIN CONTENT -->
+  <div class="qv-main">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="dot"></span> QUANTUM FIELD SIMULATOR</div>
+        <h1>QUANTUM<br>VACUUM</h1>
+        <p>Visualize the quantum foam where virtual particle-antiparticle pairs constantly emerge from vacuum energy, drift through spacetime, and annihilate in flashes of light.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="hero-stat-val" id="stat-pairs">0</span><span class="hero-stat-label">Active Pairs</span></div>
+          <div class="hero-stat"><span class="hero-stat-val" id="stat-energy">0</span><span class="hero-stat-label">Vacuum Energy (eV)</span></div>
+          <div class="hero-stat"><span class="hero-stat-val" id="stat-annihilations">0</span><span class="hero-stat-label">Annihilations</span></div>
+          <div class="hero-stat"><span class="hero-stat-val" id="stat-lifetime">0</span><span class="hero-stat-label">Avg Lifetime (ms)</span></div>
+        </div>
+        <a class="hero-cta" href="#sim"><i class="fas fa-play"></i> Start Simulation</a>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="section" id="sim">
+      <div class="section-title">FLUCTUATION TELEMETRY</div>
+      <div class="section-sub">Real-time vacuum energy metrics</div>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card-icon"><i class="fas fa-circle-nodes"></i></div>
+          <div class="dash-card-title">Pair Count</div>
+          <div class="dash-card-val" id="d-pairs">0</div>
+          <div class="dash-card-delta up" id="d-pairs-delta">+0/s</div>
+          <div class="sparkline" id="spark-pairs"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon"><i class="fas fa-bolt"></i></div>
+          <div class="dash-card-title">Energy Density</div>
+          <div class="dash-card-val" id="d-energy">0</div>
+          <div class="dash-card-delta up" id="d-energy-delta">stable</div>
+          <div class="sparkline" id="spark-energy"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon"><i class="fas fa-explosion"></i></div>
+          <div class="dash-card-title">Annihilation Rate</div>
+          <div class="dash-card-val" id="d-annihilations">0</div>
+          <div class="dash-card-delta down" id="d-annihil-delta">-0/s</div>
+          <div class="sparkline" id="spark-annihil"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon"><i class="fas fa-temperature-half"></i></div>
+          <div class="dash-card-title">Vacuum Temp</div>
+          <div class="dash-card-val" id="d-temp">0</div>
+          <div class="dash-card-delta up">0 K</div>
+          <div class="sparkline" id="spark-temp"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon"><i class="fas fa-clock"></i></div>
+          <div class="dash-card-title">Fluctuation Freq</div>
+          <div class="dash-card-val" id="d-freq">0</div>
+          <div class="dash-card-delta up" id="d-freq-delta">Hz</div>
+          <div class="sparkline" id="spark-freq"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon"><i class="fas fa-chart-line"></i></div>
+          <div class="dash-card-title">Zero-Point Energy</div>
+          <div class="dash-card-val" id="d-zpe">0</div>
+          <div class="dash-card-delta up">J</div>
+          <div class="sparkline" id="spark-zpe"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN CANVAS -->
+    <section class="section">
+      <div class="section-title">VACUUM FLUCTUATION FIELD</div>
+      <div class="section-sub">Click to create particle-antiparticle pairs</div>
+      <div class="canvas-wrap">
+        <div class="canvas-header">
+          <span class="canvas-title"><i class="fas fa-atom"></i> Quantum Foam Renderer</span>
+          <span class="canvas-badge" id="canvas-fps">60 FPS</span>
+        </div>
+        <canvas id="main-canvas"></canvas>
+        <div class="canvas-overlay">
+          <span class="canvas-stat" id="co-pairs">Pairs: 0</span>
+          <span class="canvas-stat" id="co-energy">Energy: 0 eV</span>
+          <span class="canvas-stat" id="co-fps">60 FPS</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASIMIR EFFECT -->
+    <section class="section">
+      <div class="section-title">CASIMIR EFFECT</div>
+      <div class="section-sub">Vacuum pressure between conductive plates</div>
+      <div class="casimir-demo">
+        <div class="casimir-visual">
+          <canvas id="casimir-canvas"></canvas>
+        </div>
+        <div class="casimir-info">
+          <div class="formula-block">
+            <div class="formula-title">Casimir Force per Unit Area</div>
+            <div class="formula-eq">
+              <span class="hl">F</span>/<span class="hl2">A</span> = -<span class="hl">&hbar;</span>c &pi;<sup>2</sup> / (240 <span class="hl2">d</span><sup>4</sup>)
+            </div>
+          </div>
+          <div class="casimir-metric">
+            <span class="casimir-metric-label">Force</span>
+            <span class="casimir-metric-val" id="casimir-force">0.00 N</span>
+          </div>
+          <div class="casimir-metric">
+            <span class="casimir-metric-label">Virtual Particles Between Plates</span>
+            <span class="casimir-metric-val" id="casimir-count">0</span>
+          </div>
+          <div class="casimir-metric">
+            <span class="casimir-metric-label">Plate Distance</span>
+            <span class="casimir-metric-val" id="casimir-dist">60 nm</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIRAC SEA -->
+    <section class="section">
+      <div class="section-title">DIRAC SEA</div>
+      <div class="section-sub">Visualization of occupied negative-energy states</div>
+      <div class="dirac-grid">
+        <div class="dirac-visual">
+          <canvas id="dirac-canvas"></canvas>
+        </div>
+        <div class="dirac-info">
+          <div class="dirac-desc">
+            The Dirac Sea model describes the vacuum as an infinite sea of negative-energy electron states. When energy is added, a particle is "promoted" to a positive-energy state, leaving a hole (antiparticle) in the sea.
+          </div>
+          <div class="dirac-level">
+            <div class="dirac-level-dot" style="background:var(--qv-particle)"></div>
+            <span class="dirac-level-text">Particle (positive energy state)</span>
+          </div>
+          <div class="dirac-level">
+            <div class="dirac-level-dot" style="background:var(--qv-antiparticle)"></div>
+            <span class="dirac-level-text">Antiparticle (hole in sea)</span>
+          </div>
+          <div class="dirac-level">
+            <div class="dirac-level-dot" style="background:var(--qv-text-dim);opacity:0.3"></div>
+            <span class="dirac-level-text">Occupied negative-energy state</span>
+          </div>
+          <div class="formula-block" style="margin-top:12px">
+            <div class="formula-title">Dirac Equation</div>
+            <div class="formula-eq">
+              (<span class="hl">i&gamma;</span><sup>&mu;</sup>&part;<sub>&mu;</sub> - <span class="hl2">m</span>)<span class="hl">&psi;</span> = 0
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HEISENBERG UNCERTAINTY -->
+    <section class="section">
+      <div class="section-title">HEISENBERG UNCERTAINTY</div>
+      <div class="section-sub">Position-momentum uncertainty principle</div>
+      <div class="heisen-wrap">
+        <canvas id="heisen-canvas"></canvas>
+        <div class="heisen-controls">
+          <div class="heisen-slider">
+            <label>Position Certainty (&Delta;x)</label>
+            <input type="range" id="sl-dx" min="5" max="80" value="30">
+          </div>
+          <div class="heisen-slider">
+            <label>Momentum Certainty (&Delta;p)</label>
+            <input type="range" id="sl-dp" min="5" max="80" value="30">
+          </div>
+          <div class="heisen-slider">
+            <label>Particle Count</label>
+            <input type="range" id="sl-hcount" min="10" max="200" value="60">
+          </div>
+        </div>
+      </div>
+      <div class="formula-block">
+        <div class="formula-title">Heisenberg Uncertainty Principle</div>
+        <div class="formula-eq">
+          <span class="hl">&Delta;x</span> &middot; <span class="hl2">&Delta;p</span> &ge; <span class="hl">&hbar;</span>/2
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMULAS -->
+    <section class="section">
+      <div class="section-title">VACUUM PHYSICS</div>
+      <div class="section-sub">Fundamental equations governing quantum vacuum</div>
+      <div class="dash-grid" style="grid-template-columns:repeat(2,1fr)">
+        <div class="formula-block">
+          <div class="formula-title">Zero-Point Energy</div>
+          <div class="formula-eq">
+            <span class="hl">E</span><sub>0</sub> = <span class="hl2">&hbar;&omega;</span>/2 = <span class="hl">&hbar;</span>(2&pi;<span class="hl2">f</span>)/2
+          </div>
+        </div>
+        <div class="formula-block">
+          <div class="formula-title">Vacuum Fluctuation Energy</div>
+          <div class="formula-eq">
+            <span class="hl">&rho;</span><sub>vac</sub> = <span class="hl2">&Lambda;</span>/(8&pi;G)
+          </div>
+        </div>
+        <div class="formula-block">
+          <div class="formula-title">Virtual Pair Lifetime</div>
+          <div class="formula-eq">
+            <span class="hl">&Delta;t</span> &le; <span class="hl2">&hbar;</span>/(2&Delta;<span class="hl">E</span>)
+          </div>
+        </div>
+        <div class="formula-block">
+          <div class="formula-title">Unruh Effect Temperature</div>
+          <div class="formula-eq">
+            <span class="hl">T</span> = <span class="hl2">&hbar;a</span>/(2&pi;c<span class="hl">k</span><sub>B</sub>)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="qv-footer">
+      <div class="footer-brand">QUANTUM VACUUM</div>
+      <div class="footer-sub">Style #65 &mdash; UI Playground Beta &mdash; Vacuum Fluctuation Simulator</div>
+    </footer>
+  </div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       QUANTUM VACUUM — FULL APPLICATION LOGIC
+       ═══════════════════════════════════════════════════════════ */
+
+    // --- Theme ---
+    const THEMES = ['vacuum-teal','casimir-gold','dirac-deep','event-horizon'];
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('qv-theme', t);
+      document.querySelectorAll('.theme-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === t);
+      });
+      updateThemeColors();
+    }
+    document.querySelectorAll('.theme-btn').forEach(b => {
+      b.addEventListener('click', () => setTheme(b.dataset.theme));
+    });
+
+    function getCSS(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+    let accentRGB, particleColor, antiColor, flashColor;
+    function updateThemeColors() {
+      accentRGB = getCSS('--qv-accent-rgb');
+      particleColor = getCSS('--qv-particle');
+      antiColor = getCSS('--qv-antiparticle');
+      flashColor = getCSS('--qv-flash');
+    }
+    updateThemeColors();
+
+    // --- Sidebar Toggle ---
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      sidebarToggle.querySelector('i').className =
+        sidebar.classList.contains('collapsed') ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+    });
+
+    // --- Loading ---
+    const loader = document.getElementById('loader');
+    const loaderFill = document.getElementById('loader-fill');
+    const loaderEq = document.getElementById('loader-eq');
+    const equations = ['E = \\u00b7\\/2','\\u0394x\\u00b7\\u0394p \\u2265 \\u00b7\\/2','F\\/A = -\\u00b7c\\u03c0\\u00b2\\/240d\\u2074','(i\\u03b3\\u00b5\\u2202\\u03bc - m)\\u03c8 = 0'];
+    let loadPct = 0;
+    const loadInt = setInterval(() => {
+      loadPct += 2 + Math.random() * 5;
+      if (loadPct >= 100) { loadPct = 100; clearInterval(loadInt); setTimeout(() => loader.classList.add('hidden'), 400); }
+      loaderFill.style.width = loadPct + '%';
+      loaderEq.textContent = equations[Math.floor(Math.random() * equations.length)];
+    }, 80);
+
+    // --- State ---
+    const state = {
+      mouseX: 0, mouseY: 0,
+      density: 50, rate: 30, energy: 40, lifetime: 2000,
+      plateDist: 60, plateW: 120,
+      showAnti: true, showForce: true, showTrails: false, showFlash: true,
+      pairs: [], annihilations: 0, totalPairs: 0,
+      sparkPairs: [], sparkEnergy: [], sparkAnnil: [], sparkTemp: [], sparkFreq: [], sparkZPE: [],
+      heisenDX: 30, heisenDP: 30, heisenCount: 60
+    };
+
+    // --- Sliders ---
+    function bindSlider(id, key, valId) {
+      const sl = document.getElementById(id);
+      const vl = document.getElementById(valId);
+      if (!sl) return;
+      sl.addEventListener('input', () => { state[key] = +sl.value; vl.textContent = sl.value; });
+    }
+    bindSlider('sl-density','density','val-density');
+    bindSlider('sl-rate','rate','val-rate');
+    bindSlider('sl-energy','energy','val-energy');
+    bindSlider('sl-lifetime','lifetime','val-lifetime');
+    bindSlider('sl-plate','plateDist','val-plate');
+    bindSlider('sl-platew','plateW','val-platew');
+
+    // --- Toggles ---
+    function bindToggle(id, key) {
+      const tg = document.getElementById(id);
+      if (!tg) return;
+      tg.addEventListener('click', () => { state[key] = tg.classList.contains('on'); });
+    }
+    bindToggle('tg-anti','showAnti');
+    bindToggle('tg-force','showForce');
+    bindToggle('tg-trails','showTrails');
+    bindToggle('tg-flash','showFlash');
+
+    // --- Heisenberg sliders ---
+    document.getElementById('sl-dx')?.addEventListener('input', e => { state.heisenDX = +e.target.value; });
+    document.getElementById('sl-dp')?.addEventListener('input', e => { state.heisenDP = +e.target.value; });
+    document.getElementById('sl-hcount')?.addEventListener('input', e => { state.heisenCount = +e.target.value; });
+
+    // --- Presets ---
+    const presets = {
+      qed: { density:50, rate:30, energy:40, lifetime:2000, plateDist:60, plateW:120 },
+      casimir: { density:70, rate:15, energy:20, lifetime:3000, plateDist:25, plateW:160 },
+      hawking: { density:90, rate:60, energy:70, lifetime:800, plateDist:80, plateW:100 },
+      bigbang: { density:100, rate:80, energy:80, lifetime:500, plateDist:100, plateW:80 }
+    };
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const p = presets[btn.dataset.preset];
+        if (!p) return;
+        Object.entries(p).forEach(([k,v]) => {
+          state[k] = v;
+          const sl = document.getElementById('sl-' + k.replace(/([A-Z])/g, (m) => {
+            const map = { density:'density', rate:'rate', energy:'energy', lifetime:'lifetime', plateDist:'plate', plateW:'platew' };
+            return map[k] || m.toLowerCase();
+          }));
+          if (sl) { sl.value = v; }
+        });
+        document.getElementById('val-density').textContent = state.density;
+        document.getElementById('val-rate').textContent = state.rate;
+        document.getElementById('val-energy').textContent = state.energy;
+        document.getElementById('val-lifetime').textContent = state.lifetime;
+        document.getElementById('val-plate').textContent = state.plateDist;
+        document.getElementById('val-platew').textContent = state.plateW;
+      });
+    });
+
+    document.getElementById('btn-reset')?.addEventListener('click', () => {
+      const btn = document.querySelector('.preset-btn.active');
+      if (btn) btn.click();
+      state.pairs = [];
+      state.annihilations = 0;
+      state.totalPairs = 0;
+    });
+
+    document.getElementById('btn-randomize')?.addEventListener('click', () => {
+      state.density = 10 + Math.floor(Math.random() * 90);
+      state.rate = 5 + Math.floor(Math.random() * 75);
+      state.energy = 10 + Math.floor(Math.random() * 70);
+      state.lifetime = 500 + Math.floor(Math.random() * 4500);
+      state.plateDist = 20 + Math.floor(Math.random() * 100);
+      state.plateW = 60 + Math.floor(Math.random() * 140);
+      document.getElementById('sl-density').value = state.density;
+      document.getElementById('sl-rate').value = state.rate;
+      document.getElementById('sl-energy').value = state.energy;
+      document.getElementById('sl-lifetime').value = state.lifetime;
+      document.getElementById('sl-plate').value = state.plateDist;
+      document.getElementById('sl-platew').value = state.plateW;
+      document.getElementById('val-density').textContent = state.density;
+      document.getElementById('val-rate').textContent = state.rate;
+      document.getElementById('val-energy').textContent = state.energy;
+      document.getElementById('val-lifetime').textContent = state.lifetime;
+      document.getElementById('val-plate').textContent = state.plateDist;
+      document.getElementById('val-platew').textContent = state.plateW;
+    });
+
+    document.getElementById('btn-export')?.addEventListener('click', () => {
+      const c = document.getElementById('main-canvas');
+      const link = document.createElement('a');
+      link.download = 'quantum-vacuum-' + Date.now() + '.png';
+      link.href = c.toDataURL();
+      link.click();
+    });
+
+    // --- Background Canvas ---
+    const bgCanvas = document.getElementById('vacuum-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bgParticles = [];
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    resizeBg();
+    window.addEventListener('resize', resizeBg);
+
+    class BgParticle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.size = 1 + Math.random() * 2;
+        this.life = 1;
+        this.decay = 0.002 + Math.random() * 0.005;
+        this.hue = Math.random() < 0.5 ? 175 : 320;
+        this.isAnti = this.hue === 320;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        this.life -= this.decay;
+        if (this.life <= 0) this.reset();
+      }
+      draw(ctx) {
+        const a = this.life * 0.4;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue},80%,65%,${a})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue},80%,65%,${a * 0.15})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 80; i++) bgParticles.push(new BgParticle());
+
+    function drawBg() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgParticles.forEach(p => { p.update(); p.draw(bgCtx); });
+    }
+
+    // --- Main Canvas ---
+    const mainCanvas = document.getElementById('main-canvas');
+    const mCtx = mainCanvas.getContext('2d');
+    function resizeMain() {
+      const wrap = mainCanvas.parentElement;
+      mainCanvas.width = wrap.clientWidth;
+      mainCanvas.height = 400;
+    }
+    resizeMain();
+    window.addEventListener('resize', resizeMain);
+
+    mainCanvas.addEventListener('click', e => {
+      const rect = mainCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      createPair(x, y);
+    });
+
+    function createPair(x, y) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.5 + Math.random() * 1.5;
+      state.pairs.push({
+        px: x, py: y, ax: x, ay: y,
+        pvx: Math.cos(angle) * speed, pvy: Math.sin(angle) * speed,
+        avx: -Math.cos(angle) * speed, avy: -Math.sin(angle) * speed,
+        life: 1, decay: 1000 / state.lifetime,
+        trail: [], born: Date.now()
+      });
+      state.totalPairs++;
+    }
+
+    function spawnAuto() {
+      if (Math.random() * 100 < state.rate * 0.3) {
+        const x = 40 + Math.random() * (mainCanvas.width - 80);
+        const y = 40 + Math.random() * (mainCanvas.height - 80);
+        createPair(x, y);
+      }
+    }
+
+    let flashes = [];
+    function drawMain() {
+      mCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+      // Draw foam grid
+      mCtx.strokeStyle = `rgba(${accentRGB},0.03)`;
+      mCtx.lineWidth = 1;
+      const gs = 40;
+      const t = Date.now() * 0.0003;
+      for (let x = 0; x < mainCanvas.width; x += gs) {
+        mCtx.beginPath();
+        for (let y = 0; y < mainCanvas.height; y += 4) {
+          const ox = Math.sin(y * 0.02 + t) * 3;
+          if (y === 0) mCtx.moveTo(x + ox, y);
+          else mCtx.lineTo(x + ox, y);
+        }
+        mCtx.stroke();
+      }
+      for (let y = 0; y < mainCanvas.height; y += gs) {
+        mCtx.beginPath();
+        for (let x = 0; x < mainCanvas.width; x += 4) {
+          const oy = Math.sin(x * 0.02 + t) * 3;
+          if (x === 0) mCtx.moveTo(x, y + oy);
+          else mCtx.lineTo(x, y + oy);
+        }
+        mCtx.stroke();
+      }
+
+      // Pairs
+      const now = Date.now();
+      state.pairs = state.pairs.filter(p => p.life > 0);
+      state.pairs.forEach(p => {
+        p.px += p.pvx; p.py += p.pvy;
+        p.ax += p.avx; p.ay += p.avy;
+        p.life -= p.decay * 0.016;
+
+        if (p.px < 0 || p.px > mainCanvas.width) p.pvx *= -1;
+        if (p.py < 0 || p.py > mainCanvas.height) p.pvy *= -1;
+        if (p.ax < 0 || p.ax > mainCanvas.width) p.avx *= -1;
+        if (p.ay < 0 || p.ay > mainCanvas.height) p.avy *= -1;
+
+        const a = p.life;
+
+        // Trail
+        if (state.showTrails) {
+          p.trail.push({ x: p.px, y: p.py });
+          if (p.trail.length > 12) p.trail.shift();
+          p.trail.forEach((t, i) => {
+            mCtx.beginPath();
+            mCtx.arc(t.x, t.y, 2, 0, Math.PI * 2);
+            mCtx.fillStyle = `rgba(${accentRGB},${(i / p.trail.length) * a * 0.3})`;
+            mCtx.fill();
+          });
+        }
+
+        // Force line
+        if (state.showForce) {
+          mCtx.beginPath();
+          mCtx.moveTo(p.px, p.py);
+          mCtx.lineTo(p.ax, p.ay);
+          mCtx.strokeStyle = `rgba(${accentRGB},${a * 0.15})`;
+          mCtx.lineWidth = 1;
+          mCtx.setLineDash([4, 4]);
+          mCtx.stroke();
+          mCtx.setLineDash([]);
+        }
+
+        // Particle
+        mCtx.beginPath();
+        mCtx.arc(p.px, p.py, 4 + a * 3, 0, Math.PI * 2);
+        mCtx.fillStyle = particleColor;
+        mCtx.globalAlpha = a;
+        mCtx.fill();
+        mCtx.beginPath();
+        mCtx.arc(p.px, p.py, 10 + a * 8, 0, Math.PI * 2);
+        mCtx.fillStyle = particleColor;
+        mCtx.globalAlpha = a * 0.15;
+        mCtx.fill();
+        mCtx.globalAlpha = 1;
+
+        // Antiparticle
+        if (state.showAnti) {
+          mCtx.beginPath();
+          mCtx.arc(p.ax, p.ay, 4 + a * 3, 0, Math.PI * 2);
+          mCtx.fillStyle = antiColor;
+          mCtx.globalAlpha = a;
+          mCtx.fill();
+          mCtx.beginPath();
+          mCtx.arc(p.ax, p.ay, 10 + a * 8, 0, Math.PI * 2);
+          mCtx.fillStyle = antiColor;
+          mCtx.globalAlpha = a * 0.15;
+          mCtx.fill();
+          mCtx.globalAlpha = 1;
+
+          // Anti marker
+          mCtx.beginPath();
+          mCtx.moveTo(p.ax - 3, p.ay - 3);
+          mCtx.lineTo(p.ax + 3, p.ay + 3);
+          mCtx.moveTo(p.ax + 3, p.ay - 3);
+          mCtx.lineTo(p.ax - 3, p.ay + 3);
+          mCtx.strokeStyle = `rgba(0,0,0,${a * 0.6})`;
+          mCtx.lineWidth = 1.5;
+          mCtx.stroke();
+        }
+
+        // Annihilation
+        if (p.life <= 0 && state.showFlash) {
+          flashes.push({ x: (p.px + p.ax) / 2, y: (p.py + p.ay) / 2, life: 1, size: 20 + Math.random() * 20 });
+          state.annihilations++;
+        }
+      });
+
+      // Flashes
+      flashes = flashes.filter(f => f.life > 0);
+      flashes.forEach(f => {
+        f.life -= 0.04;
+        f.size += 2;
+        mCtx.beginPath();
+        mCtx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
+        mCtx.fillStyle = flashColor;
+        mCtx.globalAlpha = f.life * 0.4;
+        mCtx.fill();
+        mCtx.beginPath();
+        mCtx.arc(f.x, f.y, f.size * 0.3, 0, Math.PI * 2);
+        mCtx.fillStyle = '#ffffff';
+        mCtx.globalAlpha = f.life * 0.8;
+        mCtx.fill();
+        mCtx.globalAlpha = 1;
+      });
+
+      spawnAuto();
+    }
+
+    // --- Casimir Canvas ---
+    const casCanvas = document.getElementById('casimir-canvas');
+    const casCtx = casCanvas.getContext('2d');
+    let casimirParticles = [];
+    function resizeCas() {
+      const w = casCanvas.parentElement;
+      casCanvas.width = w.clientWidth;
+      casCanvas.height = w.clientHeight || 300;
+    }
+    resizeCas();
+    window.addEventListener('resize', resizeCas);
+
+    class CasimirParticle {
+      constructor(plateX, gap) {
+        this.x = plateX + Math.random() * gap;
+        this.y = Math.random() * casCanvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.size = 1 + Math.random() * 2;
+        this.life = 1;
+        this.decay = 0.003 + Math.random() * 0.005;
+        this.hue = Math.random() < 0.5 ? 175 : 320;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        this.life -= this.decay;
+      }
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue},80%,65%,${this.life * 0.6})`;
+        ctx.fill();
+      }
+    }
+
+    function drawCasimir() {
+      casCtx.clearRect(0, 0, casCanvas.width, casCanvas.height);
+      const cx = casCanvas.width / 2;
+      const gap = state.plateDist;
+      const pw = state.plateW;
+      const plateLeft = cx - gap / 2 - pw / 2;
+      const plateRight = cx + gap / 2;
+
+      // Plates
+      casCtx.fillStyle = `rgba(${accentRGB},0.15)`;
+      casCtx.fillRect(plateLeft, 0, pw, casCanvas.height);
+      casCtx.fillRect(plateRight, 0, pw, casCanvas.height);
+
+      // Plate edges
+      casCtx.fillStyle = `rgba(${accentRGB},0.5)`;
+      casCtx.fillRect(plateLeft + pw - 2, 0, 2, casCanvas.height);
+      casCtx.fillRect(plateRight, 0, 2, casCanvas.height);
+
+      // Labels
+      casCtx.font = '10px JetBrains Mono';
+      casCtx.fillStyle = `rgba(${accentRGB},0.6)`;
+      casCtx.textAlign = 'center';
+      casCtx.fillText('PLATE A', plateLeft + pw / 2, 16);
+      casCtx.fillText('PLATE B', plateRight + pw / 2, 16);
+      casCtx.fillText(`${gap} nm`, cx, casCanvas.height - 12);
+
+      // Virtual particles between plates
+      if (Math.random() < 0.3) {
+        casimirParticles.push(new CasimirParticle(plateLeft + pw, gap));
+      }
+      casimirParticles = casimirParticles.filter(p => p.life > 0);
+      casimirParticles.forEach(p => {
+        if (p.x < plateLeft + pw || p.x > plateRight) p.vx *= -1;
+        p.update(); p.draw(casCtx);
+      });
+
+      // Force arrows
+      const force = 1 / Math.pow(gap, 2);
+      const arrowLen = Math.min(force * 500, 40);
+      casCtx.strokeStyle = `rgba(${accentRGB},0.4)`;
+      casCtx.lineWidth = 2;
+      casCtx.beginPath();
+      casCtx.moveTo(plateLeft + pw + 4, casCanvas.height / 2);
+      casCtx.lineTo(plateLeft + pw + 4 + arrowLen, casCanvas.height / 2);
+      casCtx.stroke();
+      casCtx.beginPath();
+      casCtx.moveTo(plateRight - 4, casCanvas.height / 2);
+      casCtx.lineTo(plateRight - 4 - arrowLen, casCanvas.height / 2);
+      casCtx.stroke();
+
+      // Update metrics
+      const forceN = (1.3e-27 / Math.pow(gap * 1e-9, 4)).toExponential(2);
+      document.getElementById('casimir-force').textContent = forceN + ' N';
+      document.getElementById('casimir-count').textContent = casimirParticles.length;
+      document.getElementById('casimir-dist').textContent = gap + ' nm';
+    }
+
+    // --- Dirac Sea Canvas ---
+    const diracCanvas = document.getElementById('dirac-canvas');
+    const dirCtx = diracCanvas.getContext('2d');
+    let diracStates = [];
+    function resizeDirac() {
+      const w = diracCanvas.parentElement;
+      diracCanvas.width = w.clientWidth;
+      diracCanvas.height = w.clientHeight || 300;
+    }
+    resizeDirac();
+    window.addEventListener('resize', resizeDirac);
+
+    function initDirac() {
+      diracStates = [];
+      const rows = 12;
+      const cols = Math.floor(diracCanvas.width / 20);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = 10 + c * 20;
+          const y = 10 + r * 24;
+          const isFilled = r < 8;
+          const isHole = r === 8 && c === Math.floor(cols / 2);
+          const isParticle = r === 3 && c === Math.floor(cols / 2);
+          diracStates.push({ x, y, filled: isFilled, hole: isHole, particle: isParticle, pulse: Math.random() * Math.PI * 2 });
+        }
+      }
+    }
+    initDirac();
+
+    function drawDirac() {
+      dirCtx.clearRect(0, 0, diracCanvas.width, diracCanvas.height);
+      const t = Date.now() * 0.002;
+
+      // Sea level line
+      dirCtx.strokeStyle = `rgba(${accentRGB},0.2)`;
+      dirCtx.setLineDash([4, 4]);
+      dirCtx.beginPath();
+      dirCtx.moveTo(0, 8 * 24 + 10);
+      dirCtx.lineTo(diracCanvas.width, 8 * 24 + 10);
+      dirCtx.stroke();
+      dirCtx.setLineDash([]);
+      dirCtx.font = '9px JetBrains Mono';
+      dirCtx.fillStyle = `rgba(${accentRGB},0.4)`;
+      dirCtx.fillText('E = 0 (Fermi Level)', 8, 8 * 24 + 8);
+
+      diracStates.forEach(s => {
+        s.pulse += 0.02;
+        const p = 0.5 + Math.sin(s.pulse) * 0.3;
+
+        if (s.hole) {
+          // Antiparticle (hole)
+          dirCtx.beginPath();
+          dirCtx.arc(s.x, s.y, 6, 0, Math.PI * 2);
+          dirCtx.strokeStyle = antiColor;
+          dirCtx.lineWidth = 2;
+          dirCtx.stroke();
+          dirCtx.beginPath();
+          dirCtx.moveTo(s.x - 3, s.y - 3);
+          dirCtx.lineTo(s.x + 3, s.y + 3);
+          dirCtx.moveTo(s.x + 3, s.y - 3);
+          dirCtx.lineTo(s.x - 3, s.y + 3);
+          dirCtx.strokeStyle = antiColor;
+          dirCtx.lineWidth = 1.5;
+          dirCtx.stroke();
+        } else if (s.particle) {
+          // Promoted particle
+          dirCtx.beginPath();
+          dirCtx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+          dirCtx.fillStyle = particleColor;
+          dirCtx.fill();
+          dirCtx.beginPath();
+          dirCtx.arc(s.x, s.y, 10, 0, Math.PI * 2);
+          dirCtx.fillStyle = particleColor;
+          dirCtx.globalAlpha = 0.2;
+          dirCtx.fill();
+          dirCtx.globalAlpha = 1;
+        } else if (s.filled) {
+          // Filled state
+          dirCtx.beginPath();
+          dirCtx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+          dirCtx.fillStyle = `rgba(${accentRGB},${0.15 + p * 0.1})`;
+          dirCtx.fill();
+        } else {
+          // Empty state
+          dirCtx.beginPath();
+          dirCtx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+          dirCtx.fillStyle = `rgba(${accentRGB},0.05)`;
+          dirCtx.fill();
+        }
+      });
+    }
+
+    // --- Heisenberg Canvas ---
+    const heisCanvas = document.getElementById('heisen-canvas');
+    const heisCtx = heisCanvas.getContext('2d');
+    function resizeHeis() {
+      const w = heisCanvas.parentElement;
+      heisCanvas.width = w.clientWidth;
+      heisCanvas.height = 350;
+    }
+    resizeHeis();
+    window.addEventListener('resize', resizeHeis);
+
+    let heisenParticles = [];
+    function initHeisen() {
+      heisenParticles = [];
+      const cx = heisCanvas.width / 2;
+      const cy = heisCanvas.height / 2;
+      for (let i = 0; i < state.heisenCount; i++) {
+        const dx = state.heisenDX * (Math.random() - 0.5) * 2;
+        const dp = state.heisenDP * (Math.random() - 0.5) * 2;
+        heisenParticles.push({
+          x: cx + dx * 3,
+          y: cy + dp * 3,
+          vx: dp * 0.1,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: 2 + Math.random() * 3,
+          hue: 175 + Math.random() * 30,
+          pulse: Math.random() * Math.PI * 2
+        });
+      }
+    }
+    initHeisen();
+
+    document.getElementById('sl-dx')?.addEventListener('input', initHeisen);
+    document.getElementById('sl-dp')?.addEventListener('input', initHeisen);
+    document.getElementById('sl-hcount')?.addEventListener('input', initHeisen);
+
+    function drawHeisen() {
+      heisCtx.clearRect(0, 0, heisCanvas.width, heisCanvas.height);
+      const cx = heisCanvas.width / 2;
+      const cy = heisCanvas.height / 2;
+      const t = Date.now() * 0.001;
+
+      // Axes
+      heisCtx.strokeStyle = `rgba(${accentRGB},0.15)`;
+      heisCtx.lineWidth = 1;
+      heisCtx.beginPath();
+      heisCtx.moveTo(40, cy); heisCtx.lineTo(heisCanvas.width - 40, cy);
+      heisCtx.moveTo(cx, 20); heisCtx.lineTo(cx, heisCanvas.height - 20);
+      heisCtx.stroke();
+
+      // Axis labels
+      heisCtx.font = '10px JetBrains Mono';
+      heisCtx.fillStyle = `rgba(${accentRGB},0.5)`;
+      heisCtx.textAlign = 'center';
+      heisCtx.fillText('\u0394x (position)', heisCanvas.width - 80, cy + 16);
+      heisCtx.save();
+      heisCtx.translate(cx - 16, 50);
+      heisCtx.rotate(-Math.PI / 2);
+      heisCtx.fillText('\u0394p (momentum)', 0, 0);
+      heisCtx.restore();
+
+      // Uncertainty box
+      const boxW = state.heisenDX * 4;
+      const boxH = state.heisenDP * 4;
+      heisCtx.strokeStyle = `rgba(${accentRGB},0.3)`;
+      heisCtx.lineWidth = 1;
+      heisCtx.setLineDash([6, 4]);
+      heisCtx.strokeRect(cx - boxW / 2, cy - boxH / 2, boxW, boxH);
+      heisCtx.setLineDash([]);
+
+      // Product label
+      const product = (state.heisenDX * state.heisenDP).toFixed(0);
+      heisCtx.fillStyle = `rgba(${accentRGB},0.6)`;
+      heisCtx.font = '11px JetBrains Mono';
+      heisCtx.textAlign = 'right';
+      heisCtx.fillText(`\u0394x\u00b7\u0394p = ${product} \u2265 \u00b7/2`, heisCanvas.width - 16, 24);
+
+      // Particles
+      heisenParticles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        p.pulse += 0.03;
+
+        // Bounce
+        if (p.x < cx - boxW / 2 || p.x > cx + boxW / 2) p.vx *= -1;
+        if (p.y < cy - boxH / 2 || p.y > cy + boxH / 2) p.vy *= -1;
+
+        // Keep in box
+        p.x = Math.max(cx - boxW / 2, Math.min(cx + boxW / 2, p.x));
+        p.y = Math.max(cy - boxH / 2, Math.min(cy + boxH / 2, p.y));
+
+        const a = 0.6 + Math.sin(p.pulse) * 0.3;
+        heisCtx.beginPath();
+        heisCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        heisCtx.fillStyle = `hsla(${p.hue},80%,65%,${a})`;
+        heisCtx.fill();
+        heisCtx.beginPath();
+        heisCtx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        heisCtx.fillStyle = `hsla(${p.hue},80%,65%,${a * 0.12})`;
+        heisCtx.fill();
+      });
+
+      // Gaussian envelope for position
+      heisCtx.beginPath();
+      for (let px = 0; px < heisCanvas.width; px++) {
+        const x = (px - cx) / (state.heisenDX * 2);
+        const y = Math.exp(-x * x) * 40;
+        if (px === 0) heisCtx.moveTo(px, cy + 60 + y);
+        else heisCtx.lineTo(px, cy + 60 + y);
+      }
+      heisCtx.strokeStyle = particleColor;
+      heisCtx.lineWidth = 1.5;
+      heisCtx.globalAlpha = 0.4;
+      heisCtx.stroke();
+      heisCtx.globalAlpha = 1;
+    }
+
+    // --- Sparklines ---
+    function initSparklines() {
+      ['spark-pairs','spark-energy','spark-annihil','spark-temp','spark-freq','spark-zpe'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        for (let i = 0; i < 20; i++) {
+          const bar = document.createElement('div');
+          bar.className = 'spark-bar';
+          bar.style.height = (20 + Math.random() * 80) + '%';
+          el.appendChild(bar);
+        }
+      });
+    }
+    initSparklines();
+
+    function updateSparkline(id, val, max) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const bars = el.children;
+      for (let i = 0; i < bars.length - 1; i++) bars[i].style.height = bars[i + 1].style.height;
+      bars[bars.length - 1].style.height = Math.min(100, (val / max) * 100) + '%';
+    }
+
+    // --- Dashboard Update ---
+    let lastDashTime = 0;
+    function updateDashboard(time) {
+      if (time - lastDashTime < 500) return;
+      lastDashTime = time;
+
+      const pairs = state.pairs.length;
+      const energy = state.energy * (1 + pairs * 0.01);
+      const freq = state.rate * (1 + Math.random() * 0.1);
+      const temp = (state.energy * 0.5 + pairs * 0.1).toFixed(1);
+      const zpe = (energy * 0.13).toFixed(2);
+
+      document.getElementById('d-pairs').textContent = pairs;
+      document.getElementById('d-energy').textContent = energy.toFixed(0);
+      document.getElementById('d-annihilations').textContent = state.annihilations;
+      document.getElementById('d-temp').textContent = temp + ' K';
+      document.getElementById('d-freq').textContent = freq.toFixed(1);
+      document.getElementById('d-zpe').textContent = zpe;
+
+      document.getElementById('stat-pairs').textContent = pairs;
+      document.getElementById('stat-energy').textContent = energy.toFixed(0);
+      document.getElementById('stat-annihilations').textContent = state.annihilations;
+      document.getElementById('stat-lifetime').textContent = state.lifetime;
+
+      document.getElementById('co-pairs').textContent = 'Pairs: ' + pairs;
+      document.getElementById('co-energy').textContent = 'Energy: ' + energy.toFixed(0) + ' eV';
+
+      updateSparkline('spark-pairs', pairs, 50);
+      updateSparkline('spark-energy', energy, 100);
+      updateSparkline('spark-annihil', state.annihilations, 200);
+      updateSparkline('spark-temp', parseFloat(temp), 50);
+      updateSparkline('spark-freq', freq, 80);
+      updateSparkline('spark-zpe', parseFloat(zpe), 20);
+    }
+
+    // --- FPS Counter ---
+    let fpsFrames = 0, fpsLast = 0, fpsVal = 60;
+    function updateFPS(time) {
+      fpsFrames++;
+      if (time - fpsLast >= 1000) {
+        fpsVal = fpsFrames;
+        fpsFrames = 0;
+        fpsLast = time;
+        document.getElementById('canvas-fps').textContent = fpsVal + ' FPS';
+        document.getElementById('co-fps').textContent = fpsVal + ' FPS';
+      }
+    }
+
+    // --- Mouse tracking ---
+    document.addEventListener('mousemove', e => { state.mouseX = e.clientX; state.mouseY = e.clientY; });
+
+    // --- Main Loop ---
+    let lastFrame = 0;
+    function loop(time) {
+      requestAnimationFrame(loop);
+      if (time - lastFrame < 16) return;
+      lastFrame = time;
+
+      drawBg();
+      drawMain();
+      drawCasimir();
+      drawDirac();
+      drawHeisen();
+      updateDashboard(time);
+      updateFPS(time);
+    }
+    requestAnimationFrame(loop);
+
+    // --- Resize handler for Dirac ---
+    window.addEventListener('resize', () => { resizeDirac(); initDirac(); });
+  </script>
+</body>
+</html>

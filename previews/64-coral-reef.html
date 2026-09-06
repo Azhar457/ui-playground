@@ -1,0 +1,2616 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="tropical-shallow">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REEF·GENESIS — Procedural Coral Reef Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* =========================================================
+       THEME DEFINITIONS — 4 UNDERWATER PALETTES
+       ========================================================= */
+    :root, [data-theme="tropical-shallow"] {
+      --ocean-deep: #001428;
+      --ocean-mid: #003366;
+      --ocean-light: #0066aa;
+      --ocean-surface: #00aadd;
+      --sand: #c2a87d;
+      --sand-dark: #8b7355;
+      --coral-primary: #ff6b6b;
+      --coral-secondary: #ffa07a;
+      --coral-accent: #ff4081;
+      --coral-purple: #ab47bc;
+      --coral-green: #66bb6a;
+      --coral-orange: #ff7043;
+      --caustic: rgba(180, 230, 255, 0.25);
+      --caustic-bright: rgba(255, 255, 255, 0.4);
+      --bubble: rgba(200, 240, 255, 0.6);
+      --text-primary: #e8f4fd;
+      --text-secondary: #8bc4e8;
+      --text-dim: #4a7a9b;
+      --panel-bg: rgba(0, 20, 40, 0.85);
+      --panel-border: rgba(0, 170, 221, 0.3);
+      --panel-glow: rgba(0, 170, 221, 0.15);
+      --btn-primary: #00aadd;
+      --btn-hover: #00ccee;
+      --card-bg: rgba(0, 30, 60, 0.7);
+      --card-border: rgba(0, 170, 221, 0.2);
+      --kelp: #2e7d32;
+      --kelp-light: #4caf50;
+      --fish-1: #ffab40;
+      --fish-2: #40c4ff;
+      --fish-3: #ff5252;
+      --danger: #ff5252;
+      --warning: #ffab40;
+      --success: #69f0ae;
+      --font-display: 'Orbitron', monospace;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="deep-twilight"] {
+      --ocean-deep: #020818;
+      --ocean-mid: #0a1628;
+      --ocean-light: #152642;
+      --ocean-surface: #1a3a5c;
+      --sand: #3d3520;
+      --sand-dark: #2a2415;
+      --coral-primary: #7c4dff;
+      --coral-secondary: #e040fb;
+      --coral-accent: #448aff;
+      --coral-purple: #d500f9;
+      --coral-green: #00e676;
+      --coral-orange: #ff6e40;
+      --caustic: rgba(100, 140, 255, 0.12);
+      --caustic-bright: rgba(180, 200, 255, 0.2);
+      --bubble: rgba(150, 180, 255, 0.4);
+      --text-primary: #c8d8f0;
+      --text-secondary: #6888b0;
+      --text-dim: #3a5070;
+      --panel-bg: rgba(5, 12, 30, 0.9);
+      --panel-border: rgba(124, 77, 255, 0.3);
+      --panel-glow: rgba(124, 77, 255, 0.1);
+      --btn-primary: #7c4dff;
+      --btn-hover: #9c7cff;
+      --card-bg: rgba(10, 20, 50, 0.75);
+      --card-border: rgba(124, 77, 255, 0.2);
+      --kelp: #1b5e20;
+      --kelp-light: #388e3c;
+      --fish-1: #ff9100;
+      --fish-2: #448aff;
+      --fish-3: #e040fb;
+      --danger: #ff5252;
+      --warning: #ffab40;
+      --success: #69f0ae;
+    }
+
+    [data-theme="midnight-abyss"] {
+      --ocean-deep: #000008;
+      --ocean-mid: #040410;
+      --ocean-light: #080820;
+      --ocean-surface: #0c0c30;
+      --sand: #1a1510;
+      --sand-dark: #0e0b08;
+      --coral-primary: #00e5ff;
+      --coral-secondary: #1de9b6;
+      --coral-accent: #651fff;
+      --coral-purple: #d500f9;
+      --coral-green: #76ff03;
+      --coral-orange: #ff3d00;
+      --caustic: rgba(0, 229, 255, 0.06);
+      --caustic-bright: rgba(0, 229, 255, 0.12);
+      --bubble: rgba(0, 229, 255, 0.3);
+      --text-primary: #a0e8ff;
+      --text-secondary: #307090;
+      --text-dim: #1a3848;
+      --panel-bg: rgba(0, 2, 8, 0.92);
+      --panel-border: rgba(0, 229, 255, 0.25);
+      --panel-glow: rgba(0, 229, 255, 0.08);
+      --btn-primary: #00e5ff;
+      --btn-hover: #18ffff;
+      --card-bg: rgba(0, 4, 12, 0.8);
+      --card-border: rgba(0, 229, 255, 0.15);
+      --kelp: #0d3b15;
+      --kelp-light: #1b5e20;
+      --fish-1: #ff6d00;
+      --fish-2: #00e5ff;
+      --fish-3: #d500f9;
+      --danger: #ff1744;
+      --warning: #ff9100;
+      --success: #00e676;
+    }
+
+    [data-theme="bioluminescent"] {
+      --ocean-deep: #01000a;
+      --ocean-mid: #050018;
+      --ocean-light: #0a0028;
+      --ocean-surface: #100038;
+      --sand: #120e18;
+      --sand-dark: #0a0810;
+      --coral-primary: #00ff88;
+      --coral-secondary: #ff00ff;
+      --coral-accent: #ffff00;
+      --coral-purple: #bf00ff;
+      --coral-green: #00ffcc;
+      --coral-orange: #ff0066;
+      --caustic: rgba(0, 255, 136, 0.08);
+      --caustic-bright: rgba(0, 255, 136, 0.15);
+      --bubble: rgba(0, 255, 200, 0.4);
+      --text-primary: #d0ffe8;
+      --text-secondary: #50b880;
+      --text-dim: #205038;
+      --panel-bg: rgba(1, 0, 10, 0.94);
+      --panel-border: rgba(0, 255, 136, 0.3);
+      --panel-glow: rgba(0, 255, 136, 0.1);
+      --btn-primary: #00ff88;
+      --btn-hover: #00ffaa;
+      --card-bg: rgba(2, 0, 15, 0.85);
+      --card-border: rgba(0, 255, 136, 0.2);
+      --kelp: #004d26;
+      --kelp-light: #007038;
+      --fish-1: #ff00ff;
+      --fish-2: #00ffcc;
+      --fish-3: #ffff00;
+      --danger: #ff0044;
+      --warning: #ffcc00;
+      --success: #00ff88;
+    }
+
+    /* =========================================================
+       RESET & BASE
+       ========================================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--ocean-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+       LOADING SCREEN
+       ========================================================= */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--ocean-deep);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    #loading-screen .loader-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem; font-weight: 800;
+      color: var(--coral-primary);
+      text-shadow: 0 0 40px var(--coral-primary);
+      margin-bottom: 1rem; letter-spacing: 0.15em;
+    }
+    #loading-screen .loader-sub {
+      font-family: var(--font-mono);
+      font-size: 0.75rem; color: var(--text-dim);
+      margin-bottom: 2rem; letter-spacing: 0.3em;
+    }
+    .loader-bar-track {
+      width: 300px; height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px; overflow: hidden;
+    }
+    .loader-bar-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--coral-primary), var(--coral-accent));
+      border-radius: 2px; transition: width 0.3s ease;
+    }
+    .loader-bubbles {
+      margin-top: 2rem; display: flex; gap: 12px;
+    }
+    .loader-bubbles span {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--caustic-bright);
+      animation: loaderBubble 1.4s ease-in-out infinite;
+    }
+    .loader-bubbles span:nth-child(2) { animation-delay: 0.2s; }
+    .loader-bubbles span:nth-child(3) { animation-delay: 0.4s; }
+    .loader-bubbles span:nth-child(4) { animation-delay: 0.6s; }
+    @keyframes loaderBubble {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-15px); opacity: 1; }
+    }
+
+    /* =========================================================
+       BACKGROUND CANVAS LAYERS
+       ========================================================= */
+    #bg-canvas, #caustic-canvas, #reef-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+    }
+    #bg-canvas { z-index: 0; }
+    #caustic-canvas { z-index: 1; mix-blend-mode: screen; pointer-events: none; }
+    #reef-canvas { z-index: 2; }
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+    .app-wrapper {
+      position: relative; z-index: 3;
+      display: flex; min-height: 100vh;
+    }
+
+    /* =========================================================
+       SIDEBAR CONTROL PANEL
+       ========================================================= */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: 340px; height: 100vh;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--panel-border);
+      backdrop-filter: blur(20px);
+      overflow-y: auto; z-index: 100;
+      padding: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sidebar.collapsed { transform: translateX(-340px); }
+    .sidebar-toggle {
+      position: fixed; top: 16px; left: 16px;
+      width: 42px; height: 42px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      cursor: pointer; z-index: 101;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .sidebar-toggle:hover {
+      background: var(--btn-primary);
+      color: var(--ocean-deep);
+      box-shadow: 0 0 20px var(--panel-glow);
+    }
+    .sidebar.collapsed ~ .sidebar-toggle { left: 16px; }
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--panel-border);
+      position: sticky; top: 0;
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      z-index: 2;
+    }
+    .sidebar-logo {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 800;
+      letter-spacing: 0.12em;
+      background: linear-gradient(135deg, var(--coral-primary), var(--coral-accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sidebar-logo-sub {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--text-dim);
+      letter-spacing: 0.25em; margin-top: 2px;
+    }
+    .sidebar-content { padding: 16px 20px 100px; }
+
+    /* Theme Picker */
+    .theme-row {
+      display: flex; gap: 6px; margin-bottom: 18px;
+    }
+    .theme-btn {
+      flex: 1; height: 32px;
+      border: 2px solid transparent;
+      border-radius: 8px; cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative; overflow: hidden;
+    }
+    .theme-btn::after {
+      content: attr(data-label);
+      position: absolute; bottom: 2px; left: 0; right: 0;
+      font-family: var(--font-mono);
+      font-size: 0.45rem; text-align: center;
+      color: rgba(255,255,255,0.8);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      letter-spacing: 0.05em;
+    }
+    .theme-btn.active {
+      border-color: var(--text-primary);
+      box-shadow: 0 0 12px var(--panel-glow);
+      transform: scale(1.05);
+    }
+    .theme-btn:hover { transform: scale(1.08); }
+    .theme-btn[data-theme="tropical-shallow"] {
+      background: linear-gradient(135deg, #0066aa, #00aadd);
+    }
+    .theme-btn[data-theme="deep-twilight"] {
+      background: linear-gradient(135deg, #1a3a5c, #7c4dff);
+    }
+    .theme-btn[data-theme="midnight-abyss"] {
+      background: linear-gradient(135deg, #080820, #00e5ff);
+    }
+    .theme-btn[data-theme="bioluminescent"] {
+      background: linear-gradient(135deg, #0a0028, #00ff88);
+    }
+
+    /* Section Styles */
+    .ctrl-section {
+      margin-bottom: 18px;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card-bg);
+    }
+    .ctrl-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px;
+      cursor: pointer; user-select: none;
+      transition: background 0.2s;
+    }
+    .ctrl-section-header:hover {
+      background: var(--panel-glow);
+    }
+    .ctrl-section-header .icon {
+      font-size: 0.85rem; margin-right: 8px;
+      color: var(--coral-primary);
+    }
+    .ctrl-section-header .label {
+      font-family: var(--font-display);
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      flex: 1;
+    }
+    .ctrl-section-header .chevron {
+      font-size: 0.6rem; color: var(--text-dim);
+      transition: transform 0.3s ease;
+    }
+    .ctrl-section.collapsed .chevron { transform: rotate(-90deg); }
+    .ctrl-section-body {
+      padding: 4px 14px 14px;
+      max-height: 800px;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease;
+      opacity: 1;
+    }
+    .ctrl-section.collapsed .ctrl-section-body {
+      max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0;
+    }
+
+    /* Form Controls */
+    .ctrl-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .ctrl-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem; color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+    .ctrl-value {
+      font-family: var(--font-mono);
+      font-size: 0.65rem; color: var(--coral-primary);
+      min-width: 36px; text-align: right;
+    }
+
+    /* Toggle */
+    .toggle-wrap {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .toggle {
+      width: 38px; height: 20px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      position: relative; cursor: pointer;
+      transition: background 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .toggle.active {
+      background: var(--btn-primary);
+      border-color: var(--btn-primary);
+    }
+    .toggle::after {
+      content: '';
+      width: 14px; height: 14px;
+      background: white; border-radius: 50%;
+      position: absolute; top: 2px; left: 2px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle.active::after { transform: translateX(18px); }
+    .toggle-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem; color: var(--text-secondary);
+    }
+    .toggle-label .species-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Slider */
+    .slider-track {
+      width: 100%; height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      position: relative; cursor: pointer;
+      margin-top: 4px;
+    }
+    .slider-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--coral-primary), var(--coral-accent));
+      transition: width 0.15s ease;
+    }
+    .slider-thumb {
+      width: 16px; height: 16px;
+      background: white; border-radius: 50%;
+      position: absolute; top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      transition: box-shadow 0.2s;
+    }
+    .slider-thumb:hover {
+      box-shadow: 0 0 16px var(--coral-primary);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 8px 14px;
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.08em;
+      cursor: pointer; transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      background: var(--btn-primary);
+      color: var(--ocean-deep);
+      border-color: var(--btn-primary);
+      box-shadow: 0 0 16px var(--panel-glow);
+    }
+    .btn-primary {
+      background: var(--btn-primary);
+      color: var(--ocean-deep);
+      border-color: var(--btn-primary);
+    }
+    .btn-primary:hover {
+      background: var(--btn-hover);
+      box-shadow: 0 0 24px var(--panel-glow);
+    }
+    .btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+    /* =========================================================
+       MAIN CONTENT
+       ========================================================= */
+    .main-content {
+      flex: 1; margin-left: 340px;
+      min-height: 100vh; position: relative;
+      transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sidebar.collapsed ~ .main-content { margin-left: 0; }
+
+    /* Hero Section */
+    .hero {
+      position: relative; height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--text-secondary);
+      letter-spacing: 0.15em;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+    .hero-badge .live-dot {
+      width: 6px; height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: livePulse 2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--success); }
+      50% { opacity: 0.4; box-shadow: 0 0 12px var(--success); }
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    .hero-title .line1 {
+      display: block;
+      background: linear-gradient(135deg, var(--coral-primary), var(--coral-secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 40px var(--coral-primary));
+    }
+    .hero-title .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--coral-accent), var(--coral-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px var(--coral-accent));
+    }
+    .hero-desc {
+      font-family: var(--font-body);
+      font-size: 1rem; font-weight: 300;
+      color: var(--text-secondary);
+      max-width: 600px; line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .hero-stats {
+      display: flex; gap: 32px; margin-bottom: 40px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .hero-stat {
+      text-align: center;
+    }
+    .hero-stat .val {
+      font-family: var(--font-display);
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--coral-primary);
+      display: block;
+    }
+    .hero-stat .lbl {
+      font-family: var(--font-mono);
+      font-size: 0.55rem; color: var(--text-dim);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .hero-cta {
+      display: flex; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .hero-cta .btn { padding: 12px 28px; font-size: 0.75rem; }
+
+    /* Section Wrapper */
+    .section {
+      padding: 80px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center; margin-bottom: 48px;
+    }
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--coral-primary);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 700; letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      font-size: 0.9rem; color: var(--text-secondary);
+      max-width: 600px; margin: 0 auto; line-height: 1.6;
+    }
+
+    /* =========================================================
+       SPECIES CARDS
+       ========================================================= */
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .species-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .species-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, transparent 60%, var(--card-border));
+      pointer-events: none;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .species-card:hover::before { opacity: 1; }
+    .species-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--coral-primary);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3), 0 0 30px var(--panel-glow);
+    }
+    .species-visual {
+      height: 180px;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .species-visual canvas {
+      width: 100%; height: 100%;
+    }
+    .species-visual .overlay-gradient {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(to top, var(--card-bg), transparent);
+    }
+    .species-info { padding: 16px 18px 18px; }
+    .species-name {
+      font-family: var(--font-display);
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.1em; margin-bottom: 4px;
+    }
+    .species-latin {
+      font-family: var(--font-body);
+      font-size: 0.7rem; font-style: italic;
+      color: var(--text-dim); margin-bottom: 10px;
+    }
+    .species-meta {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .meta-chip {
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.55rem; color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    /* =========================================================
+       GROWTH SIMULATION CANVAS
+       ========================================================= */
+    .sim-container {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      height: 500px;
+    }
+    .sim-canvas {
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .sim-overlay-top {
+      position: absolute; top: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+      z-index: 2;
+    }
+    .sim-overlay-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+      z-index: 2;
+    }
+    .sim-stat {
+      text-align: center;
+    }
+    .sim-stat .val {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--coral-primary);
+    }
+    .sim-stat .lbl {
+      font-family: var(--font-mono);
+      font-size: 0.5rem; color: var(--text-dim);
+      letter-spacing: 0.15em;
+    }
+
+    /* =========================================================
+       DASHBOARD GRID
+       ========================================================= */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .dash-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative; overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .dash-card:hover {
+      border-color: var(--coral-primary);
+      box-shadow: 0 4px 20px var(--panel-glow);
+    }
+    .dash-card .dash-icon {
+      font-size: 1.2rem;
+      color: var(--coral-primary);
+      margin-bottom: 10px;
+    }
+    .dash-card .dash-val {
+      font-family: var(--font-display);
+      font-size: 1.6rem; font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .dash-card .dash-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--text-dim);
+      letter-spacing: 0.15em;
+    }
+    .dash-card .dash-spark {
+      position: absolute; bottom: 0; right: 0;
+      width: 100px; height: 40px; opacity: 0.3;
+    }
+
+    /* =========================================================
+       DEPTH ZONES
+       ========================================================= */
+    .depth-zones {
+      display: flex; flex-direction: column; gap: 0;
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+    .depth-zone {
+      display: flex; align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--card-border);
+      transition: background 0.3s;
+    }
+    .depth-zone:last-child { border-bottom: none; }
+    .depth-zone:hover { background: var(--panel-glow); }
+    .depth-indicator {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.7rem; font-weight: 700;
+      margin-right: 16px; flex-shrink: 0;
+    }
+    .depth-zone-info { flex: 1; }
+    .depth-zone-name {
+      font-family: var(--font-display);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; margin-bottom: 4px;
+    }
+    .depth-zone-range {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--text-dim);
+    }
+    .depth-zone-bar {
+      width: 120px; height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px; overflow: hidden;
+      margin-left: 16px;
+    }
+    .depth-zone-bar-fill {
+      height: 100%; border-radius: 3px;
+      transition: width 1s ease;
+    }
+
+    /* =========================================================
+       FORMULA DISPLAY
+       ========================================================= */
+    .formula-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .formula-title {
+      font-family: var(--font-display);
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--coral-primary);
+      margin-bottom: 8px;
+    }
+    .formula-text {
+      font-family: var(--font-mono);
+      font-size: 0.8rem; color: var(--text-primary);
+      line-height: 1.8;
+      background: rgba(0,0,0,0.3);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid var(--coral-primary);
+      overflow-x: auto;
+    }
+
+    /* =========================================================
+       GROWTH TIMELINE
+       ========================================================= */
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 10px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--coral-primary), var(--coral-accent), transparent);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+      padding: 14px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .timeline-item:hover {
+      border-color: var(--coral-primary);
+      transform: translateX(4px);
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 18px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--coral-primary);
+      border: 2px solid var(--ocean-deep);
+    }
+    .timeline-time {
+      font-family: var(--font-mono);
+      font-size: 0.55rem; color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .timeline-event {
+      font-family: var(--font-body);
+      font-size: 0.85rem; font-weight: 500;
+    }
+    .timeline-detail {
+      font-size: 0.75rem; color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* =========================================================
+       BOTTOM ACTION BAR
+       ========================================================= */
+    .action-bar {
+      position: fixed; bottom: 0; left: 340px; right: 0;
+      height: 60px;
+      background: var(--panel-bg);
+      border-top: 1px solid var(--panel-border);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center;
+      padding: 0 24px;
+      gap: 16px; z-index: 90;
+      transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sidebar.collapsed ~ .main-content .action-bar { left: 0; }
+    .action-bar .fps-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+    .action-bar .fps-badge .fps-val {
+      color: var(--success); font-weight: 600;
+    }
+    .action-bar .sep {
+      width: 1px; height: 24px;
+      background: var(--panel-border);
+    }
+    .action-bar .status-text {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; color: var(--text-secondary);
+      flex: 1;
+    }
+    .action-bar .status-text .highlight {
+      color: var(--coral-primary);
+    }
+
+    /* =========================================================
+       SCROLLBAR
+       ========================================================= */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--panel-border);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--coral-primary);
+    }
+
+    /* =========================================================
+       ANIMATIONS
+       ========================================================= */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes glow-pulse {
+      0%, 100% { filter: drop-shadow(0 0 8px var(--coral-primary)); }
+      50% { filter: drop-shadow(0 0 20px var(--coral-accent)); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar { width: 280px; }
+      .main-content { margin-left: 0 !important; }
+      .action-bar { left: 0 !important; }
+      .section { padding: 40px 16px; }
+      .hero-stats { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader-title">REEF·GENESIS</div>
+    <div class="loader-sub">PROCEDURAL CORAL REEF SYSTEM v1.0</div>
+    <div class="loader-bar-track">
+      <div class="loader-bar-fill" id="loader-fill"></div>
+    </div>
+    <div class="loader-bubbles">
+      <span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+  <canvas id="caustic-canvas"></canvas>
+  <canvas id="reef-canvas"></canvas>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">REEF·GENESIS</div>
+      <div class="sidebar-logo-sub">PROCEDURAL GENERATOR v1.0</div>
+    </div>
+    <div class="sidebar-content">
+      <!-- Theme Picker -->
+      <div class="theme-row">
+        <div class="theme-btn active" data-theme="tropical-shallow" data-label="SHALLOW" onclick="setTheme('tropical-shallow')"></div>
+        <div class="theme-btn" data-theme="deep-twilight" data-label="TWILIGHT" onclick="setTheme('deep-twilight')"></div>
+        <div class="theme-btn" data-theme="midnight-abyss" data-label="ABYSS" onclick="setTheme('midnight-abyss')"></div>
+        <div class="theme-btn" data-theme="bioluminescent" data-label="BIO·LUM" onclick="setTheme('bioluminescent')"></div>
+      </div>
+
+      <!-- Coral Species Toggle -->
+      <div class="ctrl-section">
+        <div class="ctrl-section-header" onclick="toggleSection(this)">
+          <span><span class="icon">🪸</span><span class="label">Coral Species</span></span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="ctrl-section-body">
+          <div class="toggle-wrap">
+            <div class="toggle active" data-species="staghorn" onclick="toggleSpecies(this)"></div>
+            <span class="toggle-label"><span class="species-dot" style="background:#ff6b6b"></span>Staghorn</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" data-species="brain" onclick="toggleSpecies(this)"></div>
+            <span class="toggle-label"><span class="species-dot" style="background:#ffa07a"></span>Brain Coral</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" data-species="fan" onclick="toggleSpecies(this)"></div>
+            <span class="toggle-label"><span class="species-dot" style="background:#ab47bc"></span>Sea Fan</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" data-species="tube" onclick="toggleSpecies(this)"></div>
+            <span class="toggle-label"><span class="species-dot" style="background:#ff7043"></span>Tube Coral</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" data-species="mushroom" onclick="toggleSpecies(this)"></div>
+            <span class="toggle-label"><span class="species-dot" style="background:#66bb6a"></span>Mushroom</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" data-species="fire" onclick="toggleSpecies(this)"></div>
+            <span class="toggle-label"><span class="species-dot" style="background:#ff4081"></span>Fire Coral</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Growth Parameters -->
+      <div class="ctrl-section">
+        <div class="ctrl-section-header" onclick="toggleSection(this)">
+          <span><span class="icon">🌱</span><span class="label">Growth Algorithm</span></span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="ctrl-section-body">
+          <div class="ctrl-row">
+            <span class="ctrl-label">Growth Rate</span>
+            <span class="ctrl-value" id="val-growth-rate">1.0x</span>
+          </div>
+          <div class="slider-track" data-param="growth-rate" data-min="0.1" data-max="3" data-step="0.1" data-val="1">
+            <div class="slider-fill" style="width:33%"></div>
+            <div class="slider-thumb" style="left:33%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Branch Angle</span>
+            <span class="ctrl-value" id="val-branch-angle">25°</span>
+          </div>
+          <div class="slider-track" data-param="branch-angle" data-min="10" data-max="60" data-step="1" data-val="25">
+            <div class="slider-fill" style="width:33%"></div>
+            <div class="slider-thumb" style="left:33%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Branch Length</span>
+            <span class="ctrl-value" id="val-branch-length">40</span>
+          </div>
+          <div class="slider-track" data-param="branch-length" data-min="10" data-max="80" data-step="2" data-val="40">
+            <div class="slider-fill" style="width:43%"></div>
+            <div class="slider-thumb" style="left:43%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Max Depth (L-system)</span>
+            <span class="ctrl-value" id="val-max-depth">6</span>
+          </div>
+          <div class="slider-track" data-param="max-depth" data-min="1" data-max="10" data-step="1" data-val="6">
+            <div class="slider-fill" style="width:56%"></div>
+            <div class="slider-thumb" style="left:56%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Randomness</span>
+            <span class="ctrl-value" id="val-randomness">0.3</span>
+          </div>
+          <div class="slider-track" data-param="randomness" data-min="0" data-max="1" data-step="0.05" data-val="0.3">
+            <div class="slider-fill" style="width:30%"></div>
+            <div class="slider-thumb" style="left:30%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Environment -->
+      <div class="ctrl-section">
+        <div class="ctrl-section-header" onclick="toggleSection(this)">
+          <span><span class="icon">🌊</span><span class="label">Environment</span></span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="ctrl-section-body">
+          <div class="ctrl-row">
+            <span class="ctrl-label">Water Clarity</span>
+            <span class="ctrl-value" id="val-clarity">0.8</span>
+          </div>
+          <div class="slider-track" data-param="clarity" data-min="0.1" data-max="1" data-step="0.05" data-val="0.8">
+            <div class="slider-fill" style="width:78%"></div>
+            <div class="slider-thumb" style="left:78%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Current Strength</span>
+            <span class="ctrl-value" id="val-current">0.5</span>
+          </div>
+          <div class="slider-track" data-param="current" data-min="0" data-max="2" data-step="0.1" data-val="0.5">
+            <div class="slider-fill" style="width:25%"></div>
+            <div class="slider-thumb" style="left:25%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Caustic Intensity</span>
+            <span class="ctrl-value" id="val-caustic-intensity">0.7</span>
+          </div>
+          <div class="slider-track" data-param="caustic-intensity" data-min="0" data-max="1" data-step="0.05" data-val="0.7">
+            <div class="slider-fill" style="width:70%"></div>
+            <div class="slider-thumb" style="left:70%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Bubble Density</span>
+            <span class="ctrl-value" id="val-bubble-density">0.6</span>
+          </div>
+          <div class="slider-track" data-param="bubble-density" data-min="0" data-max="1" data-step="0.05" data-val="0.6">
+            <div class="slider-fill" style="width:60%"></div>
+            <div class="slider-thumb" style="left:60%"></div>
+          </div>
+          <div class="ctrl-row" style="margin-top:14px">
+            <span class="ctrl-label">Light Depth (m)</span>
+            <span class="ctrl-value" id="val-light-depth">15</span>
+          </div>
+          <div class="slider-track" data-param="light-depth" data-min="0" data-max="100" data-step="5" data-val="15">
+            <div class="slider-fill" style="width:15%"></div>
+            <div class="slider-thumb" style="left:15%"></div>
+          </div>
+          <div class="toggle-wrap" style="margin-top:12px">
+            <div class="toggle active" id="toggle-fish" onclick="toggleFish(this)"></div>
+            <span class="toggle-label">Ambient Fish</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" id="toggle-kelp" onclick="toggleKelp(this)"></div>
+            <span class="toggle-label">Kelp / Seaweed</span>
+          </div>
+          <div class="toggle-wrap">
+            <div class="toggle active" id="toggle-particles" onclick="toggleParticles(this)"></div>
+            <span class="toggle-label">Sediment Particles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="ctrl-section">
+        <div class="ctrl-section-header" onclick="toggleSection(this)">
+          <span><span class="icon">⚙️</span><span class="label">Presets</span></span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="ctrl-section-body">
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="applyPreset('tropical')">🌺 Tropical Reef</button>
+            <button class="btn" onclick="applyPreset('deep')">🌑 Deep Coral</button>
+          </div>
+          <div class="btn-row" style="margin-top:6px">
+            <button class="btn" onclick="applyPreset('mushroom')">🍄 Mushroom Beds</button>
+            <button class="btn" onclick="applyPreset('fire')">🔥 Fire Garden</button>
+          </div>
+          <div class="btn-row" style="margin-top:10px">
+            <button class="btn" onclick="randomizeReef()" style="flex:1"><i class="fas fa-dice"></i> Randomize Reef</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn" onclick="resetReef()" style="flex:1"><i class="fas fa-undo"></i> Reset to Default</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn" onclick="exportPNG()" style="flex:1"><i class="fas fa-camera"></i> Export PNG</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- L-System Formula -->
+      <div class="ctrl-section">
+        <div class="ctrl-section-header" onclick="toggleSection(this)">
+          <span><span class="icon">📐</span><span class="label">Growth Formulas</span></span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="ctrl-section-body">
+          <div class="formula-card">
+            <div class="formula-title">Staghorn L-System</div>
+            <div class="formula-text">
+              Axiom: F<br>
+              Rule: F → F[+F]F[-F]F<br>
+              F = forward, + = turn left<br>
+              - = turn right, [] = push/pop
+            </div>
+          </div>
+          <div class="formula-card">
+            <div class="formula-title">Branching Rule</div>
+            <div class="formula-text">
+              θ = branch_angle + rand(-δ, δ)<br>
+              L(n+1) = L(n) × decay<br>
+              Width(n+1) = Width(n) × 0.7
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="live-dot"></span>
+        <span>PROCEDURAL GENERATION ACTIVE</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="line1">CORAL</span>
+        <span class="line2">REEF·GENESIS</span>
+      </h1>
+      <p class="hero-desc">
+        Living procedural coral reef ecosystem with real-time L-system growth algorithms, 
+        caustic light refraction, particle bubble physics, and organic colony simulation.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="val" id="hero-species-count">6</span>
+          <span class="lbl">Species</span>
+        </div>
+        <div class="hero-stat">
+          <span class="val" id="hero-colony-count">0</span>
+          <span class="lbl">Colonies</span>
+        </div>
+        <div class="hero-stat">
+          <span class="val" id="hero-growth-gen">0</span>
+          <span class="lbl">Generations</span>
+        </div>
+        <div class="hero-stat">
+          <span class="val" id="hero-biodiversity">84</span>
+          <span class="lbl">Diversity Index</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="startGrowth()"><i class="fas fa-play"></i> Start Growth</button>
+        <button class="btn" onclick="exportPNG()"><i class="fas fa-camera"></i> Export PNG</button>
+      </div>
+    </section>
+
+    <!-- Reef Dashboard Section -->
+    <section class="section" id="section-dashboard">
+      <div class="section-header">
+        <div class="section-tag">// REEF TELEMETRY</div>
+        <h2 class="section-title">Ecosystem Dashboard</h2>
+        <p class="section-desc">Real-time monitoring of reef health, growth metrics, and environmental parameters.</p>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dash-card">
+          <div class="dash-icon">🌡️</div>
+          <div class="dash-val" id="dash-temp">26.4°C</div>
+          <div class="dash-label">WATER TEMPERATURE</div>
+          <canvas class="dash-spark" id="spark-temp"></canvas>
+        </div>
+        <div class="dash-card">
+          <div class="dash-icon">🪸</div>
+          <div class="dash-val" id="dash-growth">12.3 mm/y</div>
+          <div class="dash-label">GROWTH RATE</div>
+          <canvas class="dash-spark" id="spark-growth"></canvas>
+        </div>
+        <div class="dash-card">
+          <div class="dash-icon">💧</div>
+          <div class="dash-val" id="dash-ph">8.14</div>
+          <div class="dash-label">WATER pH</div>
+          <canvas class="dash-spark" id="spark-ph"></canvas>
+        </div>
+        <div class="dash-card">
+          <div class="dash-icon">🐠</div>
+          <div class="dash-val" id="dash-fish">38</div>
+          <div class="dash-label">FISH POPULATION</div>
+          <canvas class="dash-spark" id="spark-fish"></canvas>
+        </div>
+        <div class="dash-card">
+          <div class="dash-icon">🐠</div>
+          <div class="dash-val" id="dash-o2">7.2 mg/L</div>
+          <div class="dash-label">DISSOLVED O₂</div>
+          <canvas class="dash-spark" id="spark-o2"></canvas>
+        </div>
+        <div class="dash-card">
+          <div class="dash-icon">🧬</div>
+          <div class="dash-val" id="dash-biodiv">84%</div>
+          <div class="dash-label">BIODIVERSITY INDEX</div>
+          <canvas class="dash-spark" id="spark-biodiv"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Species Catalog -->
+    <section class="section" id="section-species">
+      <div class="section-header">
+        <div class="section-tag">// SPECIES CATALOG</div>
+        <h2 class="section-title">Coral Morphologies</h2>
+        <p class="section-desc">Six distinct coral species generated via L-system algorithms with unique branching rules and growth patterns.</p>
+      </div>
+      <div class="species-grid" id="species-grid">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Growth Simulation -->
+    <section class="section" id="section-sim">
+      <div class="section-header">
+        <div class="section-tag">// LIVE SIMULATION</div>
+        <h2 class="section-title">Growth Simulation</h2>
+        <p class="section-desc">Click anywhere on the canvas to seed new coral colonies. Watch them grow in real-time using procedural L-system branching.</p>
+      </div>
+      <div class="sim-container">
+        <canvas class="sim-canvas" id="sim-canvas"></canvas>
+        <div class="sim-overlay-top">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="sim-stat"><span class="val" id="sim-colonies">0</span><span class="lbl">COLONIES</span></span>
+            <span class="sim-stat"><span class="val" id="sim-branches">0</span><span class="lbl">BRANCHES</span></span>
+          </div>
+          <button class="btn" onclick="clearSim()"><i class="fas fa-trash"></i> Clear</button>
+        </div>
+        <div class="sim-overlay-bottom">
+          <span class="sim-stat"><span class="val" id="sim-age">0</span><span class="lbl">GEN</span></span>
+          <span class="sim-stat"><span class="val" id="sim-coral-cover">0%</span><span class="lbl">COVER</span></span>
+          <span class="sim-stat"><span class="val" id="sim-health">100%</span><span class="lbl">HEALTH</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Depth Zones -->
+    <section class="section" id="section-depth">
+      <div class="section-header">
+        <div class="section-tag">// BATHYMETRY</div>
+        <h2 class="section-title">Depth Zones</h2>
+        <p class="section-desc">Reef ecosystem stratification by ocean depth — each zone supports distinct coral communities.</p>
+      </div>
+      <div class="depth-zones">
+        <div class="depth-zone">
+          <div class="depth-indicator" style="background:linear-gradient(135deg,#00aadd,#00ddff);color:#003">0–30m</div>
+          <div class="depth-zone-info">
+            <div class="depth-zone-name">Epipelagic Reef</div>
+            <div class="depth-zone-range">Sunlight zone — maximum coral diversity, staghorn & branching species dominate</div>
+          </div>
+          <div class="depth-zone-bar">
+            <div class="depth-zone-bar-fill" style="width:95%;background:linear-gradient(90deg,#00aadd,#00ffcc)"></div>
+          </div>
+        </div>
+        <div class="depth-zone">
+          <div class="depth-indicator" style="background:linear-gradient(135deg,#1a5276,#2980b9);color:#fff">30–100m</div>
+          <div class="depth-zone-info">
+            <div class="depth-zone-name">Mesophotic Zone</div>
+            <div class="depth-zone-range">Twilight zone — plate corals, sea fans, lower light adaptation</div>
+          </div>
+          <div class="depth-zone-bar">
+            <div class="depth-zone-bar-fill" style="width:65%;background:linear-gradient(90deg,#2980b9,#7c4dff)"></div>
+          </div>
+        </div>
+        <div class="depth-zone">
+          <div class="depth-indicator" style="background:linear-gradient(135deg,#0a1628,#1a3a5c);color:#8bc4e8">100–200m</div>
+          <div class="depth-zone-info">
+            <div class="depth-zone-name">Deep Reef</div>
+            <div class="depth-zone-range">Low-light zone — brain coral, encrusting forms, sponge communities</div>
+          </div>
+          <div class="depth-zone-bar">
+            <div class="depth-zone-bar-fill" style="width:35%;background:linear-gradient(90deg,#1a3a5c,#00e5ff)"></div>
+          </div>
+        </div>
+        <div class="depth-zone">
+          <div class="depth-indicator" style="background:linear-gradient(135deg,#020818,#041020);color:#307090">200–1000m</div>
+          <div class="depth-zone-info">
+            <div class="depth-zone-name">Aphotic Abyss</div>
+            <div class="depth-zone-range">No sunlight — bioluminescence only, tube worms, deep coral thickets</div>
+          </div>
+          <div class="depth-zone-bar">
+            <div class="depth-zone-bar-fill" style="width:12%;background:linear-gradient(90deg,#041020,#00ff88)"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Growth Timeline -->
+    <section class="section" id="section-timeline">
+      <div class="section-header">
+        <div class="section-tag">// CHRONOLOGY</div>
+        <h2 class="section-title">Growth Timeline</h2>
+        <p class="section-desc">Reef development stages from initial settlement to mature ecosystem.</p>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">DAY 0 — LARVAL SETTLEMENT</div>
+          <div class="timeline-event">Planula larvae attach to substrate</div>
+          <div class="timeline-detail">Initial polyp colonizes hard surface, begins calcification. CaCO₃ skeleton starts forming at ~1mm/year.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">MONTH 6 — COLONY ESTABLISHMENT</div>
+          <div class="timeline-event">First L-system branching visible</div>
+          <div class="timeline-detail">Branching pattern emerges following axiom F → F[+F]F[-F]F. Zooxanthellae symbiosis activates photosynthetic energy pathway.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">YEAR 1 — JUVENILE REEF</div>
+          <div class="timeline-event">Multi-species community forming</div>
+          <div class="timeline-detail">Staghorn colonies reach 15-20cm height. Brain coral establishes mounding morphology. Fish recruitment begins.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">YEAR 5 — YOUNG REEF</div>
+          <div class="timeline-event">Structural complexity increasing</div>
+          <div class="timeline-detail">Three-dimensional habitat provides shelter for 50+ species. Sea fans orient perpendicular to prevailing current. Biodiversity index reaches 60+.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">YEAR 25 — MATURE REEF</div>
+          <div class="timeline-event">Climax community established</div>
+          <div class="timeline-detail">Maximum structural complexity. Coral cover reaches 40-60%. Full trophic cascade from apex predators to herbivores. Growth rate stabilizes at 10-15mm/year.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">YEAR 100+ — ANCIENT REEF</div>
+          <div class="timeline-event">Massive coral formations</div>
+          <div class="timeline-detail">Brain coral colonies exceed 2m diameter. Multi-generational reef framework. Living museum of evolutionary adaptation.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spacer for bottom bar -->
+    <div style="height:120px"></div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <span class="fps-badge">FPS: <span class="fps-val" id="fps-display">60</span></span>
+    <span class="sep"></span>
+    <span class="status-text" id="status-text">
+      System <span class="highlight">idle</span> — click canvas to seed coral or press play
+    </span>
+    <button class="btn" onclick="startGrowth()" id="play-btn"><i class="fas fa-play"></i> Grow</button>
+    <button class="btn" onclick="pauseGrowth()" id="pause-btn" style="display:none"><i class="fas fa-pause"></i> Pause</button>
+  </div>
+
+  <script>
+    /* =========================================================
+       STATE & CONFIGURATION
+       ========================================================= */
+    const state = {
+      // Active species
+      species: { staghorn: true, brain: true, fan: true, tube: true, mushroom: true, fire: true },
+      // Growth parameters
+      growthRate: 1.0,
+      branchAngle: 25,
+      branchLength: 40,
+      maxDepth: 6,
+      randomness: 0.3,
+      // Environment
+      clarity: 0.8,
+      current: 0.5,
+      causticIntensity: 0.7,
+      bubbleDensity: 0.6,
+      lightDepth: 15,
+      // Toggles
+      showFish: true,
+      showKelp: true,
+      showParticles: true,
+      // Simulation state
+      growing: false,
+      colonies: [],
+      generation: 0,
+      simTime: 0,
+      // Fish
+      fish: [],
+      // Kelp
+      kelp: [],
+      // Bubbles
+      bubbles: [],
+      // Particles
+      sediment: [],
+      // Caustic time
+      causticTime: 0,
+      // FPS
+      lastFrameTime: 0,
+      frameCount: 0,
+      fps: 60,
+    };
+
+    /* =========================================================
+       THEME SYSTEM
+       ========================================================= */
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
+    }
+
+    /* =========================================================
+       SIDEBAR CONTROLS
+       ========================================================= */
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    function toggleSection(header) {
+      header.parentElement.classList.toggle('collapsed');
+    }
+
+    function toggleSpecies(el) {
+      el.classList.toggle('active');
+      const sp = el.dataset.species;
+      state.species[sp] = el.classList.contains('active');
+      updateSpeciesCount();
+    }
+
+    function toggleFish(el) {
+      el.classList.toggle('active');
+      state.showFish = el.classList.contains('active');
+    }
+    function toggleKelp(el) {
+      el.classList.toggle('active');
+      state.showKelp = el.classList.contains('active');
+    }
+    function toggleParticles(el) {
+      el.classList.toggle('active');
+      state.showParticles = el.classList.contains('active');
+    }
+
+    function updateSpeciesCount() {
+      const count = Object.values(state.species).filter(Boolean).length;
+      document.getElementById('hero-species-count').textContent = count;
+    }
+
+    /* =========================================================
+       SLIDER SYSTEM
+       ========================================================= */
+    document.querySelectorAll('.slider-track').forEach(track => {
+      const fill = track.querySelector('.slider-fill');
+      const thumb = track.querySelector('.slider-thumb');
+
+      function updateSlider(e) {
+        const rect = track.getBoundingClientRect();
+        let pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const min = parseFloat(track.dataset.min);
+        const max = parseFloat(track.dataset.max);
+        const step = parseFloat(track.dataset.step);
+        let val = min + pct * (max - min);
+        val = Math.round(val / step) * step;
+        pct = (val - min) / (max - min);
+
+        fill.style.width = (pct * 100) + '%';
+        thumb.style.left = (pct * 100) + '%';
+        track.dataset.val = val;
+
+        const param = track.dataset.param;
+        const valEl = document.getElementById('val-' + param);
+        if (valEl) {
+          if (param === 'branch-angle') valEl.textContent = val + '°';
+          else valEl.textContent = val;
+        }
+        state[param] = val;
+      }
+
+      let dragging = false;
+      track.addEventListener('mousedown', (e) => { dragging = true; updateSlider(e); });
+      document.addEventListener('mousemove', (e) => { if (dragging) updateSlider(e); });
+      document.addEventListener('mouseup', () => { dragging = false; });
+    });
+
+    /* =========================================================
+       PRESETS
+       ========================================================= */
+    function applyPreset(name) {
+      const presets = {
+        tropical: {
+          growthRate: 1.2, branchAngle: 28, branchLength: 45, maxDepth: 7,
+          randomness: 0.25, clarity: 0.9, current: 0.6, causticIntensity: 0.8,
+          bubbleDensity: 0.7, lightDepth: 15,
+          species: { staghorn: true, brain: true, fan: true, tube: true, mushroom: true, fire: true }
+        },
+        deep: {
+          growthRate: 0.5, branchAngle: 18, branchLength: 30, maxDepth: 5,
+          randomness: 0.4, clarity: 0.4, current: 0.3, causticIntensity: 0.2,
+          bubbleDensity: 0.3, lightDepth: 60,
+          species: { staghorn: false, brain: true, fan: true, tube: true, mushroom: true, fire: false }
+        },
+        mushroom: {
+          growthRate: 0.8, branchAngle: 45, branchLength: 25, maxDepth: 4,
+          randomness: 0.15, clarity: 0.85, current: 0.4, causticIntensity: 0.7,
+          bubbleDensity: 0.5, lightDepth: 20,
+          species: { staghorn: false, brain: false, fan: false, tube: false, mushroom: true, fire: true }
+        },
+        fire: {
+          growthRate: 1.5, branchAngle: 35, branchLength: 50, maxDepth: 8,
+          randomness: 0.5, clarity: 0.7, current: 1.0, causticIntensity: 0.6,
+          bubbleDensity: 0.8, lightDepth: 10,
+          species: { staghorn: true, brain: false, fan: false, tube: false, mushroom: false, fire: true }
+        }
+      };
+      const p = presets[name];
+      if (!p) return;
+      Object.keys(p).forEach(k => {
+        if (k === 'species') {
+          Object.keys(p.species).forEach(sp => {
+            state.species[sp] = p.species[sp];
+            const toggle = document.querySelector(`.toggle[data-species="${sp}"]`);
+            if (toggle) toggle.classList.toggle('active', p.species[sp]);
+          });
+        } else {
+          state[k] = p[k];
+        }
+      });
+      syncSlidersToState();
+      updateSpeciesCount();
+      resetReef();
+    }
+
+    function syncSlidersToState() {
+      document.querySelectorAll('.slider-track').forEach(track => {
+        const param = track.dataset.param;
+        const val = state[param];
+        if (val === undefined) return;
+        const min = parseFloat(track.dataset.min);
+        const max = parseFloat(track.dataset.max);
+        const pct = (val - min) / (max - min);
+        track.querySelector('.slider-fill').style.width = (pct * 100) + '%';
+        track.querySelector('.slider-thumb').style.left = (pct * 100) + '%';
+        const valEl = document.getElementById('val-' + param);
+        if (valEl) valEl.textContent = param === 'branch-angle' ? val + '°' : val;
+      });
+    }
+
+    function randomizeReef() {
+      const pick = (a) => a[Math.floor(Math.random() * a.length)];
+      ['staghorn','brain','fan','tube','mushroom','fire'].forEach(sp => {
+        state.species[sp] = Math.random() > 0.2;
+        const toggle = document.querySelector(`.toggle[data-species="${sp}"]`);
+        if (toggle) toggle.classList.toggle('active', state.species[sp]);
+      });
+      state.growthRate = 0.3 + Math.random() * 2.5;
+      state.branchAngle = 12 + Math.floor(Math.random() * 45);
+      state.branchLength = 15 + Math.floor(Math.random() * 60);
+      state.maxDepth = 3 + Math.floor(Math.random() * 7);
+      state.randomness = Math.random() * 0.8;
+      state.clarity = 0.3 + Math.random() * 0.7;
+      state.current = Math.random() * 1.5;
+      state.causticIntensity = Math.random();
+      state.bubbleDensity = Math.random();
+      state.lightDepth = Math.floor(Math.random() * 80);
+      syncSlidersToState();
+      updateSpeciesCount();
+      resetReef();
+    }
+
+    function resetReef() {
+      state.colonies = [];
+      state.generation = 0;
+      state.simTime = 0;
+      document.getElementById('hero-colony-count').textContent = '0';
+      document.getElementById('hero-growth-gen').textContent = '0';
+      initSimScene();
+    }
+
+    /* =========================================================
+       EXPORT
+       ========================================================= */
+    function exportPNG() {
+      const canvas = document.getElementById('reef-canvas');
+      const link = document.createElement('a');
+      link.download = 'reef-genesis-' + Date.now() + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    /* =========================================================
+       CANVAS SETUP — BG, CAUSTICS, REEF
+       ========================================================= */
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    const causticCanvas = document.getElementById('caustic-canvas');
+    const causticCtx = causticCanvas.getContext('2d');
+    const reefCanvas = document.getElementById('reef-canvas');
+    const reefCtx = reefCanvas.getContext('2d');
+
+    function resizeCanvases() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      [bgCanvas, causticCanvas, reefCanvas].forEach(c => {
+        c.width = w * window.devicePixelRatio;
+        c.height = h * window.devicePixelRatio;
+        c.style.width = w + 'px';
+        c.style.height = h + 'px';
+      });
+      bgCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      causticCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      reefCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvases);
+
+    /* =========================================================
+       BG: OCEAN GRADIENT + SEDIMENT
+       ========================================================= */
+    function drawBackground(time) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const theme = document.documentElement.getAttribute('data-theme');
+
+      const gradients = {
+        'tropical-shallow': ['#00aadd', '#0066aa', '#003366', '#001428'],
+        'deep-twilight': ['#1a3a5c', '#152642', '#0a1628', '#020818'],
+        'midnight-abyss': ['#0c0c30', '#080820', '#040410', '#000008'],
+        'bioluminescent': ['#100038', '#0a0028', '#050018', '#01000a'],
+      };
+      const colors = gradients[theme] || gradients['tropical-shallow'];
+
+      const grad = bgCtx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, colors[0]);
+      grad.addColorStop(0.3, colors[1]);
+      grad.addColorStop(0.7, colors[2]);
+      grad.addColorStop(1, colors[3]);
+      bgCtx.fillStyle = grad;
+      bgCtx.fillRect(0, 0, w, h);
+
+      // Sand floor
+      const sandY = h * 0.88;
+      const sandGrad = bgCtx.createLinearGradient(0, sandY, 0, h);
+      sandGrad.addColorStop(0, 'rgba(194, 168, 125, 0.0)');
+      sandGrad.addColorStop(0.15, 'rgba(194, 168, 125, 0.15)');
+      sandGrad.addColorStop(1, 'rgba(139, 115, 85, 0.25)');
+      bgCtx.fillStyle = sandGrad;
+      bgCtx.fillRect(0, sandY, w, h - sandY);
+
+      // Sediment particles
+      if (state.showParticles) {
+        bgCtx.fillStyle = 'rgba(200, 180, 150, 0.15)';
+        for (let i = 0; i < 60; i++) {
+          const sx = ((i * 137.5 + time * 0.02 * state.current) % (w + 20)) - 10;
+          const sy = ((i * 89.3 + Math.sin(time * 0.001 + i) * 30) % (h * 0.85));
+          const sr = 0.5 + Math.sin(i * 0.7) * 0.5;
+          bgCtx.beginPath();
+          bgCtx.arc(sx, sy, sr, 0, Math.PI * 2);
+          bgCtx.fill();
+        }
+      }
+    }
+
+    /* =========================================================
+       CAUSTICS: LIGHT REFRACTION PATTERN
+       ========================================================= */
+    function drawCaustics(time) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      causticCtx.clearRect(0, 0, w, h);
+
+      if (state.causticIntensity < 0.05) return;
+
+      const t = time * 0.0003;
+      const intensity = state.causticIntensity;
+      const clarity = state.clarity;
+
+      // Overlapping sine wave interference pattern
+      causticCtx.globalAlpha = intensity * clarity * 0.35;
+      causticCtx.globalCompositeOperation = 'lighter';
+
+      const cellSize = 60;
+      const rows = Math.ceil(h / cellSize) + 1;
+      const cols = Math.ceil(w / cellSize) + 1;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * cellSize;
+          const y = r * cellSize;
+
+          // Multi-frequency interference
+          const v1 = Math.sin(x * 0.008 + t * 1.2) * Math.cos(y * 0.006 + t * 0.8);
+          const v2 = Math.sin((x + y) * 0.005 + t * 0.7) * Math.cos((x - y) * 0.004 + t * 1.1);
+          const v3 = Math.sin(x * 0.012 - t * 0.5) * Math.sin(y * 0.009 + t * 1.5);
+          const v = (v1 + v2 + v3) / 3;
+
+          const brightness = Math.pow(Math.max(0, v), 2.5) * intensity * clarity;
+          if (brightness < 0.02) continue;
+
+          const theme = document.documentElement.getAttribute('data-theme');
+          const baseColor = theme === 'bioluminescent' ? [0, 255, 136] :
+                            theme === 'midnight-abyss' ? [0, 229, 255] :
+                            theme === 'deep-twilight' ? [100, 140, 255] :
+                            [180, 230, 255];
+
+          causticCtx.fillStyle = `rgba(${baseColor[0]},${baseColor[1]},${baseColor[2]},${brightness * 0.6})`;
+          const size = cellSize * (0.3 + brightness * 0.7);
+
+          causticCtx.beginPath();
+          causticCtx.moveTo(x, y - size * 0.5);
+          causticCtx.quadraticCurveTo(x + size * 0.5, y - size * 0.3, x + size * 0.4, y + size * 0.2);
+          causticCtx.quadraticCurveTo(x + size * 0.1, y + size * 0.5, x - size * 0.3, y + size * 0.3);
+          causticCtx.quadraticCurveTo(x - size * 0.5, y, x, y - size * 0.5);
+          causticCtx.fill();
+        }
+      }
+
+      causticCtx.globalCompositeOperation = 'source-over';
+      causticCtx.globalAlpha = 1;
+    }
+
+    /* =========================================================
+       BUBBLES SYSTEM
+       ========================================================= */
+    function initBubbles() {
+      state.bubbles = [];
+      const count = Math.floor(30 * state.bubbleDensity);
+      for (let i = 0; i < count; i++) {
+        state.bubbles.push(createBubble());
+      }
+    }
+
+    function createBubble() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      return {
+        x: Math.random() * w,
+        y: h + Math.random() * 100,
+        r: 1 + Math.random() * 4,
+        speed: 0.3 + Math.random() * 1.2,
+        wobbleAmp: 10 + Math.random() * 20,
+        wobbleFreq: 0.002 + Math.random() * 0.003,
+        wobblePhase: Math.random() * Math.PI * 2,
+        opacity: 0.2 + Math.random() * 0.4,
+      };
+    }
+
+    function updateAndDrawBubbles(time) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const count = Math.floor(30 * state.bubbleDensity);
+
+      // Add/remove bubbles as needed
+      while (state.bubbles.length < count) state.bubbles.push(createBubble());
+      while (state.bubbles.length > count) state.bubbles.pop();
+
+      state.bubbles.forEach((b, i) => {
+        b.y -= b.speed * state.growthRate;
+        b.x += Math.sin(time * b.wobbleFreq + b.wobblePhase) * 0.5 * state.current;
+
+        if (b.y < -20) {
+          b.y = h + 10;
+          b.x = Math.random() * w;
+        }
+
+        reefCtx.beginPath();
+        reefCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        reefCtx.strokeStyle = `rgba(200, 240, 255, ${b.opacity})`;
+        reefCtx.lineWidth = 0.8;
+        reefCtx.stroke();
+
+        // Highlight
+        reefCtx.beginPath();
+        reefCtx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.25, 0, Math.PI * 2);
+        reefCtx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.6})`;
+        reefCtx.fill();
+      });
+    }
+
+    /* =========================================================
+       FISH SYSTEM
+       ========================================================= */
+    function initFish() {
+      state.fish = [];
+      const fishColors = ['var(--fish-1)', 'var(--fish-2)', 'var(--fish-3)'];
+      for (let i = 0; i < 25; i++) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        state.fish.push({
+          x: Math.random() * w,
+          y: 50 + Math.random() * (h * 0.75),
+          vx: (0.3 + Math.random() * 0.8) * (Math.random() > 0.5 ? 1 : -1),
+          vy: (Math.random() - 0.5) * 0.2,
+          size: 4 + Math.random() * 8,
+          colorIdx: Math.floor(Math.random() * 3),
+          tailPhase: Math.random() * Math.PI * 2,
+          wobble: Math.random() * 0.3,
+        });
+      }
+    }
+
+    function updateAndDrawFish(time) {
+      if (!state.showFish) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const tailColors = ['#ffab40', '#40c4ff', '#ff5252'];
+
+      state.fish.forEach(f => {
+        f.x += f.vx + Math.sin(time * 0.001 + f.tailPhase) * f.wobble;
+        f.y += f.vy + Math.cos(time * 0.0008 + f.tailPhase) * 0.15;
+
+        if (f.x > w + 30) { f.x = -30; f.y = 50 + Math.random() * h * 0.75; }
+        if (f.x < -30) { f.x = w + 30; f.y = 50 + Math.random() * h * 0.75; }
+        if (f.y > h * 0.9) f.vy = -Math.abs(f.vy);
+        if (f.y < 20) f.vy = Math.abs(f.vy);
+
+        const dir = f.vx > 0 ? 1 : -1;
+        const tailWag = Math.sin(time * 0.01 + f.tailPhase) * 3;
+        const color = tailColors[f.colorIdx];
+
+        reefCtx.save();
+        reefCtx.translate(f.x, f.y);
+        reefCtx.scale(dir, 1);
+
+        // Body
+        reefCtx.beginPath();
+        reefCtx.ellipse(0, 0, f.size, f.size * 0.45, 0, 0, Math.PI * 2);
+        reefCtx.fillStyle = color;
+        reefCtx.globalAlpha = 0.7;
+        reefCtx.fill();
+
+        // Tail
+        reefCtx.beginPath();
+        reefCtx.moveTo(-f.size, 0);
+        reefCtx.lineTo(-f.size - f.size * 0.6, -f.size * 0.4 + tailWag);
+        reefCtx.lineTo(-f.size - f.size * 0.6, f.size * 0.4 + tailWag);
+        reefCtx.closePath();
+        reefCtx.fillStyle = color;
+        reefCtx.globalAlpha = 0.5;
+        reefCtx.fill();
+
+        // Eye
+        reefCtx.beginPath();
+        reefCtx.arc(f.size * 0.45, -f.size * 0.1, f.size * 0.1, 0, Math.PI * 2);
+        reefCtx.fillStyle = '#fff';
+        reefCtx.globalAlpha = 0.9;
+        reefCtx.fill();
+
+        reefCtx.globalAlpha = 1;
+        reefCtx.restore();
+      });
+    }
+
+    /* =========================================================
+       KELP SYSTEM
+       ========================================================= */
+    function initKelp() {
+      state.kelp = [];
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      for (let i = 0; i < 8; i++) {
+        state.kelp.push({
+          x: 40 + Math.random() * (w - 80),
+          baseY: h * 0.85 + Math.random() * h * 0.05,
+          segments: 8 + Math.floor(Math.random() * 6),
+          segLen: 15 + Math.random() * 10,
+          phase: Math.random() * Math.PI * 2,
+          width: 3 + Math.random() * 2,
+        });
+      }
+    }
+
+    function updateAndDrawKelp(time) {
+      if (!state.showKelp) return;
+
+      state.kelp.forEach(k => {
+        reefCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--kelp-light').trim();
+        reefCtx.lineWidth = k.width;
+        reefCtx.lineCap = 'round';
+        reefCtx.globalAlpha = 0.5;
+
+        reefCtx.beginPath();
+        reefCtx.moveTo(k.x, k.baseY);
+
+        for (let s = 1; s <= k.segments; s++) {
+          const progress = s / k.segments;
+          const sway = Math.sin(time * 0.0008 * state.current + k.phase + s * 0.5) * (8 + s * 2);
+          const nx = k.x + sway;
+          const ny = k.baseY - s * k.segLen;
+          reefCtx.lineTo(nx, ny);
+
+          // Leaf blade
+          if (s > 2 && s % 2 === 0) {
+            const leafDir = s % 4 === 0 ? 1 : -1;
+            const leafLen = 8 + Math.random() * 4;
+            reefCtx.moveTo(nx, ny);
+            reefCtx.quadraticCurveTo(
+              nx + leafDir * leafLen,
+              ny - 5,
+              nx + leafDir * leafLen * 0.5,
+              ny - 10
+            );
+            reefCtx.moveTo(nx, ny);
+          }
+        }
+        reefCtx.stroke();
+        reefCtx.globalAlpha = 1;
+      });
+    }
+
+    /* =========================================================
+       CORAL L-SYSTEM GROWTH ENGINE
+       ========================================================= */
+    const SPECIES_CONFIG = {
+      staghorn: {
+        name: 'Staghorn Coral',
+        latin: 'Acropora cervicornis',
+        axiom: 'F',
+        rules: { F: 'F[+F]F[-F]F' },
+        color: '#ff6b6b',
+        color2: '#ff8a8a',
+        decay: 0.72,
+        tags: ['Branching', 'Fast Growth', 'Shallow'],
+      },
+      brain: {
+        name: 'Brain Coral',
+        latin: 'Diploria labyrinthiformis',
+        axiom: 'F',
+        rules: { F: 'F+F-F-F+F' },
+        color: '#ffa07a',
+        color2: '#ffccaa',
+        decay: 0.85,
+        tags: ['Massive', 'Slow Growth', 'Deep'],
+      },
+      fan: {
+        name: 'Sea Fan',
+        latin: 'Gorgonia ventalina',
+        axiom: 'F',
+        rules: { F: 'FF+[+F-F-F]-[-F+F+F]' },
+        color: '#ab47bc',
+        color2: '#ce93d8',
+        decay: 0.78,
+        tags: ['Planar', 'Current-Oriented', 'Filtration'],
+      },
+      tube: {
+        name: 'Tube Coral',
+        latin: 'Tubastrea coccinea',
+        axiom: 'F',
+        rules: { F: 'F[+F][-F]F' },
+        color: '#ff7043',
+        color2: '#ffab91',
+        decay: 0.7,
+        tags: ['Columnar', 'Nocturnal', 'Ahermatypic'],
+      },
+      mushroom: {
+        name: 'Mushroom Coral',
+        latin: 'Fungia scutaria',
+        axiom: 'F',
+        rules: { F: 'F[+F]F[−F]' },
+        color: '#66bb6a',
+        color2: '#a5d6a7',
+        decay: 0.82,
+        tags: ['Free-Living', 'Solitary', 'Mobile'],
+      },
+      fire: {
+        name: 'Fire Coral',
+        latin: 'Millepora alcicornis',
+        axiom: 'F',
+        rules: { F: 'F[-F][+F]F' },
+        color: '#ff4081',
+        color2: '#ff80ab',
+        decay: 0.68,
+        tags: ['Encrusting', 'Stinging', 'Aggressive'],
+      },
+    };
+
+    function lSystemExpand(axiom, rules, iterations) {
+      let current = axiom;
+      for (let i = 0; i < iterations; i++) {
+        let next = '';
+        for (const ch of current) {
+          next += rules[ch] || ch;
+        }
+        current = next;
+        if (current.length > 50000) break; // Safety limit
+      }
+      return current;
+    }
+
+    function drawLSystem(ctx, instructions, x, y, angle, length, decay, speciesColor, randomness, sway, time) {
+      const stack = [];
+      let currentAngle = angle;
+      let currentLength = length;
+      let cx = x, cy = y;
+      let depth = 0;
+      const maxDraw = Math.min(instructions.length, 8000);
+
+      ctx.lineCap = 'round';
+
+      for (let i = 0; i < maxDraw; i++) {
+        const ch = instructions[i];
+        switch (ch) {
+          case 'F': {
+            const randAngle = (Math.random() - 0.5) * randomness * 15;
+            const randLen = 1 + (Math.random() - 0.5) * randomness * 0.4;
+            const swayOffset = Math.sin(time * 0.001 + cx * 0.01 + cy * 0.01) * sway * 0.5;
+            const nx = cx + Math.cos((currentAngle + randAngle + swayOffset) * Math.PI / 180) * currentLength * randLen;
+            const ny = cy + Math.sin((currentAngle + randAngle + swayOffset) * Math.PI / 180) * currentLength * randLen;
+
+            const alpha = Math.max(0.2, 1 - depth * 0.12);
+            const lineW = Math.max(0.5, (10 - depth) * 1.2);
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(nx, ny);
+            ctx.strokeStyle = speciesColor;
+            ctx.globalAlpha = alpha * 0.8;
+            ctx.lineWidth = lineW;
+            ctx.stroke();
+
+            // Glow
+            ctx.strokeStyle = speciesColor;
+            ctx.globalAlpha = alpha * 0.15;
+            ctx.lineWidth = lineW + 4;
+            ctx.stroke();
+
+            cx = nx; cy = ny;
+            break;
+          }
+          case '+':
+            currentAngle += state.branchAngle + (Math.random() - 0.5) * randomness * 10;
+            break;
+          case '-':
+          case '−':
+            currentAngle -= state.branchAngle + (Math.random() - 0.5) * randomness * 10;
+            break;
+          case '[':
+            stack.push({ x: cx, y: cy, angle: currentAngle, len: currentLength, depth });
+            currentLength *= decay;
+            depth++;
+            break;
+          case ']':
+            if (stack.length > 0) {
+              const s = stack.pop();
+              cx = s.x; cy = s.y;
+              currentAngle = s.angle;
+              currentLength = s.len;
+              depth = s.depth;
+            }
+            break;
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    /* =========================================================
+       COLONY SYSTEM
+       ========================================================= */
+    class CoralColony {
+      constructor(x, y, speciesKey, simW, simH) {
+        this.x = x;
+        this.y = y;
+        this.speciesKey = speciesKey;
+        this.config = SPECIES_CONFIG[speciesKey];
+        this.age = 0;
+        this.maxAge = 150 + Math.floor(Math.random() * 100);
+        this.growthProgress = 0;
+        this.simW = simW;
+        this.simH = simH;
+        this.instructions = '';
+        this.generated = false;
+        this.scale = 0.3 + Math.random() * 0.3;
+        this.rotation = (Math.random() - 0.5) * 30;
+      }
+
+      update(dt) {
+        if (this.growthProgress < 1) {
+          this.growthProgress = Math.min(1, this.growthProgress + dt * state.growthRate * 0.002);
+          this.age += dt * state.growthRate * 0.01;
+        }
+        if (!this.generated && this.age > 1) {
+          const iters = Math.min(state.maxDepth, 6);
+          this.instructions = lSystemExpand(this.config.axiom, this.config.rules, iters);
+          this.generated = true;
+        }
+      }
+
+      draw(ctx, time) {
+        if (!this.instructions || this.growthProgress <= 0) return;
+        const charsToShow = Math.floor(this.instructions.length * this.growthProgress);
+        const visible = this.instructions.substring(0, charsToShow);
+
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation * Math.PI / 180);
+
+        drawLSystem(
+          ctx, visible,
+          0, 0,
+          -90, // Start pointing up
+          state.branchLength * this.scale,
+          this.config.decay,
+          this.config.color,
+          state.randomness,
+          state.current,
+          time
+        );
+
+        ctx.restore();
+      }
+    }
+
+    /* =========================================================
+       SIMULATION CANVAS
+       ========================================================= */
+    let simCanvas, simCtx;
+    function initSimCanvas() {
+      simCanvas = document.getElementById('sim-canvas');
+      simCtx = simCanvas.getContext('2d');
+    }
+
+    function resizeSimCanvas() {
+      if (!simCanvas) return;
+      const rect = simCanvas.parentElement.getBoundingClientRect();
+      simCanvas.width = rect.width * window.devicePixelRatio;
+      simCanvas.height = rect.height * window.devicePixelRatio;
+      simCanvas.style.width = rect.width + 'px';
+      simCanvas.style.height = rect.height + 'px';
+      simCtx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    }
+
+    function initSimScene() {
+      state.colonies = [];
+      state.generation = 0;
+      state.simTime = 0;
+      updateSimStats();
+    }
+
+    function updateSimStats() {
+      document.getElementById('sim-colonies').textContent = state.colonies.length;
+      const totalBranches = state.colonies.reduce((sum, c) => {
+        const shown = Math.floor(c.instructions.length * c.growthProgress);
+        return sum + Math.floor(shown * 0.3);
+      }, 0);
+      document.getElementById('sim-branches').textContent = totalBranches;
+      document.getElementById('sim-age').textContent = state.generation;
+      const cover = Math.min(100, Math.floor(state.colonies.length * 4 + totalBranches * 0.01));
+      document.getElementById('sim-coral-cover').textContent = cover + '%';
+      const health = Math.max(0, Math.floor(100 - state.colonies.length * 0.5));
+      document.getElementById('sim-health').textContent = health + '%';
+
+      document.getElementById('hero-colony-count').textContent = state.colonies.length;
+      document.getElementById('hero-growth-gen').textContent = state.generation;
+      document.getElementById('hero-biodiversity').textContent = Math.floor(60 + state.colonies.length * 2);
+    }
+
+    function drawSimBackground(time) {
+      const w = simCanvas.width / window.devicePixelRatio;
+      const h = simCanvas.height / window.devicePixelRatio;
+
+      const grad = simCtx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue('--ocean-light').trim());
+      grad.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue('--ocean-deep').trim());
+      simCtx.fillStyle = grad;
+      simCtx.fillRect(0, 0, w, h);
+
+      // Sand floor
+      const sandY = h * 0.88;
+      simCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--sand-dark').trim();
+      simCtx.globalAlpha = 0.3;
+      simCtx.fillRect(0, sandY, w, h - sandY);
+      simCtx.globalAlpha = 1;
+
+      // Grid lines (subtle)
+      simCtx.strokeStyle = 'rgba(255,255,255,0.03)';
+      simCtx.lineWidth = 0.5;
+      for (let x = 0; x < w; x += 40) {
+        simCtx.beginPath();
+        simCtx.moveTo(x, 0); simCtx.lineTo(x, h);
+        simCtx.stroke();
+      }
+      for (let y = 0; y < h; y += 40) {
+        simCtx.beginPath();
+        simCtx.moveTo(0, y); simCtx.lineTo(w, y);
+        simCtx.stroke();
+      }
+    }
+
+    function drawSimCaustics(time) {
+      const w = simCanvas.width / window.devicePixelRatio;
+      const h = simCanvas.height / window.devicePixelRatio;
+      const t = time * 0.0005;
+
+      simCtx.globalCompositeOperation = 'lighter';
+      simCtx.globalAlpha = state.causticIntensity * 0.15;
+
+      for (let i = 0; i < 12; i++) {
+        const x = w * 0.5 + Math.sin(t + i * 1.2) * w * 0.35;
+        const y = h * 0.3 + Math.cos(t * 0.7 + i * 0.8) * h * 0.2;
+        const r = 30 + Math.sin(t * 1.5 + i) * 15;
+
+        simCtx.beginPath();
+        simCtx.arc(x, y, r, 0, Math.PI * 2);
+        simCtx.fillStyle = 'rgba(180, 230, 255, 0.3)';
+        simCtx.fill();
+      }
+
+      simCtx.globalCompositeOperation = 'source-over';
+      simCtx.globalAlpha = 1;
+    }
+
+    function drawSimBubbles(time) {
+      const w = simCanvas.width / window.devicePixelRatio;
+      const h = simCanvas.height / window.devicePixelRatio;
+      const count = Math.floor(15 * state.bubbleDensity);
+
+      for (let i = 0; i < count; i++) {
+        const phase = i * 2.7 + time * 0.001;
+        const bx = ((Math.sin(phase) * 0.5 + 0.5) * w * 0.8 + w * 0.1 + Math.sin(time * 0.0005 + i) * 20);
+        const by = h - ((time * 0.05 * state.growthRate + i * 47) % h);
+        const br = 1 + Math.sin(i * 1.3) * 1.5;
+
+        simCtx.beginPath();
+        simCtx.arc(bx, by, Math.abs(br), 0, Math.PI * 2);
+        simCtx.strokeStyle = 'rgba(200, 240, 255, 0.3)';
+        simCtx.lineWidth = 0.5;
+        simCtx.stroke();
+      }
+    }
+
+    /* Click to seed coral on sim canvas */
+    function onSimClick(e) {
+      if (!simCanvas) return;
+      const rect = simCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const activeSpecies = Object.entries(state.species)
+        .filter(([_, v]) => v)
+        .map(([k]) => k);
+      if (activeSpecies.length === 0) return;
+
+      const chosen = activeSpecies[Math.floor(Math.random() * activeSpecies.length)];
+      const colony = new CoralColony(x, y, chosen, rect.width, rect.height);
+      state.colonies.push(colony);
+      updateSimStats();
+
+      // Fire burst effect
+      for (let i = 0; i < 8; i++) {
+        state.bubbles.push({
+          x: x + (Math.random() - 0.5) * 30,
+          y: y + (Math.random() - 0.5) * 20,
+          r: 1 + Math.random() * 2,
+          speed: 0.5 + Math.random() * 1.5,
+          wobbleAmp: 5 + Math.random() * 10,
+          wobbleFreq: 0.005 + Math.random() * 0.005,
+          wobblePhase: Math.random() * Math.PI * 2,
+          opacity: 0.4 + Math.random() * 0.4,
+        });
+      }
+    }
+
+    /* =========================================================
+       SPECIES CARD RENDERING
+       ========================================================= */
+    function renderSpeciesCards() {
+      const grid = document.getElementById('species-grid');
+      grid.innerHTML = '';
+
+      Object.entries(SPECIES_CONFIG).forEach(([key, config]) => {
+        const card = document.createElement('div');
+        card.className = 'species-card';
+
+        const visualId = 'species-visual-' + key;
+        const tagsHtml = config.tags.map(t => `<span class="meta-chip">${t}</span>`).join('');
+
+        card.innerHTML = `
+          <div class="species-visual">
+            <canvas id="${visualId}"></canvas>
+            <div class="overlay-gradient"></div>
+          </div>
+          <div class="species-info">
+            <div class="species-name">${config.name}</div>
+            <div class="species-latin">${config.latin}</div>
+            <div class="species-meta">${tagsHtml}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        // Draw L-system on species card canvas
+        requestAnimationFrame(() => {
+          const canvas = document.getElementById(visualId);
+          if (!canvas) return;
+          const rect = canvas.parentElement.getBoundingClientRect();
+          canvas.width = rect.width * window.devicePixelRatio;
+          canvas.height = rect.height * window.devicePixelRatio;
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          const ctx = canvas.getContext('2d');
+          ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+          // Background
+          const grad = ctx.createLinearGradient(0, 0, 0, rect.height);
+          grad.addColorStop(0, 'rgba(0,30,60,0.3)');
+          grad.addColorStop(1, 'rgba(0,10,25,0.6)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, rect.width, rect.height);
+
+          const instructions = lSystemExpand(config.axiom, config.rules, Math.min(state.maxDepth, 6));
+          const centerX = rect.width / 2;
+          const baseY = rect.height * 0.92;
+          const len = Math.min(18, rect.height * 0.08);
+
+          drawLSystem(ctx, instructions, centerX, baseY, -90, len, config.decay, config.color, 0.2, 0, 0);
+        });
+      });
+    }
+
+    /* =========================================================
+       SPARKLINE CHARTS
+       ========================================================= */
+    function drawSparkline(canvasId, data, color) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = 100, h = 40;
+      canvas.width = w; canvas.height = h;
+      ctx.clearRect(0, 0, w, h);
+
+      if (data.length < 2) return;
+
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const range = max - min || 1;
+
+      ctx.beginPath();
+      data.forEach((v, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = h - ((v - min) / range) * (h - 4) - 2;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Fill
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fillStyle = color.replace(')', ', 0.1)').replace('rgb', 'rgba');
+      ctx.fill();
+    }
+
+    const sparkData = {
+      temp: Array.from({ length: 20 }, () => 25 + Math.random() * 3),
+      growth: Array.from({ length: 20 }, () => 8 + Math.random() * 10),
+      ph: Array.from({ length: 20 }, () => 7.8 + Math.random() * 0.6),
+      fish: Array.from({ length: 20 }, () => 25 + Math.floor(Math.random() * 30)),
+      o2: Array.from({ length: 20 }, () => 5 + Math.random() * 4),
+      biodiv: Array.from({ length: 20 }, () => 60 + Math.random() * 30),
+    };
+
+    function updateDashboards() {
+      const temp = 25 + Math.sin(Date.now() * 0.0001) * 2 + Math.random();
+      const grow = 10 + Math.sin(Date.now() * 0.0002) * 4 + Math.random();
+      const ph = 8.0 + Math.sin(Date.now() * 0.00005) * 0.2 + Math.random() * 0.1;
+      const fishCount = 30 + Math.floor(Math.sin(Date.now() * 0.00015) * 15);
+      const o2 = 6.5 + Math.sin(Date.now() * 0.0003) * 1.5;
+      const biodiv = 75 + Math.sin(Date.now() * 0.00008) * 10;
+
+      document.getElementById('dash-temp').textContent = temp.toFixed(1) + '°C';
+      document.getElementById('dash-growth').textContent = grow.toFixed(1) + ' mm/y';
+      document.getElementById('dash-ph').textContent = ph.toFixed(2);
+      document.getElementById('dash-fish').textContent = fishCount;
+      document.getElementById('dash-o2').textContent = o2.toFixed(1) + ' mg/L';
+      document.getElementById('dash-biodiv').textContent = Math.floor(biodiv) + '%';
+
+      sparkData.temp.push(temp); sparkData.temp.shift();
+      sparkData.growth.push(grow); sparkData.growth.shift();
+      sparkData.ph.push(ph); sparkData.ph.shift();
+      sparkData.fish.push(fishCount); sparkData.fish.shift();
+      sparkData.o2.push(o2); sparkData.o2.shift();
+      sparkData.biodiv.push(biodiv); sparkData.biodiv.shift();
+
+      drawSparkline('spark-temp', sparkData.temp, 'rgb(255, 107, 107)');
+      drawSparkline('spark-growth', sparkData.growth, 'rgb(0, 170, 221)');
+      drawSparkline('spark-ph', sparkData.ph, 'rgb(102, 187, 106)');
+      drawSparkline('spark-fish', sparkData.fish, 'rgb(255, 171, 64)');
+      drawSparkline('spark-o2', sparkData.o2, 'rgb(64, 196, 255)');
+      drawSparkline('spark-biodiv', sparkData.biodiv, 'rgb(171, 71, 188)');
+    }
+
+    /* =========================================================
+       GROWTH CONTROL
+       ========================================================= */
+    function startGrowth() {
+      state.growing = true;
+      document.getElementById('play-btn').style.display = 'none';
+      document.getElementById('pause-btn').style.display = '';
+      document.getElementById('status-text').innerHTML = 'Growth <span class="highlight">active</span> — colonies expanding in real-time';
+
+      // Auto-seed some colonies if sim is empty
+      if (state.colonies.length === 0 && simCanvas) {
+        const w = simCanvas.width / window.devicePixelRatio;
+        const h = simCanvas.height / window.devicePixelRatio;
+        const activeSpecies = Object.entries(state.species)
+          .filter(([_, v]) => v)
+          .map(([k]) => k);
+        if (activeSpecies.length > 0) {
+          for (let i = 0; i < 5; i++) {
+            const sp = activeSpecies[i % activeSpecies.length];
+            const colony = new CoralColony(
+              w * 0.15 + Math.random() * w * 0.7,
+              h * 0.85 + Math.random() * h * 0.05,
+              sp, w, h
+            );
+            state.colonies.push(colony);
+          }
+          updateSimStats();
+        }
+      }
+    }
+
+    function pauseGrowth() {
+      state.growing = false;
+      document.getElementById('play-btn').style.display = '';
+      document.getElementById('pause-btn').style.display = 'none';
+      document.getElementById('status-text').innerHTML = 'Growth <span class="highlight">paused</span> — click play to resume';
+    }
+
+    function clearSim() {
+      state.colonies = [];
+      state.generation = 0;
+      state.simTime = 0;
+      updateSimStats();
+    }
+
+    /* =========================================================
+       MAIN ANIMATION LOOP
+       ========================================================= */
+    let lastTime = 0;
+    function animate(time) {
+      requestAnimationFrame(animate);
+
+      // FPS counter
+      state.frameCount++;
+      if (time - state.lastFrameTime > 1000) {
+        state.fps = state.frameCount;
+        state.frameCount = 0;
+        state.lastFrameTime = time;
+        document.getElementById('fps-display').textContent = state.fps;
+      }
+
+      const dt = Math.min(50, time - lastTime);
+      lastTime = time;
+
+      // Background
+      drawBackground(time);
+      drawCaustics(time);
+
+      // Main reef canvas
+      reefCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      updateAndDrawKelp(time);
+      updateAndDrawFish(time);
+      updateAndDrawBubbles(time);
+
+      // Simulation canvas
+      if (simCanvas) {
+        resizeSimCanvas();
+        const sw = simCanvas.width / window.devicePixelRatio;
+        const sh = simCanvas.height / window.devicePixelRatio;
+        simCtx.clearRect(0, 0, sw, sh);
+        drawSimBackground(time);
+        drawSimCaustics(time);
+
+        // Update and draw colonies
+        if (state.growing) {
+          state.simTime += dt;
+          state.generation = Math.floor(state.simTime * 0.01);
+        }
+        state.colonies.forEach(c => {
+          if (state.growing) c.update(dt);
+          c.draw(simCtx, time);
+        });
+        drawSimBubbles(time);
+        updateSimStats();
+      }
+
+      // Dashboard update (every ~10 frames)
+      if (state.frameCount % 10 === 0) {
+        updateDashboards();
+      }
+    }
+
+    /* =========================================================
+       INITIALIZATION
+       ========================================================= */
+    function init() {
+      resizeCanvases();
+      initSimCanvas();
+      initSimScene();
+      initBubbles();
+      initFish();
+      initKelp();
+      renderSpeciesCards();
+      updateDashboards();
+      updateSpeciesCount();
+
+      // Sim canvas click
+      reefCanvas.addEventListener('click', (e) => {
+        // Only seed on sim canvas if visible, otherwise seed on reef canvas
+        if (simCanvas) onSimClick(e);
+      });
+
+      // Loading screen
+      let progress = 0;
+      const loaderFill = document.getElementById('loader-fill');
+      const loadInterval = setInterval(() => {
+        progress += 8 + Math.random() * 12;
+        if (progress >= 100) {
+          progress = 100;
+          loaderFill.style.width = '100%';
+          clearInterval(loadInterval);
+          setTimeout(() => {
+            document.getElementById('loading-screen').classList.add('hidden');
+          }, 400);
+        } else {
+          loaderFill.style.width = progress + '%';
+        }
+      }, 150);
+
+      // Start animation
+      requestAnimationFrame(animate);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') { e.preventDefault(); toggleSidebar(); }
+      if (e.key === ' ') { e.preventDefault(); state.growing ? pauseGrowth() : startGrowth(); }
+      if (e.key === 'r' || e.key === 'R') { if (e.ctrlKey || e.metaKey) return; randomizeReef(); }
+    });
+
+    // Init on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,2900 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="synapse-teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEURAL·SYNAPSE — Living Neural Network Interface</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('ns-theme')||'synapse-teal';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       THEME DEFINITIONS — 4 NEURAL PALLETES
+       ═══════════════════════════════════════════════════════════ */
+    :root, [data-theme="synapse-teal"] {
+      --ns-bg: #04060e;
+      --ns-bg-secondary: #080c1a;
+      --ns-surface: rgba(8, 18, 40, 0.7);
+      --ns-surface-hover: rgba(12, 28, 60, 0.85);
+      --ns-text: #d4e5f7;
+      --ns-text-dim: #4a6585;
+      --ns-text-bright: #ffffff;
+      --ns-accent: #00e5cc;
+      --ns-accent-rgb: 0, 229, 204;
+      --ns-secondary: #7c3aed;
+      --ns-secondary-rgb: 124, 58, 237;
+      --ns-tertiary: #f59e0b;
+      --ns-tertiary-rgb: 245, 158, 11;
+      --ns-dendrite: #00e5cc;
+      --ns-axon: #7c3aed;
+      --ns-soma: #00e5cc;
+      --ns-glow: rgba(0, 229, 204, 0.5);
+      --ns-glow-strong: rgba(0, 229, 204, 0.8);
+      --ns-border: rgba(0, 229, 204, 0.15);
+      --ns-border-strong: rgba(0, 229, 204, 0.35);
+      --ns-firing: #00ffcc;
+      --ns-receiving: #7c3aed;
+      --ns-veil: rgba(0, 10, 30, 0.6);
+      --ns-gradient-hero: linear-gradient(135deg, rgba(0,229,204,0.08), rgba(124,58,237,0.06), transparent);
+    }
+
+    [data-theme="cortex-violet"] {
+      --ns-bg: #060410;
+      --ns-bg-secondary: #0c0820;
+      --ns-surface: rgba(14, 8, 42, 0.7);
+      --ns-surface-hover: rgba(22, 14, 60, 0.85);
+      --ns-text: #e0d4f7;
+      --ns-text-dim: #6a4a85;
+      --ns-text-bright: #ffffff;
+      --ns-accent: #a855f7;
+      --ns-accent-rgb: 168, 85, 247;
+      --ns-secondary: #ec4899;
+      --ns-secondary-rgb: 236, 72, 153;
+      --ns-tertiary: #38bdf8;
+      --ns-tertiary-rgb: 56, 189, 248;
+      --ns-dendrite: #a855f7;
+      --ns-axon: #ec4899;
+      --ns-soma: #a855f7;
+      --ns-glow: rgba(168, 85, 247, 0.5);
+      --ns-glow-strong: rgba(168, 85, 247, 0.8);
+      --ns-border: rgba(168, 85, 247, 0.15);
+      --ns-border-strong: rgba(168, 85, 247, 0.35);
+      --ns-firing: #c084fc;
+      --ns-receiving: #ec4899;
+      --ns-veil: rgba(10, 4, 30, 0.6);
+      --ns-gradient-hero: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(236,72,153,0.06), transparent);
+    }
+
+    [data-theme="ganglion-amber"] {
+      --ns-bg: #0a0804;
+      --ns-bg-secondary: #140e06;
+      --ns-surface: rgba(30, 20, 6, 0.7);
+      --ns-surface-hover: rgba(45, 30, 10, 0.85);
+      --ns-text: #f7edd4;
+      --ns-text-dim: #85704a;
+      --ns-text-bright: #ffffff;
+      --ns-accent: #f59e0b;
+      --ns-accent-rgb: 245, 158, 11;
+      --ns-secondary: #ef4444;
+      --ns-secondary-rgb: 239, 68, 68;
+      --ns-tertiary: #10b981;
+      --ns-tertiary-rgb: 16, 185, 129;
+      --ns-dendrite: #f59e0b;
+      --ns-axon: #ef4444;
+      --ns-soma: #f59e0b;
+      --ns-glow: rgba(245, 158, 11, 0.5);
+      --ns-glow-strong: rgba(245, 158, 11, 0.8);
+      --ns-border: rgba(245, 158, 11, 0.15);
+      --ns-border-strong: rgba(245, 158, 11, 0.35);
+      --ns-firing: #fbbf24;
+      --ns-receiving: #ef4444;
+      --ns-veil: rgba(15, 8, 2, 0.6);
+      --ns-gradient-hero: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.06), transparent);
+    }
+
+    [data-theme="neuropathy-crimson"] {
+      --ns-bg: #0c0406;
+      --ns-bg-secondary: #18080c;
+      --ns-surface: rgba(36, 8, 18, 0.7);
+      --ns-surface-hover: rgba(50, 14, 26, 0.85);
+      --ns-text: #f7d4de;
+      --ns-text-dim: #854a5c;
+      --ns-text-bright: #ffffff;
+      --ns-accent: #f43f5e;
+      --ns-accent-rgb: 244, 63, 94;
+      --ns-secondary: #e879f9;
+      --ns-secondary-rgb: 232, 121, 249;
+      --ns-tertiary: #34d399;
+      --ns-tertiary-rgb: 52, 211, 153;
+      --ns-dendrite: #f43f5e;
+      --ns-axon: #e879f9;
+      --ns-soma: #f43f5e;
+      --ns-glow: rgba(244, 63, 94, 0.5);
+      --ns-glow-strong: rgba(244, 63, 94, 0.8);
+      --ns-border: rgba(244, 63, 94, 0.15);
+      --ns-border-strong: rgba(244, 63, 94, 0.35);
+      --ns-firing: #fb7185;
+      --ns-receiving: #e879f9;
+      --ns-veil: rgba(18, 4, 8, 0.6);
+      --ns-gradient-hero: linear-gradient(135deg, rgba(244,63,94,0.08), rgba(232,121,249,0.06), transparent);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       GLOBAL RESET & BASE
+       ═══════════════════════════════════════════════════════════ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--ns-bg);
+      color: var(--ns-text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       BACKGROUND CANVAS — LIVING NEURAL NETWORK
+       ═══════════════════════════════════════════════════════════ */
+    #neural-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Gradient veil */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: var(--ns-veil);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Ambient glow orbs */
+    .ambient-layer {
+      position: fixed; inset: 0;
+      z-index: 1; pointer-events: none;
+      overflow: hidden;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.07;
+      animation: orbFloat 30s ease-in-out infinite alternate;
+    }
+    .ambient-orb:nth-child(1) {
+      width: 50vw; height: 50vw;
+      background: var(--ns-accent);
+      top: -15%; left: -10%;
+    }
+    .ambient-orb:nth-child(2) {
+      width: 40vw; height: 40vw;
+      background: var(--ns-secondary);
+      bottom: -10%; right: -10%;
+      animation-delay: -10s;
+      animation-duration: 25s;
+    }
+    .ambient-orb:nth-child(3) {
+      width: 30vw; height: 30vw;
+      background: var(--ns-tertiary);
+      top: 50%; left: 40%;
+      animation-delay: -20s;
+      animation-duration: 35s;
+      opacity: 0.04;
+    }
+
+    @keyframes orbFloat {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(3vw, -2vw) scale(1.1); }
+      66%  { transform: translate(-2vw, 3vw) scale(0.95); }
+      100% { transform: translate(4vw, -1vw) scale(1.08); }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       CONTENT WRAPPER
+       ═══════════════════════════════════════════════════════════ */
+    .ns-content {
+      position: relative;
+      z-index: 10;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       NAVIGATION
+       ═══════════════════════════════════════════════════════════ */
+    .ns-nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 32px;
+      background: rgba(4, 6, 14, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--ns-border);
+    }
+
+    .ns-brand {
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .ns-brand-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, var(--ns-accent), var(--ns-secondary));
+      box-shadow: 0 0 20px var(--ns-glow), 0 0 60px rgba(var(--ns-accent-rgb), 0.2);
+      animation: somaPulse 3s ease-in-out infinite;
+      position: relative;
+    }
+    .ns-brand-icon::after {
+      content: '';
+      position: absolute; inset: 4px;
+      border-radius: 50%;
+      background: var(--ns-bg);
+      opacity: 0.5;
+    }
+
+    @keyframes somaPulse {
+      0%, 100% { box-shadow: 0 0 20px var(--ns-glow), 0 0 60px rgba(var(--ns-accent-rgb), 0.2); }
+      50% { box-shadow: 0 0 30px var(--ns-glow-strong), 0 0 80px rgba(var(--ns-accent-rgb), 0.35); }
+    }
+
+    .ns-brand-text {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900; font-size: 1rem;
+      letter-spacing: 3px;
+      color: var(--ns-accent);
+      text-shadow: 0 0 16px var(--ns-glow);
+    }
+    .ns-brand-text span {
+      color: var(--ns-text-dim);
+      text-shadow: none;
+    }
+
+    .ns-nav-right {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .ns-activity-pulse {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(var(--ns-accent-rgb), 0.08);
+      border: 1px solid var(--ns-border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; font-weight: 500;
+      color: var(--ns-accent);
+    }
+    .ns-activity-dot {
+      width: 7px; height: 7px;
+      background: var(--ns-accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--ns-accent);
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.4; }
+    }
+
+    /* Theme Switcher */
+    .ns-theme-switcher {
+      display: flex; gap: 4px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 3px; border-radius: 999px;
+      border: 1px solid var(--ns-border);
+    }
+    .ns-th-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%; border: 2px solid transparent;
+      cursor: pointer; transition: all 0.3s ease;
+      position: relative;
+    }
+    .ns-th-btn.active {
+      border-color: var(--ns-text-bright);
+      transform: scale(1.15);
+    }
+    .ns-th-btn:hover { transform: scale(1.1); }
+    .ns-th-btn[data-theme-pick="synapse-teal"] { background: linear-gradient(135deg, #00e5cc, #7c3aed); }
+    .ns-th-btn[data-theme-pick="cortex-violet"] { background: linear-gradient(135deg, #a855f7, #ec4899); }
+    .ns-th-btn[data-theme-pick="ganglion-amber"] { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .ns-th-btn[data-theme-pick="neuropathy-crimson"] { background: linear-gradient(135deg, #f43f5e, #e879f9); }
+
+    /* ═══════════════════════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════════════════════════ */
+    .ns-hero {
+      min-height: 92vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 80px 0;
+    }
+
+    .ns-hero-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--ns-accent);
+      background: rgba(var(--ns-accent-rgb), 0.08);
+      border: 1px solid var(--ns-border-strong);
+      padding: 6px 18px; border-radius: 999px;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 28px;
+      animation: badgePulse 4s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(var(--ns-accent-rgb), 0.15); }
+      50% { box-shadow: 0 0 0 8px rgba(var(--ns-accent-rgb), 0); }
+    }
+
+    .ns-hero-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .ns-hero-title .ns-glow-text {
+      background: linear-gradient(135deg, var(--ns-accent), var(--ns-secondary), var(--ns-tertiary));
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientFlow 6s ease-in-out infinite;
+    }
+    @keyframes gradientFlow {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    .ns-hero-subtitle {
+      color: var(--ns-text-dim);
+      font-size: 1.05rem; max-width: 560px;
+      line-height: 1.7; margin-bottom: 40px;
+    }
+
+    .ns-hero-stats {
+      display: flex; gap: 40px; margin-top: 20px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .ns-stat-block {
+      text-align: center;
+      position: relative;
+    }
+    .ns-stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900; font-size: 2rem;
+      color: var(--ns-accent);
+      text-shadow: 0 0 20px var(--ns-glow);
+    }
+    .ns-stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 500;
+      color: var(--ns-text-dim);
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .ns-stat-block::after {
+      content: '';
+      position: absolute; right: -20px; top: 10%; height: 80%;
+      width: 1px; background: var(--ns-border);
+    }
+    .ns-stat-block:last-child::after { display: none; }
+
+    .ns-hero-cta {
+      display: flex; gap: 16px; margin-top: 32px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .ns-btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; font-size: 0.9rem;
+      padding: 14px 32px; border-radius: 999px;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex; align-items: center; gap: 10px;
+      position: relative; overflow: hidden;
+      text-decoration: none;
+    }
+    .ns-btn-primary {
+      background: linear-gradient(135deg, var(--ns-accent), var(--ns-secondary));
+      color: var(--ns-bg); border: none;
+      font-weight: 700;
+      box-shadow: 0 4px 24px var(--ns-glow);
+    }
+    .ns-btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 40px var(--ns-glow-strong);
+    }
+    .ns-btn-primary::after {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: skewX(-20deg);
+      animation: btnSheen 5s infinite ease-in-out;
+    }
+    @keyframes btnSheen {
+      0%, 100% { left: -100%; }
+      50% { left: 150%; }
+    }
+
+    .ns-btn-outline {
+      background: transparent;
+      color: var(--ns-text);
+      border: 1px solid var(--ns-border-strong);
+      backdrop-filter: blur(12px);
+    }
+    .ns-btn-outline:hover {
+      background: rgba(var(--ns-accent-rgb), 0.08);
+      border-color: var(--ns-accent);
+      transform: translateY(-2px);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       NEURAL PULSE DIVIDER
+       ═══════════════════════════════════════════════════════════ */
+    .ns-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--ns-border-strong), transparent);
+      position: relative;
+      margin: 0 auto;
+    }
+    .ns-divider::after {
+      content: '';
+      position: absolute;
+      width: 8px; height: 8px;
+      background: var(--ns-accent);
+      border-radius: 50%;
+      top: -3.5px; left: 50%;
+      box-shadow: 0 0 12px var(--ns-accent);
+      animation: dividerPulse 3s ease-in-out infinite;
+    }
+    @keyframes dividerPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+      50% { transform: translateX(-50%) scale(1.8); opacity: 0.3; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION COMMON
+       ═══════════════════════════════════════════════════════════ */
+    .ns-section {
+      padding: 80px 0;
+      position: relative;
+    }
+    .ns-section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .ns-section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--ns-accent);
+      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .ns-section-tag::before, .ns-section-tag::after {
+      content: ''; width: 20px; height: 1px;
+      background: var(--ns-border-strong);
+    }
+    .ns-section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.4rem);
+      letter-spacing: -0.5px;
+      color: var(--ns-text-bright);
+    }
+    .ns-section-desc {
+      color: var(--ns-text-dim); font-size: 0.95rem;
+      max-width: 520px; margin: 12px auto 0; line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 2: LIVE SIGNAL DASHBOARD
+       ═══════════════════════════════════════════════════════════ */
+    .ns-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .ns-dash-card {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .ns-dash-card:hover {
+      border-color: var(--ns-border-strong);
+      background: var(--ns-surface-hover);
+      transform: translateY(-2px);
+    }
+    .ns-dash-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--ns-accent), var(--ns-secondary));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .ns-dash-card:hover::before { opacity: 1; }
+
+    .ns-dash-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--ns-text-dim);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ns-dash-label i {
+      font-size: 0.7rem;
+      color: var(--ns-accent);
+    }
+
+    .ns-dash-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900; font-size: 1.8rem;
+      color: var(--ns-text-bright);
+      margin-bottom: 4px;
+    }
+    .ns-dash-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: var(--ns-text-dim);
+    }
+
+    .ns-dash-bar-track {
+      width: 100%; height: 4px;
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      border-radius: 999px;
+      margin-top: 14px;
+      overflow: hidden;
+    }
+    .ns-dash-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ns-accent), var(--ns-secondary));
+      border-radius: 999px;
+      transition: width 1s ease;
+      box-shadow: 0 0 8px var(--ns-glow);
+    }
+
+    /* Sparkline canvas inside cards */
+    .ns-sparkline {
+      width: 100%; height: 40px;
+      margin-top: 12px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 3: NEURAL NETWORK TOPOLOGY (Interactive SVG/Canvas)
+       ═══════════════════════════════════════════════════════════ */
+    .ns-topology-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    #topology-canvas {
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .ns-topology-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 20px 28px;
+      background: linear-gradient(transparent, rgba(4,6,14,0.9));
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .ns-topo-info {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .ns-topo-info-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--ns-text-bright);
+    }
+    .ns-topo-info-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; color: var(--ns-text-dim);
+    }
+    .ns-topo-legend {
+      display: flex; gap: 16px;
+    }
+    .ns-legend-item {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; color: var(--ns-text-dim);
+    }
+    .ns-legend-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 4: NEURAL CLUSTER CARDS
+       ═══════════════════════════════════════════════════════════ */
+    .ns-cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .ns-cluster-card {
+      position: relative;
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 20px;
+      padding: 32px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ns-cluster-card:hover {
+      border-color: var(--ns-border-strong);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(var(--ns-accent-rgb), 0.12);
+    }
+
+    /* Neural pulse on hover */
+    .ns-cluster-card::after {
+      content: '';
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--ns-glow), transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .ns-cluster-card:hover::after { opacity: 0.15; }
+
+    .ns-cluster-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      border: 1px solid var(--ns-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      color: var(--ns-accent);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s;
+    }
+    .ns-cluster-card:hover .ns-cluster-icon {
+      background: rgba(var(--ns-accent-rgb), 0.2);
+      box-shadow: 0 0 24px rgba(var(--ns-accent-rgb), 0.2);
+    }
+
+    .ns-cluster-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: 1.05rem;
+      color: var(--ns-text-bright);
+      margin-bottom: 10px;
+      position: relative; z-index: 2;
+    }
+    .ns-cluster-desc {
+      font-size: 0.85rem; color: var(--ns-text-dim);
+      line-height: 1.7;
+      position: relative; z-index: 2;
+      margin-bottom: 20px;
+    }
+    .ns-cluster-meta {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      position: relative; z-index: 2;
+    }
+    .ns-meta-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px;
+      background: rgba(var(--ns-accent-rgb), 0.08);
+      border: 1px solid var(--ns-border);
+      color: var(--ns-accent);
+      letter-spacing: 0.5px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 5: EEG WAVEFORM VISUALIZER
+       ═══════════════════════════════════════════════════════════ */
+    .ns-eeg-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .ns-eeg-container { grid-template-columns: 1fr; }
+    }
+
+    .ns-eeg-main {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    #eeg-canvas {
+      width: 100%; height: 200px;
+      display: block;
+    }
+    .ns-eeg-labels {
+      display: flex; gap: 20px; margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .ns-eeg-label {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      color: var(--ns-text-dim);
+    }
+    .ns-eeg-label-dot {
+      width: 10px; height: 3px; border-radius: 2px;
+    }
+
+    .ns-eeg-sidebar {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .ns-band-card {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 12px;
+      padding: 16px;
+      flex: 1;
+      transition: all 0.3s;
+    }
+    .ns-band-card:hover {
+      border-color: var(--ns-border-strong);
+    }
+    .ns-band-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--ns-text-dim);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .ns-band-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900; font-size: 1.4rem;
+      color: var(--ns-text-bright);
+    }
+    .ns-band-bar {
+      width: 100%; height: 3px;
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      border-radius: 999px;
+      margin-top: 8px;
+    }
+    .ns-band-bar-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 6: SIGNAL TRANSMITTER INTERACTIVE
+       ═══════════════════════════════════════════════════════════ */
+    .ns-transmitter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      .ns-transmitter-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ns-signal-node {
+      background: var(--ns-surface);
+      border: 2px solid var(--ns-border);
+      border-radius: 24px;
+      padding: 40px 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .ns-signal-node:hover {
+      border-color: var(--ns-accent);
+      transform: scale(1.03);
+    }
+    .ns-signal-node.firing {
+      border-color: var(--ns-accent);
+      box-shadow: 0 0 40px var(--ns-glow), inset 0 0 40px rgba(var(--ns-accent-rgb), 0.05);
+    }
+    .ns-signal-node.firing .ns-node-soma {
+      transform: scale(1.3);
+      box-shadow: 0 0 40px var(--ns-glow-strong), 0 0 80px rgba(var(--ns-accent-rgb), 0.3);
+    }
+
+    .ns-node-soma {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, var(--ns-accent), var(--ns-secondary));
+      margin: 0 auto 18px;
+      box-shadow: 0 0 20px var(--ns-glow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .ns-node-soma::after {
+      content: '';
+      position: absolute; inset: 6px;
+      border-radius: 50%;
+      background: var(--ns-bg);
+      opacity: 0.3;
+    }
+
+    .ns-node-name {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--ns-text-bright);
+      margin-bottom: 6px;
+    }
+    .ns-node-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 500;
+      color: var(--ns-text-dim);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    /* Arrow connectors between nodes */
+    .ns-connector {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .ns-connector-line {
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--ns-accent), transparent, var(--ns-secondary));
+      position: relative;
+    }
+    .ns-connector-dot {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--ns-accent);
+      box-shadow: 0 0 12px var(--ns-accent);
+      top: -4px; left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .ns-transmitter-grid.firing .ns-connector-dot {
+      opacity: 1;
+      animation: signalTravel 1s ease-in-out infinite;
+    }
+    @keyframes signalTravel {
+      0% { left: 0%; opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .ns-connector { display: none; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 7: THOUGHT PATTERN VISUALIZER
+       ═══════════════════════════════════════════════════════════ */
+    .ns-thought-wrap {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 24px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      .ns-thought-wrap { grid-template-columns: 1fr; padding: 24px; }
+    }
+
+    #thought-canvas {
+      width: 100%; aspect-ratio: 1;
+      border-radius: 16px;
+      border: 1px solid var(--ns-border);
+      background: rgba(0,0,0,0.3);
+    }
+
+    .ns-thought-controls {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .ns-thought-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: 1.2rem;
+      color: var(--ns-text-bright);
+    }
+    .ns-thought-desc {
+      font-size: 0.85rem; color: var(--ns-text-dim);
+      line-height: 1.7;
+    }
+
+    .ns-pattern-btns {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .ns-pattern-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--ns-border);
+      background: transparent;
+      color: var(--ns-text-dim);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .ns-pattern-btn:hover, .ns-pattern-btn.active {
+      border-color: var(--ns-accent);
+      color: var(--ns-accent);
+      background: rgba(var(--ns-accent-rgb), 0.08);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 8: SYNAPTIC WEIGHT TABLE
+       ═══════════════════════════════════════════════════════════ */
+    .ns-table-wrap {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .ns-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .ns-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--ns-text-dim);
+      padding: 16px 24px;
+      text-align: left;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--ns-border);
+    }
+    .ns-table td {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--ns-border);
+      font-size: 0.85rem;
+    }
+    .ns-table tr:last-child td { border-bottom: none; }
+    .ns-table tr:hover td {
+      background: rgba(var(--ns-accent-rgb), 0.03);
+    }
+    .ns-table .ns-cell-route {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 0.75rem;
+      color: var(--ns-text-bright);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ns-cell-arrow {
+      color: var(--ns-accent);
+      font-size: 0.7rem;
+    }
+    .ns-cell-strength {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ns-cell-bar {
+      width: 80px; height: 4px;
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .ns-cell-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+    .ns-cell-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .ns-status-active {
+      background: rgba(0, 229, 204, 0.1);
+      color: var(--ns-accent);
+      border: 1px solid rgba(var(--ns-accent-rgb), 0.3);
+    }
+    .ns-status-pruning {
+      background: rgba(var(--ns-tertiary-rgb), 0.1);
+      color: var(--ns-tertiary);
+      border: 1px solid rgba(var(--ns-tertiary-rgb), 0.3);
+    }
+    .ns-status-inhibitory {
+      background: rgba(var(--ns-secondary-rgb), 0.1);
+      color: var(--ns-secondary);
+      border: 1px solid rgba(var(--ns-secondary-rgb), 0.3);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 9: NEURO-TOGGLE CONTROL PANEL
+       ═══════════════════════════════════════════════════════════ */
+    .ns-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .ns-control-box {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .ns-control-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .ns-control-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--ns-text-dim);
+    }
+
+    /* Neural Toggle */
+    .ns-toggle {
+      width: 48px; height: 26px;
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      border: 1px solid var(--ns-border);
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .ns-toggle.active {
+      background: rgba(var(--ns-accent-rgb), 0.25);
+      border-color: var(--ns-accent);
+    }
+    .ns-toggle-knob {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--ns-text-dim);
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .ns-toggle.active .ns-toggle-knob {
+      transform: translateX(22px);
+      background: var(--ns-accent);
+      box-shadow: 0 0 12px var(--ns-glow);
+    }
+
+    /* Neuro Slider */
+    .ns-slider-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4px;
+    }
+    .ns-slider-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+      color: var(--ns-accent);
+    }
+    .ns-slider {
+      width: 100%; height: 6px;
+      -webkit-appearance: none; appearance: none;
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      border-radius: 999px;
+      outline: none;
+    }
+    .ns-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--ns-accent);
+      box-shadow: 0 0 12px var(--ns-glow);
+      cursor: pointer;
+    }
+
+    /* Dial */
+    .ns-dial-wrap {
+      display: flex; align-items: center; gap: 20px;
+    }
+    .ns-dial {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--ns-border);
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .ns-dial-indicator {
+      position: absolute;
+      width: 3px; height: 30px;
+      background: var(--ns-accent);
+      border-radius: 2px;
+      top: 6px; left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0deg);
+      box-shadow: 0 0 8px var(--ns-accent);
+    }
+    .ns-dial-center {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--ns-accent);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px var(--ns-glow);
+    }
+    .ns-dial-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; color: var(--ns-text-dim);
+    }
+    .ns-dial-readout {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: 1.2rem;
+      color: var(--ns-text-bright);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 10: ACTION POTENTIAL ANIMATION
+       ═══════════════════════════════════════════════════════════ */
+    .ns-ap-container {
+      background: var(--ns-surface);
+      border: 1px solid var(--ns-border);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+    }
+    #ap-canvas {
+      width: 100%; height: 280px;
+      display: block;
+      margin-top: 20px;
+    }
+    .ns-ap-phases {
+      display: flex; justify-content: center; gap: 32px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .ns-ap-phase {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .ns-ap-phase-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+    }
+    .ns-ap-phase-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 700;
+      color: var(--ns-text-dim);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTION 11: NEURAL ARCHITECTURE DIAGRAM
+       ═══════════════════════════════════════════════════════════ */
+    .ns-arch-diagram {
+      display: flex; flex-direction: column; gap: 12px;
+      align-items: center;
+    }
+    .ns-layer-row {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    }
+    .ns-neuron-node {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--ns-surface);
+      border: 2px solid var(--ns-border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem; font-weight: 700;
+      color: var(--ns-text-dim);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .ns-neuron-node:hover, .ns-neuron-node.active {
+      border-color: var(--ns-accent);
+      background: rgba(var(--ns-accent-rgb), 0.1);
+      color: var(--ns-accent);
+      box-shadow: 0 0 16px rgba(var(--ns-accent-rgb), 0.2);
+      transform: scale(1.1);
+    }
+    .ns-layer-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--ns-text-dim);
+      padding: 6px 16px;
+      border: 1px solid var(--ns-border);
+      border-radius: 6px;
+      margin-bottom: 4px;
+      width: 100%; text-align: center;
+    }
+    .ns-connection-line {
+      width: 1px; height: 16px;
+      background: var(--ns-border);
+      margin: 0 auto;
+    }
+    .ns-layer-connections {
+      display: flex; gap: 3px; justify-content: center;
+    }
+    .ns-conn-pipe {
+      width: 1px; height: 20px;
+      background: linear-gradient(to bottom, var(--ns-accent), transparent);
+      opacity: 0.4;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ */
+    .ns-footer {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .ns-footer-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900; font-size: 1.1rem;
+      color: var(--ns-accent);
+      text-shadow: 0 0 16px var(--ns-glow);
+      margin-bottom: 12px;
+    }
+    .ns-footer-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; color: var(--ns-text-dim);
+      letter-spacing: 2px;
+    }
+    .ns-footer-links {
+      display: flex; gap: 20px; justify-content: center;
+      margin-top: 24px; flex-wrap: wrap;
+    }
+    .ns-footer-link {
+      font-size: 0.75rem; color: var(--ns-text-dim);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .ns-footer-link:hover { color: var(--ns-accent); }
+
+    /* ═══════════════════════════════════════════════════════════
+       UTILITY ANIMATIONS
+       ═══════════════════════════════════════════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .ns-animate-in {
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    /* Synapse fire animation on click */
+    @keyframes synapseFire {
+      0% { box-shadow: 0 0 0 0 var(--ns-glow-strong); }
+      50% { box-shadow: 0 0 60px 20px rgba(var(--ns-accent-rgb), 0.15); }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    .ns-fire-effect {
+      animation: synapseFire 0.6s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .ns-hero-stats { gap: 24px; }
+      .ns-stat-block::after { display: none; }
+      .ns-transmitter-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Neural Network Canvas -->
+  <canvas id="neural-canvas"></canvas>
+
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-layer">
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       NAVIGATION
+       ═══════════════════════════════════════════════════ -->
+  <nav class="ns-nav">
+    <div class="ns-brand">
+      <div class="ns-brand-icon"></div>
+      <div class="ns-brand-text">NEURAL<span>·</span>SYNAPSE</div>
+    </div>
+    <div class="ns-nav-right">
+      <div class="ns-activity-pulse">
+        <span class="ns-activity-dot"></span>
+        <span id="firing-rate-display">42.7 Hz</span>
+      </div>
+      <div class="ns-theme-switcher">
+        <button class="ns-th-btn active" data-theme-pick="synapse-teal" onclick="setNSTheme('synapse-teal')" title="Synapse Teal"></button>
+        <button class="ns-th-btn" data-theme-pick="cortex-violet" onclick="setNSTheme('cortex-violet')" title="Cortex Violet"></button>
+        <button class="ns-th-btn" data-theme-pick="ganglion-amber" onclick="setNSTheme('ganglion-amber')" title="Ganglion Amber"></button>
+        <button class="ns-th-btn" data-theme-pick="neuropathy-crimson" onclick="setNSTheme('neuropathy-crimson')" title="Neuropathy Crimson"></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ns-content">
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 1: HERO
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-hero">
+      <div class="ns-hero-badge">
+        <i class="fa-solid fa-brain"></i>
+        Living Neural Network Interface · Style #62
+      </div>
+      <h1 class="ns-hero-title">
+        <span class="ns-glow-text">NEURAL</span><br>
+        SYNAPSE
+      </h1>
+      <p class="ns-hero-subtitle">
+        Sebuah antarmuka hidup yang meniru jaringan saraf biologis — 
+        neuron berdenyut, sinapsis menembakkan sinyal, dan jalur dendrit 
+        yang menyala mengikuti interaksi pengguna.
+      </p>
+      <div class="ns-hero-stats">
+        <div class="ns-stat-block">
+          <div class="ns-stat-value" id="stat-neurons">86B</div>
+          <div class="ns-stat-label">Neurons</div>
+        </div>
+        <div class="ns-stat-block">
+          <div class="ns-stat-value" id="stat-synapses">150T</div>
+          <div class="ns-stat-label">Synapses</div>
+        </div>
+        <div class="ns-stat-block">
+          <div class="ns-stat-value" id="stat-firing">1.2k</div>
+          <div class="ns-stat-label">Firing / sec</div>
+        </div>
+        <div class="ns-stat-block">
+          <div class="ns-stat-value" id="stat-latency">0.5ms</div>
+          <div class="ns-stat-label">Latency</div>
+        </div>
+      </div>
+      <div class="ns-hero-cta">
+        <button class="ns-btn ns-btn-primary" onclick="triggerGlobalFire()">
+          <i class="fa-solid fa-bolt"></i> Fire All Neurons
+        </button>
+        <button class="ns-btn ns-btn-outline" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">
+          <i class="fa-solid fa-chart-line"></i> View Signals
+        </button>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 2: LIVE SIGNAL DASHBOARD
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section" id="dashboard">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Real-time Telemetry</div>
+        <h2 class="ns-section-title">SIGNAL DASHBOARD</h2>
+        <p class="ns-section-desc">Metrik neurosains real-time dari jaringan saraf simulasi yang berjalan di background.</p>
+      </div>
+
+      <div class="ns-dashboard">
+        <div class="ns-dash-card">
+          <div class="ns-dash-label"><i class="fa-solid fa-wave-square"></i> Membrane Potential</div>
+          <div class="ns-dash-value" id="dash-membrane">-70</div>
+          <div class="ns-dash-unit">mV (resting)</div>
+          <div class="ns-dash-bar-track"><div class="ns-dash-bar-fill" style="width: 35%"></div></div>
+          <canvas class="ns-sparkline" id="spark-membrane"></canvas>
+        </div>
+
+        <div class="ns-dash-card">
+          <div class="ns-dash-label"><i class="fa-solid fa-bolt"></i> Firing Rate</div>
+          <div class="ns-dash-value" id="dash-firing">42.7</div>
+          <div class="ns-dash-unit">Hz (cortical avg)</div>
+          <div class="ns-dash-bar-track"><div class="ns-dash-bar-fill" style="width: 62%"></div></div>
+          <canvas class="ns-sparkline" id="spark-firing"></canvas>
+        </div>
+
+        <div class="ns-dash-card">
+          <div class="ns-dash-label"><i class="fa-solid fa-link"></i> Synaptic Weight</div>
+          <div class="ns-dash-value" id="dash-weight">0.847</div>
+          <div class="ns-dash-unit">LTP coefficient</div>
+          <div class="ns-dash-bar-track"><div class="ns-dash-bar-fill" style="width: 85%"></div></div>
+          <canvas class="ns-sparkline" id="spark-weight"></canvas>
+        </div>
+
+        <div class="ns-dash-card">
+          <div class="ns-dash-label"><i class="fa-solid fa-droplet"></i> Neurotransmitter</div>
+          <div class="ns-dash-value" id="dash-nt">3.2</div>
+          <div class="ns-dash-unit">μM concentration</div>
+          <div class="ns-dash-bar-track"><div class="ns-dash-bar-fill" style="width: 53%"></div></div>
+          <canvas class="ns-sparkline" id="spark-nt"></canvas>
+        </div>
+
+        <div class="ns-dash-card">
+          <div class="ns-dash-label"><i class="fa-solid fa-network-wired"></i> Network Cohesion</div>
+          <div class="ns-dash-value" id="dash-cohesion">94.2</div>
+          <div class="ns-dash-unit">% synchrony index</div>
+          <div class="ns-dash-bar-track"><div class="ns-dash-bar-fill" style="width: 94%"></div></div>
+          <canvas class="ns-sparkline" id="spark-cohesion"></canvas>
+        </div>
+
+        <div class="ns-dash-card">
+          <div class="ns-dash-label"><i class="fa-solid fa-rotate"></i> Refractory Period</div>
+          <div class="ns-dash-value" id="dash-refractory">2.1</div>
+          <div class="ns-dash-unit">ms absolute</div>
+          <div class="ns-dash-bar-track"><div class="ns-dash-bar-fill" style="width: 21%"></div></div>
+          <canvas class="ns-sparkline" id="spark-refractory"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 3: NEURAL NETWORK TOPOLOGY
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Network Architecture</div>
+        <h2 class="ns-section-title">NEURAL TOPOLOGY</h2>
+        <p class="ns-section-desc">Visualisasi interaktif dari jaringan saraf — klik node untuk menembakkan sinyal.</p>
+      </div>
+
+      <div class="ns-topology-wrap">
+        <canvas id="topology-canvas"></canvas>
+        <div class="ns-topology-overlay">
+          <div class="ns-topo-info">
+            <div class="ns-topo-info-title">Cortex Layer Visualization</div>
+            <div class="ns-topo-info-sub">86 neurons · 2,450 connections · click to fire</div>
+          </div>
+          <div class="ns-topo-legend">
+            <div class="ns-legend-item">
+              <div class="ns-legend-dot" style="background: var(--ns-accent);"></div>
+              Excitatory
+            </div>
+            <div class="ns-legend-item">
+              <div class="ns-legend-dot" style="background: var(--ns-secondary);"></div>
+              Inhibitory
+            </div>
+            <div class="ns-legend-item">
+              <div class="ns-legend-dot" style="background: var(--ns-tertiary);"></div>
+              Interneuron
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 4: NEURAL CLUSTER CARDS
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Cortical Regions</div>
+        <h2 class="ns-section-title">NEURAL CLUSTERS</h2>
+        <p class="ns-section-desc">Setiap kartu merepresentasikan kluster neuron di region kortikal berbeda.</p>
+      </div>
+
+      <div class="ns-cluster-grid">
+        <div class="ns-cluster-card" onclick="this.classList.add('ns-fire-effect'); setTimeout(()=>this.classList.remove('ns-fire-effect'), 600)">
+          <div class="ns-cluster-icon"><i class="fa-solid fa-eye"></i></div>
+          <div class="ns-cluster-title">Visual Cortex (V1–V5)</div>
+          <div class="ns-cluster-desc">Pemrosesan input visual — edge detection, motion tracking, dan colour segregation dalam 5 area kortikal.</div>
+          <div class="ns-cluster-meta">
+            <span class="ns-meta-chip">140M neurons</span>
+            <span class="ns-meta-chip">450M synapses</span>
+            <span class="ns-meta-chip">60Hz gamma</span>
+          </div>
+        </div>
+
+        <div class="ns-cluster-card" onclick="this.classList.add('ns-fire-effect'); setTimeout(()=>this.classList.remove('ns-fire-effect'), 600)">
+          <div class="ns-cluster-icon"><i class="fa-solid fa-ear-listen"></i></div>
+          <div class="ns-cluster-title">Auditory Cortex (A1)</div>
+          <div class="ns-cluster-desc">Decoding frekuensi suara, temporal pattern recognition, dan speech processing dalam tonotopic map.</div>
+          <div class="ns-cluster-meta">
+            <span class="ns-meta-chip">100M neurons</span>
+            <span class="ns-meta-chip">320M synapses</span>
+            <span class="ns-meta-chip">40Hz theta</span>
+          </div>
+        </div>
+
+        <div class="ns-cluster-card" onclick="this.classList.add('ns-fire-effect'); setTimeout(()=>this.classList.remove('ns-fire-effect'), 600)">
+          <div class="ns-cluster-icon"><i class="fa-solid fa-hand"></i></div>
+          <div class="ns-cluster-title">Motor Cortex (M1)</div>
+          <div class="ns-cluster-desc">Eksekusi gerakan voluntary — corticospinal projections ke α-motor neurons untuk kontrol otot.</div>
+          <div class="ns-cluster-meta">
+            <span class="ns-meta-chip">80M neurons</span>
+            <span class="ns-meta-chip">280M synapses</span>
+            <span class="ns-meta-chip">30Hz beta</span>
+          </div>
+        </div>
+
+        <div class="ns-cluster-card" onclick="this.classList.add('ns-fire-effect'); setTimeout(()=>this.classList.remove('ns-fire-effect'), 600)">
+          <div class="ns-cluster-icon"><i class="fa-solid fa-hippo"></i></div>
+          <div class="ns-cluster-title">Hippocampal Formation</div>
+          <div class="ns-cluster-desc">Pembentukan memori episodik — place cells, grid cells, dan replay spike saat konsolidasi tidur.</div>
+          <div class="ns-cluster-meta">
+            <span class="ns-meta-chip">45M neurons</span>
+            <span class="ns-meta-chip">200M synapses</span>
+            <span class="ns-meta-chip">8Hz theta</span>
+          </div>
+        </div>
+
+        <div class="ns-cluster-card" onclick="this.classList.add('ns-fire-effect'); setTimeout(()=>this.classList.remove('ns-fire-effect'), 600)">
+          <div class="ns-cluster-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+          <div class="ns-cluster-title">Autonomic Ganglia</div>
+          <div class="ns-cluster-desc">Regulasi homeostatis — sympathetic/parasympathetic balance untuk heart rate, blood pressure, GI motility.</div>
+          <div class="ns-cluster-meta">
+            <span class="ns-meta-chip">500K neurons</span>
+            <span class="ns-meta-chip">15M synapses</span>
+            <span class="ns-meta-chip">1Hz delta</span>
+          </div>
+        </div>
+
+        <div class="ns-cluster-card" onclick="this.classList.add('ns-fire-effect'); setTimeout(()=>this.classList.remove('ns-fire-effect'), 600)">
+          <div class="ns-cluster-icon"><i class="fa-solid fa-flask"></i></div>
+          <div class="ns-cluster-title">Prefrontal Cortex (PFC)</div>
+          <div class="ns-cluster-desc">Executive function — working memory, decision making, impulse control, dan abstract reasoning.</div>
+          <div class="ns-cluster-meta">
+            <span class="ns-meta-chip">200M neurons</span>
+            <span class="ns-meta-chip">700M synapses</span>
+            <span class="ns-meta-chip">50Hz gamma</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 5: EEG WAVEFORM
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Electroencephalography</div>
+        <h2 class="ns-section-title">EEG WAVEFORM</h2>
+        <p class="ns-section-desc">Sinyal multi-channel real-time meniru electrophysiology kortikal.</p>
+      </div>
+
+      <div class="ns-eeg-container">
+        <div class="ns-eeg-main">
+          <canvas id="eeg-canvas"></canvas>
+          <div class="ns-eeg-labels">
+            <div class="ns-eeg-label">
+              <div class="ns-eeg-label-dot" style="background: var(--ns-accent);"></div> Fz (Frontal)
+            </div>
+            <div class="ns-eeg-label">
+              <div class="ns-eeg-label-dot" style="background: var(--ns-secondary);"></div> Cz (Central)
+            </div>
+            <div class="ns-eeg-label">
+              <div class="ns-eeg-label-dot" style="background: var(--ns-tertiary);"></div> Pz (Parietal)
+            </div>
+            <div class="ns-eeg-label">
+              <div class="ns-eeg-label-dot" style="background: #fb7185;"></div> Oz (Occipital)
+            </div>
+          </div>
+        </div>
+
+        <div class="ns-eeg-sidebar">
+          <div class="ns-band-card">
+            <div class="ns-band-name">DELTA (0.5–4 Hz)</div>
+            <div class="ns-band-value" id="band-delta">12.4</div>
+            <div class="ns-band-bar"><div class="ns-band-bar-fill" style="width: 35%; background: var(--ns-accent);"></div></div>
+          </div>
+          <div class="ns-band-card">
+            <div class="ns-band-name">THETA (4–8 Hz)</div>
+            <div class="ns-band-value" id="band-theta">28.7</div>
+            <div class="ns-band-bar"><div class="ns-band-bar-fill" style="width: 55%; background: var(--ns-secondary);"></div></div>
+          </div>
+          <div class="ns-band-card">
+            <div class="ns-band-name">ALPHA (8–13 Hz)</div>
+            <div class="ns-band-value" id="band-alpha">45.2</div>
+            <div class="ns-band-bar"><div class="ns-band-bar-fill" style="width: 72%; background: var(--ns-tertiary);"></div></div>
+          </div>
+          <div class="ns-band-card">
+            <div class="ns-band-name">BETA (13–30 Hz)</div>
+            <div class="ns-band-value" id="band-beta">18.9</div>
+            <div class="ns-band-bar"><div class="ns-band-bar-fill" style="width: 42%; background: #fb7185;"></div></div>
+          </div>
+          <div class="ns-band-card">
+            <div class="ns-band-name">GAMMA (30–100 Hz)</div>
+            <div class="ns-band-value" id="band-gamma">8.3</div>
+            <div class="ns-band-bar"><div class="ns-band-bar-fill" style="width: 22%; background: var(--ns-text-dim);"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 6: SIGNAL TRANSMITTER
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Signal Propagation</div>
+        <h2 class="ns-section-title">SIGNAL TRANSMITTER</h2>
+        <p class="ns-section-desc">Klik neuron manapun untuk memicu gelombang aksi yang menyebar ke seluruh jaringan.</p>
+      </div>
+
+      <div class="ns-transmitter-grid" id="transmitter-grid">
+        <div class="ns-signal-node" onclick="fireSignal(this, 0)">
+          <div class="ns-node-soma"></div>
+          <div class="ns-node-name">Presynaptic</div>
+          <div class="ns-node-type">Input Neuron</div>
+        </div>
+        <div class="ns-connector">
+          <div class="ns-connector-line">
+            <div class="ns-connector-dot"></div>
+          </div>
+        </div>
+        <div class="ns-signal-node" onclick="fireSignal(this, 2)">
+          <div class="ns-node-soma"></div>
+          <div class="ns-node-name">Postsynaptic</div>
+          <div class="ns-node-type">Output Neuron</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 7: THOUGHT PATTERN VISUALIZER
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Neural Oscillation</div>
+        <h2 class="ns-section-title">THOUGHT PATTERNS</h2>
+        <p class="ns-section-desc">Visualisasi pola pikir otak dalam berbagai kondisi kognitif.</p>
+      </div>
+
+      <div class="ns-thought-wrap">
+        <canvas id="thought-canvas"></canvas>
+        <div class="ns-thought-controls">
+          <div class="ns-thought-title">Cognitive State Visualizer</div>
+          <div class="ns-thought-desc">
+            Pilih pola pikir untuk mengubah visualisasi neural activity.
+            Setiap kondisi memiliki signature oscillator yang unik.
+          </div>
+          <div class="ns-pattern-btns">
+            <button class="ns-pattern-btn active" onclick="setThoughtPattern('focus', this)">🎯 Focused</button>
+            <button class="ns-pattern-btn" onclick="setThoughtPattern('creative', this)">🎨 Creative</button>
+            <button class="ns-pattern-btn" onclick="setThoughtPattern('meditation', this)">🧘 Meditation</button>
+            <button class="ns-pattern-btn" onclick="setThoughtPattern('dream', this)">💤 Dream</button>
+            <button class="ns-pattern-btn" onclick="setThoughtPattern('flow', this)">🌊 Flow State</button>
+            <button class="ns-pattern-btn" onclick="setThoughtPattern('anxiety', this)">⚡ Anxiety</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 8: SYNAPTIC WEIGHT TABLE
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Connection Matrix</div>
+        <h2 class="ns-section-title">SYNAPTIC WEIGHTS</h2>
+        <p class="ns-section-desc">Daftar koneksi antar kluster neuron beserta kekuatan sinaptik dan statusnya.</p>
+      </div>
+
+      <div class="ns-table-wrap">
+        <table class="ns-table">
+          <thead>
+            <tr>
+              <th>Route</th>
+              <th>Weight</th>
+              <th>Strength</th>
+              <th>Delay</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="synapse-table-body">
+            <tr>
+              <td><span class="ns-cell-route"><i class="fa-solid fa-circle" style="font-size:6px;color:var(--ns-accent)"></i> V1 <span class="ns-cell-arrow">→</span> V2</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--ns-text-bright)">0.92</td>
+              <td><div class="ns-cell-strength"><div class="ns-cell-bar"><div class="ns-cell-bar-fill" style="width:92%;background:var(--ns-accent)"></div></div></div></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ns-text-dim)">1.2ms</td>
+              <td><span class="ns-cell-status ns-status-active">ACTIVE</span></td>
+            </tr>
+            <tr>
+              <td><span class="ns-cell-route"><i class="fa-solid fa-circle" style="font-size:6px;color:var(--ns-accent)"></i> PFC <span class="ns-cell-arrow">→</span> M1</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--ns-text-bright)">0.78</td>
+              <td><div class="ns-cell-strength"><div class="ns-cell-bar"><div class="ns-cell-bar-fill" style="width:78%;background:var(--ns-secondary)"></div></div></div></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ns-text-dim)">2.4ms</td>
+              <td><span class="ns-cell-status ns-status-active">ACTIVE</span></td>
+            </tr>
+            <tr>
+              <td><span class="ns-cell-route"><i class="fa-solid fa-circle" style="font-size:6px;color:var(--ns-secondary)"></i> HPC <span class="ns-cell-arrow">→</span> PFC</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--ns-text-bright)">0.65</td>
+              <td><div class="ns-cell-strength"><div class="ns-cell-bar"><div class="ns-cell-bar-fill" style="width:65%;background:var(--ns-accent)"></div></div></div></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ns-text-dim)">3.1ms</td>
+              <td><span class="ns-cell-status ns-status-pruning">PRUNING</span></td>
+            </tr>
+            <tr>
+              <td><span class="ns-cell-route"><i class="fa-solid fa-circle" style="font-size:6px;color:var(--ns-secondary)"></i> AMY <span class="ns-cell-arrow">→</span> PFC</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--ns-text-bright)">0.41</td>
+              <td><div class="ns-cell-strength"><div class="ns-cell-bar"><div class="ns-cell-bar-fill" style="width:41%;background:var(--ns-secondary)"></div></div></div></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ns-text-dim)">1.8ms</td>
+              <td><span class="ns-cell-status ns-status-inhibitory">INHIBITORY</span></td>
+            </tr>
+            <tr>
+              <td><span class="ns-cell-route"><i class="fa-solid fa-circle" style="font-size:6px;color:var(--ns-tertiary)"></i> A1 <span class="ns-cell-arrow">→</span> Wernicke</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--ns-text-bright)">0.88</td>
+              <td><div class="ns-cell-strength"><div class="ns-cell-bar"><div class="ns-cell-bar-fill" style="width:88%;background:var(--ns-accent)"></div></div></div></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ns-text-dim)">0.9ms</td>
+              <td><span class="ns-cell-status ns-status-active">ACTIVE</span></td>
+            </tr>
+            <tr>
+              <td><span class="ns-cell-route"><i class="fa-solid fa-circle" style="font-size:6px;color:var(--ns-accent)"></i> THL <span class="ns-cell-arrow">→</span> ALL</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--ns-text-bright)">0.95</td>
+              <td><div class="ns-cell-strength"><div class="ns-cell-bar"><div class="ns-cell-bar-fill" style="width:95%;background:var(--ns-accent)"></div></div></div></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--ns-text-dim)">0.5ms</td>
+              <td><span class="ns-cell-status ns-status-active">ACTIVE</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 9: CONTROL PANEL
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Neuromodulation</div>
+        <h2 class="ns-section-title">CONTROL PANEL</h2>
+        <p class="ns-section-desc">Kontrol parameter neuromodulator — setiap perubahan mempengaruhi seluruh visualisasi.</p>
+      </div>
+
+      <div class="ns-controls-grid">
+        <div class="ns-control-box">
+          <div class="ns-control-header">
+            <span class="ns-control-label">Dopamine Pathway</span>
+            <div class="ns-toggle active" onclick="this.classList.toggle('active')">
+              <div class="ns-toggle-knob"></div>
+            </div>
+          </div>
+          <div>
+            <div class="ns-slider-row">
+              <span class="ns-control-label">Concentration</span>
+              <span class="ns-slider-value" id="dopa-val">72%</span>
+            </div>
+            <input type="range" class="ns-slider" min="0" max="100" value="72" oninput="document.getElementById('dopa-val').textContent = this.value + '%'">
+          </div>
+        </div>
+
+        <div class="ns-control-box">
+          <div class="ns-control-header">
+            <span class="ns-control-label">Serotonin Level</span>
+            <div class="ns-toggle active" onclick="this.classList.toggle('active')">
+              <div class="ns-toggle-knob"></div>
+            </div>
+          </div>
+          <div>
+            <div class="ns-slider-row">
+              <span class="ns-control-label">Concentration</span>
+              <span class="ns-slider-value" id="sero-val">58%</span>
+            </div>
+            <input type="range" class="ns-slider" min="0" max="100" value="58" oninput="document.getElementById('sero-val').textContent = this.value + '%'">
+          </div>
+        </div>
+
+        <div class="ns-control-box">
+          <div class="ns-control-header">
+            <span class="ns-control-label">GABA Inhibition</span>
+            <div class="ns-toggle" onclick="this.classList.toggle('active')">
+              <div class="ns-toggle-knob"></div>
+            </div>
+          </div>
+          <div class="ns-dial-wrap">
+            <div class="ns-dial" id="gaba-dial" onmousedown="startDialDrag(event, this)" onmousemove="rotateDial(event, this)" onmouseup="stopDialDrag()">
+              <div class="ns-dial-indicator" id="gaba-indicator"></div>
+              <div class="ns-dial-center"></div>
+            </div>
+            <div>
+              <div class="ns-dial-label">Inhibition Strength</div>
+              <div class="ns-dial-readout" id="gaba-readout">45%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ns-control-box">
+          <div class="ns-control-header">
+            <span class="ns-control-label">Acetylcholine</span>
+            <div class="ns-toggle active" onclick="this.classList.toggle('active')">
+              <div class="ns-toggle-knob"></div>
+            </div>
+          </div>
+          <div>
+            <div class="ns-slider-row">
+              <span class="ns-control-label">Attention Gate</span>
+              <span class="ns-slider-value" id="ache-val">83%</span>
+            </div>
+            <input type="range" class="ns-slider" min="0" max="100" value="83" oninput="document.getElementById('ache-val').textContent = this.value + '%'">
+          </div>
+        </div>
+
+        <div class="ns-control-box">
+          <div class="ns-control-header">
+            <span class="ns-control-label">Norepinephrine</span>
+            <div class="ns-toggle" onclick="this.classList.toggle('active')">
+              <div class="ns-toggle-knob"></div>
+            </div>
+          </div>
+          <div>
+            <div class="ns-slider-row">
+              <span class="ns-control-label">Arousal Level</span>
+              <span class="ns-slider-value" id="nore-val">34%</span>
+            </div>
+            <input type="range" class="ns-slider" min="0" max="100" value="34" oninput="document.getElementById('nore-val').textContent = this.value + '%'">
+          </div>
+        </div>
+
+        <div class="ns-control-box">
+          <div class="ns-control-header">
+            <span class="ns-control-label">Glutamate Excitation</span>
+            <div class="ns-toggle active" onclick="this.classList.toggle('active')">
+              <div class="ns-toggle-knob"></div>
+            </div>
+          </div>
+          <div>
+            <div class="ns-slider-row">
+              <span class="ns-control-label">EPSP Amplitude</span>
+              <span class="ns-slider-value" id="glut-val">67%</span>
+            </div>
+            <input type="range" class="ns-slider" min="0" max="100" value="67" oninput="document.getElementById('glut-val').textContent = this.value + '%'">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 10: ACTION POTENTIAL
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Electrophysiology</div>
+        <h2 class="ns-section-title">ACTION POTENTIAL</h2>
+        <p class="ns-section-desc">Gelombang aksi neuron — sodium influx, depolarisasi, dan repolarisasi dalam animasi real-time.</p>
+      </div>
+
+      <div class="ns-ap-container">
+        <canvas id="ap-canvas"></canvas>
+        <div class="ns-ap-phases">
+          <div class="ns-ap-phase">
+            <div class="ns-ap-phase-dot" style="background: var(--ns-text-dim);"></div>
+            <div class="ns-ap-phase-name">Resting</div>
+          </div>
+          <div class="ns-ap-phase">
+            <div class="ns-ap-phase-dot" style="background: var(--ns-accent);"></div>
+            <div class="ns-ap-phase-name">Threshold</div>
+          </div>
+          <div class="ns-ap-phase">
+            <div class="ns-ap-phase-dot" style="background: var(--ns-secondary);"></div>
+            <div class="ns-ap-phase-name">Depolarize</div>
+          </div>
+          <div class="ns-ap-phase">
+            <div class="ns-ap-phase-dot" style="background: var(--ns-tertiary);"></div>
+            <div class="ns-ap-phase-name">Overshoot</div>
+          </div>
+          <div class="ns-ap-phase">
+            <div class="ns-ap-phase-dot" style="background: #fb7185;"></div>
+            <div class="ns-ap-phase-name">Repolarize</div>
+          </div>
+          <div class="ns-ap-phase">
+            <div class="ns-ap-phase-dot" style="background: var(--ns-text-dim);"></div>
+            <div class="ns-ap-phase-name">Hyperpolarize</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ns-divider"></div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECTION 11: ARCHITECTURE DIAGRAM
+         ═══════════════════════════════════════════════════ -->
+    <section class="ns-section">
+      <div class="ns-section-header">
+        <div class="ns-section-tag">Deep Architecture</div>
+        <h2 class="ns-section-title">NEURAL LAYERS</h2>
+        <p class="ns-section-desc">Arsitektur neural network — klik neuron untuk menyalakannya.</p>
+      </div>
+
+      <div class="ns-arch-diagram" id="arch-diagram">
+        <div class="ns-layer-label">INPUT LAYER — Sensory Receptors</div>
+        <div class="ns-layer-row" id="layer-input"></div>
+        <div class="ns-layer-connections" id="conn-1"></div>
+        <div class="ns-layer-label">HIDDEN LAYER 1 — Feature Detection</div>
+        <div class="ns-layer-row" id="layer-hidden1"></div>
+        <div class="ns-layer-connections" id="conn-2"></div>
+        <div class="ns-layer-label">HIDDEN LAYER 2 — Pattern Recognition</div>
+        <div class="ns-layer-row" id="layer-hidden2"></div>
+        <div class="ns-layer-connections" id="conn-3"></div>
+        <div class="ns-layer-label">HIDDEN LAYER 3 — Abstract Integration</div>
+        <div class="ns-layer-row" id="layer-hidden3"></div>
+        <div class="ns-layer-connections" id="conn-4"></div>
+        <div class="ns-layer-label">OUTPUT LAYER — Motor / Decision</div>
+        <div class="ns-layer-row" id="layer-output"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════════════ -->
+    <footer class="ns-footer">
+      <div class="ns-divider" style="margin-bottom:48px"></div>
+      <div class="ns-footer-brand">NEURAL·SYNAPSE</div>
+      <div class="ns-footer-sub">UI PLAYGROUND BETA · STYLE #62 · 2026</div>
+      <div class="ns-footer-links">
+        <a href="../index.html" class="ns-footer-link"><i class="fa-solid fa-arrow-left"></i> Back to Playground</a>
+        <a href="../showcase.html" class="ns-footer-link"><i class="fa-solid fa-grid-2"></i> Showcase</a>
+        <a href="61-prismatic-holographic.html" class="ns-footer-link"><i class="fa-solid fa-arrow-left"></i> Prev: Prismatic</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       JAVASCRIPT — ALL NEURAL SYSTEMS
+       ═══════════════════════════════════════════════════════════ -->
+  <script>
+    /* ── Theme Switcher ──────────────────────────────── */
+    function setNSTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('ns-theme', theme);
+      document.querySelectorAll('.ns-th-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-theme-pick') === theme);
+      });
+    }
+    // Init theme
+    (function() {
+      var t = localStorage.getItem('ns-theme') || 'synapse-teal';
+      document.documentElement.setAttribute('data-theme', t);
+      document.querySelectorAll('.ns-th-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-theme-pick') === t);
+      });
+    })();
+
+    /* ── Utility ──────────────────────────────────────── */
+    function getAccentRGB() {
+      var s = getComputedStyle(document.documentElement);
+      return s.getPropertyValue('--ns-accent-rgb').trim().split(',').map(Number);
+    }
+    function getSecondaryRGB() {
+      var s = getComputedStyle(document.documentElement);
+      return s.getPropertyValue('--ns-secondary-rgb').trim().split(',').map(Number);
+    }
+
+    /* ════════════════════════════════════════════════════
+       1. BACKGROUND NEURAL CANVAS
+       ════════════════════════════════════════════════════ */
+    (function() {
+      var canvas = document.getElementById('neural-canvas');
+      var ctx = canvas.getContext('2d');
+      var W, H, nodes = [], fires = [];
+      var mouse = { x: -999, y: -999 };
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Create neuron nodes
+      var NODE_COUNT = Math.min(90, Math.floor((W * H) / 15000));
+      for (var i = 0; i < NODE_COUNT; i++) {
+        nodes.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 1.5 + Math.random() * 2.5,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.005 + Math.random() * 0.015,
+          brightness: 0.3 + Math.random() * 0.4,
+          type: Math.random() < 0.7 ? 'excitatory' : (Math.random() < 0.5 ? 'inhibitory' : 'interneuron')
+        });
+      }
+
+      // Random spontaneous firing
+      setInterval(function() {
+        if (fires.length < 3) {
+          var idx = Math.floor(Math.random() * nodes.length);
+          fires.push({ idx: idx, age: 0, maxAge: 60 + Math.random() * 40 });
+        }
+      }, 400);
+
+      // Mouse interaction — proximity firing
+      document.addEventListener('mousemove', function(e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+      document.addEventListener('click', function(e) {
+        // Find nearest node and fire it
+        var minD = 200;
+        var nearest = -1;
+        for (var i = 0; i < nodes.length; i++) {
+          var dx = nodes[i].x - e.clientX;
+          var dy = nodes[i].y - e.clientY;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d < minD) { minD = d; nearest = i; }
+        }
+        if (nearest >= 0) {
+          fires.push({ idx: nearest, age: 0, maxAge: 80 });
+          // Propagate to neighbors
+          for (var j = 0; j < nodes.length; j++) {
+            if (j === nearest) continue;
+            var dx2 = nodes[j].x - nodes[nearest].x;
+            var dy2 = nodes[j].y - nodes[nearest].y;
+            var d2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+            if (d2 < 200) {
+              fires.push({ idx: j, age: Math.floor(d2 / 5), maxAge: 60 });
+            }
+          }
+        }
+      });
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        var accent = getAccentRGB();
+        var sec = getSecondaryRGB();
+        var t = Date.now() * 0.001;
+
+        // Update positions
+        for (var i = 0; i < nodes.length; i++) {
+          var n = nodes[i];
+          n.x += n.vx;
+          n.y += n.vy;
+          n.phase += n.speed;
+          if (n.x < 0 || n.x > W) n.vx *= -1;
+          if (n.y < 0 || n.y > H) n.vy *= -1;
+          // Mouse repulsion
+          var dxm = n.x - mouse.x;
+          var dym = n.y - mouse.y;
+          var dm = Math.sqrt(dxm * dxm + dym * dym);
+          if (dm < 120) {
+            n.vx += (dxm / dm) * 0.05;
+            n.vy += (dym / dm) * 0.05;
+          }
+          n.vx *= 0.99;
+          n.vy *= 0.99;
+        }
+
+        // Draw connections
+        var maxDist = 140;
+        ctx.lineWidth = 0.5;
+        for (var i = 0; i < nodes.length; i++) {
+          for (var j = i + 1; j < nodes.length; j++) {
+            var dx = nodes[i].x - nodes[j].x;
+            var dy = nodes[i].y - nodes[j].y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < maxDist) {
+              var alpha = (1 - dist / maxDist) * 0.12;
+              // Check if either node is firing
+              var firing = false;
+              for (var f = 0; f < fires.length; f++) {
+                if (fires[f].idx === i || fires[f].idx === j) { firing = true; break; }
+              }
+              if (firing) {
+                alpha = Math.min(0.4, alpha * 3);
+                ctx.strokeStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',' + alpha + ')';
+                ctx.lineWidth = 1;
+              } else {
+                ctx.strokeStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',' + alpha + ')';
+                ctx.lineWidth = 0.5;
+              }
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw nodes
+        for (var i = 0; i < nodes.length; i++) {
+          var n = nodes[i];
+          var pulse = Math.sin(n.phase) * 0.3 + 0.7;
+          var col = accent;
+          if (n.type === 'inhibitory') col = sec;
+          var r = n.r * pulse;
+          var alpha = n.brightness * pulse;
+
+          // Glow for firing nodes
+          for (var f = 0; f < fires.length; f++) {
+            if (fires[f].idx === i) {
+              var fade = 1 - fires[f].age / fires[f].maxAge;
+              r = n.r * (1 + fade * 3);
+              alpha = 0.5 + fade * 0.5;
+              // Draw glow
+              ctx.beginPath();
+              ctx.arc(n.x, n.y, r * 4, 0, Math.PI * 2);
+              ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',' + (fade * 0.15) + ')';
+              ctx.fill();
+              break;
+            }
+          }
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha + ')';
+          ctx.fill();
+        }
+
+        // Update fires
+        for (var f = fires.length - 1; f >= 0; f--) {
+          fires[f].age++;
+          if (fires[f].age >= fires[f].maxAge) fires.splice(f, 1);
+        }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ════════════════════════════════════════════════════
+       2. SPARKLINE MINI CHARTS
+       ════════════════════════════════════════════════════ */
+    (function() {
+      var sparkData = {
+        membrane: [], firing: [], weight: [], nt: [], cohesion: [], refractory: []
+      };
+      var maxPts = 60;
+      for (var key in sparkData) {
+        for (var i = 0; i < maxPts; i++) {
+          sparkData[key].push(Math.random());
+        }
+      }
+
+      function drawSparkline(canvasId, data, color) {
+        var canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W = canvas.width = canvas.offsetWidth * 2;
+        var H = canvas.height = canvas.offsetHeight * 2;
+        ctx.clearRect(0, 0, W, H);
+
+        var step = W / (data.length - 1);
+        ctx.beginPath();
+        ctx.moveTo(0, H - data[0] * H * 0.8 - H * 0.1);
+        for (var i = 1; i < data.length; i++) {
+          var x = i * step;
+          var y = H - data[i] * H * 0.8 - H * 0.1;
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Fill
+        ctx.lineTo(W, H);
+        ctx.lineTo(0, H);
+        ctx.closePath();
+        var grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, color.replace(')', ',0.15)').replace('rgb', 'rgba'));
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      setInterval(function() {
+        var accent = getAccentRGB();
+        var sec = getSecondaryRGB();
+        var c1 = 'rgb(' + accent.join(',') + ')';
+        var c2 = 'rgb(' + sec.join(',') + ')';
+
+        for (var key in sparkData) {
+          sparkData[key].push(Math.random());
+          if (sparkData[key].length > maxPts) sparkData[key].shift();
+        }
+
+        drawSparkline('spark-membrane', sparkData.membrane, c1);
+        drawSparkline('spark-firing', sparkData.firing, c1);
+        drawSparkline('spark-weight', sparkData.weight, c2);
+        drawSparkline('spark-nt', sparkData.nt, c1);
+        drawSparkline('spark-cohesion', sparkData.cohesion, c2);
+        drawSparkline('spark-refractory', sparkData.refractory, c1);
+      }, 500);
+    })();
+
+    /* ════════════════════════════════════════════════════
+       3. LIVE DASHBOARD VALUE UPDATES
+       ════════════════════════════════════════════════════ */
+    (function() {
+      setInterval(function() {
+        var memVal = (-70 + (Math.random() - 0.5) * 20).toFixed(1);
+        var fireVal = (42.7 + (Math.random() - 0.5) * 8).toFixed(1);
+        var weightVal = (0.847 + (Math.random() - 0.5) * 0.1).toFixed(3);
+        var ntVal = (3.2 + (Math.random() - 0.5) * 0.8).toFixed(1);
+        var cohesVal = (94.2 + (Math.random() - 0.5) * 4).toFixed(1);
+        var refracVal = (2.1 + (Math.random() - 0.5) * 0.6).toFixed(1);
+
+        document.getElementById('dash-membrane').textContent = memVal;
+        document.getElementById('dash-firing').textContent = fireVal;
+        document.getElementById('dash-weight').textContent = weightVal;
+        document.getElementById('dash-nt').textContent = ntVal;
+        document.getElementById('dash-cohesion').textContent = cohesVal;
+        document.getElementById('dash-refractory').textContent = refracVal;
+        document.getElementById('firing-rate-display').textContent = fireVal + ' Hz';
+      }, 1200);
+    })();
+
+    /* ════════════════════════════════════════════════════
+       4. TOPOLOGY CANVAS (Interactive Network Map)
+       ════════════════════════════════════════════════════ */
+    (function() {
+      var canvas = document.getElementById('topology-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var W, H;
+      var topoNodes = [], topoFires = [];
+
+      function resize() {
+        var rect = canvas.parentElement.getBoundingClientRect();
+        W = canvas.width = rect.width * 2;
+        H = canvas.height = rect.height * 2;
+        ctx.scale(1, 1);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Generate layered topology
+      var layers = [8, 12, 16, 12, 8, 4];
+      var layerSpacing = W / (layers.length + 1);
+      for (var l = 0; l < layers.length; l++) {
+        for (var n = 0; n < layers[l]; n++) {
+          var ySpread = H * 0.7;
+          var yOff = H * 0.15;
+          topoNodes.push({
+            x: layerSpacing * (l + 1),
+            y: yOff + (ySpread / (layers[l] + 1)) * (n + 1),
+            r: 4 + Math.random() * 4,
+            layer: l,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.01 + Math.random() * 0.02,
+            active: false,
+            activationTime: 0
+          });
+        }
+      }
+
+      // Generate connections between adjacent layers
+      var topoEdges = [];
+      var idxStart = 0;
+      for (var l = 0; l < layers.length - 1; l++) {
+        var nextStart = idxStart + layers[l];
+        for (var i = 0; i < layers[l]; i++) {
+          for (var j = 0; j < layers[l + 1]; j++) {
+            if (Math.random() < 0.35) { // Sparse connectivity
+              topoEdges.push({
+                from: idxStart + i,
+                to: nextStart + j,
+                weight: 0.3 + Math.random() * 0.7,
+                firing: false,
+                fireProgress: 0
+              });
+            }
+          }
+        }
+        idxStart += layers[l];
+      }
+
+      // Click to fire
+      canvas.addEventListener('click', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var mx = (e.clientX - rect.left) * 2;
+        var my = (e.clientY - rect.top) * 2;
+        for (var i = 0; i < topoNodes.length; i++) {
+          var dx = topoNodes[i].x - mx;
+          var dy = topoNodes[i].y - my;
+          if (Math.sqrt(dx * dx + dy * dy) < 30) {
+            topoNodes[i].active = true;
+            topoNodes[i].activationTime = 0;
+            // Propagate through edges
+            for (var e2 = 0; e2 < topoEdges.length; e2++) {
+              if (topoEdges[e2].from === i || topoEdges[e2].to === i) {
+                topoEdges[e2].firing = true;
+                topoEdges[e2].fireProgress = 0;
+              }
+            }
+            break;
+          }
+        }
+      });
+
+      function drawTopology() {
+        ctx.clearRect(0, 0, W, H);
+        var accent = getAccentRGB();
+        var sec = getSecondaryRGB();
+        var ter = [245, 158, 11];
+
+        // Draw edges
+        for (var e = 0; e < topoEdges.length; e++) {
+          var edge = topoEdges[e];
+          var from = topoNodes[edge.from];
+          var to = topoNodes[edge.to];
+          var alpha = edge.weight * 0.15;
+          var col = accent;
+
+          if (edge.firing) {
+            alpha = 0.6;
+            edge.fireProgress += 0.03;
+            if (edge.fireProgress >= 1) {
+              edge.firing = false;
+              edge.fireProgress = 0;
+              // Activate target node
+              topoNodes[edge.to].active = true;
+              topoNodes[edge.to].activationTime = 0;
+            }
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(from.x, from.y);
+          ctx.lineTo(to.x, to.y);
+          ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha + ')';
+          ctx.lineWidth = edge.firing ? 2 : 1;
+          ctx.stroke();
+
+          // Traveling pulse
+          if (edge.firing) {
+            var px = from.x + (to.x - from.x) * edge.fireProgress;
+            var py = from.y + (to.y - from.y) * edge.fireProgress;
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.9)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(px, py, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.2)';
+            ctx.fill();
+          }
+        }
+
+        // Draw nodes
+        var t = Date.now() * 0.001;
+        for (var i = 0; i < topoNodes.length; i++) {
+          var n = topoNodes[i];
+          n.phase += n.speed;
+          var pulse = Math.sin(n.phase) * 0.3 + 0.7;
+          var r = n.r * pulse;
+          var col = accent;
+          if (n.layer === 2 || n.layer === 3) col = sec;
+          if (n.layer === 0 || n.layer === 5) col = ter;
+
+          if (n.active) {
+            n.activationTime++;
+            if (n.activationTime > 50) n.active = false;
+            var fade = 1 - n.activationTime / 50;
+            r = n.r * (1 + fade * 2);
+            // Glow
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, r * 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',' + (fade * 0.2) + ')';
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+          var nodeAlpha = n.active ? 1 : 0.6 * pulse;
+          ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + nodeAlpha + ')';
+          ctx.fill();
+        }
+
+        // Spontaneous micro-fires
+        if (Math.random() < 0.02) {
+          var ri = Math.floor(Math.random() * topoNodes.length);
+          topoNodes[ri].active = true;
+          topoNodes[ri].activationTime = 0;
+          for (var e2 = 0; e2 < topoEdges.length; e2++) {
+            if (topoEdges[e2].from === ri && Math.random() < 0.3) {
+              topoEdges[e2].firing = true;
+              topoEdges[e2].fireProgress = 0;
+            }
+          }
+        }
+
+        requestAnimationFrame(drawTopology);
+      }
+      drawTopology();
+    })();
+
+    /* ════════════════════════════════════════════════════
+       5. EEG WAVEFORM CANVAS
+       ════════════════════════════════════════════════════ */
+    (function() {
+      var canvas = document.getElementById('eeg-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var W, H;
+      var channels = [];
+      var numChannels = 4;
+      var bufferLen = 200;
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth * 2;
+        H = canvas.height = canvas.offsetHeight * 2;
+        channels = [];
+        for (var c = 0; c < numChannels; c++) {
+          var buf = [];
+          for (var i = 0; i < bufferLen; i++) buf.push(0);
+          channels.push(buf);
+        }
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var t = 0;
+      var freqs = [2, 6, 10, 22, 45]; // delta, theta, alpha, beta, gamma combined
+      var amps = [0.4, 0.6, 0.8, 0.3, 0.15];
+
+      function drawEEG() {
+        ctx.clearRect(0, 0, W, H);
+        var accent = getAccentRGB();
+        var sec = getSecondaryRGB();
+        var colors = [accent, sec, [245, 158, 11], [251, 113, 133]];
+
+        t += 0.02;
+        var channelH = H / numChannels;
+
+        // Generate signal
+        for (var c = 0; c < numChannels; c++) {
+          var val = 0;
+          for (var f = 0; f < freqs.length; f++) {
+            val += amps[f] * Math.sin(t * freqs[f] + c * 1.2 + f * 0.7);
+          }
+          val += (Math.random() - 0.5) * 0.05; // noise
+          channels[c].push(val);
+          if (channels[c].length > bufferLen) channels[c].shift();
+        }
+
+        // Draw grid lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        for (var y = 0; y < H; y += channelH) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(W, y);
+          ctx.stroke();
+        }
+
+        // Draw each channel
+        for (var c = 0; c < numChannels; c++) {
+          var col = colors[c % colors.length];
+          var baseY = channelH * c + channelH / 2;
+          var step = W / bufferLen;
+
+          ctx.beginPath();
+          for (var i = 0; i < channels[c].length; i++) {
+            var x = i * step;
+            var y = baseY + channels[c][i] * channelH * 0.35;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.8)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Channel label
+          ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.4)';
+          ctx.font = '18px JetBrains Mono';
+          ctx.fillText('CH' + (c + 1), 8, baseY - channelH * 0.3);
+        }
+
+        requestAnimationFrame(drawEEG);
+      }
+      drawEEG();
+    })();
+
+    /* ════════════════════════════════════════════════════
+       6. THOUGHT PATTERN VISUALIZER
+       ════════════════════════════════════════════════════ */
+    var currentPattern = 'focus';
+    function setThoughtPattern(pattern, btn) {
+      currentPattern = pattern;
+      document.querySelectorAll('.ns-pattern-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    (function() {
+      var canvas = document.getElementById('thought-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var W, H;
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth * 2;
+        H = canvas.height = canvas.offsetHeight * 2;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var patternConfigs = {
+        focus:      { freqs: [12, 24, 40], amps: [0.6, 0.4, 0.2], speed: 1.0, layers: 3, coherence: 0.9 },
+        creative:   { freqs: [6, 10, 18, 35], amps: [0.5, 0.7, 0.5, 0.3], speed: 1.3, layers: 4, coherence: 0.5 },
+        meditation: { freqs: [4, 8], amps: [0.8, 0.6], speed: 0.4, layers: 2, coherence: 0.95 },
+        dream:      { freqs: [2, 5, 9, 14, 22], amps: [0.4, 0.6, 0.8, 0.3, 0.15], speed: 0.7, layers: 5, coherence: 0.3 },
+        flow:       { freqs: [10, 20, 40, 60], amps: [0.5, 0.7, 0.6, 0.3], speed: 1.5, layers: 4, coherence: 0.85 },
+        anxiety:    { freqs: [15, 25, 45, 70, 90], amps: [0.3, 0.5, 0.7, 0.6, 0.4], speed: 2.0, layers: 5, coherence: 0.2 }
+      };
+
+      var t = 0;
+      var particles = [];
+      for (var i = 0; i < 60; i++) {
+        particles.push({
+          angle: Math.random() * Math.PI * 2,
+          radius: 50 + Math.random() * 150,
+          speed: 0.005 + Math.random() * 0.02,
+          size: 1 + Math.random() * 3,
+          offset: Math.random() * Math.PI * 2
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        var accent = getAccentRGB();
+        var sec = getSecondaryRGB();
+        var config = patternConfigs[currentPattern] || patternConfigs.focus;
+        t += 0.02 * config.speed;
+
+        var cx = W / 2;
+        var cy = H / 2;
+
+        // Background radial gradient
+        var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.5);
+        grad.addColorStop(0, 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.05)');
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw oscillation rings
+        for (var layer = 0; layer < config.layers; layer++) {
+          var freq = config.freqs[layer % config.freqs.length];
+          var amp = config.amps[layer % config.amps.length];
+          var baseR = 40 + layer * 40;
+
+          ctx.beginPath();
+          for (var a = 0; a <= 360; a += 1) {
+            var rad = a * Math.PI / 180;
+            var r = baseR + Math.sin(t * freq * 0.1 + a * config.coherence * 0.05) * amp * 30;
+            var x = cx + Math.cos(rad) * r;
+            var y = cy + Math.sin(rad) * r;
+            if (a === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          var col = layer % 2 === 0 ? accent : sec;
+          ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (0.3 + layer * 0.1) + ')';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Draw floating particles
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          p.angle += p.speed * config.speed;
+          var pr = p.radius + Math.sin(t + p.offset) * 30;
+          var px = cx + Math.cos(p.angle) * pr;
+          var py = cy + Math.sin(p.angle) * pr;
+          var pAlpha = 0.3 + Math.sin(t * 2 + p.offset) * 0.2;
+          ctx.beginPath();
+          ctx.arc(px, py, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',' + pAlpha + ')';
+          ctx.fill();
+        }
+
+        // Center glow
+        ctx.beginPath();
+        ctx.arc(cx, cy, 20 + Math.sin(t * 3) * 5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.6)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.1)';
+        ctx.fill();
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ════════════════════════════════════════════════════
+       7. ACTION POTENTIAL CANVAS
+       ════════════════════════════════════════════════════ */
+    (function() {
+      var canvas = document.getElementById('ap-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var W, H;
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth * 2;
+        H = canvas.height = canvas.offsetHeight * 2;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var t = 0;
+      var trail = [];
+      var maxTrail = 300;
+
+      function apShape(x) {
+        // Classic action potential waveform
+        // x in range 0..1
+        var phase = (x * 5) % 1; // repeat
+        var v = -70; // resting
+        if (phase < 0.3) {
+          // Rising phase (depolarization)
+          v = -70 + 110 * Math.pow(phase / 0.3, 2);
+        } else if (phase < 0.45) {
+          // Overshoot peak
+          var peakPhase = (phase - 0.3) / 0.15;
+          v = 40 - 10 * Math.sin(peakPhase * Math.PI);
+        } else if (phase < 0.7) {
+          // Repolarization
+          var repPhase = (phase - 0.45) / 0.25;
+          v = 30 - 100 * Math.pow(repPhase, 1.5);
+        } else if (phase < 0.85) {
+          // Hyperpolarization
+          var hypPhase = (phase - 0.7) / 0.15;
+          v = -90 + 20 * Math.sin(hypPhase * Math.PI);
+        } else {
+          // Return to rest
+          var retPhase = (phase - 0.85) / 0.15;
+          v = -70 + 0 * retPhase;
+        }
+        return v;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        var accent = getAccentRGB();
+        var sec = getSecondaryRGB();
+        t += 0.008;
+
+        // Y axis mapping: -100 to +50 -> H to 0
+        function yMap(v) {
+          return H - ((v + 100) / 150) * H;
+        }
+
+        // Grid lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        var vLines = [-100, -70, -55, -40, -20, 0, 20, 40];
+        for (var i = 0; i < vLines.length; i++) {
+          var yy = yMap(vLines[i]);
+          ctx.beginPath();
+          ctx.moveTo(0, yy);
+          ctx.lineTo(W, yy);
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,0.15)';
+          ctx.font = '16px JetBrains Mono';
+          ctx.fillText(vLines[i] + 'mV', 6, yy - 4);
+        }
+
+        // Threshold line
+        var threshY = yMap(-55);
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.3)';
+        ctx.beginPath();
+        ctx.moveTo(0, threshY);
+        ctx.lineTo(W, threshY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.5)';
+        ctx.fillText('THRESHOLD (-55mV)', W - 200, threshY - 6);
+
+        // Draw AP waveform
+        ctx.beginPath();
+        var step = W / maxTrail;
+        for (var i = 0; i < maxTrail; i++) {
+          var x = i * step;
+          var v = apShape(t + i * 0.005);
+          var y = yMap(v);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.9)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Glow version
+        ctx.strokeStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.2)';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+
+        // Phase coloring on the line
+        for (var i = 0; i < maxTrail - 1; i += 3) {
+          var x1 = i * step;
+          var v1 = apShape(t + i * 0.005);
+          var y1 = yMap(v1);
+          var phase = (t + i * 0.005 * 5) % 1;
+          var col = accent;
+          if (phase > 0.3 && phase < 0.45) col = sec;
+          else if (phase > 0.45 && phase < 0.7) col = [245, 158, 11];
+          else if (phase > 0.7 && phase < 0.85) col = [251, 113, 133];
+
+          ctx.beginPath();
+          ctx.arc(x1, y1, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.5)';
+          ctx.fill();
+        }
+
+        // Current position indicator
+        var curV = apShape(t);
+        var curY = yMap(curV);
+        ctx.beginPath();
+        ctx.arc(0, curY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',1)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(0, curY, 12, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',0.2)';
+        ctx.fill();
+
+        // Current voltage readout
+        ctx.fillStyle = 'rgba(' + accent[0] + ',' + accent[1] + ',' + accent[2] + ',1)';
+        ctx.font = 'bold 20px Orbitron';
+        ctx.fillText(Math.round(curV) + ' mV', 20, curY - 16);
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ════════════════════════════════════════════════════
+       8. NEURAL ARCHITECTURE DIAGRAM
+       ════════════════════════════════════════════════════ */
+    (function() {
+      var layers = [
+        { id: 'layer-input', count: 6 },
+        { id: 'layer-hidden1', count: 10 },
+        { id: 'layer-hidden2', count: 12 },
+        { id: 'layer-hidden3', count: 8 },
+        { id: 'layer-output', count: 4 }
+      ];
+      var connIds = ['conn-1', 'conn-2', 'conn-3', 'conn-4'];
+
+      layers.forEach(function(layer) {
+        var container = document.getElementById(layer.id);
+        if (!container) return;
+        for (var i = 0; i < layer.count; i++) {
+          var node = document.createElement('div');
+          node.className = 'ns-neuron-node';
+          node.textContent = i + 1;
+          node.onclick = function() {
+            this.classList.toggle('active');
+            // Trigger fire effect
+            this.style.transition = 'none';
+            this.style.boxShadow = '0 0 30px var(--ns-glow-strong)';
+            var self = this;
+            setTimeout(function() {
+              self.style.transition = 'all 0.5s';
+              self.style.boxShadow = '';
+            }, 200);
+          };
+          container.appendChild(node);
+        }
+      });
+
+      connIds.forEach(function(id) {
+        var container = document.getElementById(id);
+        if (!container) return;
+        for (var i = 0; i < 12; i++) {
+          var pipe = document.createElement('div');
+          pipe.className = 'ns-conn-pipe';
+          pipe.style.height = (12 + Math.random() * 12) + 'px';
+          container.appendChild(pipe);
+        }
+      });
+    })();
+
+    /* ════════════════════════════════════════════════════
+       9. SIGNAL TRANSMITTER
+       ════════════════════════════════════════════════════ */
+    function fireSignal(node, idx) {
+      node.classList.add('firing');
+      document.getElementById('transmitter-grid').classList.add('firing');
+      setTimeout(function() {
+        node.classList.remove('firing');
+        document.getElementById('transmitter-grid').classList.remove('firing');
+      }, 1500);
+    }
+
+    /* ════════════════════════════════════════════════════
+       10. GLOBAL FIRE BUTTON
+       ════════════════════════════════════════════════════ */
+    function triggerGlobalFire() {
+      // Fire all cluster cards
+      document.querySelectorAll('.ns-cluster-card').forEach(function(card, i) {
+        setTimeout(function() {
+          card.classList.add('ns-fire-effect');
+          setTimeout(function() { card.classList.remove('ns-fire-effect'); }, 600);
+        }, i * 150);
+      });
+      // Fire all nodes in architecture
+      document.querySelectorAll('.ns-neuron-node').forEach(function(node, i) {
+        setTimeout(function() {
+          node.classList.add('active');
+          setTimeout(function() { node.classList.remove('active'); }, 800);
+        }, i * 50);
+      });
+      // Fire transmitter
+      fireSignal(document.querySelector('.ns-signal-node'), 0);
+    }
+
+    /* ════════════════════════════════════════════════════
+       11. DIAL CONTROL
+       ════════════════════════════════════════════════════ */
+    var dialDragging = false;
+    function startDialDrag(e, dial) { dialDragging = true; rotateDial(e, dial); }
+    function stopDialDrag() { dialDragging = false; }
+    function rotateDial(e, dial) {
+      if (!dialDragging) return;
+      var rect = dial.getBoundingClientRect();
+      var cx = rect.left + rect.width / 2;
+      var cy = rect.top + rect.height / 2;
+      var angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+      var degrees = (angle * 180 / Math.PI + 90 + 360) % 360;
+      var indicator = document.getElementById('gaba-indicator');
+      if (indicator) indicator.style.transform = 'translateX(-50%) rotate(' + degrees + 'deg)';
+      var readout = Math.round(degrees / 360 * 100);
+      var el = document.getElementById('gaba-readout');
+      if (el) el.textContent = readout + '%';
+    }
+
+    /* ════════════════════════════════════════════════════
+       12. UPDATE EEG BAND VALUES
+       ════════════════════════════════════════════════════ */
+    setInterval(function() {
+      var bands = ['band-delta', 'band-theta', 'band-alpha', 'band-beta', 'band-gamma'];
+      var bases = [12.4, 28.7, 45.2, 18.9, 8.3];
+      var widths = [35, 55, 72, 42, 22];
+      bands.forEach(function(id, i) {
+        var val = (bases[i] + (Math.random() - 0.5) * 5).toFixed(1);
+        var el = document.getElementById(id);
+        if (el) el.textContent = val;
+        var barFill = el.parentElement.querySelector('.ns-band-bar-fill');
+        if (barFill) {
+          var newW = Math.max(5, Math.min(100, widths[i] + (Math.random() - 0.5) * 10));
+          barFill.style.width = newW + '%';
+        }
+      });
+    }, 2000);
+
+    /* ════════════════════════════════════════════════════
+       13. STAT COUNTER ANIMATION
+       ════════════════════════════════════════════════════ */
+    setInterval(function() {
+      var firing = (1200 + (Math.random() - 0.5) * 200).toFixed(0);
+      var latency = (0.5 + Math.random() * 0.3).toFixed(1);
+      document.getElementById('stat-firing').textContent = Number(firing).toLocaleString();
+      document.getElementById('stat-latency').textContent = latency + 'ms';
+    }, 3000);
+
+  </script>
+</body>
+</html>

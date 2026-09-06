@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PARAMETRIC·ARCH — Procedural Architecture Explorer</title>
+
+  <!-- Anti-flash -->
+  <script>!function(){try{var t=localStorage.getItem('pa-theme')||'void';document.documentElement.setAttribute('data-theme',t)}catch(e){}}();</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       THEME DEFINITIONS
+       ═══════════════════════════════════════════════════════════ */
+    :root, [data-theme="void"] {
+      --bg: #060810;
+      --surface: rgba(10, 14, 28, 0.92);
+      --surface-solid: #0c1020;
+      --text: #e0e6f0;
+      --text-dim: #5a6a85;
+      --text-bright: #ffffff;
+      --accent: #00e5cc;
+      --accent-rgb: 0, 229, 204;
+      --secondary: #8b5cf6;
+      --secondary-rgb: 139, 92, 246;
+      --tertiary: #f59e0b;
+      --tertiary-rgb: 245, 158, 11;
+      --danger: #f43f5e;
+      --success: #10b981;
+      --border: rgba(0, 229, 204, 0.12);
+      --border-strong: rgba(0, 229, 204, 0.3);
+      --glow: rgba(0, 229, 204, 0.4);
+      --panel-bg: rgba(8, 12, 24, 0.88);
+      --scrollbar-thumb: rgba(0, 229, 204, 0.2);
+    }
+    [data-theme="ember"] {
+      --bg: #0a0604;
+      --surface: rgba(28, 16, 8, 0.92);
+      --surface-solid: #1a0e08;
+      --text: #f0e6d4;
+      --text-dim: #8a7560;
+      --text-bright: #ffffff;
+      --accent: #f59e0b;
+      --accent-rgb: 245, 158, 11;
+      --secondary: #ef4444;
+      --secondary-rgb: 239, 68, 68;
+      --tertiary: #10b981;
+      --tertiary-rgb: 16, 185, 129;
+      --danger: #f43f5e;
+      --success: #10b981;
+      --border: rgba(245, 158, 11, 0.12);
+      --border-strong: rgba(245, 158, 11, 0.3);
+      --glow: rgba(245, 158, 11, 0.4);
+      --panel-bg: rgba(20, 12, 6, 0.88);
+      --scrollbar-thumb: rgba(245, 158, 11, 0.2);
+    }
+    [data-theme="arctic"] {
+      --bg: #040810;
+      --surface: rgba(8, 16, 32, 0.92);
+      --surface-solid: #0a1428;
+      --text: #d4e8f7;
+      --text-dim: #4a7090;
+      --text-bright: #ffffff;
+      --accent: #38bdf8;
+      --accent-rgb: 56, 189, 248;
+      --secondary: #818cf8;
+      --secondary-rgb: 129, 140, 248;
+      --tertiary: #a78bfa;
+      --tertiary-rgb: 167, 139, 250;
+      --danger: #f43f5e;
+      --success: #34d399;
+      --border: rgba(56, 189, 248, 0.12);
+      --border-strong: rgba(56, 189, 248, 0.3);
+      --glow: rgba(56, 189, 248, 0.4);
+      --panel-bg: rgba(6, 12, 24, 0.88);
+      --scrollbar-thumb: rgba(56, 189, 248, 0.2);
+    }
+    [data-theme="noir"] {
+      --bg: #080808;
+      --surface: rgba(18, 18, 18, 0.92);
+      --surface-solid: #141414;
+      --text: #e0e0e0;
+      --text-dim: #666666;
+      --text-bright: #ffffff;
+      --accent: #ffffff;
+      --accent-rgb: 255, 255, 255;
+      --secondary: #888888;
+      --secondary-rgb: 136, 136, 136;
+      --tertiary: #555555;
+      --tertiary-rgb: 85, 85, 85;
+      --danger: #cc0000;
+      --success: #00cc66;
+      --border: rgba(255, 255, 255, 0.1);
+      --border-strong: rgba(255, 255, 255, 0.25);
+      --glow: rgba(255, 255, 255, 0.3);
+      --panel-bg: rgba(10, 10, 10, 0.88);
+      --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       GLOBAL RESET
+       ═══════════════════════════════════════════════════════════ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 999px; }
+
+    /* ═══════════════════════════════════════════════════════════
+       LAYOUT
+       ═══════════════════════════════════════════════════════════ */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 340px;
+      min-width: 340px;
+      height: 100vh;
+      background: var(--panel-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 20;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sidebar.collapsed {
+      transform: translateX(-340px);
+      min-width: 0;
+      width: 0;
+    }
+
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .brand-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-shadow: 0 0 12px var(--glow);
+    }
+    .brand-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    /* Presets Row */
+    .presets-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .preset-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.08);
+    }
+
+    /* Sidebar Controls Scroll Area */
+    .sidebar-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+    }
+
+    /* Principle Block */
+    .principle-block {
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .principle-block.active {
+      border-color: var(--border-strong);
+    }
+    .principle-block.disabled {
+      opacity: 0.45;
+    }
+
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      background: rgba(var(--accent-rgb), 0.03);
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .principle-header:hover {
+      background: rgba(var(--accent-rgb), 0.06);
+    }
+    .principle-num {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 0.6rem;
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.1);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      min-width: 22px;
+      text-align: center;
+    }
+    .principle-name {
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: var(--text-bright);
+      flex: 1;
+    }
+    .principle-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(var(--accent-rgb), 0.08);
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      width: 36px; height: 20px;
+      background: rgba(var(--accent-rgb), 0.1);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    .toggle-switch.on {
+      background: rgba(var(--accent-rgb), 0.3);
+      border-color: var(--accent);
+    }
+    .toggle-knob {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toggle-switch.on .toggle-knob {
+      transform: translateX(16px);
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--glow);
+    }
+
+    /* Principle Body (collapsible) */
+    .principle-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+      padding: 0 14px;
+    }
+    .principle-body.open {
+      max-height: 600px;
+      padding: 8px 14px 14px;
+    }
+
+    /* Formula Display */
+    .formula-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.06);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Slider Row */
+    .slider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .slider-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+    .slider-value {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+    .param-slider {
+      width: 100%; height: 4px;
+      -webkit-appearance: none; appearance: none;
+      background: rgba(var(--accent-rgb), 0.12);
+      border-radius: 999px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .param-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--glow);
+      cursor: pointer;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SIDEBAR FOOTER
+       ═══════════════════════════════════════════════════════════ */
+    .sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .footer-row {
+      display: flex;
+      gap: 8px;
+    }
+    .footer-btn {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 8px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .footer-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.06);
+    }
+    .footer-btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
+      color: var(--bg);
+      border: none;
+      font-weight: 800;
+    }
+    .footer-btn.primary:hover {
+      box-shadow: 0 4px 20px var(--glow);
+      transform: translateY(-1px);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       3D VIEWPORT
+       ═══════════════════════════════════════════════════════════ */
+    .viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    #three-canvas {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* Viewport Overlay UI */
+    .vp-top-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      z-index: 15;
+      pointer-events: none;
+    }
+    .vp-top-bar > * { pointer-events: auto; }
+
+    .toggle-sidebar-btn {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .toggle-sidebar-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .theme-switcher {
+      display: flex;
+      gap: 4px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .th-btn {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .th-btn.active { border-color: var(--text-bright); transform: scale(1.1); }
+    .th-btn:hover { transform: scale(1.05); }
+    .th-btn[data-theme-pick="void"] { background: linear-gradient(135deg, #00e5cc, #8b5cf6); }
+    .th-btn[data-theme-pick="ember"] { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .th-btn[data-theme-pick="arctic"] { background: linear-gradient(135deg, #38bdf8, #818cf8); }
+    .th-btn[data-theme-pick="noir"] { background: linear-gradient(135deg, #ffffff, #666666); }
+
+    /* Info overlay */
+    .vp-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.6));
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 15;
+      pointer-events: none;
+    }
+    .vp-info > * { pointer-events: auto; }
+
+    .vp-stats {
+      display: flex;
+      gap: 20px;
+    }
+    .vp-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .vp-stat-val {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    .vp-stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .vp-controls-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      text-align: right;
+      line-height: 1.6;
+    }
+    .vp-controls-hint kbd {
+      background: rgba(var(--accent-rgb), 0.1);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.5rem;
+      color: var(--accent);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       LOADING SCREEN
+       ═══════════════════════════════════════════════════════════ */
+    .loading-screen {
+      position: fixed; inset: 0;
+      z-index: 1000;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      transition: opacity 0.6s ease;
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--glow);
+    }
+    .loading-bar-track {
+      width: 200px; height: 3px;
+      background: rgba(var(--accent-rgb), 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.3s;
+    }
+    .loading-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-title">PARAMETRIC·ARCH</div>
+  <div class="loading-bar-track"><div class="loading-bar-fill" id="loadingBar"></div></div>
+  <div class="loading-sub" id="loadingText">Initializing Three.js...</div>
+</div>
+
+<div class="app-layout">
+
+  <!-- ═══════════════════════════════════════════════════
+       SIDEBAR
+       ═══════════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div>
+          <div class="brand-title">PARAMETRIC·ARCH</div>
+          <div class="brand-sub">7 PRINCIPLES · REAL-TIME 3D</div>
+        </div>
+      </div>
+      <div class="presets-row">
+        <button class="preset-btn active" onclick="applyPreset('tower')">🏛 Fractal Tower</button>
+        <button class="preset-btn" onclick="applyPreset('pavilion')">⭕ Radial Pavilion</button>
+        <button class="preset-btn" onclick="applyPreset('dome')">🫧 Organic Dome</button>
+        <button class="preset-btn" onclick="applyPreset('quasi')">💎 Quasicrystal</button>
+      </div>
+    </div>
+
+    <div class="sidebar-scroll" id="sidebarScroll">
+      <!-- Principles are populated by JS -->
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="footer-row">
+        <button class="footer-btn" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        <button class="footer-btn" onclick="randomizeAll()"><i class="fa-solid fa-shuffle"></i> Randomize</button>
+        <button class="footer-btn primary" onclick="exportPNG()"><i class="fa-solid fa-camera"></i> Export PNG</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════
+       VIEWPORT
+       ═══════════════════════════════════════════════════ -->
+  <main class="viewport" id="viewport">
+    <canvas id="three-canvas"></canvas>
+
+    <div class="vp-top-bar">
+      <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Toggle Panel (Tab)">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="theme-switcher">
+        <button class="th-btn active" data-theme-pick="void" onclick="setTheme('void')" title="Void"></button>
+        <button class="th-btn" data-theme-pick="ember" onclick="setTheme('ember')" title="Ember"></button>
+        <button class="th-btn" data-theme-pick="arctic" onclick="setTheme('arctic')" title="Arctic"></button>
+        <button class="th-btn" data-theme-pick="noir" onclick="setTheme('noir')" title="Noir"></button>
+      </div>
+    </div>
+
+    <div class="vp-info">
+      <div class="vp-stats">
+        <div class="vp-stat">
+          <div class="vp-stat-val" id="stat-fps">60</div>
+          <div class="vp-stat-label">FPS</div>
+        </div>
+        <div class="vp-stat">
+          <div class="vp-stat-val" id="stat-verts">0</div>
+          <div class="vp-stat-label">Vertices</div>
+        </div>
+        <div class="vp-stat">
+          <div class="vp-stat-val" id="stat-draws">0</div>
+          <div class="vp-stat-label">Draw Calls</div>
+        </div>
+      </div>
+      <div class="vp-controls-hint">
+        <kbd>LMB</kbd> Rotate &nbsp; <kbd>RMB</kbd> Pan &nbsp; <kbd>Scroll</kbd> Zoom<br>
+        <kbd>Tab</kbd> Toggle Panel &nbsp; <kbd>R</kbd> Reset View
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+/* ════════════════════════════════════════════════════════════
+   1. PRINCIPLE DEFINITIONS — UI + PARAMETERS + GENERATORS
+   ════════════════════════════════════════════════════════════ */
+
+var PRINCIPLES = [
+  {
+    id: 'mandelbulb',
+    num: 1,
+    name: 'Mandelbulb Fractal',
+    badge: 'MASSING',
+    enabled: true,
+    formula: "z' = z^n + c\nSpherical: r = |z|, θ = acos(z_r/|z|), φ = atan2(z_i, z_r)\nNew r: r^n, New θ: n·θ, New φ: n·φ",
+    params: {
+      power: { label: 'Power (n)', min: 2, max: 16, step: 0.5, value: 8 },
+      depth: { label: 'Iterations', min: 1, max: 20, step: 1, value: 8 },
+      scale: { label: 'Scale', min: 0.2, max: 3, step: 0.1, value: 1.0 },
+      offset: { label: 'Offset Y', min: -2, max: 2, step: 0.05, value: 0 },
+      detail: { label: 'Point Density', min: 5000, max: 40000, step: 1000, value: 15000 }
+    }
+  },
+  {
+    id: 'azimuthal',
+    num: 2,
+    name: 'Azimuthal Projection',
+    badge: 'SITE PLAN',
+    enabled: false,
+    formula: "Polar(r, θ) → Cartesian(r·cosθ, r·sinθ)\nEquidistant: d = r (linear from center)\nSectors: Δθ = 2π / n_sectors",
+    params: {
+      sectors: { label: 'Sectors (θ)', min: 3, max: 24, step: 1, value: 12 },
+      rings: { label: 'Rings', min: 2, max: 12, step: 1, value: 5 },
+      radius: { label: 'Max Radius', min: 2, max: 15, step: 0.5, value: 8 },
+      jitter: { label: 'Jitter', min: 0, max: 1, step: 0.05, value: 0.1 },
+      columnHeight: { label: 'Column Height', min: 0.5, max: 5, step: 0.1, value: 2 }
+    }
+  },
+  {
+    id: 'fibonacci',
+    num: 3,
+    name: 'Fibonacci Spiral',
+    badge: 'PROPORTION',
+    enabled: false,
+    formula: "r = a · e^(b·θ)\nb = ln(φ) / (π/2), φ = 1.618033...\nGolden ratio governs growth rate",
+    params: {
+      turns: { label: 'Turns', min: 1, max: 10, step: 0.5, value: 5 },
+      spacing: { label: 'Spacing (a)', min: 0.1, max: 2, step: 0.05, value: 0.5 },
+      tubeRadius: { label: 'Tube Radius', min: 0.02, max: 0.5, step: 0.01, value: 0.15 },
+      direction: { label: 'Direction', min: -1, max: 1, step: 2, value: 1 },
+      height: { label: 'Height Scale', min: 0, max: 8, step: 0.2, value: 3 }
+    }
+  },
+  {
+    id: 'voronoi',
+    num: 4,
+    name: 'Voronoi Diagram',
+    badge: 'STRUCTURE',
+    enabled: false,
+    formula: "V(p_i) = { x | d(x,p_i) ≤ d(x,p_j) ∀j≠i }\nWeighted: d_w(x,p) = |x-p|² - w_p\nSeed points with additive weights",
+    params: {
+      seeds: { label: 'Seed Count', min: 5, max: 80, step: 1, value: 30 },
+      jitter: { label: 'Seed Jitter', min: 0, max: 1, step: 0.05, value: 0.4 },
+      size: { label: 'Grid Size', min: 5, max: 20, step: 1, value: 10 },
+      height: { label: 'Wall Height', min: 0.1, max: 4, step: 0.1, value: 1.5 },
+      weight: { label: 'Additive Weight', min: 0, max: 3, step: 0.1, value: 0 }
+    }
+  },
+  {
+    id: 'lissajous',
+    num: 5,
+    name: 'Lissajous Curves',
+    badge: 'FACADE',
+    enabled: false,
+    formula: "x = A·sin(a·t + δ)\ny = B·sin(b·t)\nWhen a/b is rational → closed curve\nPhase δ shifts the shape",
+    params: {
+      a: { label: 'Freq A', min: 1, max: 12, step: 1, value: 5 },
+      b: { label: 'Freq B', min: 1, max: 12, step: 1, value: 4 },
+      delta: { label: 'Phase δ (°)', min: 0, max: 360, step: 5, value: 90 },
+      ampX: { label: 'Amplitude X', min: 0.5, max: 5, step: 0.1, value: 3 },
+      ampY: { label: 'Amplitude Y', min: 0.5, max: 5, step: 0.1, value: 3 },
+      thickness: { label: 'Profile Height', min: 0.1, max: 4, step: 0.1, value: 1.5 }
+    }
+  },
+  {
+    id: 'penrose',
+    num: 6,
+    name: 'Penrose Tiling',
+    badge: 'QUASICRYSTAL',
+    enabled: false,
+    formula: "P3: Kite & Dart (τ-scaled)\nP2: Rhombus (thin 36° / thick 72°)\nAperiodic: no translational symmetry\nSubstitution rule at each iteration",
+    params: {
+      type: { label: 'Type (P2=0, P3=1)', min: 0, max: 1, step: 1, value: 1 },
+      scale: { label: 'Tile Scale', min: 0.2, max: 3, step: 0.1, value: 1.0 },
+      iterations: { label: 'Subdivision', min: 1, max: 6, step: 1, value: 3 },
+      rotation: { label: 'Rotation (°)', min: 0, max: 360, step: 5, value: 0 },
+      zHeight: { label: 'Z Height', min: 0, max: 4, step: 0.1, value: 0.5 }
+    }
+  },
+  {
+    id: 'spherical',
+    num: 7,
+    name: 'Spherical Harmonics',
+    badge: 'DEFORM',
+    enabled: false,
+    formula: "f(θ,φ) = Σ_l Σ_m Y_l^m(θ,φ)\nY_l^m = N · P_l^m(cosθ) · e^(imφ)\nLegendre polynomials + spherical harmonics",
+    params: {
+      degreeL: { label: 'Degree (l)', min: 0, max: 8, step: 1, value: 4 },
+      orderM: { label: 'Order (m)', min: 0, max: 8, step: 1, value: 2 },
+      amplitude: { label: 'Amplitude', min: 0, max: 2, step: 0.05, value: 0.8 },
+      sphereRes: { label: 'Resolution', min: 16, max: 80, step: 4, value: 48 },
+      smoothness: { label: 'Smoothness', min: 0.1, max: 3, step: 0.1, value: 1 }
+    }
+  }
+];
+
+/* ════════════════════════════════════════════════════════════
+   2. PRESETS
+   ════════════════════════════════════════════════════════════ */
+var PRESETS = {
+  tower: {
+    mandelbulb: { enabled: true, power: 8, depth: 10, scale: 1.0, offset: 0, detail: 20000 },
+    azimuthal: { enabled: false },
+    fibonacci: { enabled: true, turns: 6, spacing: 0.3, tubeRadius: 0.08, direction: 1, height: 4 },
+    voronoi: { enabled: true, seeds: 40, jitter: 0.3, size: 8, height: 2, weight: 0 },
+    lissajous: { enabled: false },
+    penrose: { enabled: false },
+    spherical: { enabled: false }
+  },
+  pavilion: {
+    mandelbulb: { enabled: false },
+    azimuthal: { enabled: true, sectors: 16, rings: 6, radius: 10, jitter: 0.15, columnHeight: 3 },
+    fibonacci: { enabled: true, turns: 3, spacing: 0.8, tubeRadius: 0.12, direction: 1, height: 2 },
+    voronoi: { enabled: false },
+    lissajous: { enabled: true, a: 3, b: 2, delta: 90, ampX: 4, ampY: 4, thickness: 1 },
+    penrose: { enabled: false },
+    spherical: { enabled: true, degreeL: 3, orderM: 1, amplitude: 0.5, sphereRes: 32, smoothness: 1.5 }
+  },
+  dome: {
+    mandelbulb: { enabled: false },
+    azimuthal: { enabled: false },
+    fibonacci: { enabled: false },
+    voronoi: { enabled: true, seeds: 50, jitter: 0.6, size: 12, height: 1, weight: 1.5 },
+    lissajous: { enabled: false },
+    penrose: { enabled: false },
+    spherical: { enabled: true, degreeL: 6, orderM: 3, amplitude: 1.2, sphereRes: 64, smoothness: 1 }
+  },
+  quasi: {
+    mandelbulb: { enabled: true, power: 4, depth: 6, scale: 0.8, offset: -0.5, detail: 15000 },
+    azimuthal: { enabled: false },
+    fibonacci: { enabled: false },
+    voronoi: { enabled: false },
+    lissajous: { enabled: true, a: 7, b: 5, delta: 45, ampX: 2, ampY: 2, thickness: 0.5 },
+    penrose: { enabled: true, type: 1, scale: 1.2, iterations: 4, rotation: 18, zHeight: 1 },
+    spherical: { enabled: true, degreeL: 5, orderM: 4, amplitude: 0.6, sphereRes: 40, smoothness: 2 }
+  }
+};
+
+/* ════════════════════════════════════════════════════════════
+   3. UI BUILDER — POPULATE SIDEBAR
+   ════════════════════════════════════════════════════════════ */
+function buildSidebar() {
+  var container = document.getElementById('sidebarScroll');
+  container.innerHTML = '';
+
+  PRINCIPLES.forEach(function(p) {
+    var block = document.createElement('div');
+    block.className = 'principle-block ' + (p.enabled ? 'active' : 'disabled');
+    block.id = 'block-' + p.id;
+
+    var header = document.createElement('div');
+    header.className = 'principle-header';
+    header.onclick = function(e) {
+      if (e.target.closest('.toggle-switch')) return;
+      togglePrincipleBody(p.id);
+    };
+    header.innerHTML = '<span class="principle-num">' + p.num + '</span>' +
+      '<span class="principle-name">' + p.name + '</span>' +
+      '<span class="principle-badge">' + p.badge + '</span>' +
+      '<div class="toggle-switch ' + (p.enabled ? 'on' : '') + '" id="toggle-' + p.id + '" onclick="togglePrinciple(\'' + p.id + '\')">' +
+        '<div class="toggle-knob"></div></div>';
+
+    var body = document.createElement('div');
+    body.className = 'principle-body';
+    body.id = 'body-' + p.id;
+
+    var formula = document.createElement('div');
+    formula.className = 'formula-display';
+    formula.textContent = p.formula;
+    body.appendChild(formula);
+
+    // Build sliders for each param
+    for (var key in p.params) {
+      var param = p.params[key];
+      var row = document.createElement('div');
+      row.innerHTML =
+        '<div class="slider-row">' +
+          '<span class="slider-label">' + param.label + '</span>' +
+          '<span class="slider-value" id="val-' + p.id + '-' + key + '">' + param.value + '</span>' +
+        '</div>' +
+        '<input type="range" class="param-slider" id="slider-' + p.id + '-' + key + '" ' +
+          'min="' + param.min + '" max="' + param.max + '" step="' + param.step + '" value="' + param.value + '" ' +
+          'oninput="updateParam(\'' + p.id + '\',\'' + key + '\',this.value)">';
+      body.appendChild(row);
+    }
+
+    block.appendChild(header);
+    block.appendChild(body);
+    container.appendChild(block);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   4. UI INTERACTIONS
+   ════════════════════════════════════════════════════════════ */
+function togglePrincipleBody(id) {
+  var body = document.getElementById('body-' + id);
+  body.classList.toggle('open');
+}
+
+function togglePrinciple(id) {
+  var p = PRINCIPLES.find(function(x) { return x.id === id; });
+  p.enabled = !p.enabled;
+  var toggle = document.getElementById('toggle-' + id);
+  toggle.classList.toggle('on', p.enabled);
+  document.getElementById('block-' + id).classList.toggle('active', p.enabled);
+  document.getElementById('block-' + id).classList.toggle('disabled', !p.enabled);
+  rebuildScene();
+}
+
+function updateParam(principleId, paramKey, value) {
+  var p = PRINCIPLES.find(function(x) { return x.id === principleId; });
+  var v = parseFloat(value);
+  p.params[paramKey].value = v;
+  document.getElementById('val-' + principleId + '-' + paramKey).textContent = v;
+  rebuildScene();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function setTheme(name) {
+  document.documentElement.setAttribute('data-theme', name);
+  localStorage.setItem('pa-theme', name);
+  document.querySelectorAll('.th-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-theme-pick') === name);
+  });
+  // Update Three.js scene background
+  if (scene) {
+    var bgColors = { void: 0x060810, ember: 0x0a0604, arctic: 0x040810, noir: 0x080808 };
+    scene.background = new THREE.Color(bgColors[name] || bgColors.void);
+  }
+}
+
+function applyPreset(name) {
+  var preset = PRESETS[name];
+  if (!preset) return;
+  document.querySelectorAll('.preset-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  var btns = document.querySelectorAll('.preset-btn'); btns.forEach(function(b) { if (b.textContent.toLowerCase().indexOf(name.substr(0,4)) >= 0) b.classList.add('active'); });
+
+  PRINCIPLES.forEach(function(p) {
+    var pp = preset[p.id];
+    if (pp) {
+      p.enabled = pp.enabled;
+      for (var k in pp) {
+        if (k !== 'enabled' && p.params[k]) p.params[k].value = pp[k];
+      }
+    }
+  });
+  buildSidebar();
+  rebuildScene();
+}
+
+function resetAll() {
+  applyPreset('tower');
+}
+
+function randomizeAll() {
+  PRINCIPLES.forEach(function(p) {
+    p.enabled = Math.random() > 0.65;
+    for (var k in p.params) {
+      var param = p.params[k];
+      var range = param.max - param.min;
+      param.value = param.min + Math.random() * range;
+      param.value = Math.round(param.value / param.step) * param.step;
+    }
+  });
+  buildSidebar();
+  rebuildScene();
+}
+
+/* ════════════════════════════════════════════════════════════
+   5. THREE.JS SCENE SETUP
+   ════════════════════════════════════════════════════════════ */
+var scene, camera, renderer, controls;
+var sceneGroup; // Group holding all generated geometry
+var frameCount = 0;
+var lastFPSTime = Date.now();
+
+function initThree() {
+  var canvas = document.getElementById('three-canvas');
+  var viewport = document.getElementById('viewport');
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x060810);
+  scene.fog = new THREE.FogExp2(0x060810, 0.02);
+
+  camera = new THREE.PerspectiveCamera(50, viewport.clientWidth / viewport.clientHeight, 0.1, 200);
+  camera.position.set(10, 8, 14);
+
+  renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+  renderer.setSize(viewport.clientWidth, viewport.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 3;
+  controls.maxDistance = 60;
+  controls.target.set(0, 2, 0);
+
+  // Lights
+  var ambient = new THREE.AmbientLight(0x334466, 0.6);
+  scene.add(ambient);
+
+  var dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  dirLight.position.set(10, 20, 10);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  dirLight.shadow.camera.near = 0.5;
+  dirLight.shadow.camera.far = 60;
+  dirLight.shadow.camera.left = -15;
+  dirLight.shadow.camera.right = 15;
+  dirLight.shadow.camera.top = 15;
+  dirLight.shadow.camera.bottom = -15;
+  scene.add(dirLight);
+
+  var pointLight = new THREE.PointLight(0x00e5cc, 0.5, 40);
+  pointLight.position.set(-5, 10, -5);
+  scene.add(pointLight);
+
+  var pointLight2 = new THREE.PointLight(0x8b5cf6, 0.3, 30);
+  pointLight2.position.set(5, 5, 8);
+  scene.add(pointLight2);
+
+  // Grid floor
+  var gridHelper = new THREE.GridHelper(30, 30, 0x1a2a3a, 0x0a1520);
+  gridHelper.position.y = -0.01;
+  scene.add(gridHelper);
+
+  // Ground plane
+  var groundGeo = new THREE.PlaneGeometry(30, 30);
+  var groundMat = new THREE.MeshStandardMaterial({ color: 0x080c14, roughness: 0.95, metalness: 0 });
+  var ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.02;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  sceneGroup = new THREE.Group();
+  scene.add(sceneGroup);
+
+  window.addEventListener('resize', function() {
+    var w = viewport.clientWidth;
+    var h = viewport.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') { e.preventDefault(); toggleSidebar(); }
+    if (e.key === 'r' || e.key === 'R') {
+      camera.position.set(10, 8, 14);
+      controls.target.set(0, 2, 0);
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   6. SCENE REBUILD — GENERATE ALL ENABLED PRINCIPLES
+   ════════════════════════════════════════════════════════════ */
+function rebuildScene() {
+  // Clear previous
+  while (sceneGroup.children.length > 0) {
+    var child = sceneGroup.children[0];
+    if (child.geometry) child.geometry.dispose();
+    if (child.material) {
+      if (Array.isArray(child.material)) child.material.forEach(function(m) { m.dispose(); });
+      else child.material.dispose();
+    }
+    sceneGroup.remove(child);
+  }
+
+  var accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  var secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim();
+
+  PRINCIPLES.forEach(function(p) {
+    if (!p.enabled) return;
+    switch (p.id) {
+      case 'mandelbulb': generateMandelbulb(p); break;
+      case 'azimuthal': generateAzimuthal(p); break;
+      case 'fibonacci': generateFibonacci(p); break;
+      case 'voronoi': generateVoronoi(p); break;
+      case 'lissajous': generateLissajous(p); break;
+      case 'penrose': generatePenrose(p); break;
+      case 'spherical': generateSphericalHarmonics(p); break;
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   7. GENERATOR: MANDELBULB FRACTAL
+   Formula: z' = z^n + c in spherical coordinates
+   ════════════════════════════════════════════════════════════ */
+function generateMandelbulb(p) {
+  var n = p.params.power.value;
+  var maxIter = Math.round(p.params.depth.value);
+  var scale = p.params.scale.value;
+  var offsetY = p.params.offset.value;
+  var pointCount = Math.round(p.params.detail.value);
+
+  var positions = new Float32Array(pointCount * 3);
+  var colors = new Float32Array(pointCount * 3);
+  var idx = 0;
+
+  var bailout = 2;
+
+  for (var i = 0; i < pointCount; i++) {
+    // Random point in sphere
+    var x = (Math.random() * 2 - 1) * 1.5;
+    var y = (Math.random() * 2 - 1) * 1.5;
+    var z = (Math.random() * 2 - 1) * 1.5;
+
+    var zx = x, zy = y, zz = z;
+    var iter = 0;
+
+    while (iter < maxIter) {
+      var r = Math.sqrt(zx * zx + zy * zy + zz * zz);
+      if (r > bailout) break;
+
+      // Spherical coordinates
+      var theta = Math.acos(zz / r);
+      var phi = Math.atan2(zy, zx);
+
+      // New radius = r^n, new angles = n*angle
+      var rn = Math.pow(r, n);
+      var newTheta = theta * n;
+      var newPhi = phi * n;
+
+      // Convert back to cartesian + add c (the original point)
+      zx = rn * Math.sin(newTheta) * Math.cos(newPhi) + x;
+      zy = rn * Math.sin(newTheta) * Math.sin(newPhi) + y;
+      zz = rn * Math.cos(newTheta) + z;
+
+      iter++;
+    }
+
+    if (iter >= maxIter) {
+      // Point is inside the Mandelbulb
+      positions[idx * 3] = zx * scale;
+      positions[idx * 3 + 1] = zy * scale + offsetY;
+      positions[idx * 3 + 2] = zz * scale;
+
+      // Color by iteration depth
+      var t = iter / maxIter;
+      colors[idx * 3] = 0.1 + t * 0.4;
+      colors[idx * 3 + 1] = 0.6 + t * 0.4;
+      colors[idx * 3 + 2] = 0.8 + t * 0.2;
+      idx++;
+    }
+  }
+
+  if (idx === 0) return;
+
+  var geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions.slice(0, idx * 3), 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors.slice(0, idx * 3), 3));
+
+  var material = new THREE.PointsMaterial({
+    size: 0.04,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.85,
+    sizeAttenuation: true
+  });
+
+  var points = new THREE.Points(geometry, material);
+  sceneGroup.add(points);
+}
+
+/* ════════════════════════════════════════════════════════════
+   8. GENERATOR: AZIMUTHAL EQUIDISTANT PROJECTION
+   Polar(r,θ) → Cartesian with linear radial spacing
+   ════════════════════════════════════════════════════════════ */
+function generateAzimuthal(p) {
+  var nSectors = Math.round(p.params.sectors.value);
+  var nRings = Math.round(p.params.rings.value);
+  var maxR = p.params.radius.value;
+  var jitterAmt = p.params.jitter.value;
+  var colH = p.params.columnHeight.value;
+
+  var material = new THREE.MeshStandardMaterial({
+    color: 0x00e5cc,
+    transparent: true,
+    opacity: 0.6,
+    roughness: 0.3,
+    metalness: 0.7,
+    side: THREE.DoubleSide
+  });
+
+  // Draw ring lines
+  for (var ring = 1; ring <= nRings; ring++) {
+    var r = (ring / nRings) * maxR;
+    var curve = new THREE.EllipseCurve(0, 0, r, r, 0, 2 * Math.PI, false, 0);
+    var pts = curve.getPoints(64);
+    var geo = new THREE.BufferGeometry().setFromPoints(
+      pts.map(function(p2) { return new THREE.Vector3(p2.x, 0.01, p2.y); })
+    );
+    var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x1a3a4a, transparent: true, opacity: 0.4 }));
+    sceneGroup.add(line);
+  }
+
+  // Draw sector lines
+  for (var s = 0; s < nSectors; s++) {
+    var angle = (s / nSectors) * Math.PI * 2;
+    var pts = [
+      new THREE.Vector3(0, 0.01, 0),
+      new THREE.Vector3(Math.cos(angle) * maxR, 0.01, Math.sin(angle) * maxR)
+    ];
+    var geo = new THREE.BufferGeometry().setFromPoints(pts);
+    var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x1a3a4a, transparent: true, opacity: 0.4 }));
+    sceneGroup.add(line);
+  }
+
+  // Place columns at intersections
+  for (var ring = 1; ring <= nRings; ring++) {
+    for (var s = 0; s < nSectors; s++) {
+      var r = (ring / nRings) * maxR;
+      var angle = (s / nSectors) * Math.PI * 2;
+      var jx = (Math.random() - 0.5) * jitterAmt * r * 0.3;
+      var jz = (Math.random() - 0.5) * jitterAmt * r * 0.3;
+      var x = r * Math.cos(angle) + jx;
+      var z = r * Math.sin(angle) + jz;
+
+      var h = colH * (0.5 + 0.5 * Math.sin(ring * 0.8 + s * 0.5));
+      var geo = new THREE.CylinderGeometry(0.06, 0.06, h, 6);
+      var mat = new THREE.MeshStandardMaterial({ color: 0x00e5cc, roughness: 0.4, metalness: 0.6 });
+      var col = new THREE.Mesh(geo, mat);
+      col.position.set(x, h / 2, z);
+      col.castShadow = true;
+      sceneGroup.add(col);
+
+      // Top cap
+      var capGeo = new THREE.SphereGeometry(0.1, 8, 8);
+      var cap = new THREE.Mesh(capGeo, mat);
+      cap.position.set(x, h, z);
+      sceneGroup.add(cap);
+    }
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   9. GENERATOR: FIBONACCI SPIRAL
+   r = a·e^(bθ), b = ln(φ)/(π/2)
+   ════════════════════════════════════════════════════════════ */
+function generateFibonacci(p) {
+  var turns = p.params.turns.value;
+  var a = p.params.spacing.value;
+  var tubeR = p.params.tubeRadius.value;
+  var dir = p.params.direction.value;
+  var hScale = p.params.height.value;
+  var PHI = 1.6180339887;
+  var b = Math.log(PHI) / (Math.PI / 2);
+
+  var points = [];
+  var totalAngle = turns * Math.PI * 2;
+  var steps = Math.round(turns * 60);
+
+  for (var i = 0; i <= steps; i++) {
+    var t = (i / steps) * totalAngle;
+    var r = a * Math.exp(b * t);
+    var x = r * Math.cos(t * dir);
+    var z = r * Math.sin(t * dir);
+    var y = (t / totalAngle) * hScale;
+    points.push(new THREE.Vector3(x, y, z));
+  }
+
+  var curve = new THREE.CatmullRomCurve3(points);
+  var geo = new THREE.TubeGeometry(curve, steps, tubeR, 8, false);
+  var mat = new THREE.MeshStandardMaterial({
+    color: 0xf59e0b,
+    roughness: 0.3,
+    metalness: 0.6,
+    transparent: true,
+    opacity: 0.8
+  });
+  var mesh = new THREE.Mesh(geo, mat);
+  mesh.castShadow = true;
+  sceneGroup.add(mesh);
+
+  // Spiral path line for visual
+  var lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+  var lineMat = new THREE.LineBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.4 });
+  sceneGroup.add(new THREE.Line(lineGeo, lineMat));
+
+  // Mark golden ratio points with spheres
+  for (var i = 0; i < 8; i++) {
+    var frac = (i + 1) / 9;
+    var pt = curve.getPoint(frac);
+    var sGeo = new THREE.SphereGeometry(tubeR * 2, 8, 8);
+    var sMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xf59e0b, emissiveIntensity: 0.3 });
+    var sphere = new THREE.Mesh(sGeo, sMat);
+    sphere.position.copy(pt);
+    sceneGroup.add(sphere);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   10. GENERATOR: VORONOI DIAGRAM
+   Partition plane by seed points → polygons
+   ════════════════════════════════════════════════════════════ */
+function generateVoronoi(p) {
+  var numSeeds = Math.round(p.params.seeds.value);
+  var jitterAmt = p.params.jitter.value;
+  var gridSize = p.params.size.value;
+  var wallH = p.params.height.value;
+  var weight = p.params.weight.value;
+
+  // Generate seed points on a grid + jitter
+  var seeds = [];
+  var gridN = Math.ceil(Math.sqrt(numSeeds));
+  var spacing = gridSize * 2 / gridN;
+  for (var i = 0; i < gridN; i++) {
+    for (var j = 0; j < gridN; j++) {
+      if (seeds.length >= numSeeds) break;
+      var sx = (i - gridN / 2) * spacing + (Math.random() - 0.5) * spacing * jitterAmt;
+      var sz = (j - gridN / 2) * spacing + (Math.random() - 0.5) * spacing * jitterAmt;
+      seeds.push({ x: sx, z: sz, w: Math.random() * weight });
+    }
+  }
+
+  // For each seed, draw edges to neighbors (approximate Voronoi via Delaunay-like connectivity)
+  // Simple approach: for each pair of seeds, draw the perpendicular bisector clipped to grid
+  var lineMaterial = new THREE.LineBasicMaterial({
+    color: 0x10b981,
+    transparent: true,
+    opacity: 0.6
+  });
+
+  // Draw Voronoi cells as filled quads around each seed
+  for (var i = 0; i < seeds.length; i++) {
+    var seed = seeds[i];
+    // Create a small octagonal prism around each seed point
+    var geo = new THREE.CylinderGeometry(spacing * 0.3, spacing * 0.35, wallH, 6);
+    var mat = new THREE.MeshStandardMaterial({
+      color: 0x10b981,
+      transparent: true,
+      opacity: 0.35,
+      roughness: 0.5,
+      metalness: 0.3,
+      wireframe: false
+    });
+    var mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(seed.x, wallH / 2, seed.z);
+    mesh.castShadow = true;
+    sceneGroup.add(mesh);
+
+    // Wireframe overlay
+    var wireGeo = new THREE.EdgesGeometry(geo);
+    var wireMat = new THREE.LineBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.5 });
+    var wireframe = new THREE.LineSegments(wireGeo, wireMat);
+    wireframe.position.copy(mesh.position);
+    sceneGroup.add(wireframe);
+  }
+
+  // Draw connecting lines between nearby seeds (Delaunay-like)
+  for (var i = 0; i < seeds.length; i++) {
+    for (var j = i + 1; j < seeds.length; j++) {
+      var dx = seeds[i].x - seeds[j].x;
+      var dz = seeds[i].z - seeds[j].z;
+      var dist = Math.sqrt(dx * dx + dz * dz);
+      if (dist < spacing * 1.5) {
+        var pts = [
+          new THREE.Vector3(seeds[i].x, 0.02, seeds[i].z),
+          new THREE.Vector3(seeds[j].x, 0.02, seeds[j].z)
+        ];
+        var geo = new THREE.BufferGeometry().setFromPoints(pts);
+        sceneGroup.add(new THREE.Line(geo, lineMaterial));
+      }
+    }
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   11. GENERATOR: LISSAJOUS CURVES
+   x = A·sin(a·t + δ), y = B·sin(b·t)
+   ════════════════════════════════════════════════════════════ */
+function generateLissajous(p) {
+  var freqA = Math.round(p.params.a.value);
+  var freqB = Math.round(p.params.b.value);
+  var phase = p.params.delta.value * Math.PI / 180;
+  var ampX = p.params.ampX.value;
+  var ampY = p.params.ampY.value;
+  var thickness = p.params.thickness.value;
+
+  var points = [];
+  var steps = 500;
+  var totalT = Math.PI * 2 * Math.max(freqA, freqB); // Full cycle
+
+  for (var i = 0; i <= steps; i++) {
+    var t = (i / steps) * totalT;
+    var x = ampX * Math.sin(freqA * t + phase);
+    var y = thickness * Math.sin(t * 0.5) * 0.3; // Slight vertical undulation for roof
+    var z = ampY * Math.sin(freqB * t);
+    points.push(new THREE.Vector3(x, y, z));
+  }
+
+  var curve = new THREE.CatmullRomCurve3(points, true); // Closed curve
+  var tubeGeo = new THREE.TubeGeometry(curve, steps, 0.08, 8, true);
+  var tubeMat = new THREE.MeshStandardMaterial({
+    color: 0x8b5cf6,
+    roughness: 0.3,
+    metalness: 0.7,
+    transparent: true,
+    opacity: 0.7
+  });
+  var tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+  tubeMesh.position.y = thickness;
+  tubeMesh.castShadow = true;
+  sceneGroup.add(tubeMesh);
+
+  // Draw a thin ribbon along the curve for facade effect
+  var ribbonPoints = curve.getSpacedPoints(200);
+  var ribbonGeo = new THREE.BufferGeometry();
+  var ribbonVerts = [];
+  var ribbonW = 0.15;
+  for (var i = 0; i < ribbonPoints.length - 1; i++) {
+    var p1 = ribbonPoints[i];
+    var p2 = ribbonPoints[i + 1];
+    var dir = new THREE.Vector3().subVectors(p2, p1).normalize();
+    var up = new THREE.Vector3(0, 1, 0);
+    var side = new THREE.Vector3().crossVectors(dir, up).normalize();
+    ribbonVerts.push(
+      p1.x - side.x * ribbonW, p1.y, p1.z - side.z * ribbonW,
+      p1.x + side.x * ribbonW, p1.y + thickness, p1.z + side.z * ribbonW,
+      p2.x - side.x * ribbonW, p2.y, p2.z - side.z * ribbonW,
+      p2.x + side.x * ribbonW, p2.y + thickness, p2.z + side.z * ribbonW
+    );
+  }
+  ribbonGeo.setAttribute('position', new THREE.Float32BufferAttribute(ribbonVerts, 3));
+  ribbonGeo.computeVertexNormals();
+  var ribbonMat = new THREE.MeshStandardMaterial({
+    color: 0x8b5cf6,
+    transparent: true,
+    opacity: 0.2,
+    side: THREE.DoubleSide,
+    roughness: 0.5
+  });
+  sceneGroup.add(new THREE.Mesh(ribbonGeo, ribbonMat));
+
+  // Center glow sphere
+  var glowGeo = new THREE.SphereGeometry(0.2, 16, 16);
+  var glowMat = new THREE.MeshStandardMaterial({ color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.5 });
+  var glow = new THREE.Mesh(glowGeo, glowMat);
+  glow.position.y = thickness;
+  sceneGroup.add(glow);
+}
+
+/* ════════════════════════════════════════════════════════════
+   12. GENERATOR: PENROSE TILING (P3 Kite & Dart simplified)
+   ════════════════════════════════════════════════════════════ */
+function generatePenrose(p) {
+  var isP3 = p.params.type.value >= 0.5;
+  var scale = p.params.scale.value;
+  var iter = Math.round(p.params.iterations.value);
+  var rot = p.params.rotation.value * Math.PI / 180;
+  var zH = p.params.zHeight.value;
+
+  var phi = 1.6180339887;
+  var tiles = [];
+
+  if (isP3) {
+    // Generate P3-like pattern using rhombuses with golden ratio angles
+    var angles = [0, 72, 144, 216, 288]; // 5-fold symmetry
+    for (var a = 0; a < angles.length; a++) {
+      for (var layer = 1; layer <= iter; layer++) {
+        var r = layer * scale * phi;
+        var angle = (angles[a] + rot) * Math.PI / 180;
+        var sides = 5;
+        var verts = [];
+        for (var s = 0; s <= sides; s++) {
+          var sa = angle + (s / sides) * Math.PI * 2;
+          verts.push({ x: r * Math.cos(sa), z: r * Math.sin(sa) });
+        }
+        tiles.push(verts);
+      }
+    }
+  } else {
+    // P2: Diamond shapes in concentric rings
+    for (var ring = 1; ring <= iter * 3; ring++) {
+      var r = ring * scale;
+      var n = Math.floor(ring * 5);
+      for (var i = 0; i < n; i++) {
+        var angle = (i / n) * Math.PI * 2 + rot;
+        var nextAngle = ((i + 1) / n) * Math.PI * 2 + rot;
+        tiles.push([
+          { x: 0, z: 0 },
+          { x: r * Math.cos(angle), z: r * Math.sin(angle) },
+          { x: (r + scale) * Math.cos((angle + nextAngle) / 2), z: (r + scale) * Math.sin((angle + nextAngle) / 2) },
+          { x: r * Math.cos(nextAngle), z: r * Math.sin(nextAngle) }
+        ]);
+      }
+    }
+  }
+
+  // Render tiles
+  var lineMat = new THREE.LineBasicMaterial({ color: 0xf43f5e, transparent: true, opacity: 0.5 });
+  var fillMat = new THREE.MeshStandardMaterial({
+    color: 0xf43f5e,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.DoubleSide,
+    roughness: 0.4,
+    metalness: 0.3
+  });
+
+  tiles.forEach(function(verts) {
+    if (verts.length < 3) return;
+
+    // Fill polygon
+    var shape = new THREE.Shape();
+    shape.moveTo(verts[0].x, verts[0].z);
+    for (var i = 1; i < verts.length; i++) {
+      shape.lineTo(verts[i].x, verts[i].z);
+    }
+    shape.closePath();
+
+    var extrudeSettings = { depth: zH, bevelEnabled: false };
+    var geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    geo.rotateX(-Math.PI / 2);
+    var mesh = new THREE.Mesh(geo, fillMat);
+    sceneGroup.add(mesh);
+
+    // Edge lines
+    var linePts = verts.map(function(v) { return new THREE.Vector3(v.x, zH + 0.01, v.z); });
+    linePts.push(linePts[0].clone()); // Close
+    var lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
+    sceneGroup.add(new THREE.Line(lineGeo, lineMat));
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   13. GENERATOR: SPHERICAL HARMONICS
+   f(θ,φ) = Σ Y_l^m(θ,φ) → deform sphere
+   ════════════════════════════════════════════════════════════ */
+function generateSphericalHarmonics(p) {
+  var l = Math.round(p.params.degreeL.value);
+  var m = Math.round(p.params.orderM.value);
+  var amp = p.params.amplitude.value;
+  var res = Math.round(p.params.sphereRes.value);
+  var smooth = p.params.smoothness.value;
+
+  var geo = new THREE.SphereGeometry(3, res, res);
+  var posAttr = geo.getAttribute('position');
+  var normals = geo.getAttribute('normal');
+
+  // Iterate all vertices and deform
+  for (var i = 0; i < posAttr.count; i++) {
+    var x = posAttr.getX(i);
+    var y = posAttr.getY(i);
+    var z = posAttr.getZ(i);
+    var r = Math.sqrt(x * x + y * y + z * z);
+
+    if (r < 0.001) continue;
+
+    // Spherical coordinates
+    var theta = Math.acos(Math.max(-1, Math.min(1, y / r))); // polar
+    var phi = Math.atan2(z, x); // azimuthal
+
+    // Simplified spherical harmonic Y_l^m
+    var Ylm = computeSphericalHarmonic(l, m, theta, phi, smooth);
+
+    // Deform radius
+    var newR = r + amp * Ylm;
+
+    posAttr.setXYZ(i, x / r * newR, y / r * newR, z / r * newR);
+  }
+
+  posAttr.needsUpdate = true;
+  geo.computeVertexNormals();
+
+  // Color by height
+  var colors = new Float32Array(posAttr.count * 3);
+  for (var i = 0; i < posAttr.count; i++) {
+    var y = posAttr.getY(i);
+    var t = (y + 3) / 6; // normalize -3..3 → 0..1
+    colors[i * 3] = 0.05 + t * 0.3;
+    colors[i * 3 + 1] = 0.3 + t * 0.5;
+    colors[i * 3 + 2] = 0.6 + t * 0.4;
+  }
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+  var mat = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    roughness: 0.4,
+    metalness: 0.5,
+    transparent: true,
+    opacity: 0.85,
+    side: THREE.DoubleSide
+  });
+
+  var mesh = new THREE.Mesh(geo, mat);
+  mesh.position.y = 4;
+  mesh.castShadow = true;
+  sceneGroup.add(mesh);
+
+  // Wireframe overlay
+  var wireGeo = new THREE.WireframeGeometry(geo);
+  var wireMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.08 });
+  var wire = new THREE.LineSegments(wireGeo, wireMat);
+  wire.position.y = 4;
+  sceneGroup.add(wire);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SPHERICAL HARMONIC FUNCTION
+   Y_l^m(θ,φ) = N · P_l^m(cosθ) · cos(mφ) for real SH
+   Uses associated Legendre polynomials
+   ════════════════════════════════════════════════════════════ */
+function computeSphericalHarmonic(l, m, theta, phi, smooth) {
+  var mAbs = Math.abs(m);
+  var x = Math.cos(theta);
+
+  // Associated Legendre polynomial P_l^m(x) — simplified
+  var P = associatedLegendre(l, mAbs, x);
+
+  // Normalization factor (simplified)
+  var norm = Math.sqrt((2 * l + 1) / (4 * Math.PI));
+  if (m !== 0) norm *= 0.7071; // sqrt(1/2) for real normalization
+
+  // Real spherical harmonic
+  var val = norm * P;
+  if (m > 0) val *= Math.cos(mAbs * phi);
+  else if (m < 0) val *= Math.sin(mAbs * phi);
+
+  return val * smooth;
+}
+
+function associatedLegendre(l, m, x) {
+  // Compute P_l^m(x) using recurrence
+  if (l === 0 && m === 0) return 1;
+  if (l === 1 && m === 0) return x;
+  if (l === 1 && m === 1) return -Math.sqrt(1 - x * x);
+  if (l === 2 && m === 0) return 0.5 * (3 * x * x - 1);
+  if (l === 2 && m === 1) return -3 * x * Math.sqrt(Math.max(0, 1 - x * x));
+  if (l === 2 && m === 2) return 3 * (1 - x * x);
+  if (l === 3 && m === 0) return 0.5 * x * (5 * x * x - 3);
+  if (l === 3 && m === 1) return -1.5 * (5 * x * x - 1) * Math.sqrt(Math.max(0, 1 - x * x));
+  if (l === 3 && m === 2) return 15 * x * (1 - x * x);
+  if (l === 3 && m === 3) return -15 * Math.pow(Math.max(0, 1 - x * x), 1.5);
+  if (l === 4 && m === 0) return 0.125 * (35 * Math.pow(x, 4) - 30 * x * x + 3);
+  if (l === 4 && m === 1) return -2.5 * (7 * x * x * x - 3 * x) * Math.sqrt(Math.max(0, 1 - x * x));
+  if (l === 4 && m === 2) return 7.5 * (7 * x * x - 1) * (1 - x * x);
+  if (l === 4 && m === 3) return -105 * x * Math.pow(Math.max(0, 1 - x * x), 1.5);
+  if (l === 4 && m === 4) return 105 * Math.pow(1 - x * x, 2);
+  if (l === 5 && m === 0) return 0.125 * x * (63 * Math.pow(x, 4) - 70 * x * x + 15);
+  if (l === 5 && m === 1) return -1.875 * (21 * Math.pow(x, 4) - 14 * x * x + 1) * Math.sqrt(Math.max(0, 1 - x * x));
+  if (l === 5 && m === 2) return 3.75 * x * (9 * x * x - 1) * (1 - x * x);
+  if (l === 5 && m === 3) return -52.5 * (3 * x * x - 1) * Math.pow(Math.max(0, 1 - x * x), 1.5);
+  if (l === 5 && m === 4) return 105 * x * Math.pow(1 - x * x, 2);
+  if (l === 5 && m === 5) return -105 * Math.pow(Math.max(0, 1 - x * x), 2.5);
+  if (l === 6 && m === 0) return 0.0625 * (231 * Math.pow(x, 6) - 315 * Math.pow(x, 4) + 105 * x * x - 5);
+  if (l === 6 && m === 1) return -3.375 * (33 * Math.pow(x, 5) - 30 * Math.pow(x, 3) + 5 * x) * Math.sqrt(Math.max(0, 1 - x * x));
+  if (l === 6 && m === 2) return 3.75 * (33 * Math.pow(x, 4) - 18 * x * x + 1) * (1 - x * x);
+  if (l === 6 && m === 3) return -15.75 * (11 * x * x * x - 3 * x) * Math.pow(Math.max(0, 1 - x * x), 1.5);
+  if (l === 6 && m === 4) return 15.75 * (11 * x * x - 1) * Math.pow(1 - x * x, 2);
+  if (l === 6 && m === 5) return -472.5 * x * Math.pow(Math.max(0, 1 - x * x), 2.5);
+  if (l === 6 && m === 6) return 472.5 * Math.pow(Math.max(0, 1 - x * x), 3);
+  if (l === 7 && m === 0) return 0.0625 * x * (429 * Math.pow(x, 6) - 693 * Math.pow(x, 4) + 315 * x * x - 35);
+  if (l === 7 && m === 1) return -5.625 * (429 * Math.pow(x, 6) / 9 - 693 * Math.pow(x, 4) / 9 + 315 * x * x / 9 - 35 / 9) * Math.sqrt(Math.max(0, 1 - x * x));
+  if (l >= 8) {
+    // Fallback: use recurrence
+    return Math.cos(l * theta) * Math.pow(1 - x * x, m / 2);
+  }
+  return 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   14. EXPORT PNG
+   ════════════════════════════════════════════════════════════ */
+function exportPNG() {
+  renderer.render(scene, camera);
+  var link = document.createElement('a');
+  link.download = 'parametric-arch-' + Date.now() + '.png';
+  link.href = renderer.domElement.toDataURL('image/png');
+  link.click();
+}
+
+/* ════════════════════════════════════════════════════════════
+   15. ANIMATION LOOP
+   ════════════════════════════════════════════════════════════ */
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+
+  // Slow rotation for visual interest
+  if (sceneGroup.children.length > 0) {
+    // sceneGroup.rotation.y += 0.0005;
+  }
+
+  renderer.render(scene, camera);
+
+  // FPS counter
+  frameCount++;
+  var now = Date.now();
+  if (now - lastFPSTime > 1000) {
+    var fps = Math.round(frameCount * 1000 / (now - lastFPSTime));
+    document.getElementById('stat-fps').textContent = fps;
+    document.getElementById('stat-verts').textContent = renderer.info.render.triangles.toLocaleString();
+    document.getElementById('stat-draws').textContent = renderer.info.render.calls;
+    frameCount = 0;
+    lastFPSTime = now;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   16. INITIALIZATION
+   ════════════════════════════════════════════════════════════ */
+function init() {
+  var loadingBar = document.getElementById('loadingBar');
+  var loadingText = document.getElementById('loadingText');
+
+  // Init theme
+  var t = localStorage.getItem('pa-theme') || 'void';
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('.th-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-theme-pick') === t);
+  });
+
+  loadingBar.style.width = '20%';
+  loadingText.textContent = 'Building sidebar UI...';
+  buildSidebar();
+
+  setTimeout(function() {
+    loadingBar.style.width = '50%';
+    loadingText.textContent = 'Initializing Three.js scene...';
+    initThree();
+
+    setTimeout(function() {
+      loadingBar.style.width = '80%';
+      loadingText.textContent = 'Generating parametric geometry...';
+      // Open first principle body by default
+      togglePrincipleBody('mandelbulb');
+      rebuildScene();
+
+      setTimeout(function() {
+        loadingBar.style.width = '100%';
+        loadingText.textContent = 'Ready!';
+        setTimeout(function() {
+          document.getElementById('loadingScreen').classList.add('hidden');
+          animate();
+        }, 400);
+      }, 300);
+    }, 300);
+  }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
