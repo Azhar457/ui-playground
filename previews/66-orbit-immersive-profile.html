@@ -406,15 +406,45 @@
       background: linear-gradient(145deg, rgba(var(--accent-rgb), 0.07), var(--surface));
     }
 
-    /* =========================================================
-       NETWORK SECTION & SIMULATOR CONSOLE
-       ========================================================= */
     .network-panel { text-align: center; justify-content: center; }
     .network-content { max-width: 920px; margin: auto; }
 
+    .telemetry-tabs {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--surface-border);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+      margin: 24px auto 8px;
+    }
+    .tab-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 999px;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: #03060a;
+      background: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
     .chips {
       display: flex; justify-content: center;
-      gap: 10px; flex-wrap: wrap; margin: 30px 0 22px;
+      gap: 10px; flex-wrap: wrap; margin: 20px 0 22px;
     }
 
     .chip-btn {
@@ -793,6 +823,7 @@
     <button class="dock-btn" onclick="triggerPingAll()"><i class="fa-solid fa-bolt"></i> Ping Mesh</button>
     <button class="dock-btn" id="dockSatBtn" onclick="toggleSatellites()"><i class="fa-solid fa-satellite"></i> Satellites [ON]</button>
     <button class="dock-btn" id="dockPacketsBtn" onclick="togglePackets()"><i class="fa-solid fa-wave-square"></i> Packets [ON]</button>
+    <button class="dock-btn" onclick="focusSatellite('25544')"><i class="fa-solid fa-satellite-dish"></i> ISS Track</button>
     <div class="dock-sep"></div>
     <button class="dock-btn" onclick="cameraPreset('global')"><i class="fa-solid fa-arrows-to-circle"></i> Global</button>
     <button class="dock-btn" onclick="cameraPreset('pacific')">APAC</button>
@@ -959,6 +990,16 @@
           Select a node or click directly on the 3D globe to inspect edge telemetry and trigger packet transmissions.
         </p>
 
+        <!-- Mode Switcher Tabs: Ground Nodes vs LEO Constellation -->
+        <div class="telemetry-tabs reveal">
+          <button class="tab-btn active" id="tabGroundNodes" onclick="setTelemetryMode('ground')">
+            <i class="fa-solid fa-earth-americas"></i> Ground Nodes (6)
+          </button>
+          <button class="tab-btn" id="tabSatellites" onclick="setTelemetryMode('satellites')">
+            <i class="fa-solid fa-satellite"></i> LEO Constellation (27)
+          </button>
+        </div>
+
         <!-- City Selection Chips -->
         <div class="chips reveal" id="chipsContainer" role="radiogroup" aria-label="City nodes">
           <button class="chip-btn" data-city="Jakarta" role="radio" aria-checked="true" onclick="focusCity('Jakarta')"><span class="dot"></span>Jakarta</button>
@@ -969,23 +1010,35 @@
           <button class="chip-btn" data-city="Tokyo" role="radio" aria-checked="false" onclick="focusCity('Tokyo')"><span class="dot"></span>Tokyo</button>
         </div>
 
+        <!-- Satellite Selection Chips (Active in LEO Mode) -->
+        <div class="chips reveal" id="satChipsContainer" role="radiogroup" aria-label="Orbital satellites" style="display:none;">
+          <button class="chip-btn" data-sat="25544" role="radio" aria-checked="true" onclick="focusSatellite('25544')"><span class="dot" style="background:#00f0ff;box-shadow:0 0 8px #00f0ff;"></span>ISS (Zarya)</button>
+          <button class="chip-btn" data-sat="48274" role="radio" aria-checked="false" onclick="focusSatellite('48274')"><span class="dot" style="background:#ff4757;box-shadow:0 0 8px #ff4757;"></span>CSS Tiangong</button>
+          <button class="chip-btn" data-sat="20580" role="radio" aria-checked="false" onclick="focusSatellite('20580')"><span class="dot" style="background:#a855f7;box-shadow:0 0 8px #a855f7;"></span>HST Hubble</button>
+          <button class="chip-btn" data-sat="44713" role="radio" aria-checked="false" onclick="focusSatellite('44713')"><span class="dot" style="background:#38bdf8;box-shadow:0 0 8px #38bdf8;"></span>Starlink-1007</button>
+          <button class="chip-btn" data-sat="40697" role="radio" aria-checked="false" onclick="focusSatellite('40697')"><span class="dot" style="background:#14b8a6;box-shadow:0 0 8px #14b8a6;"></span>Sentinel-2A</button>
+          <button class="chip-btn" data-sat="42955" role="radio" aria-checked="false" onclick="focusSatellite('42955')"><span class="dot" style="background:#f59e0b;box-shadow:0 0 8px #f59e0b;"></span>Iridium-Next 128</button>
+          <button class="chip-btn" data-sat="33591" role="radio" aria-checked="false" onclick="focusSatellite('33591')"><span class="dot" style="background:#10b981;box-shadow:0 0 8px #10b981;"></span>NOAA-19</button>
+          <button class="chip-btn" data-sat="54754" role="radio" aria-checked="false" onclick="focusSatellite('54754')"><span class="dot" style="background:#0ea5e9;box-shadow:0 0 8px #0ea5e9;"></span>SWOT Ocean</button>
+        </div>
+
         <!-- Telemetry HUD Card -->
         <div class="telemetry-hud reveal" id="telemetryCard">
           <div>
-            <small>Node Coordinates</small>
+            <small id="hudLabel1">Node Coordinates</small>
             <span id="hudCoords">-6.2° S, 106.8° E</span>
           </div>
           <div>
-            <small>Local Timezone</small>
+            <small id="hudLabel2">Local Timezone</small>
             <span id="hudTime">UTC+7 (WIB)</span>
           </div>
           <div>
-            <small>Edge Backbone Ping</small>
+            <small id="hudLabel3">Edge Backbone Ping</small>
             <span id="hudPing">2.8 ms (100Gbps)</span>
           </div>
           <div>
-            <small>Active Routing Hops</small>
-            <span id="hudHops">3 Global Paths</span>
+            <small id="hudLabel4">Active Routing Hops</small>
+            <span id="hudHops">Direct Tier-1 Uplink</span>
           </div>
         </div>
 
@@ -1116,7 +1169,7 @@
 
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 400);
-      camera.position.set(0, 0.2, 11.8);
+      camera.position.set(0, 0, 11.8);
 
       var controls = null;
       if (typeof THREE.OrbitControls !== 'undefined') {
@@ -1194,7 +1247,7 @@
       }
 
       var globeGroup = new THREE.Group();
-      globeGroup.position.set(0, 0.1, 0);
+      globeGroup.position.set(0, 0, 0);
       scene.add(globeGroup);
 
       var proceduralTex = generateEarthCanvasTexture();
@@ -1376,35 +1429,201 @@
         });
       }
 
-      // =========================================================
-      // 3D ORBITING SATELLITE CONSTELLATION SWARM (Keplerian LEO)
-      // =========================================================
-      var satCount = 36;
-      var satGroup = new THREE.Group();
-      globeGroup.add(satGroup);
-      var satGeo = new THREE.BufferGeometry();
-      var satPositions = new Float32Array(satCount * 3);
-      satGeo.setAttribute('position', new THREE.BufferAttribute(satPositions, 3));
-      var satMat = new THREE.PointsMaterial({
-        color: 0x7dd3fc, size: 0.055, transparent: true, opacity: 0.85
-      });
-      var satPoints = new THREE.Points(satGeo, satMat);
-      satGroup.add(satPoints);
+      // 3D Tactical Target Reticle on Globe Node (Coordinates Crosshair)
+      var cityTargetMarker = new THREE.Group();
+      var markerRingGeo = new THREE.RingGeometry(0.13, 0.16, 32);
+      var markerRingMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.95 });
+      cityTargetMarker.add(new THREE.Mesh(markerRingGeo, markerRingMat));
 
-      var satellites = [];
-      for (var s = 0; s < satCount; s++) {
-        var pIdx = s % orbitalPlanes.length;
-        satellites.push({
-          orbitRadius: 3.75,
-          angle: (s / satCount) * Math.PI * 2 + (s % 4) * 0.4,
-          speed: 0.0016 + (s % 3) * 0.0003,
-          inc: orbitalPlanes[pIdx].inc,
-          raan: orbitalPlanes[pIdx].raan
-        });
+      var tickMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.95 });
+      var ticksGeo = new THREE.BufferGeometry();
+      var tickPositions = new Float32Array([
+        0, 0.16, 0,  0, 0.23, 0,
+        0, -0.16, 0, 0, -0.23, 0,
+        -0.16, 0, 0, -0.23, 0, 0,
+        0.16, 0, 0,  0.23, 0, 0,
+        -0.04, 0, 0, 0.04, 0, 0,
+        0, -0.04, 0, 0, 0.04, 0
+      ]);
+      ticksGeo.setAttribute('position', new THREE.BufferAttribute(tickPositions, 3));
+      cityTargetMarker.add(new THREE.LineSegments(ticksGeo, tickMat));
+      globeGroup.add(cityTargetMarker);
+
+      // =========================================================
+      // AUTHENTIC LEO SATELLITE FLEET & KEPLERIAN PROPAGATOR
+      // (Incorporated from case-studies/leo-live.html - Zero External API)
+      // =========================================================
+      var EARTH_RADIUS_KM = 6371;
+      var SCENE_EARTH_RADIUS = 3.30;
+      var KM_TO_SCENE_SCALE = SCENE_EARTH_RADIUS / EARTH_RADIUS_KM;
+
+      var SATELLITE_CATALOG = [
+        // Space Stations (~400 km - 420 km)
+        { id: "25544", name: "ISS (ZARYA)", cat: "station", agency: "NASA / ROSCOSMOS", color: "#00f0ff", a: 6790, e: 0.0006, inc: 51.64, raan: 145.2, argp: 85.3, m0: 210.5, n: 15.54 },
+        { id: "48274", name: "CSS (TIANGONG)", cat: "station", agency: "CNSA (CHINA)", color: "#ff4757", a: 6760, e: 0.0004, inc: 41.47, raan: 320.1, argp: 45.2, m0: 110.0, n: 15.65 },
+        { id: "52220", name: "AXIOM AX-1", cat: "station", agency: "AXIOM / SPACEX", color: "#2ed573", a: 6792, e: 0.0005, inc: 51.64, raan: 210.0, argp: 90.0, m0: 50.0, n: 15.53 },
+
+        // Science & Telescopes (~500 km - 600 km)
+        { id: "20580", name: "HST (HUBBLE)", cat: "science", agency: "NASA / ESA", color: "#a855f7", a: 6910, e: 0.0003, inc: 28.47, raan: 215.8, argp: 120.4, m0: 305.2, n: 15.12 },
+        { id: "33053", name: "FERMI GAMMA-RAY", cat: "science", agency: "NASA", color: "#c084fc", a: 6920, e: 0.0011, inc: 25.58, raan: 112.4, argp: 95.1, m0: 84.6, n: 15.09 },
+        { id: "44874", name: "CHEOPS EXOPLANET", cat: "science", agency: "ESA", color: "#e879f9", a: 7080, e: 0.0008, inc: 98.22, raan: 65.4, argp: 180.2, m0: 240.1, n: 14.58 },
+        { id: "28485", name: "SWIFT GAMMA EXPLORER", cat: "science", agency: "NASA / ASI", color: "#d946ef", a: 6940, e: 0.0010, inc: 20.55, raan: 305.0, argp: 60.0, m0: 175.0, n: 15.03 },
+
+        // Starlink & OneWeb Mega-Constellations (~530 km - 580 km)
+        { id: "44713", name: "STARLINK-1007", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.05, raan: 45.2, argp: 90.0, m0: 15.4, n: 15.10 },
+        { id: "44720", name: "STARLINK-1014", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.05, raan: 105.2, argp: 90.0, m0: 75.4, n: 15.10 },
+        { id: "45050", name: "STARLINK-1130", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.05, raan: 165.2, argp: 90.0, m0: 135.4, n: 15.10 },
+        { id: "51090", name: "STARLINK-3012", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.22, raan: 225.2, argp: 90.0, m0: 195.4, n: 15.10 },
+        { id: "53820", name: "STARLINK-4120", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.22, raan: 285.2, argp: 90.0, m0: 255.4, n: 15.10 },
+        { id: "55010", name: "STARLINK-5014", cat: "starlink", agency: "SPACEX", color: "#38bdf8", a: 6920, e: 0.0001, inc: 53.22, raan: 345.2, argp: 90.0, m0: 315.4, n: 15.10 },
+        { id: "45131", name: "ONEWEB-0012", cat: "starlink", agency: "ONEWEB", color: "#60a5fa", a: 7170, e: 0.0012, inc: 87.40, raan: 80.5, argp: 40.0, m0: 120.0, n: 14.30 },
+        { id: "47970", name: "ONEWEB-0045", cat: "starlink", agency: "ONEWEB", color: "#60a5fa", a: 7170, e: 0.0012, inc: 87.40, raan: 260.5, argp: 40.0, m0: 300.0, n: 14.30 },
+
+        // Weather & Earth Observation (~680 km - 820 km)
+        { id: "33591", name: "NOAA-19", cat: "weather", agency: "NOAA / NASA", color: "#10b981", a: 7210, e: 0.0014, inc: 98.70, raan: 210.4, argp: 270.0, m0: 140.0, n: 14.18 },
+        { id: "43013", name: "NOAA-20 (JPSS-1)", cat: "weather", agency: "NOAA / NASA", color: "#34d399", a: 7200, e: 0.0002, inc: 98.74, raan: 140.2, argp: 180.0, m0: 50.0, n: 14.20 },
+        { id: "25994", name: "TERRA (EOS AM-1)", cat: "weather", agency: "NASA", color: "#4ade80", a: 7080, e: 0.0001, inc: 98.20, raan: 310.5, argp: 90.0, m0: 220.0, n: 14.57 },
+        { id: "27424", name: "AQUA (EOS PM-1)", cat: "weather", agency: "NASA", color: "#2dd4bf", a: 7080, e: 0.0001, inc: 98.20, raan: 130.5, argp: 90.0, m0: 40.0, n: 14.57 },
+        { id: "37849", name: "SUOMI NPP", cat: "weather", agency: "NASA / NOAA", color: "#22c55e", a: 7200, e: 0.0001, inc: 98.70, raan: 30.0, argp: 60.0, m0: 180.0, n: 14.20 },
+        { id: "40697", name: "SENTINEL-2A", cat: "weather", agency: "ESA COPERNICUS", color: "#14b8a6", a: 7160, e: 0.0001, inc: 98.62, raan: 95.0, argp: 110.0, m0: 310.0, n: 14.31 },
+        { id: "46984", name: "SENTINEL-6 MICHAEL", cat: "weather", agency: "ESA / NASA", color: "#06b6d4", a: 7700, e: 0.0008, inc: 66.04, raan: 175.0, argp: 45.0, m0: 90.0, n: 12.80 },
+        { id: "39084", name: "LANDSAT-8", cat: "weather", agency: "USGS / NASA", color: "#84cc16", a: 7080, e: 0.0001, inc: 98.20, raan: 250.0, argp: 210.0, m0: 15.0, n: 14.57 },
+        { id: "54754", name: "SWOT OCEAN RADAR", cat: "weather", agency: "NASA / CNES", color: "#0ea5e9", a: 7260, e: 0.0005, inc: 77.60, raan: 120.0, argp: 30.0, m0: 200.0, n: 14.05 },
+
+        // Radar & Comms (~500 km - 780 km)
+        { id: "42955", name: "IRIDIUM-NEXT 128", cat: "radar", agency: "IRIDIUM COMM", color: "#f59e0b", a: 7150, e: 0.0002, inc: 86.40, raan: 15.0, argp: 90.0, m0: 180.0, n: 14.35 },
+        { id: "43075", name: "IRIDIUM-NEXT 134", cat: "radar", agency: "IRIDIUM COMM", color: "#f59e0b", a: 7150, e: 0.0002, inc: 86.40, raan: 195.0, argp: 90.0, m0: 0.0, n: 14.35 },
+        { id: "31598", name: "TERRASAR-X RADAR", cat: "radar", agency: "DLR (GERMANY)", color: "#fb923c", a: 6880, e: 0.0002, inc: 97.44, raan: 280.0, argp: 60.0, m0: 330.0, n: 15.19 }
+      ];
+
+      function solveKepler(M, e) {
+        var E = M;
+        for (var k = 0; k < 10; k++) {
+          var dE = (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+          E -= dE;
+          if (Math.abs(dE) < 1e-6) break;
+        }
+        return E;
       }
 
+      function getSatellitePosition(sat, simTimeSec) {
+        var nRadPerSec = (sat.n * 2 * Math.PI) / 86400;
+        var M = ((sat.m0 * Math.PI / 180) + nRadPerSec * simTimeSec) % (2 * Math.PI);
+        var E = solveKepler(M, sat.e);
+
+        var sinNu = (Math.sqrt(1 - sat.e * sat.e) * Math.sin(E)) / (1 - sat.e * Math.cos(E));
+        var cosNu = (Math.cos(E) - sat.e) / (1 - sat.e * Math.cos(E));
+        var nu = Math.atan2(sinNu, cosNu);
+
+        var rKm = sat.a * (1 - sat.e * Math.cos(E));
+        var altitudeKm = rKm - EARTH_RADIUS_KM;
+
+        var GM = 398600.4418;
+        var velocityKmS = Math.sqrt(GM * (2 / rKm - 1 / sat.a));
+
+        var P = nu + (sat.argp * Math.PI / 180);
+        var xOrb = rKm * Math.cos(P);
+        var yOrb = rKm * Math.sin(P);
+
+        var incRad = sat.inc * Math.PI / 180;
+        var raanRad = sat.raan * Math.PI / 180;
+
+        var xEci = xOrb * Math.cos(raanRad) - yOrb * Math.cos(incRad) * Math.sin(raanRad);
+        var yEci = xOrb * Math.sin(raanRad) + yOrb * Math.cos(incRad) * Math.cos(raanRad);
+        var zEci = yOrb * Math.sin(incRad);
+
+        var pos3D = new THREE.Vector3(
+          xEci * KM_TO_SCENE_SCALE,
+          zEci * KM_TO_SCENE_SCALE,
+          -yEci * KM_TO_SCENE_SCALE
+        );
+
+        var periodMin = (86400 / sat.n) / 60;
+        return { pos3D: pos3D, altitudeKm: altitudeKm, velocityKmS: velocityKmS, periodMin: periodMin, rKm: rKm };
+      }
+
+      var satGroup = new THREE.Group();
+      scene.add(satGroup);
+
+      var satelliteObjects = new Map();
+      var satelliteHitSpheres = [];
+      var selectedSatId = '25544';
+      var simTimeSeconds = Date.now() / 1000;
+
+      function createOrbitPath(sat) {
+        var points = [];
+        var segments = 96;
+        var periodSec = 86400 / sat.n;
+        for (var i = 0; i <= segments; i++) {
+          var t = (i / segments) * periodSec;
+          var res = getSatellitePosition(sat, t);
+          points.push(res.pos3D);
+        }
+        var orbitGeo = new THREE.BufferGeometry().setFromPoints(points);
+        var orbitMat = new THREE.LineBasicMaterial({
+          color: new THREE.Color(sat.color),
+          transparent: true,
+          opacity: (sat.id === selectedSatId) ? 0.85 : 0.16
+        });
+        return new THREE.Line(orbitGeo, orbitMat);
+      }
+
+      function createSatelliteMesh(sat) {
+        var grp = new THREE.Group();
+
+        // Satellite core bus
+        var bodyMat = new THREE.MeshStandardMaterial({
+          color: 0xd4d4d8, metalness: 0.9, roughness: 0.2
+        });
+        var body = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.065, 0.065), bodyMat);
+        grp.add(body);
+
+        // Solar wings
+        var wingMat = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(sat.color),
+          emissive: new THREE.Color(sat.color),
+          emissiveIntensity: 0.45,
+          metalness: 0.95, roughness: 0.1
+        });
+        var wings = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.008, 0.05), wingMat);
+        grp.add(wings);
+
+        // Pulsing beacon sphere
+        var beaconMat = new THREE.MeshBasicMaterial({
+          color: new THREE.Color(sat.color),
+          transparent: true, opacity: 0.9
+        });
+        var beacon = new THREE.Mesh(new THREE.SphereGeometry(0.032, 10, 10), beaconMat);
+        grp.add(beacon);
+
+        // Invisible raycast hit sphere
+        var hitSphere = new THREE.Mesh(
+          new THREE.SphereGeometry(0.24, 8, 8),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        hitSphere.userData = { satId: sat.id, sat: sat };
+        grp.add(hitSphere);
+        satelliteHitSpheres.push(hitSphere);
+
+        grp.userData = { satId: sat.id, sat: sat };
+        return grp;
+      }
+
+      // Initialize all satellites
+      SATELLITE_CATALOG.forEach(function(sat) {
+        var mesh = createSatelliteMesh(sat);
+        var orbitLine = createOrbitPath(sat);
+        satGroup.add(mesh);
+        satGroup.add(orbitLine);
+        satelliteObjects.set(sat.id, {
+          sat: sat,
+          mesh: mesh,
+          orbitLine: orbitLine
+        });
+      });
+
       // =========================================================
-      // INTERACTION: RAYCASTER (CLICK & HOVER PINS IN 3D)
+      // INTERACTION: RAYCASTER (CLICK & HOVER PINS & SATELLITES)
       // =========================================================
       var raycaster = new THREE.Raycaster();
       var pointer = new THREE.Vector2(-999, -999);
@@ -1426,51 +1645,222 @@
       }
       window.addEventListener('pointermove', onPointerMove);
 
-      // Click on canvas checks for 3D node hits
+      // Click on canvas checks for 3D node hits or satellite hits
       renderer.domElement.addEventListener('pointerdown', function(e) {
         raycaster.setFromCamera(pointer, camera);
-        var intersects = raycaster.intersectObjects(raycastSpheres, false);
+        var targets = raycastSpheres.concat(satelliteHitSpheres);
+        var intersects = raycaster.intersectObjects(targets, false);
         if (intersects.length > 0) {
-          var city = intersects[0].object.userData.cityName;
-          if (city) {
-            focusCity(city);
+          var hitObj = intersects[0].object;
+          if (hitObj.userData.cityName) {
+            focusCity(hitObj.userData.cityName);
             if (window.playBeep) window.playBeep(720);
+          } else if (hitObj.userData.satId) {
+            focusSatellite(hitObj.userData.satId);
+            if (window.playBeep) window.playBeep(760);
           }
         }
       });
 
-      // Target Rotation Variables
+      // Target Tracking State
       var targetRotY = 0;
       var targetRotX = 0;
+      var isTargetLocked = false;
+      var currentFocusedType = 'city';
 
+      if (controls) {
+        controls.addEventListener('start', function() {
+          isTargetLocked = false;
+        });
+      }
+
+      // Exact Spherical Trigonometry Node Centering
       window.focusCity = function(cityName) {
-        var btns = document.querySelectorAll('.chip-btn');
-        btns.forEach(function(btn) {
+        var city = CITIES[cityName];
+        if (!city) return;
+
+        isTargetLocked = true;
+        currentFocusedType = 'city';
+
+        // Update city buttons in UI
+        document.querySelectorAll('#chipsContainer .chip-btn').forEach(function(btn) {
           var isActive = btn.dataset.city === cityName;
           btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
         });
 
-        var city = CITIES[cityName];
-        if (!city) return;
+        // Update Section 3 telemetry card
+        var hudLabel1 = document.getElementById('hudLabel1');
+        var hudCoords = document.getElementById('hudCoords');
+        var hudLabel2 = document.getElementById('hudLabel2');
+        var hudTime = document.getElementById('hudTime');
+        var hudLabel3 = document.getElementById('hudLabel3');
+        var hudPing = document.getElementById('hudPing');
+        var hudLabel4 = document.getElementById('hudLabel4');
+        var hudHops = document.getElementById('hudHops');
 
-        document.getElementById('hudCoords').textContent = Math.abs(city.lat) + '° ' + (city.lat >= 0 ? 'N' : 'S') + ', ' + Math.abs(city.lon) + '° ' + (city.lon >= 0 ? 'E' : 'W');
-        document.getElementById('hudTime').textContent = city.time;
-        document.getElementById('hudPing').textContent = city.ping;
-        document.getElementById('hudHops').textContent = city.hops;
+        if (hudLabel1) hudLabel1.textContent = 'Node Coordinates';
+        if (hudCoords) hudCoords.textContent = Math.abs(city.lat) + '° ' + (city.lat >= 0 ? 'N' : 'S') + ', ' + Math.abs(city.lon) + '° ' + (city.lon >= 0 ? 'E' : 'W');
+        if (hudLabel2) hudLabel2.textContent = 'Local Timezone';
+        if (hudTime) hudTime.textContent = city.time;
+        if (hudLabel3) hudLabel3.textContent = 'Edge Backbone Ping';
+        if (hudPing) hudPing.textContent = city.ping;
+        if (hudLabel4) hudLabel4.textContent = 'Active Routing Hops';
+        if (hudHops) hudHops.textContent = city.hops;
 
-        if (window.playBeep) window.playBeep(620);
+        // Update Tactical HUD in 3D Focus Mode
+        var tacCoords = document.getElementById('tacticalCoords');
+        if (tacCoords) {
+          tacCoords.textContent = 'TARGET: ' + cityName.toUpperCase() + ' EDGE · ' + Math.abs(city.lat) + '° ' + (city.lat >= 0 ? 'N' : 'S') + ' ' + Math.abs(city.lon) + '° ' + (city.lon >= 0 ? 'E' : 'W') + ' · ZERO LOSS';
+        }
 
-        targetRotY = -((city.lon + 90) * Math.PI / 180);
-        targetRotX = (city.lat * Math.PI / 180) * 0.4;
+        if (window.playBeep) window.playBeep(640);
+
+        // Mathematical coordinate transform:
+        // Transformed vector P' = Rx(rx) * Ry(ry) * P must equal (0, 0, +radius).
+        var p = latLonToVector3(city.lat, city.lon);
+        var ry = Math.atan2(-p.x, p.z);
+        var z1 = -p.x * Math.sin(ry) + p.z * Math.cos(ry);
+        var rx = Math.atan2(p.y, z1);
+
+        // Normalize delta around Y to take shortest path
+        var diffY = (ry - globeGroup.rotation.y) % (Math.PI * 2);
+        if (diffY < -Math.PI) diffY += Math.PI * 2;
+        if (diffY > Math.PI) diffY -= Math.PI * 2;
+        targetRotY = globeGroup.rotation.y + diffY;
+        targetRotX = rx;
 
         if (typeof gsap !== 'undefined') {
           gsap.killTweensOf(globeGroup.rotation);
+          gsap.killTweensOf(camera.position);
+
           gsap.to(globeGroup.rotation, {
-            y: targetRotY,
             x: targetRotX,
+            y: targetRotY,
+            z: 0,
             duration: 1.4,
             ease: 'power3.out'
           });
+
+          var camDist = isFocusMode ? 9.2 : (getActiveSectionIndex() === 3 ? 8.2 : 11.8);
+          gsap.to(camera.position, {
+            x: 0,
+            y: 0,
+            z: camDist,
+            duration: 1.2,
+            ease: 'power2.out',
+            onUpdate: function() { camera.lookAt(0, 0, 0); }
+          });
+        } else {
+          globeGroup.rotation.x = targetRotX;
+          globeGroup.rotation.y = targetRotY;
+          globeGroup.rotation.z = 0;
+          camera.position.set(0, 0, isFocusMode ? 9.2 : 11.8);
+          camera.lookAt(0, 0, 0);
+        }
+
+        // Attach 3D target lock reticle on node coordinate
+        if (cityTargetMarker) {
+          cityTargetMarker.position.copy(p);
+          cityTargetMarker.lookAt(p.clone().multiplyScalar(2));
+          cityTargetMarker.visible = true;
+          if (typeof gsap !== 'undefined') {
+            cityTargetMarker.scale.set(0.1, 0.1, 0.1);
+            gsap.to(cityTargetMarker.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: 'back.out(2)' });
+          }
+        }
+      };
+
+      // Focus on LEO Satellite
+      window.focusSatellite = function(satId) {
+        var item = satelliteObjects.get(satId);
+        if (!item) return;
+        var sat = item.sat;
+        selectedSatId = satId;
+        isTargetLocked = true;
+        currentFocusedType = 'satellite';
+
+        // Update UI satellite chips
+        document.querySelectorAll('#satChipsContainer .chip-btn').forEach(function(btn) {
+          var isActive = btn.dataset.sat === satId;
+          btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+
+        // Update satellite orbit lines opacity
+        satelliteObjects.forEach(function(sObj, id) {
+          sObj.orbitLine.material.opacity = (id === satId) ? 0.95 : 0.16;
+        });
+
+        // Hide city target marker
+        if (cityTargetMarker) cityTargetMarker.visible = false;
+
+        // Real-time position & telemetry calculation
+        var satRes = getSatellitePosition(sat, simTimeSeconds);
+
+        var hudLabel1 = document.getElementById('hudLabel1');
+        var hudCoords = document.getElementById('hudCoords');
+        var hudLabel2 = document.getElementById('hudLabel2');
+        var hudTime = document.getElementById('hudTime');
+        var hudLabel3 = document.getElementById('hudLabel3');
+        var hudPing = document.getElementById('hudPing');
+        var hudLabel4 = document.getElementById('hudLabel4');
+        var hudHops = document.getElementById('hudHops');
+
+        if (hudLabel1) hudLabel1.textContent = 'Orbital Velocity';
+        if (hudCoords) hudCoords.textContent = satRes.velocityKmS.toFixed(2) + ' km/s';
+        if (hudLabel2) hudLabel2.textContent = 'LEO Altitude';
+        if (hudTime) hudTime.textContent = satRes.altitudeKm.toFixed(1) + ' km (Apogee)';
+        if (hudLabel3) hudLabel3.textContent = 'Orbital Period';
+        if (hudPing) hudPing.textContent = satRes.periodMin.toFixed(1) + ' min / rev';
+        if (hudLabel4) hudLabel4.textContent = 'NORAD / Agency';
+        if (hudHops) hudHops.textContent = sat.id + ' · ' + sat.agency.split('/')[0].trim();
+
+        // Update Tactical HUD in 3D Focus Mode
+        var tacCoords = document.getElementById('tacticalCoords');
+        if (tacCoords) {
+          tacCoords.textContent = 'TARGET: ' + sat.name + ' · ALT: ' + satRes.altitudeKm.toFixed(1) + ' km · VEL: ' + satRes.velocityKmS.toFixed(2) + ' km/s';
+        }
+
+        if (window.playBeep) window.playBeep(720);
+
+        // Center satellite directly on the reticle + crosshair
+        var p = satRes.pos3D;
+        var r = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+        var targetCamDist = isFocusMode ? 8.6 : (getActiveSectionIndex() === 3 ? 7.6 : 10.5);
+        var scale = targetCamDist / r;
+
+        if (typeof gsap !== 'undefined') {
+          gsap.killTweensOf(camera.position);
+          gsap.to(camera.position, {
+            x: p.x * scale,
+            y: p.y * scale,
+            z: p.z * scale,
+            duration: 1.4,
+            ease: 'power2.inOut',
+            onUpdate: function() { camera.lookAt(0, 0, 0); }
+          });
+        } else {
+          camera.position.set(p.x * scale, p.y * scale, p.z * scale);
+          camera.lookAt(0, 0, 0);
+        }
+      };
+
+      // Telemetry Section Mode Switcher (Ground vs Satellites)
+      window.setTelemetryMode = function(mode) {
+        var isSat = (mode === 'satellites');
+        var tabGround = document.getElementById('tabGroundNodes');
+        var tabSat = document.getElementById('tabSatellites');
+        var cityContainer = document.getElementById('chipsContainer');
+        var satContainer = document.getElementById('satChipsContainer');
+
+        if (tabGround) tabGround.classList.toggle('active', !isSat);
+        if (tabSat) tabSat.classList.toggle('active', isSat);
+        if (cityContainer) cityContainer.style.display = isSat ? 'none' : 'flex';
+        if (satContainer) satContainer.style.display = isSat ? 'flex' : 'none';
+
+        if (isSat) {
+          focusSatellite(selectedSatId || '25544');
+        } else {
+          focusCity('Jakarta');
         }
       };
 
@@ -1532,6 +1922,7 @@
 
       window.cameraPreset = function(preset) {
         var tCamZ = isFocusMode ? 9.2 : 11.8;
+        isTargetLocked = true;
         if (preset === 'global') {
           targetRotX = 0; targetRotY = 0;
         } else if (preset === 'pacific') {
@@ -1545,8 +1936,8 @@
         if (typeof gsap !== 'undefined') {
           gsap.killTweensOf(globeGroup.rotation);
           gsap.killTweensOf(camera.position);
-          gsap.to(globeGroup.rotation, { x: targetRotX, y: targetRotY, duration: 1.6, ease: 'power3.inOut' });
-          gsap.to(camera.position, { x: 0, y: 0.2, z: tCamZ, duration: 1.4, ease: 'power3.out' });
+          gsap.to(globeGroup.rotation, { x: targetRotX, y: targetRotY, z: 0, duration: 1.6, ease: 'power3.inOut' });
+          gsap.to(camera.position, { x: 0, y: 0, z: tCamZ, duration: 1.4, ease: 'power3.out' });
         }
 
         if (window.playBeep) window.playBeep(560);
@@ -1654,7 +2045,8 @@
         if (ringMat) ringMat.color.setHex(c.accent);
         if (wireMat) wireMat.color.setHex(c.accent);
         if (arcMat) arcMat.color.setHex(c.arc);
-        if (satMat) satMat.color.setHex(c.sat);
+        if (markerRingMat) markerRingMat.color.setHex(c.accent);
+        if (tickMat) tickMat.color.setHex(c.accent);
 
         if (window.playBeep) window.playBeep(640);
       };
@@ -1668,23 +2060,24 @@
         requestAnimationFrame(animate);
         if (controls) controls.update();
 
+        var delta = clock.getDelta();
         var time = clock.getElapsedTime();
         var activeIdx = getActiveSectionIndex();
 
-        // Camera Depth Per Section (When not in Focus Mode)
-        if (!isFocusMode) {
+        // Advance simulation time for satellites
+        simTimeSeconds += delta * 12;
+
+        // Camera Depth Per Section (When not in Focus Mode and not targeting satellite)
+        if (!isFocusMode && !isTargetLocked) {
           var isNetworkSection = (activeIdx === 3);
           var isArchitectureSection = (activeIdx === 4);
           var targetZ = isNetworkSection ? 8.2 : isArchitectureSection ? 10.2 : 11.8;
           camera.position.z += (targetZ - camera.position.z) * 0.03;
         }
 
-        // Globe Spherical Rotation
-        if (Math.abs(targetRotY) > 0.001) {
-          globeGroup.rotation.y += (targetRotY - globeGroup.rotation.y) * 0.04;
-          globeGroup.rotation.x += (targetRotX - globeGroup.rotation.x) * 0.04;
-        } else if (!reducedMotion) {
-          globeGroup.rotation.y += 0.0004;
+        // Idle Globe Spherical Rotation
+        if (!isTargetLocked && !reducedMotion) {
+          globeGroup.rotation.y += 0.0003;
         }
 
         if (!reducedMotion) {
@@ -1699,6 +2092,12 @@
             child.scale.lerp(new THREE.Vector3(s, s, s), 0.1);
           }
         });
+
+        // Pulse 3D Target Marker Lock on Active Node
+        if (cityTargetMarker && cityTargetMarker.visible) {
+          var ms = 1.0 + Math.sin(time * 4.0) * 0.08;
+          cityTargetMarker.scale.set(ms, ms, ms);
+        }
 
         // Animate Moving Data Packets along Curves
         if (showPackets && arcCurves.length > 0) {
@@ -1715,36 +2114,21 @@
           packetParticles.geometry.attributes.position.needsUpdate = true;
         }
 
-        // Animate Satellites Constellation (Keplerian orbits)
-        if (showSatellites) {
-          var satArray = satPoints.geometry.attributes.position.array;
-          for (var s = 0; s < satCount; s++) {
-            var sat = satellites[s];
-            sat.angle += sat.speed;
-            var R = sat.orbitRadius;
-            var xP = R * Math.cos(sat.angle);
-            var yP = R * Math.sin(sat.angle) * Math.sin(sat.inc);
-            var zP = R * Math.sin(sat.angle) * Math.cos(sat.inc);
-
-            var x = xP * Math.cos(sat.raan) + zP * Math.sin(sat.raan);
-            var y = yP;
-            var z = -xP * Math.sin(sat.raan) + zP * Math.cos(sat.raan);
-
-            satArray[s * 3] = x;
-            satArray[s * 3 + 1] = y;
-            satArray[s * 3 + 2] = z;
-          }
-          satPoints.geometry.attributes.position.needsUpdate = true;
+        // Animate Real Keplerian Satellites Fleet
+        if (showSatellites && satelliteObjects) {
+          satelliteObjects.forEach(function(item) {
+            var satRes = getSatellitePosition(item.sat, simTimeSeconds);
+            item.mesh.position.copy(satRes.pos3D);
+            item.mesh.lookAt(satRes.pos3D.clone().multiplyScalar(2));
+          });
         }
 
-        // 3D Raycasting Tooltip Logic
+        // 3D Raycasting Tooltip Logic (Both Nodes & Satellites)
         raycaster.setFromCamera(pointer, camera);
-        var intersects = raycaster.intersectObjects(raycastSpheres, false);
+        var hitTargets = raycastSpheres.concat(satelliteHitSpheres);
+        var intersects = raycaster.intersectObjects(hitTargets, false);
         if (intersects.length > 0) {
           var hitObj = intersects[0].object;
-          var cityName = hitObj.userData.cityName;
-          var cityData = hitObj.userData.cityData;
-          hoveredCity = cityName;
           renderer.domElement.style.cursor = 'pointer';
 
           // Project 3D coordinate to 2D screen space
@@ -1754,11 +2138,20 @@
 
           tooltipEl.style.left = sx + 'px';
           tooltipEl.style.top = sy + 'px';
-          ttTitle.textContent = cityName + ' Core Edge';
-          ttMeta.textContent = cityData.lat + '°, ' + cityData.lon + '° · ' + cityData.ping;
+
+          if (hitObj.userData.cityName) {
+            var cityName = hitObj.userData.cityName;
+            var cityData = hitObj.userData.cityData;
+            ttTitle.textContent = cityName + ' Core Edge';
+            ttMeta.textContent = cityData.lat + '°, ' + cityData.lon + '° · ' + cityData.ping;
+          } else if (hitObj.userData.satId) {
+            var sData = hitObj.userData.sat;
+            var sPos = getSatellitePosition(sData, simTimeSeconds);
+            ttTitle.textContent = sData.name + ' [' + sData.cat.toUpperCase() + ']';
+            ttMeta.textContent = 'NORAD ' + sData.id + ' · Alt: ' + sPos.altitudeKm.toFixed(0) + ' km · ' + sData.agency;
+          }
           tooltipEl.classList.add('visible');
         } else {
-          hoveredCity = null;
           renderer.domElement.style.cursor = 'default';
           tooltipEl.classList.remove('visible');
         }
@@ -1766,6 +2159,11 @@
         renderer.render(scene, camera);
       }
       animate();
+
+      // Initial focus on Jakarta Node so coordinates align dead center under reticle +
+      setTimeout(function() {
+        if (window.focusCity) window.focusCity('Jakarta');
+      }, 100);
 
       // Resize Handler
       window.addEventListener('resize', function() {
